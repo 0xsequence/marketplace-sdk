@@ -1,3 +1,4 @@
+import type { ListOffersForCollectibleRequest as APIListOffersForCollectibleRequest } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
@@ -5,7 +6,6 @@ import type {
 	ListCollectibleOffersResponse,
 	ListOffersForCollectibleRequest,
 	Page,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -19,7 +19,7 @@ export interface FetchListOffersForCollectibleParams
 	> {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	config: SdkConfig;
 	sort?: Array<SortBy>;
 }
@@ -53,15 +53,13 @@ export async function fetchListOffersForCollectible(
 		} as Page;
 	}
 
-	const apiArgs: ListOffersForCollectibleRequest = {
+	return await marketplaceClient.listOffersForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		tokenId: collectibleId,
 		page: finalPage,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listOffersForCollectible(apiArgs);
+	});
 }
 
 export type ListOffersForCollectibleQueryOptions =
@@ -72,15 +70,20 @@ export type ListOffersForCollectibleQueryOptions =
 export function getListOffersForCollectibleQueryKey(
 	params: ListOffersForCollectibleQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
+	const apiArgs: APIListOffersForCollectibleRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.collectibleId ?? 0n,
 		filter: params.filter,
 		page: params.page,
-	} satisfies QueryKeyArgs<ListOffersForCollectibleRequest>;
+	};
 
-	return ['collectible', 'market-offers', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listOffersForCollectible({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+		tokenId: apiArgs.tokenId,
+	});
 }
 
 export function listOffersForCollectibleQueryOptions(
