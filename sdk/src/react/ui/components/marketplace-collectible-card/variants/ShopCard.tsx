@@ -78,8 +78,6 @@ export function ShopCard({
 		>
 			<Footer
 				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
 				name={tokenMetadata.name || ''}
 				type={collectionType}
 				decimals={tokenMetadata.decimals}
