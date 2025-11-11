@@ -1,15 +1,16 @@
-import type { GetTokenSuppliesArgs, Page } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient, type ValuesOptional } from '../../_internal';
 import type { StandardInfiniteQueryOptions } from '../../types/query';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchTokenSuppliesParams
-	extends Omit<GetTokenSuppliesArgs, 'contractAddress'> {
+	extends Omit<Indexer.GetTokenSuppliesRequest, 'contractAddress'> {
 	chainId: number;
 	collectionAddress: string;
 	config: SdkConfig;
-	page?: Page;
+	page?: Indexer.Page;
 }
 
 /**
@@ -20,8 +21,8 @@ export async function fetchTokenSupplies(params: FetchTokenSuppliesParams) {
 
 	const indexerClient = getIndexerClient(chainId, config);
 
-	const apiArgs: GetTokenSuppliesArgs = {
-		contractAddress: collectionAddress,
+	const apiArgs: Indexer.GetTokenSuppliesRequest = {
+		contractAddress: collectionAddress as `0x${string}`,
 		...rest,
 	};
 
@@ -42,7 +43,7 @@ export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
 		metadataOptions: params.metadataOptions,
 	};
 
-	return ['token', 'supplies', apiArgs] as const;
+	return createTokenQueryKey('supplies', apiArgs);
 }
 
 export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
@@ -53,7 +54,7 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
-	const initialPageParam = { page: 1, pageSize: 30 } as Page;
+	const initialPageParam: Indexer.Page = { page: 1, pageSize: 30, more: false };
 
 	const queryFn = async ({ pageParam = initialPageParam }) =>
 		fetchTokenSupplies({

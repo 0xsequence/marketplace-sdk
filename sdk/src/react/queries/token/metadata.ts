@@ -1,4 +1,4 @@
-import type { GetTokenMetadataArgs } from '@0xsequence/metadata';
+import type { GetTokenMetadataArgs } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
@@ -7,11 +7,12 @@ import {
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchListTokenMetadataParams {
 	chainId: number;
 	contractAddress: string;
-	tokenIds: string[];
+	tokenIds: bigint[];
 	config: SdkConfig;
 }
 
@@ -25,9 +26,9 @@ export async function fetchListTokenMetadata(
 	const metadataClient = getMetadataClient(config);
 
 	const response = await metadataClient.getTokenMetadata({
-		chainID: chainId.toString(),
+		chainId: chainId,
 		contractAddress: contractAddress,
-		tokenIDs: tokenIds,
+		tokenIds: tokenIds,
 	});
 
 	return response.tokenMetadata;
@@ -42,12 +43,12 @@ export function getListTokenMetadataQueryKey(
 	params: ListTokenMetadataQueryOptions,
 ) {
 	const apiArgs = {
-		chainID: String(params.chainId),
+		chainId: params.chainId,
 		contractAddress: params.contractAddress,
-		tokenIDs: params.tokenIds,
+		tokenIds: params.tokenIds,
 	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
 
-	return ['token', 'metadata', apiArgs] as const;
+	return createTokenQueryKey('metadata', apiArgs);
 }
 
 export function listTokenMetadataQueryOptions(

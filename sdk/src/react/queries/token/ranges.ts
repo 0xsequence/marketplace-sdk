@@ -1,9 +1,10 @@
-import type { GetTokenIDRangesReturn } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchGetTokenRangesParams {
 	chainId: number;
@@ -16,7 +17,7 @@ export interface FetchGetTokenRangesParams {
  */
 export async function fetchGetTokenRanges(
 	params: FetchGetTokenRangesParams,
-): Promise<GetTokenIDRangesReturn> {
+): Promise<Indexer.GetTokenIDRangesResponse> {
 	const { chainId, collectionAddress, config } = params;
 
 	const indexerClient = getIndexerClient(chainId, config);
@@ -43,7 +44,7 @@ export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 		contractAddress: params.collectionAddress!,
 	};
 
-	return ['token', 'ranges', apiArgs] as const;
+	return createTokenQueryKey('ranges', apiArgs);
 }
 
 export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
