@@ -1,13 +1,12 @@
+import { MarketplaceKind, MarketplaceMocks } from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
-import { MarketplaceKind } from '../../_internal';
-import {
-	mockCheckoutOptions,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockCheckoutOptions, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import type { UseMarketCheckoutOptionsParams } from './market-checkout-options';
 import { useMarketCheckoutOptions } from './market-checkout-options';
 

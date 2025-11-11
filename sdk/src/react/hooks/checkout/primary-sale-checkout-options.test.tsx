@@ -1,3 +1,4 @@
+import { MarketplaceMocks } from '@0xsequence/marketplace-api';
 import { skipToken } from '@tanstack/react-query';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
@@ -5,10 +6,9 @@ import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
-import {
-	mockCheckoutOptions,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockCheckoutOptions, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { usePrimarySaleCheckoutOptions } from './primary-sale-checkout-options';
 
 // Mock wagmi useAccount hook
@@ -47,8 +47,8 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				collectionAddress: mockCollectionAddress,
 				items: [
 					{
-						quantity: '1',
-						tokenId: '1',
+						quantity: 1n,
+						tokenId: 1n,
 					},
 				],
 			}),
@@ -86,12 +86,12 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				collectionAddress: mockCollectionAddress,
 				items: [
 					{
-						quantity: '2',
-						tokenId: '1',
+						quantity: 2n,
+						tokenId: 1n,
 					},
 					{
-						quantity: '1',
-						tokenId: '2',
+						quantity: 1n,
+						tokenId: 2n,
 					},
 				],
 			}),
@@ -106,7 +106,7 @@ describe('usePrimarySaleCheckoutOptions', () => {
 
 	it('should refetch when args change', async () => {
 		let chainIdProp = 1;
-		const itemsProp = [{ quantity: '1', tokenId: '1' }];
+		const itemsProp = [{ quantity: 1n, tokenId: 1n }];
 
 		const { result, rerender } = renderHook(() =>
 			usePrimarySaleCheckoutOptions({
@@ -155,7 +155,7 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
-				items: [{ quantity: '1', tokenId: '1' }],
+				items: [{ quantity: 1n, tokenId: 1n }],
 			}),
 		);
 
@@ -178,7 +178,7 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
-				items: [{ quantity: '1', tokenId: '1' }],
+				items: [{ quantity: 1n, tokenId: 1n }],
 			}),
 		);
 
@@ -194,7 +194,7 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
-				items: [],
+				items: [{ quantity: 1n, tokenId: 1n }],
 			}),
 		);
 
