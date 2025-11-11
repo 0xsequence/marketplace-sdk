@@ -66,10 +66,10 @@ export function ERC721SaleControls({
 			salesContractAddress,
 			cardType: 'shop',
 			quantityDecimals: 0,
-			quantityRemaining: quantityRemaining ? Number(quantityRemaining) : 0,
+			quantityRemaining: quantityRemaining ?? 0n,
 			items: [
 				{
-					quantity: quantity.toString(),
+					quantity: BigInt(quantity),
 				},
 			],
 			salePrice: {
