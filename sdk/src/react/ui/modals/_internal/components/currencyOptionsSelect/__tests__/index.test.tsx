@@ -1,10 +1,8 @@
-import type { UseQueryResult } from '@tanstack/react-query';
 import { render } from '@test';
 import { TEST_CURRENCIES, TEST_CURRENCY } from '@test/const';
 import { screen } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Currency } from '../../../../../../_internal';
 import * as marketCurrenciesFn from '../../../../../../hooks/currency/list';
 import CurrencyOptionsSelect from '..';
 
@@ -31,7 +29,7 @@ describe('CurrencyOptionsSelect', () => {
 			isLoading: true,
 			data: undefined,
 			error: null,
-		} as UseQueryResult<Currency[], Error>);
+		} as any);
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 
@@ -46,7 +44,7 @@ describe('CurrencyOptionsSelect', () => {
 			isLoading: false,
 			data: TEST_CURRENCIES,
 			error: null,
-		} as UseQueryResult<Currency[], Error>);
+		} as any);
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 
