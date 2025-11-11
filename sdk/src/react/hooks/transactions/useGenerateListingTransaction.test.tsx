@@ -1,12 +1,12 @@
+import { MarketplaceMocks } from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import {
-	ContractType,
-	OrderbookKind,
-} from '../../_internal/api/marketplace.gen';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
+import { ContractType, OrderbookKind } from '@0xsequence/marketplace-api';
 import type { CreateReqWithDateExpiry } from './useGenerateListingTransaction';
 import { useGenerateListingTransaction } from './useGenerateListingTransaction';
 
@@ -18,11 +18,11 @@ describe('useGenerateListingTransaction', () => {
 	});
 
 	const mockListing: CreateReqWithDateExpiry = {
-		tokenId: '1',
-		quantity: '1',
+		tokenId: 1n,
+		quantity: 1n,
 		expiry: new Date('2024-12-31'),
 		currencyAddress: zeroAddress,
-		pricePerToken: '1000000000000000000',
+		pricePerToken: 1000000000000000000n,
 	};
 
 	const mockTransactionProps = {
@@ -163,7 +163,7 @@ describe('useGenerateListingTransaction', () => {
 	it('should handle invalid listing data', async () => {
 		const invalidListing = {
 			...mockListing,
-			pricePerToken: 'invalid-price',
+			pricePerToken: -1n,
 		};
 
 		server.use(
