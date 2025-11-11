@@ -1,12 +1,12 @@
+import { MarketplaceMocks } from '@0xsequence/marketplace-api';
+
+const { mockCurrencies, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockCurrencies,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrencyComparePrices } from './compare-prices';
 
 describe('useCurrencyComparePrices', () => {
