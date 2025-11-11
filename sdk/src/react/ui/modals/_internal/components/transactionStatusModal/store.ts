@@ -25,7 +25,7 @@ interface TransactionStatusModalContext {
 	price: Price | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 }
@@ -39,7 +39,7 @@ const initialContext: TransactionStatusModalContext = {
 	price: undefined,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	collectibleId: '',
+	collectibleId: 0n,
 	callbacks: undefined,
 	queriesToInvalidate: [],
 };
