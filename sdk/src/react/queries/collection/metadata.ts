@@ -1,4 +1,4 @@
-import type { GetContractInfoArgs } from '@0xsequence/metadata';
+import type { GetContractInfoArgs } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../_internal';
 
 import type { StandardQueryOptions } from '../../types/query';
+import { createCollectionQueryKey } from './queryKeys';
 
 export interface FetchCollectionParams {
 	chainId: number;
@@ -24,7 +25,7 @@ export async function fetchCollection(params: FetchCollectionParams) {
 	const metadataClient = getMetadataClient(config);
 
 	const result = await metadataClient.getContractInfo({
-		chainID: chainId.toString(),
+		chainId: chainId,
 		contractAddress: collectionAddress,
 	});
 
@@ -37,11 +38,11 @@ export type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
 
 export function getCollectionQueryKey(params: CollectionQueryOptions) {
 	const apiArgs = {
-		chainID: String(params.chainId),
+		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetContractInfoArgs>;
 
-	return ['collection', 'metadata', apiArgs] as const;
+	return createCollectionQueryKey('metadata', apiArgs);
 }
 
 export function collectionQueryOptions(params: CollectionQueryOptions) {
