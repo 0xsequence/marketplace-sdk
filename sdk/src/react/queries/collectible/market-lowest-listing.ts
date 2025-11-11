@@ -1,17 +1,16 @@
+import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
-	type GetCollectibleLowestListingRequest,
-	type GetCollectibleLowestListingResponse,
+	type GetLowestPriceListingForCollectibleRequest,
 	getMarketplaceClient,
-	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
 	extends Omit<
-		GetCollectibleLowestListingRequest,
+		GetLowestPriceListingForCollectibleRequest,
 		'contractAddress' | 'chainId'
 	> {
 	collectionAddress: string;
@@ -24,19 +23,16 @@ export interface FetchLowestListingParams
  */
 export async function fetchLowestListing(
 	params: FetchLowestListingParams,
-): Promise<GetCollectibleLowestListingResponse['order'] | null> {
+): Promise<MarketplaceAPI.GetCollectibleLowestListingResponse['order'] | null> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectibleLowestListingRequest = {
+	const result = await marketplaceClient.getLowestPriceListingForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		...additionalApiParams,
-	};
-
-	const result =
-		await marketplaceClient.getLowestPriceListingForCollectible(apiArgs);
+	});
 	return result.order || null;
 }
 
@@ -46,14 +42,13 @@ export type LowestListingQueryOptions =
 	};
 
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.getLowestPriceListingForCollectible({
+		chainId: (params.chainId ?? 0).toString(),
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.tokenId ?? 0n,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCollectibleLowestListingRequest>;
-
-	return ['collectible', 'market-lowest-listing', apiArgs] as const;
+	});
 }
 
 export function lowestListingQueryOptions(params: LowestListingQueryOptions) {

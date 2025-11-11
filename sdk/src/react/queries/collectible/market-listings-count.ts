@@ -1,20 +1,17 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	GetCountOfListingsForCollectibleRequest,
 	OrderFilter,
-} from '../../_internal/api/marketplace.gen';
+} from '@0xsequence/marketplace-api';
+import { queryOptions } from '@tanstack/react-query';
+import type { SdkConfig } from '../../../types';
+import type { ValuesOptional } from '../../_internal';
+import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountListingsForCollectibleParams {
 	chainId: number;
 	collectionAddress: string;
-	collectibleId: string;
+	collectibleId: bigint;
 	config: SdkConfig;
 	filter?: OrderFilter;
 }
@@ -29,14 +26,12 @@ export async function fetchCountListingsForCollectible(
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: GetCountOfListingsForCollectibleRequest = {
+	const result = await client.getCountOfListingsForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		tokenId: collectibleId,
 		filter,
-	};
-
-	const result = await client.getCountOfListingsForCollectible(apiArgs);
+	});
 	return result.count;
 }
 
@@ -48,14 +43,19 @@ export type CountListingsForCollectibleQueryOptions =
 export function getCountListingsForCollectibleQueryKey(
 	params: CountListingsForCollectibleQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
+	const apiArgs: GetCountOfListingsForCollectibleRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.collectibleId ?? 0n,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCountOfListingsForCollectibleRequest>;
+	};
 
-	return ['order', 'listings-count', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.getCountOfListingsForCollectible({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+		tokenId: apiArgs.tokenId,
+	});
 }
 
 export function countListingsForCollectibleQueryOptions(

@@ -1,10 +1,10 @@
+import type { ListListingsForCollectibleRequest } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import type {
 	ListCollectibleListingsRequest,
 	ListCollectibleListingsResponse,
-	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
 import { getMarketplaceClient } from '../../_internal';
@@ -17,7 +17,7 @@ export interface FetchListListingsForCollectibleParams
 	> {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	config: SdkConfig;
 }
 
@@ -36,14 +36,12 @@ export async function fetchListListingsForCollectible(
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: ListCollectibleListingsRequest = {
+	return await marketplaceClient.listListingsForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		tokenId: collectibleId,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listListingsForCollectible(apiArgs);
+	});
 }
 
 export type ListListingsForCollectibleQueryOptions =
@@ -54,15 +52,20 @@ export type ListListingsForCollectibleQueryOptions =
 export function getListListingsForCollectibleQueryKey(
 	params: ListListingsForCollectibleQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
+	const apiArgs: ListListingsForCollectibleRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.collectibleId ?? 0n,
 		filter: params.filter,
 		page: params.page,
-	} satisfies QueryKeyArgs<ListCollectibleListingsRequest>;
+	};
 
-	return ['collectible', 'market-listings', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listListingsForCollectible({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+		tokenId: apiArgs.tokenId,
+	});
 }
 
 export function listListingsForCollectibleQueryOptions(
