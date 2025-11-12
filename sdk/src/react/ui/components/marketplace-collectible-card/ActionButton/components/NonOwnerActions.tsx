@@ -17,6 +17,7 @@ type NonOwnerActionsBaseProps = {
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	className?: string;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
@@ -53,6 +54,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		unlimitedSupply,
 		cardType,
 		hideQuantitySelector,
+		className,
 	} = props;
 
 	const { show: showBuyModal } = useBuyModal();
@@ -89,6 +91,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					})
 				}
 				icon={<CartIcon />}
+				className={className}
 			/>
 		);
 	}
@@ -118,6 +121,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					})
 				}
 				icon={<CartIcon />}
+				className={className}
 			/>
 		);
 	}
@@ -137,6 +141,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						orderbookKind,
 					})
 				}
+				className={className}
 			/>
 		);
 	}

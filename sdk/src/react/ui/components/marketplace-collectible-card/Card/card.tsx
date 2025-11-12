@@ -8,7 +8,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-	({ children, onClick, onKeyDown, className, ...props }, ref) => {
+	({ children, onClick, onKeyDown, className = '', ...props }, ref) => {
 		const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 			if (onClick && (e.key === 'Enter' || e.key === ' ')) {
 				e.preventDefault();
@@ -25,7 +25,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 				data-testid="collectible-card"
 				className={cn(
 					'group relative z-10 flex flex-col items-start overflow-hidden rounded-xl',
-					'w-card-width min-w-card-min-width border border-border-base bg-background-primary',
+					'w-card-width min-w-card-min-width border border-border-base',
 					isInteractive && [
 						'cursor-pointer',
 						'focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus',

@@ -1,5 +1,5 @@
-import type { Currency } from '../../../../_internal';
 import { fromBigIntString, toNumber } from '../../../../../utils';
+import type { Currency } from '../../../../_internal';
 
 export const OVERFLOW_PRICE = 100000000;
 export const UNDERFLOW_PRICE = 0.0001;

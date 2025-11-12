@@ -15,6 +15,7 @@ type OwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	highestOffer?: Order;
+	className?: string;
 };
 
 export function OwnerActions({
@@ -24,6 +25,7 @@ export function OwnerActions({
 	chainId,
 	orderbookKind,
 	highestOffer,
+	className,
 }: OwnerActionsProps) {
 	const { show: showCreateListingModal } = useCreateListingModal();
 	const { show: showSellModal } = useSellModal();
@@ -42,6 +44,7 @@ export function OwnerActions({
 						orderbookKind,
 					})
 				}
+				className={className}
 			/>
 		);
 	}
@@ -59,6 +62,7 @@ export function OwnerActions({
 						order: highestOffer,
 					})
 				}
+				className={className}
 			/>
 		);
 	}
@@ -75,6 +79,7 @@ export function OwnerActions({
 						collectibleId: tokenId,
 					})
 				}
+				className={className}
 			/>
 		);
 	}
