@@ -18,6 +18,7 @@ export const NonTradableInventoryCard = forwardRef<
 			balance,
 			balanceIsLoading,
 			collectibleMetadata,
+			classNames,
 		},
 		ref,
 	) => {
@@ -31,21 +32,25 @@ export const NonTradableInventoryCard = forwardRef<
 		if (skeleton) return skeleton;
 
 		return (
-			<Card ref={ref}>
+			<Card ref={ref} className={classNames?.cardRoot}>
 				<Card.Media
 					metadata={collectibleMetadata}
 					assetSrcPrefixUrl={assetSrcPrefixUrl}
+					className={classNames?.cardMedia}
 				/>
 
-				<Card.Content>
-					<Card.Title>{collectibleMetadata.name || 'Untitled'}</Card.Title>
+				<Card.Content className={classNames?.cardContent}>
+					<Card.Title className={classNames?.cardTitle}>
+						{collectibleMetadata.name || 'Untitled'}
+					</Card.Title>
 
-					<Card.Price />
+					<Card.Price className={classNames?.cardPrice} />
 
 					<Card.Badge
 						type={collectionType as ContractType}
 						balance={balance}
 						decimals={collectibleMetadata.decimals}
+						className={classNames?.cardBadge}
 					/>
 				</Card.Content>
 			</Card>
