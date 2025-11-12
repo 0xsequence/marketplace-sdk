@@ -70,7 +70,7 @@ export function usePrimarySale1155CardData({
 		const unlimitedSupply = saleData?.unlimitedSupply;
 
 		return {
-			collectibleId: metadata.tokenId,
+			tokenId: metadata.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,

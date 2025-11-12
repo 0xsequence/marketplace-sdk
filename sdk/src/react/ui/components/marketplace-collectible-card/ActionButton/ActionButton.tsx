@@ -31,6 +31,7 @@ type ActionButtonProps = {
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	className?: string;
 };
 
 export function ActionButton({
@@ -51,6 +52,7 @@ export function ActionButton({
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
+	className,
 }: ActionButtonProps) {
 	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
@@ -72,6 +74,7 @@ export function ActionButton({
 				chainId={chainId}
 				orderbookKind={orderbookKind}
 				highestOffer={highestOffer}
+				className={className}
 			/>
 		);
 	}
@@ -104,5 +107,5 @@ export function ActionButton({
 					hideQuantitySelector,
 				};
 
-	return <NonOwnerActions {...nonOwnerProps} />;
+	return <NonOwnerActions {...nonOwnerProps} className={className} />;
 }

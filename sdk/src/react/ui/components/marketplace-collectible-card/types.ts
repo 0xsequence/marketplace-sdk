@@ -9,19 +9,31 @@ import type {
 	OrderbookKind,
 } from '../../../_internal';
 
-// Base properties shared by all collectible card types
+export type CardClassNames = {
+	cardRoot?: string;
+	cardMedia?: string;
+	cardContent?: string;
+	cardTitle?: string;
+	cardPrice?: string;
+	cardBadge?: string;
+	cardFooter?: string;
+	cardActionButton?: string;
+	cardSaleDetails?: string;
+	cardSkeleton?: string;
+};
+
 type MarketplaceCardBaseProps = {
-	collectibleId: string;
+	tokenId: string;
 	chainId: number;
 	collectionAddress: Address;
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading: boolean;
 	cardType?: CardType;
+	classNames?: CardClassNames;
 	hideQuantitySelector?: boolean;
 };
 
-// Properties specific to Shop card
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
 	tokenMetadata: MarketplaceTokenMetadataType | MetadataTokenMetadataType;

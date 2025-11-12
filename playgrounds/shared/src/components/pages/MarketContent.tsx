@@ -73,7 +73,7 @@ export function MarketContent({
 
 		return (
 			<button
-				onClick={() => handleCollectibleClick(card.collectibleId)}
+				onClick={() => handleCollectibleClick(card.tokenId)}
 				className={cn('w-full cursor-pointer')}
 				type="button"
 			>

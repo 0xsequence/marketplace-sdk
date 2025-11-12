@@ -49,7 +49,7 @@ export function CollectibleGrid({
 				if (createCollectibleRoute) {
 					return (
 						<AppLink
-							key={collectible.collectibleId}
+							key={collectible.tokenId}
 							href={createCollectibleRoute(collectible)}
 						>
 							{content}
@@ -57,7 +57,7 @@ export function CollectibleGrid({
 					);
 				}
 
-				return <div key={collectible.collectibleId}>{content}</div>;
+				return <div key={collectible.tokenId}>{content}</div>;
 			})}
 		</div>
 	);
