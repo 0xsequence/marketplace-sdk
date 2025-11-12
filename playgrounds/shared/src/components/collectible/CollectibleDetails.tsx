@@ -75,7 +75,7 @@ export const CollectibleDetails = ({
 					)) ||
 						'<'}
 
-					<Text className="font-medium text-sm text-white">
+					<Text className="font-medium text-sm text-text-100">
 						{collection?.name}
 					</Text>
 				</button>
