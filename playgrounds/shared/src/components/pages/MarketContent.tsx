@@ -77,22 +77,7 @@ export function MarketContent({
 				className={cn('w-full cursor-pointer')}
 				type="button"
 			>
-				<CollectibleCard
-					{...card}
-					classNames={{
-						cardRoot: 'rounded-none bg-gray-400',
-						cardMedia: 'rounded-none',
-						cardContent: 'rounded-none',
-						cardTitle: 'rounded-none text-yellow-500 text-2xl',
-						cardPrice: 'rounded-none bg-blue-500 text-black',
-						cardBadge: 'rounded-none bg-red-500',
-						cardFooter:
-							'rounded-none mkasdmkaskmd bottom-0 group-hover:translate-y-0 relative',
-						cardActionButton: 'rounded-none bg-green-500 text-black',
-						cardSaleDetails: 'rounded-none',
-						cardSkeleton: 'rounded-none',
-					}}
-				/>
+				<CollectibleCard {...card} />
 			</button>
 		);
 	};
