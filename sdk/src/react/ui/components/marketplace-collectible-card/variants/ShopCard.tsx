@@ -42,6 +42,7 @@ export function ShopCard({
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
+	classNames,
 }: ShopCollectibleCardProps) {
 	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
 		chainId,
@@ -99,6 +100,7 @@ export function ShopCard({
 			}
 			unlimitedSupply={unlimitedSupply}
 			hideQuantitySelector={hideQuantitySelector}
+			classNames={classNames}
 		/>
 	);
 }

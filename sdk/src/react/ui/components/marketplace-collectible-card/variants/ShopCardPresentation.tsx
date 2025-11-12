@@ -2,11 +2,13 @@
 
 import type { Address } from 'viem';
 import { type CardType, CollectibleCardAction } from '../../../../../types';
+import { cn } from '../../../../../utils';
 import { ContractType, type Currency } from '../../../../_internal';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Card } from '../Card';
 import type { CollectibleMetadata } from '../Card/card-media';
 import { CARD_TITLE_MAX_LENGTH_DEFAULT } from '../constants';
+import type { CardClassNames } from '../types';
 
 export interface ShopCardPresentationProps {
 	/** Token identification */
@@ -42,6 +44,7 @@ export interface ShopCardPresentationProps {
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	classNames?: CardClassNames;
 }
 
 /**
@@ -80,18 +83,19 @@ export function ShopCardPresentation({
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
+	classNames,
 }: ShopCardPresentationProps) {
 	return (
-		<Card>
+		<Card className={classNames?.cardRoot}>
 			<Card.Media
 				metadata={tokenMetadata}
 				assetSrcPrefixUrl={assetSrcPrefixUrl}
-				className={shopState.mediaClassName}
+				className={cn(shopState.mediaClassName, classNames?.cardMedia)}
 			/>
 
-			<Card.Content>
+			<Card.Content className={classNames?.cardContent}>
 				<Card.Title
-					className={shopState.titleClassName}
+					className={cn(shopState.titleClassName, classNames?.cardTitle)}
 					maxLength={CARD_TITLE_MAX_LENGTH_DEFAULT}
 				>
 					{tokenMetadata.name || 'Untitled'}
@@ -101,7 +105,11 @@ export function ShopCardPresentation({
 					{collectionType === ContractType.ERC1155 &&
 						salePrice?.amount &&
 						saleCurrency && (
-							<Card.Price amount={salePrice.amount} currency={saleCurrency} />
+							<Card.Price
+								amount={salePrice.amount}
+								currency={saleCurrency}
+								className={classNames?.cardPrice}
+							/>
 						)}
 				</div>
 
@@ -113,12 +121,16 @@ export function ShopCardPresentation({
 					}
 					type={collectionType}
 					unlimitedSupply={unlimitedSupply}
+					className={classNames?.cardSaleDetails}
 				/>
 
 				{!salePrice?.amount && <div className="h-5 w-full" />}
 			</Card.Content>
 
-			<Card.Footer show={shopState.showActionButton}>
+			<Card.Footer
+				show={shopState.showActionButton}
+				className={classNames?.cardFooter}
+			>
 				<ActionButton
 					chainId={chainId}
 					collectionAddress={collectionAddress}
@@ -132,6 +144,7 @@ export function ShopCardPresentation({
 					quantityRemaining={quantityRemaining}
 					unlimitedSupply={unlimitedSupply}
 					hideQuantitySelector={hideQuantitySelector}
+					className={classNames?.cardActionButton}
 				/>
 			</Card.Footer>
 		</Card>
