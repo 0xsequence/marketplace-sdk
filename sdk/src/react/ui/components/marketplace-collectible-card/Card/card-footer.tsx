@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef } from 'react';
+import { cn } from '../../../../../utils';
 
 export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 	show?: boolean;
@@ -16,13 +17,16 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Card.Footer>
  */
 export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
-	({ children, show = true, ...props }, ref) => {
+	({ children, show = true, className, ...props }, ref) => {
 		if (!show) return null;
 
 		return (
 			<div
 				ref={ref}
-				className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]"
+				className={cn(
+					'-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]',
+					className ?? '',
+				)}
 				{...props}
 			>
 				{children}

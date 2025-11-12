@@ -9,6 +9,19 @@ import type {
 	OrderbookKind,
 } from '../../../_internal';
 
+export type CardClassNames = {
+	cardRoot?: string;
+	cardMedia?: string;
+	cardContent?: string;
+	cardTitle?: string;
+	cardPrice?: string;
+	cardBadge?: string;
+	cardFooter?: string;
+	cardActionButton?: string;
+	cardSaleDetails?: string;
+	cardSkeleton?: string;
+};
+
 type MarketplaceCardBaseProps = {
 	tokenId: string;
 	chainId: number;
@@ -17,6 +30,7 @@ type MarketplaceCardBaseProps = {
 	assetSrcPrefixUrl?: string;
 	cardLoading: boolean;
 	cardType?: CardType;
+	classNames?: CardClassNames;
 	hideQuantitySelector?: boolean;
 };
 

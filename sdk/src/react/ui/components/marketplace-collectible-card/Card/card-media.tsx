@@ -46,7 +46,7 @@ export const CardMedia = forwardRef<HTMLDivElement, CardMediaProps>(
 
 		return (
 			<div
-				className="w-full"
+				className="w-full overflow-hidden"
 				style={{
 					aspectRatio: '1',
 				}}

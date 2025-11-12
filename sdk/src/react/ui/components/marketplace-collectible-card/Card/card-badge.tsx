@@ -3,6 +3,7 @@
 import { Text } from '@0xsequence/design-system';
 import { forwardRef } from 'react';
 import { formatUnits } from 'viem';
+import { cn } from '../../../../../utils';
 import { ContractType } from '../../../../_internal';
 
 export interface CardBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -12,7 +13,7 @@ export interface CardBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const CardBadge = forwardRef<HTMLDivElement, CardBadgeProps>(
-	({ type, balance, decimals, ...props }, ref) => {
+	({ type, balance, decimals, className, ...props }, ref) => {
 		const displayText =
 			type === ContractType.ERC1155
 				? balance
@@ -22,7 +23,12 @@ export const CardBadge = forwardRef<HTMLDivElement, CardBadgeProps>(
 
 		return (
 			<div ref={ref} {...props}>
-				<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
+				<Text
+					className={cn(
+						'rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs',
+						className,
+					)}
+				>
 					{displayText}
 				</Text>
 			</div>

@@ -41,6 +41,7 @@ export function MarketCard({
 	onCannotPerformAction,
 	prioritizeOwnerActions,
 	hideQuantitySelector,
+	classNames,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -77,6 +78,8 @@ export function MarketCard({
 		hasListing: !!lowestListing,
 	});
 
+	console.log('classNames', classNames);
+
 	return (
 		<MarketCardPresentation
 			tokenId={tokenId}
@@ -97,6 +100,7 @@ export function MarketCard({
 			onCannotPerformAction={onCannotPerformAction}
 			prioritizeOwnerActions={prioritizeOwnerActions}
 			hideQuantitySelector={hideQuantitySelector}
+			classNames={classNames}
 		/>
 	);
 }

@@ -24,6 +24,7 @@ interface PriceDisplayProps {
 export const formatPrice = (
 	amount: string,
 	currency: Currency,
+	className?: string,
 ): React.ReactNode => {
 	const price = formatPriceData(amount, currency);
 
@@ -42,13 +43,15 @@ export const formatPrice = (
 		return (
 			<div className="flex items-center">
 				<Icon className="h-3 w-3 text-text-100" />
-				<Text className="font-bold text-sm text-text-100">{`${price.displayText} ${price.symbol}`}</Text>
+				<Text
+					className={cn('font-bold text-sm', className || 'text-text-100')}
+				>{`${price.displayText} ${price.symbol}`}</Text>
 			</div>
 		);
 	}
 
 	return (
-		<Text className="font-bold text-sm text-text-100">
+		<Text className={cn('font-bold text-sm', className || 'text-text-100')}>
 			{price.displayText} {price.symbol}
 		</Text>
 	);
@@ -61,7 +64,7 @@ export const PriceDisplay = ({
 	className,
 }: PriceDisplayProps) => {
 	return (
-		<div className={cn('flex items-center gap-1', className)}>
+		<div className="flex items-center gap-1">
 			{showCurrencyIcon && currency.imageUrl && (
 				<Image
 					alt={currency.symbol}
@@ -72,7 +75,8 @@ export const PriceDisplay = ({
 					}}
 				/>
 			)}
-			{formatPrice(amount, currency)}
+
+			{formatPrice(amount, currency, className)}
 		</div>
 	);
 };

@@ -13,8 +13,8 @@ export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
 			<div
 				ref={ref}
 				className={cn(
-					'relative flex w-full flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4',
-					className,
+					'relative flex w-full flex-col items-start gap-2 whitespace-nowrap p-4',
+					className || 'bg-background-primary',
 				)}
 				{...props}
 			>

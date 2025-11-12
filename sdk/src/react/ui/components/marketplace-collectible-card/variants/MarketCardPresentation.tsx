@@ -13,6 +13,7 @@ import {
 	CARD_TITLE_MAX_LENGTH_DEFAULT,
 	CARD_TITLE_MAX_LENGTH_WITH_OFFER,
 } from '../constants';
+import type { CardClassNames } from '../types';
 
 export interface MarketCardPresentationProps {
 	/** Token identification */
@@ -47,6 +48,7 @@ export interface MarketCardPresentationProps {
 	) => void;
 	prioritizeOwnerActions?: boolean;
 	hideQuantitySelector?: boolean;
+	classNames?: CardClassNames;
 }
 
 /**
@@ -88,6 +90,7 @@ export function MarketCardPresentation({
 	onCannotPerformAction,
 	prioritizeOwnerActions,
 	hideQuantitySelector,
+	classNames,
 }: MarketCardPresentationProps) {
 	// Only define handlers if callback exists
 	const handleClick = onCollectibleClick
@@ -102,14 +105,21 @@ export function MarketCardPresentation({
 			}
 		: undefined;
 
+	console.log('classNames', classNames);
+
 	return (
-		<Card onClick={handleClick} onKeyDown={handleKeyDown}>
+		<Card
+			onClick={handleClick}
+			onKeyDown={handleKeyDown}
+			className={classNames?.cardRoot}
+		>
 			<Card.Media
 				metadata={collectibleMetadata}
 				assetSrcPrefixUrl={assetSrcPrefixUrl}
+				className={classNames?.cardMedia}
 			/>
 
-			<Card.Content>
+			<Card.Content className={classNames?.cardContent}>
 				<Card.Title
 					highestOffer={highestOffer}
 					onOfferClick={(e) =>
@@ -121,22 +131,28 @@ export function MarketCardPresentation({
 							? CARD_TITLE_MAX_LENGTH_WITH_OFFER
 							: CARD_TITLE_MAX_LENGTH_DEFAULT
 					}
+					className={classNames?.cardTitle}
 				>
 					{collectibleMetadata.name || 'Untitled'}
 				</Card.Title>
 
 				<div className="flex items-center gap-1">
-					<Card.Price amount={lowestListing?.priceAmount} currency={currency} />
+					<Card.Price
+						amount={lowestListing?.priceAmount}
+						currency={currency}
+						className={classNames?.cardPrice}
+					/>
 				</div>
 
 				<Card.Badge
 					type={collectionType}
 					balance={balance}
 					decimals={collectibleMetadata.decimals}
+					className={classNames?.cardBadge}
 				/>
 			</Card.Content>
 
-			<Card.Footer show={showActionButton}>
+			<Card.Footer show={showActionButton} className={classNames?.cardFooter}>
 				<ActionButton
 					chainId={chainId}
 					collectionAddress={collectionAddress}
@@ -150,6 +166,7 @@ export function MarketCardPresentation({
 					cardType="market"
 					prioritizeOwnerActions={prioritizeOwnerActions}
 					hideQuantitySelector={hideQuantitySelector}
+					className={classNames?.cardActionButton}
 				/>
 			</Card.Footer>
 		</Card>
