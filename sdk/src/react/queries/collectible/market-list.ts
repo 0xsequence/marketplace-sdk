@@ -14,7 +14,10 @@ import type { StandardInfiniteQueryOptions } from '../../types/query';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export interface FetchListCollectiblesParams
-	extends Omit<ListCollectiblesRequest, 'chainId' | 'contractAddress'> {
+	extends Omit<
+		ListCollectiblesRequest,
+		'chainId' | 'contractAddress' | 'page'
+	> {
 	chainId: number;
 	collectionAddress: Address;
 	cardType?: CardType;
@@ -60,6 +63,10 @@ export async function fetchListCollectibles(
 
 export type ListCollectiblesQueryOptions =
 	ValuesOptional<FetchListCollectiblesParams> & {
+		/** Initial page number for API requests (controls how many items fetched per API call). Defaults to 1. */
+		page?: number;
+		/** Initial page size for API requests (controls batch size when fetching data from backend). Defaults to 30. */
+		pageSize?: number;
 		query?: StandardInfiniteQueryOptions;
 	};
 
@@ -97,6 +104,9 @@ export function listCollectiblesQueryOptions(
 			params.config &&
 			(params.query?.enabled ?? true),
 	);
+	
+	const initialPage = params.page ?? 1;
+	const initialPageSize = params.pageSize ?? 30;
 
 	return infiniteQueryOptions({
 		queryKey: getListCollectiblesQueryKey(params),
@@ -117,7 +127,7 @@ export function listCollectiblesQueryOptions(
 				pageParam,
 			);
 		},
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
+		initialPageParam: { page: initialPage, pageSize: initialPageSize } as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 		...params.query,

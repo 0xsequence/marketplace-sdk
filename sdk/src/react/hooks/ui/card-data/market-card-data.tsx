@@ -17,7 +17,7 @@ import { useSellModal } from '../../../ui/modals/SellModal';
 import { useCollectibleMarketList } from '../../collectible/market-list';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 
-interface UseMarketCardDataProps {
+export interface UseMarketCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
 	// orderbookKind is optional — used to override marketplace config for internal tests
@@ -32,6 +32,10 @@ interface UseMarketCardDataProps {
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
 	hideQuantitySelector?: boolean;
+	/** Initial page number for API requests (controls how many items fetched per API call). Defaults to 1. */
+	initialPage?: number;
+	/** Initial page size for API requests (controls batch size when fetching data from backend). Defaults to 30. */
+	initialPageSize?: number;
 }
 
 export function useMarketCardData({
@@ -48,6 +52,8 @@ export function useMarketCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
+	initialPage,
+	initialPageSize,
 }: UseMarketCardDataProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
@@ -73,6 +79,8 @@ export function useMarketCardData({
 		query: {
 			enabled: !!collectionAddress && !!chainId,
 		},
+		page: initialPage,
+		pageSize: initialPageSize,
 	});
 
 	// Get user balances for this collection
