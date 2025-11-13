@@ -60,6 +60,20 @@ export function VirtualizedCollectiblesView({
 	};
 
 	// Handle empty state
+	if (collectibleCards.length === 0 && (isLoading || isFetchingNextPage)) {
+		return (
+			<div className="flex w-full gap-1">
+				<FiltersSidebar
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+				/>
+				<div className="flex h-full w-full flex-col items-center justify-center gap-4">
+					<Text variant="large">Loading collectibles...</Text>
+				</div>
+			</div>
+		);
+	}
+
 	if (collectibleCards.length === 0 && !isLoading) {
 		return (
 			<div className="flex w-full gap-1">
