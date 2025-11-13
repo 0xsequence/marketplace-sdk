@@ -104,7 +104,7 @@ export function listCollectiblesQueryOptions(
 			params.config &&
 			(params.query?.enabled ?? true),
 	);
-	
+
 	const initialPage = params.page ?? 1;
 	const initialPageSize = params.pageSize ?? 30;
 
