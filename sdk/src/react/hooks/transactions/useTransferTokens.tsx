@@ -7,7 +7,7 @@ import type { ContractType } from '../../_internal';
 interface BaseTransferParams {
 	chainId: number;
 	collectionAddress: Address;
-	tokenId: string;
+	tokenId: bigint;
 	receiverAddress: Address;
 }
 

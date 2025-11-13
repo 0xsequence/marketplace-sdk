@@ -4,7 +4,6 @@ import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -53,7 +52,7 @@ export async function fetchListCollectionActivities(
 
 	const apiArgs: ListCollectionActivitiesRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
 	};
@@ -69,22 +68,17 @@ export type ListCollectionActivitiesQueryOptions =
 export function getListCollectionActivitiesQueryKey(
 	params: ListCollectionActivitiesQueryOptions,
 ) {
-	const page =
-		params.page || params.pageSize || params.sort
-			? {
-					page: params.page ?? 1,
-					pageSize: params.pageSize ?? 10,
-					sort: params.sort,
-				}
-			: undefined;
-
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		page: page,
-	} satisfies QueryKeyArgs<ListCollectionActivitiesRequest>;
-
-	return ['collection', 'market-activities', apiArgs] as const;
+	return [
+		'collection',
+		'market-activities',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			page: params.page,
+			pageSize: params.pageSize,
+			sort: params.sort,
+		},
+	] as const;
 }
 
 export function listCollectionActivitiesQueryOptions(

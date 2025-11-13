@@ -38,8 +38,8 @@ export type UseTokenRangesParams = Optional<
  * })
  *
  * if (data) {
- *   console.log(`Token ranges: ${JSON.stringify(data.tokenIDRanges)}`);
- *   data.tokenIDRanges?.forEach(range => {
+ *   console.log(`Token ranges: ${JSON.stringify(data.ranges)}`);
+ *   data.ranges?.forEach(range => {
  *     console.log(`Range: ${range.start} - ${range.end}`);
  *   });
  * }

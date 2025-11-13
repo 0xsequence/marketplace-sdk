@@ -1,8 +1,7 @@
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
-import type { Env, SdkConfig } from '../../../types/index';
-import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
+import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
 import { networkToWagmiChain } from '../../../utils/networkconfigToWagmiChain';
 import { getConnectors } from './get-connectors';
 

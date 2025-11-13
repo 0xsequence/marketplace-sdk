@@ -1,12 +1,14 @@
+import {
+	CollectionStatus,
+	MarketplaceMocks,
+} from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
+
+const { mockCollection, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	mockCollection,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { CollectionStatus } from '../../_internal/api/marketplace.gen';
 import { useCollectionMarketDetailPolling as useCollectionDetailPolling } from './market-detail-polling';
 
 describe('useCollectionDetailPolling', () => {

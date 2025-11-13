@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/marketplace-api';
 import { render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -101,7 +101,7 @@ const mockCollection1155 = {
 };
 
 const mockCollectable = {
-	tokenId: '1',
+	tokenId: 1n,
 	name: 'Test Collectible',
 	source: 'https://example.com',
 	attributes: [],
@@ -117,21 +117,21 @@ const mockOrder = {
 	originName: 'Test',
 	slug: 'test-order',
 	collectionContractAddress: '0x123',
-	tokenId: '1',
+	tokenId: 1n,
 	createdBy: '0xabc',
-	priceAmount: '1000000000000000000',
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
-	priceAmountNet: '1000000000000000000',
+	priceAmountNet: 1000000000000000000n,
 	priceAmountNetFormatted: '1.0',
 	priceCurrencyAddress: '0x0',
 	priceDecimals: 18,
 	priceUSD: 3000,
 	priceUSDFormatted: '$3,000.00',
-	quantityInitial: '1',
+	quantityInitial: 1n,
 	quantityInitialFormatted: '1',
-	quantityRemaining: '1',
+	quantityRemaining: 1n,
 	quantityRemainingFormatted: '1',
-	quantityAvailable: '1',
+	quantityAvailable: 1n,
 	quantityAvailableFormatted: '1',
 	quantityDecimals: 0,
 	feeBps: 250,
@@ -153,7 +153,8 @@ const mockCheckoutOptions = {
 
 const mockCurrency = {
 	chainId: 1,
-	contractAddress: '0x0',
+	contractAddress:
+		'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	status: CurrencyStatus.active,
 	name: 'Ethereum',
 	symbol: 'ETH',
@@ -170,10 +171,11 @@ const mockCurrency = {
 
 const mockShopData = {
 	salesContractAddress: '0x456' as `0x${string}`,
-	items: [{ tokenId: '1', quantity: '1' }],
+	items: [{ tokenId: 1n, quantity: 1n } as any],
 	salePrice: {
 		amount: '1000000000000000000',
-		currencyAddress: '0x0' as `0x${string}`,
+		currencyAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	},
 	checkoutOptions: undefined,
 };
@@ -199,7 +201,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					cardType: 'market',
@@ -236,7 +238,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					cardType: 'market',
@@ -272,7 +274,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -308,9 +310,9 @@ describe('BuyModalRouter', () => {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
 					salesContractAddress: '0x456' as `0x${string}`,
-					items: [{ tokenId: '1' }],
+					items: [{ tokenId: 1n } as any],
 					quantityDecimals: 0,
-					quantityRemaining: 10,
+					quantityRemaining: 10n,
 					salePrice: {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
@@ -350,9 +352,9 @@ describe('BuyModalRouter', () => {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
 					salesContractAddress: '0x456' as `0x${string}`,
-					items: [{ tokenId: '1' }],
+					items: [{ tokenId: 1n } as any],
 					quantityDecimals: 0,
-					quantityRemaining: 10,
+					quantityRemaining: 10n,
 					salePrice: {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
@@ -391,9 +393,9 @@ describe('BuyModalRouter', () => {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
 					salesContractAddress: '0x456' as `0x${string}`,
-					items: [{ tokenId: '1' }],
+					items: [{ tokenId: 1n } as any],
 					quantityDecimals: 0,
-					quantityRemaining: 10,
+					quantityRemaining: 10n,
 					salePrice: {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
@@ -430,7 +432,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -462,7 +464,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -495,9 +497,9 @@ describe('BuyModalRouter', () => {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
 					salesContractAddress: '0x456' as `0x${string}`,
-					items: [{ tokenId: '1' }],
+					items: [{ tokenId: 1n } as any],
 					quantityDecimals: 0,
-					quantityRemaining: 10,
+					quantityRemaining: 10n,
 					salePrice: {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
@@ -537,7 +539,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
+					collectibleId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					// cardType not specified - should default to MARKET

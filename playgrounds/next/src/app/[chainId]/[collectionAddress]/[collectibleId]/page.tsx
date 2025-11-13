@@ -13,7 +13,7 @@ export default function CollectiblePage() {
 	const route = createRoute.collectible(
 		Number(chainId),
 		collectionAddress as string,
-		collectibleId as string,
+		BigInt(collectibleId),
 	);
 
 	return (
@@ -25,7 +25,7 @@ export default function CollectiblePage() {
 			}}
 			chainId={Number(chainId)}
 			collectionAddress={collectionAddress as `0x${string}`}
-			collectibleId={collectibleId as string}
+			collectibleId={BigInt(collectibleId)}
 		/>
 	);
 }

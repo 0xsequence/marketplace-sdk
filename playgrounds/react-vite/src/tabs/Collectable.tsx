@@ -18,7 +18,7 @@ export function Collectible() {
 			showFullLayout={true}
 			chainId={Number(chainId)}
 			collectionAddress={collectionAddress as Address}
-			collectibleId={collectibleId as string}
+			collectibleId={BigInt(collectibleId as string)}
 		/>
 	);
 }

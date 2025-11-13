@@ -199,8 +199,8 @@ export function useFilterState() {
 
 				const newPriceFilter: PriceFilter = {
 					contractAddress,
-					...(min && { min }),
-					...(max && { max }),
+					...(min && { min: BigInt(min) }),
+					...(max && { max: BigInt(max) }),
 				};
 
 				setPriceFilters([...otherPriceFilters, newPriceFilter]);

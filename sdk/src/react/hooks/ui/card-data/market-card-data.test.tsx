@@ -1,18 +1,18 @@
+import {
+	IndexerMocks,
+	MarketplaceMocks,
+	PropertyType,
+} from '@0xsequence/marketplace-api';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
 import { renderHook, server, waitFor } from '../../../../../test';
 import * as types from '../../../../types';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../../_internal/api/__mocks__/marketplace.msw';
-import { PropertyType } from '../../../_internal/api/marketplace.gen';
 import { useMarketCardData } from './market-card-data';
 
 describe('useMarketCardData', () => {
@@ -255,7 +255,7 @@ describe('useMarketCardData', () => {
 					collectibles: [
 						{
 							...mockCollectibleOrder,
-							metadata: { ...mockCollectibleOrder.metadata, tokenId: '2' },
+							metadata: { ...mockCollectibleOrder.metadata, tokenId: 2n },
 						},
 					],
 				});

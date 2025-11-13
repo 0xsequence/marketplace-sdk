@@ -5,7 +5,6 @@ import type {
 	ListCollectibleOffersResponse,
 	ListOffersForCollectibleRequest,
 	Page,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -19,7 +18,7 @@ export interface FetchListOffersForCollectibleParams
 	> {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	config: SdkConfig;
 	sort?: Array<SortBy>;
 }
@@ -53,15 +52,13 @@ export async function fetchListOffersForCollectible(
 		} as Page;
 	}
 
-	const apiArgs: ListOffersForCollectibleRequest = {
+	return await marketplaceClient.listOffersForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		tokenId: collectibleId,
 		page: finalPage,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listOffersForCollectible(apiArgs);
+	});
 }
 
 export type ListOffersForCollectibleQueryOptions =
@@ -72,15 +69,17 @@ export type ListOffersForCollectibleQueryOptions =
 export function getListOffersForCollectibleQueryKey(
 	params: ListOffersForCollectibleQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
-		filter: params.filter,
-		page: params.page,
-	} satisfies QueryKeyArgs<ListOffersForCollectibleRequest>;
-
-	return ['collectible', 'market-offers', apiArgs] as const;
+	return [
+		'collectible',
+		'market-offers',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.collectibleId ?? 0n,
+			filter: params.filter,
+			page: params.page,
+		},
+	] as const;
 }
 
 export function listOffersForCollectibleQueryOptions(

@@ -10,7 +10,7 @@ import { ActionButtonBody } from './ActionButtonBody';
 
 type OwnerActionsProps = {
 	action: CollectibleCardAction;
-	tokenId: string;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	orderbookKind?: OrderbookKind;

@@ -4,7 +4,6 @@ import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -50,14 +49,12 @@ export async function fetchListCollectibleActivities(
 				}
 			: undefined;
 
-	const apiArgs: ListCollectibleActivitiesRequest = {
+	return await marketplaceClient.listCollectibleActivities({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectibleActivities(apiArgs);
+	});
 }
 
 export type ListCollectibleActivitiesQueryOptions =
@@ -68,24 +65,18 @@ export type ListCollectibleActivitiesQueryOptions =
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
-	// TODO: Do we actually want to do the page like this?
-	const page =
-		params.page || params.pageSize || params.sort
-			? {
-					page: params.page ?? 1,
-					pageSize: params.pageSize ?? 10,
-					sort: params.sort,
-				}
-			: undefined;
-
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
-		page: page,
-	} satisfies QueryKeyArgs<ListCollectibleActivitiesRequest>;
-
-	return ['collectible', 'market-activities', apiArgs] as const;
+	return [
+		'collectible',
+		'market-activities',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			page: params.page,
+			pageSize: params.pageSize,
+			sort: params.sort,
+		},
+	] as const;
 }
 
 export function listCollectibleActivitiesQueryOptions(

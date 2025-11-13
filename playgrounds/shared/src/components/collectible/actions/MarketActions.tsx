@@ -28,7 +28,7 @@ export function MarketActionsCard({
 	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	isOwner: boolean;
 }) {
 	const shouldShowBuyButton = !!lowestListing;

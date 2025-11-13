@@ -22,7 +22,7 @@ export const createRoute = {
 	collectible: (
 		chainId: number,
 		collectionAddress: string,
-		collectibleId: string,
+		collectibleId: bigint,
 	) => `/${chainId}/${collectionAddress}/${collectibleId}`,
 	inventory: () => '/inventory',
 	debug: () => '/debug',

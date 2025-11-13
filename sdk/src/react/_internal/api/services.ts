@@ -1,6 +1,5 @@
 import { SequenceAPIClient } from '@0xsequence/api';
-import { SequenceIndexer } from '@0xsequence/indexer';
-import { SequenceMetadata } from '@0xsequence/metadata';
+import { SequenceIndexer, SequenceMetadata } from '@0xsequence/marketplace-api';
 import { stringTemplate } from '@0xsequence/network';
 import type { ApiConfig, Env, SdkConfig } from '../../../types/sdk-config';
 import { getNetwork } from '../../../utils/network';

@@ -39,13 +39,13 @@ export const generateOfferTransaction = async (
 	params: GenerateOfferTransactionRequestWithNumberChainId,
 	config: SdkConfig,
 	walletKind?: WalletKind,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
-		chainId: String(params.chainId),
+		chainId: params.chainId,
 		offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
 		walletType: walletKind,
-	} satisfies GenerateOfferTransactionRequest;
+	};
 	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateOfferTransaction(args)).steps;
 };

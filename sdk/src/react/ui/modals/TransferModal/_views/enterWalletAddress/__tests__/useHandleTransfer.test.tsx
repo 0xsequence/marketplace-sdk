@@ -43,7 +43,7 @@ describe('useHandleTransfer', () => {
 		receiverAddress: '0x1234567890123456789012345678901234567890',
 		collectionAddress:
 			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
-		collectibleId: '123',
+		collectibleId: 123n,
 		quantity: '2',
 		chainId: 1,
 		transferIsProcessing: false,
@@ -381,7 +381,7 @@ describe('useHandleTransfer', () => {
 
 			const fullState = {
 				...defaultModalState,
-				collectibleId: '999',
+				collectibleId: 999n,
 				quantity: '10',
 				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
 			};

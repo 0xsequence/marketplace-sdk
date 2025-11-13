@@ -7,7 +7,7 @@ import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind?: OrderbookKind;
-	collectibleId: string;
+	collectibleId: bigint;
 	offerPrice: Price;
 	offerPriceChanged: boolean;
 	quantity: string;
@@ -21,7 +21,7 @@ type MakeOfferState = BaseModalState & {
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 };
@@ -32,7 +32,7 @@ type Actions = {
 };
 
 const offerPrice = {
-	amountRaw: '0',
+	amountRaw: 0n,
 	currency: {} as Currency,
 };
 
@@ -57,7 +57,7 @@ const initialState: MakeOfferState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	collectibleId: '',
+	collectibleId: 0n,
 	orderbookKind: undefined,
 	callbacks: undefined,
 	offerPrice: { ...offerPrice },

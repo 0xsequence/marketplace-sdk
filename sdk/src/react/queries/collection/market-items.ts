@@ -4,7 +4,6 @@ import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
-	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
 import { getMarketplaceClient } from '../../_internal';
@@ -29,7 +28,7 @@ export async function fetchListItemsOrdersForCollection(
 
 	const apiArgs: ListOrdersWithCollectiblesRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: page,
 		...additionalApiParams,
 	};
@@ -45,14 +44,16 @@ export type ListItemsOrdersForCollectionQueryOptions =
 export function getListItemsOrdersForCollectionQueryKey(
 	params: ListItemsOrdersForCollectionQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		side: params.side,
-		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListOrdersWithCollectiblesRequest, 'page'>>;
-
-	return ['collection', 'market-items', apiArgs] as const;
+	return [
+		'collection',
+		'market-items',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			side: params.side,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function listItemsOrdersForCollectionQueryOptions(

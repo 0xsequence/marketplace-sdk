@@ -1,13 +1,12 @@
+import type { ListCollectionActivitiesRequest } from '@0xsequence/marketplace-api';
+import { MarketplaceMocks, SortOrder } from '@0xsequence/marketplace-api';
+
+const { mockActivity, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockActivity,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import type { ListCollectionActivitiesRequest } from '../../_internal/api/marketplace.gen';
-import { SortOrder } from '../../_internal/api/marketplace.gen';
 import type { UseCollectionMarketActivitiesParams } from './market-activities';
 import { useCollectionMarketActivities } from './market-activities';
 

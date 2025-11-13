@@ -5,8 +5,6 @@ import { compareAddress } from '../../../utils';
 import {
 	getMarketplaceClient,
 	getQueryClient,
-	type ListCurrenciesRequest,
-	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
@@ -31,7 +29,7 @@ export async function fetchMarketCurrencies(
 
 	let currencies = await marketplaceClient
 		.listCurrencies({
-			chainId: String(chainId),
+			chainId: chainId,
 		})
 		.then((resp) =>
 			resp.currencies.map((currency) => ({
@@ -74,15 +72,11 @@ export type MarketCurrenciesQueryOptions =
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-	} satisfies QueryKeyArgs<ListCurrenciesRequest>;
-
 	return [
 		'currency',
 		'list',
-		apiArgs,
 		{
+			chainId: params.chainId ?? 0,
 			includeNativeCurrency: params.includeNativeCurrency,
 			collectionAddress: params.collectionAddress,
 		},

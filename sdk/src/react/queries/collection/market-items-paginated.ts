@@ -44,7 +44,7 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 
 	const apiArgs: ListOrdersWithCollectiblesRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
 	};

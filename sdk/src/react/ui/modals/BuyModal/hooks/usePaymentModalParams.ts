@@ -1,5 +1,5 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
-import type { TokenMetadata } from '@0xsequence/metadata';
+import type { TokenMetadata } from '@0xsequence/marketplace-api';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address, Hash, Hex } from 'viem';
 import type { CheckoutOptions, SdkConfig } from '../../../../../types';
@@ -32,7 +32,7 @@ interface GetBuyCollectableParams {
 	config: SdkConfig;
 	address: Address;
 	collectionAddress: string;
-	collectibleId: string;
+	collectibleId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 	quantity: number;
@@ -70,15 +70,15 @@ export const getBuyCollectableParams = async ({
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
-		chainId: String(chainId),
+		chainId: chainId,
 		collectionAddress,
 		buyer: address,
 		marketplace: marketplace,
 		ordersData: [
 			{
 				orderId: orderId,
-				quantity: quantity.toString(),
-				tokenId: collectibleId,
+				quantity: BigInt(quantity),
+				tokenId: BigInt(collectibleId),
 			},
 		],
 		additionalFees: [fee],
@@ -121,13 +121,15 @@ export const getBuyCollectableParams = async ({
 		chain: chainId,
 		collectibles: [
 			{
-				tokenId: collectibleId,
+				// Checkout library expects string for tokenId
+				tokenId: collectibleId.toString(),
+				// Checkout library expects string for quantity display
 				quantity: quantity.toString(),
 				decimals: collectable.decimals,
 			},
 		],
 		currencyAddress: priceCurrencyAddress,
-		price: buyStep.price,
+		price: buyStep.price.toString(),
 		targetContractAddress: buyStep.to,
 		approvedSpenderAddress,
 		txData: buyStep.data as Hex,
@@ -204,7 +206,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	// Extract Marketplace-specific properties using type guard
 	const collectibleId = isMarketProps(buyModalProps)
 		? buyModalProps.collectibleId
-		: '';
+		: 0n;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback

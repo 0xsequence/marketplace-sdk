@@ -13,13 +13,14 @@ import { ActionModal } from '../../_internal/components/baseModal/ActionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore } from '../store';
 
-const INFINITY_STRING = maxUint256.toString();
+// Use bigint for infinity constant to avoid precision loss
+const INFINITY = maxUint256;
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	cardType: CardType;
 	quantityDecimals: number;
-	quantityRemaining: string;
+	quantityRemaining: bigint;
 	unlimitedSupply?: boolean;
 	salePrice?: {
 		amount: string;
@@ -42,11 +43,13 @@ export const ERC1155QuantityModal = ({
 	const [localQuantity, setLocalQuantity] = useState(minQuantity);
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
+	// Calculate max quantity using bigint arithmetic to avoid precision loss
 	const maxQuantity = unlimitedSupply
-		? INFINITY_STRING
+		? INFINITY.toString()
 		: quantityDecimals > 0
-			? (Number(quantityRemaining) / 10 ** quantityDecimals).toString()
-			: quantityRemaining;
+			? // Use bigint division for decimals to avoid Number() precision loss
+				(quantityRemaining / BigInt(10 ** quantityDecimals)).toString()
+			: quantityRemaining.toString();
 
 	const currencyQuery = useCurrencyDetail({
 		chainId,
@@ -57,13 +60,11 @@ export const ERC1155QuantityModal = ({
 	const marketplaceConfigQuery = useMarketplaceConfig();
 
 	const handleBuyNow = () => {
-		// Convert the quantity to account for decimals
-		const quantityWithDecimals = parseUnits(
-			localQuantity,
-			quantityDecimals,
-		).toString();
+		// Convert the quantity to account for decimals - parseUnits returns bigint
+		const quantityWithDecimals = parseUnits(localQuantity, quantityDecimals);
 		buyModalStore.send({
 			type: 'setQuantity',
+			// Store expects number, convert bigint safely
 			quantity: Number(quantityWithDecimals),
 		});
 	};

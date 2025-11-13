@@ -47,7 +47,7 @@ describe('useMarketPlatformFee', () => {
 
 		// Default fee should be 2.5%, which is 250 in BPS (basis points)
 		expect(result.current).toEqual({
-			amount: '250',
+			amount: 250n,
 			receiver: defaultPlatformFeeRecipient,
 		});
 	});
@@ -81,7 +81,7 @@ describe('useMarketPlatformFee', () => {
 
 		// 5.0% fee should be 500 in BPS (basis points)
 		expect(result.current).toEqual({
-			amount: '500',
+			amount: 500n,
 			receiver: defaultPlatformFeeRecipient,
 		});
 	});
@@ -138,7 +138,7 @@ describe('useMarketPlatformFee', () => {
 
 		// 3.5% fee should be 350 in BPS (basis points)
 		expect(result.current).toEqual({
-			amount: '350',
+			amount: 350n,
 			receiver: defaultPlatformFeeRecipient,
 		});
 	});

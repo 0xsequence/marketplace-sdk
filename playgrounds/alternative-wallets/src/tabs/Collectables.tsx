@@ -17,7 +17,7 @@ export function Collectibles() {
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress as string,
-			tokenId,
+			BigInt(tokenId),
 		);
 		navigate(route);
 	};

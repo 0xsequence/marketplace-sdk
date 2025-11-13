@@ -12,7 +12,7 @@ interface ShopActionsProps {
 	contractType: ContractType | undefined;
 	chainId: number;
 	collectionAddress: Address;
-	tokenId: string;
+	tokenId: bigint;
 	collectibleName: string;
 }
 
@@ -101,23 +101,24 @@ export function ShopActions({
 					onClick={() =>
 						showBuyModal({
 							chainId: Number(chainId),
-							collectionAddress: String(collectionAddress) as Address,
+							// collectionAddress is already an Address type
+							collectionAddress,
 							salesContractAddress: saleContractAddress as Address,
 							items: [
 								{
-									tokenId: String(tokenId),
-									quantity: '1', // TODO: this is overwritten later, should not be exposed
+									tokenId: BigInt(tokenId),
+									quantity: 1n, // TODO: this is overwritten later, should not be exposed
 								},
 							],
 							cardType: 'shop',
 							salePrice: {
-								amount: primarySaleItem?.priceAmount ?? '0',
+								amount: primarySaleItem?.priceAmount?.toString() ?? '0',
 								currencyAddress:
 									(primarySaleItem?.currencyAddress as Address) ?? '0x',
 							},
 							quantityDecimals: 0,
 							// TODO: This is 0 for unlimited supply, fix it
-							quantityRemaining: Number(primarySaleItem?.supply),
+							quantityRemaining: primarySaleItem?.supply ?? 0n,
 						})
 					}
 				/>
@@ -165,22 +166,23 @@ export function ShopActions({
 						onClick={() =>
 							showBuyModal({
 								chainId: Number(chainId),
-								collectionAddress: String(collectionAddress) as Address,
+								// collectionAddress is already an Address type
+								collectionAddress,
 								salesContractAddress: saleContractAddress as Address,
 								items: [
 									{
-										tokenId: String(tokenId),
-										quantity: '1', // TODO: this is overwritten later, should not be exposed
+										tokenId: BigInt(tokenId),
+										quantity: 1n, // TODO: this is overwritten later, should not be exposed
 									},
 								],
 								cardType: 'shop',
 								salePrice: {
-									amount: primarySaleItem?.priceAmount ?? '0',
+									amount: primarySaleItem?.priceAmount?.toString() ?? '0',
 									currencyAddress:
 										(primarySaleItem?.currencyAddress as Address) ?? '0x',
 								},
 								quantityDecimals: 0,
-								quantityRemaining: Number(primarySaleItem?.supply),
+								quantityRemaining: primarySaleItem?.supply ?? 0n,
 							})
 						}
 					/>

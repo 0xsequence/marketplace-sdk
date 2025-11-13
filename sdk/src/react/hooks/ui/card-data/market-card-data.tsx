@@ -97,20 +97,27 @@ export function useMarketCardData({
 
 	// Generate card props for each collectible
 	const collectibleCards = useMemo(() => {
-		return allCollectibles.map((collectible: CollectibleOrder) => {
-			const balance = collectionBalance?.balances.find(
-				(balance) => balance.tokenID === collectible.metadata.tokenId,
-			)?.balance;
+		return allCollectibles.map((collectible) => {
+			const balanceObj = collectionBalance?.balances.find(
+				(b) => b.tokenId === BigInt(collectible.metadata.tokenId),
+			);
+			const balance = balanceObj?.balance?.toString();
 
 			const cardProps: MarketCollectibleCardProps = {
-				tokenId: collectible.metadata.tokenId,
+				tokenId: BigInt(collectible.metadata.tokenId),
 				chainId,
 				collectionAddress,
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
 				cardType: 'market',
 				orderbookKind,
-				collectible,
+				collectible: {
+					...collectible,
+					metadata: {
+						...collectible.metadata,
+						tokenId: BigInt(collectible.metadata.tokenId),
+					},
+				} as CollectibleOrder,
 				onCollectibleClick,
 				balance,
 				balanceIsLoading: balanceLoading,
@@ -125,7 +132,7 @@ export function useMarketCardData({
 						showSellModal({
 							chainId,
 							collectionAddress,
-							tokenId: collectible.metadata.tokenId,
+							tokenId: BigInt(collectible.metadata.tokenId),
 							order: order as Order,
 						});
 						return;

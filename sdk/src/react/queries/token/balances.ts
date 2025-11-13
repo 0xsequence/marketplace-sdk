@@ -1,14 +1,15 @@
-import type { GetTokenBalancesReturn, Page } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient } from '../../_internal';
+import { createTokenQueryKey } from './queryKeys';
 
 export type UseListBalancesArgs = {
 	chainId: number;
 	accountAddress?: Address;
 	contractAddress?: Address;
-	tokenId?: string;
+	tokenId?: bigint;
 	includeMetadata?: boolean;
 	metadataOptions?: {
 		verifiedOnly?: boolean;
@@ -16,7 +17,7 @@ export type UseListBalancesArgs = {
 		includeContracts?: Hex[];
 	};
 	includeCollectionTokens?: boolean;
-	page?: Page;
+	page?: Indexer.Page;
 	//TODO: More options
 	query?: {
 		enabled?: boolean;
@@ -26,28 +27,31 @@ export type UseListBalancesArgs = {
 export async function fetchBalances(
 	args: UseListBalancesArgs,
 	config: SdkConfig,
-	page: Page,
-): Promise<GetTokenBalancesReturn> {
+	page: Indexer.Page,
+) {
 	const indexerClient = getIndexerClient(args.chainId, config);
+	// Convert SDK args (tokenId: bigint) to API args (tokenID: string)
+	const { tokenId, ...restArgs } = args;
 	return indexerClient.getTokenBalances({
-		...args,
-		tokenID: args.tokenId,
+		...restArgs,
+		tokenID: tokenId?.toString(),
 		page: page,
 	});
 }
 
 export function getListBalancesQueryKey(args: UseListBalancesArgs) {
+	// Convert SDK args (tokenId: bigint) to API args (tokenID: string) for query key
 	const apiArgs = {
 		chainId: args.chainId,
 		accountAddress: args.accountAddress,
 		contractAddress: args.contractAddress,
-		tokenID: args.tokenId,
+		tokenID: args.tokenId?.toString(),
 		includeMetadata: args.includeMetadata,
 		metadataOptions: args.metadataOptions,
 		includeCollectionTokens: args.includeCollectionTokens,
 	};
 
-	return ['token', 'balances', apiArgs] as const;
+	return createTokenQueryKey('balances', apiArgs);
 }
 
 /**
@@ -65,7 +69,14 @@ export function listBalancesOptions(
 		...args.query,
 		queryKey: getListBalancesQueryKey(args),
 		queryFn: ({ pageParam }) => fetchBalances(args, config, pageParam),
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
-		getNextPageParam: (lastPage) => lastPage.page.after,
+		initialPageParam: { page: 1, pageSize: 30, more: false },
+		getNextPageParam: (lastPage) =>
+			lastPage.page?.more
+				? {
+						page: lastPage.page.page + 1,
+						pageSize: lastPage.page.pageSize,
+						more: true,
+					}
+				: undefined,
 	});
 }

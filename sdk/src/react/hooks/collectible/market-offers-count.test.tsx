@@ -1,15 +1,18 @@
+import { MarketplaceMocks } from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { useCollectibleMarketOffersCount } from './market-offers-count';
 
 describe('useCollectibleMarketOffersCount', () => {
 	const defaultArgs = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: '1',
+		collectibleId: 1n,
 		query: {},
 	};
 
@@ -73,7 +76,7 @@ describe('useCollectibleMarketOffersCount', () => {
 			...defaultArgs,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectibleId: '2',
+			collectibleId: 2n,
 		};
 
 		rerender(() => useCollectibleMarketOffersCount(newArgs));

@@ -1,12 +1,13 @@
-import {
-	type ContractInfo,
-	type GetContractInfoBatchArgs,
-	type Metadata,
-	type PropertyFilter,
-	PropertyType,
-	ResourceStatus,
-	type TokenMetadata,
+// MSW mocks for metadata API
+// These mocks use RAW types directly from @0xsequence/metadata
+
+import type {
+	ContractInfo,
+	GetContractInfoBatchArgs,
+	PropertyFilter,
+	TokenMetadata,
 } from '@0xsequence/metadata';
+import { PropertyType, ResourceStatus } from '@0xsequence/metadata';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 
@@ -132,6 +133,20 @@ export const mockFilters = [
 	},
 ];
 
+// Import transforms for normalized mocks
+import * as transforms from '../adapters/metadata/transforms';
+import type * as Normalized from '../adapters/metadata/types';
+
+// Normalized mock data (with BigInt types) - for use in SDK tests
+export const mockTokenMetadataNormalized: Normalized.TokenMetadata =
+	transforms.toTokenMetadata(mockTokenMetadata);
+
+export const mockEthCollectionNormalized: Normalized.ContractInfo =
+	transforms.toContractInfo(mockEthCollection);
+
+export const mockPolCollectionNormalized: Normalized.ContractInfo =
+	transforms.toContractInfo(mockPolCollection);
+
 type Endpoint =
 	| 'GetContractInfo'
 	| 'GetContractInfoBatch'
@@ -139,19 +154,15 @@ type Endpoint =
 	| 'GetTokenMetadataPropertyFilters'
 	| 'SearchTokenMetadata';
 
-type EndpointReturn<E extends Endpoint> = Awaited<
-	ReturnType<Metadata[Uncapitalize<E>]>
->;
-
 export const mockMetadataEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Metadata/${endpoint}`;
 
-export const mockMetadataHandler = <E extends Endpoint>(
-	endpoint: E,
-	response: EndpointReturn<E>,
+export const mockMetadataHandler = <T extends Record<string, unknown>>(
+	endpoint: Endpoint,
+	response: T,
 ) => {
-	return http.post(mockMetadataEndpoint(endpoint), (request) => {
-		debugLog(endpoint, request, response);
+	return http.post(mockMetadataEndpoint(endpoint), () => {
+		debugLog(endpoint, {}, response);
 		return HttpResponse.json(response);
 	});
 };

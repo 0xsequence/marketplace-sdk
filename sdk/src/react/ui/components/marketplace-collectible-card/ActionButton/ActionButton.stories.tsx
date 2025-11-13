@@ -1,3 +1,4 @@
+import { OrderStatus } from '@0xsequence/marketplace-api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { defaultHandlers } from '../../../../../../test/handlers';
@@ -6,7 +7,6 @@ import {
 	MarketplaceKind,
 	OrderbookKind,
 	OrderSide,
-	OrderStatus,
 } from '../../../../../types';
 import { ActionButton } from './ActionButton';
 
@@ -98,22 +98,23 @@ const MOCK_ORDER = {
 	chainId: 1,
 	originName: 'Mock Origin',
 	slug: 'test-order',
-	collectionContractAddress: MOCK_ADDRESS,
-	tokenId: '123',
-	createdBy: MOCK_ADDRESS,
-	priceAmount: '1000000000000000000',
+	collectionContractAddress: MOCK_ADDRESS as `0x${string}`,
+	tokenId: 123n,
+	createdBy: MOCK_ADDRESS as `0x${string}`,
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
-	priceAmountNet: '950000000000000000',
+	priceAmountNet: 950000000000000000n,
 	priceAmountNetFormatted: '0.95',
-	priceCurrencyAddress: '0x0000000000000000000000000000000000000000',
+	priceCurrencyAddress:
+		'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	priceDecimals: 18,
 	priceUSD: 1000,
 	priceUSDFormatted: '$1,000.00',
-	quantityInitial: '1',
+	quantityInitial: 1n,
 	quantityInitialFormatted: '1',
-	quantityRemaining: '1',
+	quantityRemaining: 1n,
 	quantityRemainingFormatted: '1',
-	quantityAvailable: '1',
+	quantityAvailable: 1n,
 	quantityAvailableFormatted: '1',
 	quantityDecimals: 0,
 	feeBps: 500,
@@ -131,7 +132,7 @@ export const OfferAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.OFFER,
 		owned: false,
 		cardType: 'market',
@@ -157,7 +158,7 @@ export const SellAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.SELL,
 		owned: true,
 		cardType: 'market',
@@ -187,7 +188,7 @@ export const ListAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.LIST,
 		owned: true,
 		cardType: 'market',
@@ -212,7 +213,7 @@ export const TransferAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.TRANSFER,
 		owned: true,
 		cardType: 'market',
@@ -236,17 +237,18 @@ export const ShopBuyAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.BUY,
 		owned: false,
 		cardType: 'shop',
 		salesContractAddress: MOCK_ADDRESS,
 		salePrice: {
 			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
+			currencyAddress:
+				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},
 		quantityDecimals: 0,
-		quantityRemaining: 100,
+		quantityRemaining: 100n,
 		unlimitedSupply: false,
 		onCannotPerformAction: fn(),
 	},
@@ -269,7 +271,7 @@ export const MarketBuyAction: Story = {
 	args: {
 		chainId: 1,
 		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.BUY,
 		owned: false,
 		cardType: 'market',

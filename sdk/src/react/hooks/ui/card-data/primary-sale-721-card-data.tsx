@@ -1,11 +1,13 @@
-import type { TokenMetadata } from '@0xsequence/metadata';
+import type {
+	CollectiblePrimarySaleItem,
+	TokenMetadata,
+} from '@0xsequence/marketplace-api';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { useFilterState } from '../../..';
 import { ContractType } from '../../../_internal';
-import type { CollectiblePrimarySaleItem } from '../../../_internal/api/marketplace.gen';
 import { tokenSuppliesQueryOptions } from '../../../queries/token/supplies';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useConfig } from '../../config';
@@ -85,11 +87,12 @@ export function usePrimarySale721CardData({
 	]);
 
 	const allTokenSupplies = tokenSuppliesData?.pages.flatMap(
-		(page) => page.tokenIDs,
+		(page) => page.supplies,
 	);
-	const matchingTokenSupplies = allTokenSupplies?.filter((item) =>
+	const matchingTokenSupplies = allTokenSupplies?.filter((supply) =>
 		primarySaleItemsWithMetadata.some(
-			(primarySaleItem) => primarySaleItem.metadata.tokenId === item.tokenID,
+			(primarySaleItem) =>
+				BigInt(primarySaleItem.metadata.tokenId) === supply.tokenId,
 		),
 	);
 
@@ -112,7 +115,7 @@ export function usePrimarySale721CardData({
 	const unmintedPrimarySaleItems = primarySaleItemsWithMetadata.filter(
 		(item) =>
 			!matchingTokenSupplies?.some(
-				(supply) => supply.tokenID === item.metadata.tokenId,
+				(supply) => supply.tokenId === BigInt(item.metadata.tokenId),
 			),
 	);
 
@@ -125,20 +128,24 @@ export function usePrimarySale721CardData({
 				currencyAddress: primarySaleItem.currencyAddress as Address,
 			};
 
-			const quantityInitial = primarySaleItem.supply?.toString();
+			const quantityInitial = primarySaleItem.supply;
 
-			const quantityRemaining = '1';
+			const quantityRemaining = 1n;
 
 			const saleStartsAt = primarySaleItem.startDate.toString();
 
 			const saleEndsAt = primarySaleItem.endDate.toString();
 
 			return {
-				tokenId: metadata.tokenId,
+				tokenId: BigInt(metadata.tokenId),
 				chainId,
 				collectionAddress: contractAddress,
 				collectionType: ContractType.ERC721,
-				tokenMetadata: metadata,
+				tokenMetadata: {
+					...metadata,
+					tokenId: BigInt(metadata.tokenId),
+					source: '',
+				},
 				cardLoading: saleDetailsLoading,
 				salesContractAddress: salesContractAddress,
 				salePrice,
@@ -153,12 +160,20 @@ export function usePrimarySale721CardData({
 	);
 
 	const mintedTokensCollectibleCards = allTokenSupplies?.map((item) => {
+		const metadata = item.tokenMetadata || {};
 		return {
-			tokenId: item.tokenID,
+			tokenId: item.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
-			tokenMetadata: item.tokenMetadata as TokenMetadata,
+			tokenMetadata: {
+				...metadata,
+				tokenId: item.tokenId,
+				name: (metadata as any).name || '',
+				source: (metadata as any).source || '',
+				attributes: (metadata as any).attributes || [],
+				status: (metadata as any).status || 'active',
+			} as unknown as TokenMetadata,
 			cardLoading: saleDetailsLoading,
 			salesContractAddress: salesContractAddress,
 			salePrice: {

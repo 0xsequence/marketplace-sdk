@@ -1,9 +1,10 @@
-import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
+import { createCollectionQueryKey } from './queryKeys';
 
 export interface CollectionBalanceFilter {
 	accountAddresses: Array<Address>;
@@ -22,7 +23,7 @@ export interface FetchCollectionBalanceDetailsParams {
  */
 export async function fetchCollectionBalanceDetails(
 	params: FetchCollectionBalanceDetailsParams,
-): Promise<GetTokenBalancesDetailsReturn> {
+): Promise<Indexer.GetTokenBalancesDetailsResponse> {
 	const { chainId, filter, config } = params;
 
 	const indexerClient = getIndexerClient(chainId, config);
@@ -38,20 +39,25 @@ export async function fetchCollectionBalanceDetails(
 	);
 
 	const responses = await Promise.all(promises);
-	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
-		(acc, curr) => {
-			if (!curr) return acc;
-			return {
-				page: curr.page,
-				nativeBalances: [
-					...(acc.nativeBalances || []),
-					...(curr.nativeBalances || []),
-				],
-				balances: [...(acc.balances || []), ...(curr.balances || [])],
-			};
-		},
-		{ page: {}, nativeBalances: [], balances: [] },
-	);
+	const mergedResponse =
+		responses.reduce<Indexer.GetTokenBalancesDetailsResponse>(
+			(acc, curr) => {
+				if (!curr) return acc;
+				return {
+					page: curr.page,
+					nativeBalances: [
+						...(acc.nativeBalances || []),
+						...(curr.nativeBalances || []),
+					],
+					balances: [...(acc.balances || []), ...(curr.balances || [])],
+				};
+			},
+			{
+				page: { page: 0, pageSize: 0, more: false },
+				nativeBalances: [],
+				balances: [],
+			},
+		);
 
 	if (!mergedResponse) {
 		throw new Error('Failed to fetch collection balance details');
@@ -73,7 +79,7 @@ export function getCollectionBalanceDetailsQueryKey(
 		filter: params.filter!,
 	};
 
-	return ['collection', 'balance-details', apiArgs] as const;
+	return createCollectionQueryKey('balance-details', apiArgs);
 }
 
 export function collectionBalanceDetailsQueryOptions(

@@ -4,8 +4,8 @@ import {
 	FilterCondition,
 	type LookupMarketplaceReturn,
 	MarketplaceWalletType,
-} from '../builder.gen';
-import { OrderbookKind } from '../marketplace.gen';
+} from '../adapters/builder/builder.gen';
+import { OrderbookKind } from '../adapters/marketplace/marketplace.gen';
 import { mockCurrencies } from './marketplace.msw';
 
 export const mockMarketCollections = [

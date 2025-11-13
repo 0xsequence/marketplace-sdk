@@ -79,7 +79,7 @@ export default function PriceInput({
 		useConvertPriceToUSD({
 			chainId,
 			currencyAddress: currencyAddress as Address,
-			amountRaw: priceAmountRaw,
+			amountRaw: priceAmountRaw?.toString(),
 			query: {
 				enabled:
 					orderbookKind === OrderbookKind.opensea &&
@@ -123,12 +123,12 @@ export default function PriceInput({
 		!!isBalanceSuccess &&
 		!!priceAmountRaw &&
 		!!currencyDecimals &&
-		getTotalRequiredBalance() > BigInt(balance?.value || 0n);
+		getTotalRequiredBalance() > (balance?.value || 0n);
 
 	const hasEnoughForBaseOffer =
 		!!isBalanceSuccess &&
 		!!priceAmountRaw &&
-		BigInt(priceAmountRaw) <= BigInt(balance?.value || 0n);
+		BigInt(priceAmountRaw) <= (balance?.value || 0n);
 
 	const getRoyaltyFeeAmount = () => {
 		if (!priceAmountRaw || !currencyDecimals || !feeData?.royaltyPercentage) {
@@ -196,11 +196,11 @@ export default function PriceInput({
 				// If the user has entered a value and the currency decimals have changed,
 				// we need to adjust the raw amount to maintain the same displayed value
 				const parsedAmount = parseUnits(value, Number(currencyDecimals));
-				const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+				const updatedPrice = { ...price, amountRaw: parsedAmount };
 
 				onPriceChange(updatedPrice);
 			} catch {
-				const updatedPrice = { ...price, amountRaw: '0' };
+				const updatedPrice = { ...price, amountRaw: 0n };
 				onPriceChange(updatedPrice);
 			}
 		}
@@ -221,10 +221,10 @@ export default function PriceInput({
 				setOpenseaDecimalError(validation.errorMessage || null);
 				try {
 					const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-					const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+					const updatedPrice = { ...price, amountRaw: parsedAmount };
 					onPriceChange(updatedPrice);
 				} catch {
-					const updatedPrice = { ...price, amountRaw: '0' };
+					const updatedPrice = { ...price, amountRaw: 0n };
 					onPriceChange(updatedPrice);
 				}
 				return;
@@ -234,11 +234,11 @@ export default function PriceInput({
 
 		try {
 			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+			const updatedPrice = { ...price, amountRaw: parsedAmount };
 
 			onPriceChange(updatedPrice);
 		} catch {
-			const updatedPrice = { ...price, amountRaw: '0' };
+			const updatedPrice = { ...price, amountRaw: 0n };
 			onPriceChange(updatedPrice);
 		}
 	};
@@ -326,7 +326,7 @@ export default function PriceInput({
 				)}
 
 			{!balanceError &&
-				priceAmountRaw !== '0' &&
+				priceAmountRaw !== 0n &&
 				!openseaLowestPriceCriteriaMet &&
 				orderbookKind === OrderbookKind.opensea &&
 				!isConversionLoading &&

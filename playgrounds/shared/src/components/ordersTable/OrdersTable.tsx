@@ -7,7 +7,7 @@ import OrdersTableBodySkeleton from './_components/Skeletons';
 
 type OrdersTableProps = {
 	chainId: number;
-	tokenId: string;
+	tokenId: bigint;
 	orders: Order[] | undefined;
 	ordersCount: number | undefined;
 	ordersCountLoading: boolean;

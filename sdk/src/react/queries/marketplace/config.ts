@@ -1,16 +1,19 @@
+import type { LookupMarketplaceReturn } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { ContractType, OrderbookKind, SdkConfig } from '../../../types';
 import type {
+	ContractType,
 	MarketCollection,
 	MarketPage,
 	MarketplaceConfig,
+	OrderbookKind,
+	SdkConfig,
 	ShopCollection,
 	ShopPage,
-} from '../../../types/new-marketplace-types';
+} from '../../../types';
 import { getBuilderClient } from '../../_internal';
-import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
 import { persistentQueryMeta } from '../../_internal/query-meta';
+import { createMarketplaceQueryKey } from './queryKeys';
 
 export const fetchMarketplaceConfig = async ({
 	config,
@@ -27,7 +30,11 @@ export const fetchMarketplaceConfig = async ({
 			projectId: Number(config.projectId),
 		});
 
-		builderMarketplaceConfig = response;
+		builderMarketplaceConfig = response as unknown as LookupMarketplaceReturn;
+	}
+
+	if (!builderMarketplaceConfig) {
+		throw new Error('Failed to fetch marketplace config');
 	}
 
 	const marketCollections = (
@@ -101,7 +108,7 @@ export const marketplaceConfigOptions = (config: SdkConfig) => {
 		config._internal?.prefetchedMarketplaceSettings;
 
 	return queryOptions({
-		queryKey: ['config', 'marketplace'],
+		queryKey: createMarketplaceQueryKey('config', {}),
 		queryFn: () =>
 			fetchMarketplaceConfig({
 				config,

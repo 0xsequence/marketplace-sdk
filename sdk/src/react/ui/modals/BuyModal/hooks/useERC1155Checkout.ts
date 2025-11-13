@@ -52,8 +52,9 @@ export const useERC1155Checkout = ({
 		collectionAddress,
 		items: [
 			{
-				...items[0],
-				quantity: quantity?.toString() || '1',
+				// @0xsequence/checkout library expects strings for tokenId and quantity
+				tokenId: (items[0]?.tokenId ?? 0n).toString(),
+				quantity: (quantity ?? 1n).toString(),
 			},
 		],
 		wallet: accountAddress ?? '',

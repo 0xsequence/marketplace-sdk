@@ -1,5 +1,8 @@
-import type { ContractType, CreateReq } from '../../types';
-import type { MarketplaceKind } from './api';
+import type {
+	ContractType,
+	CreateReq,
+	MarketplaceKind,
+} from '@0xsequence/marketplace-api';
 
 export interface QueryArg {
 	enabled?: boolean;

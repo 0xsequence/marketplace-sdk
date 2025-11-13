@@ -1,7 +1,12 @@
 import { renderHook } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
-import { ExecuteType, StepType } from '../../_internal/api';
+import {
+	ExecuteType,
+	type SignatureStep,
+	StepType,
+	type TransactionStep,
+} from '../../../types';
 import { useProcessStep } from './useProcessStep';
 
 vi.mock('wagmi', async (importOriginal) => {
@@ -64,9 +69,9 @@ describe('useProcessStep', () => {
 				id: StepType.buy,
 				to: '0x123',
 				data: '0xabc',
-				value: '0x0',
-				price: '0x0',
-			};
+				value: 0n,
+				price: 0n,
+			} as TransactionStep;
 
 			const response = await result.current.processStep(step, 1);
 
@@ -89,9 +94,9 @@ describe('useProcessStep', () => {
 				id: StepType.tokenApproval,
 				to: '0x456',
 				data: '0xdef',
-				value: '0x0',
-				price: '0x0',
-			};
+				value: 0n,
+				price: 0n,
+			} as TransactionStep;
 
 			const response = await result.current.processStep(step, 1);
 
@@ -108,12 +113,12 @@ describe('useProcessStep', () => {
 				id: StepType.sell,
 				to: '0x789',
 				data: '0xghi',
-				value: '0x0',
-				price: '0x0',
+				value: 0n,
+				price: 0n,
 				maxFeePerGas: '0x100',
 				maxPriorityFeePerGas: '0x50',
 				gas: '0x5208',
-			};
+			} as TransactionStep;
 
 			await result.current.processStep(step, 1);
 
@@ -142,14 +147,14 @@ describe('useProcessStep', () => {
 				id: StepType.signEIP191,
 				data: 'Sign this message',
 				to: '0x0',
-				value: '0x0',
-				price: '0x0',
+				value: 0n,
+				price: 0n,
 				post: {
 					endpoint: '/api/order',
 					method: 'POST',
 					body: { test: 'data' },
 				},
-			};
+			} as SignatureStep;
 
 			const response = await result.current.processStep(step, 1);
 
@@ -181,8 +186,8 @@ describe('useProcessStep', () => {
 				id: StepType.signEIP712,
 				data: '0x0',
 				to: '0x0',
-				value: '0x0',
-				price: '0x0',
+				value: 0n,
+				price: 0n,
 				signature: {
 					domain: {
 						name: 'Test',
@@ -199,7 +204,7 @@ describe('useProcessStep', () => {
 					method: 'POST',
 					body: { test: 'data' },
 				},
-			};
+			} as SignatureStep;
 
 			const response = await result.current.processStep(step, 1);
 
@@ -217,24 +222,43 @@ describe('useProcessStep', () => {
 			});
 		});
 
-		it('should handle signature without post step', async () => {
-			const mockSignature = '0xsignatureonly';
+		it('should handle signature step with valid post', async () => {
+			const mockSignature = '0xsignaturevalid';
+			const mockOrderId = 'order-789';
 			mockSignMessageAsync.mockResolvedValue(mockSignature);
+			mockExecute.mockResolvedValue({ orderId: mockOrderId });
 
 			const { result } = renderHook(() => useProcessStep());
 
 			const step = {
 				id: StepType.signEIP191,
-				data: '0xabc',
+				data: 'Sign this message',
 				to: '0x0',
-				value: '0x0',
-				price: '0x0',
-			};
+				value: 0n,
+				price: 0n,
+				post: {
+					endpoint: '/api/create-order',
+					method: 'POST',
+					body: { orderData: 'test' },
+				},
+			} as SignatureStep;
 
 			const response = await result.current.processStep(step, 1);
 
-			expect(response).toEqual({ type: 'signature', signature: mockSignature });
-			expect(mockExecute).not.toHaveBeenCalled();
+			expect(response).toEqual({ type: 'signature', orderId: mockOrderId });
+			expect(mockSignMessageAsync).toHaveBeenCalledWith({
+				message: 'Sign this message',
+			});
+			expect(mockExecute).toHaveBeenCalledWith({
+				params: {
+					chainId: '1',
+					signature: mockSignature,
+					method: 'POST',
+					endpoint: '/api/create-order',
+					body: { orderData: 'test' },
+					executeType: ExecuteType.order,
+				},
+			});
 		});
 	});
 
@@ -246,12 +270,17 @@ describe('useProcessStep', () => {
 				id: 'unsupported' as any,
 				data: '0x0',
 				to: '0x0',
-				value: '0x0',
-				price: '0x0',
-			};
+				value: 0n,
+				price: 0n,
+				post: {
+					endpoint: '',
+					method: '',
+					body: {},
+				},
+			} as any;
 
 			await expect(result.current.processStep(step, 1)).rejects.toThrow(
-				'Unsupported step type: unsupported',
+				'Unsupported step type',
 			);
 		});
 
@@ -262,9 +291,14 @@ describe('useProcessStep', () => {
 				id: StepType.signEIP712,
 				data: '0x0',
 				to: '0x0',
-				value: '0x0',
-				price: '0x0',
-			};
+				value: 0n,
+				price: 0n,
+				post: {
+					endpoint: '',
+					method: '',
+					body: {},
+				},
+			} as SignatureStep;
 
 			await expect(result.current.processStep(step, 1)).rejects.toThrow(
 				'EIP712 step missing signature data',

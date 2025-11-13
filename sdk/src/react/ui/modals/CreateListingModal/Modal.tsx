@@ -50,6 +50,7 @@ const Modal = observer(() => {
 		callbacks,
 		listingIsBeingProcessed,
 	} = state;
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
@@ -75,7 +76,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		collectibleId: collectibleId,
 	});
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
@@ -89,7 +90,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId,
+		collectableId: collectibleId.toString(),
 		userAddress: address ?? undefined,
 	});
 
@@ -121,7 +122,7 @@ const Modal = observer(() => {
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
-				).toString(),
+				),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
 				pricePerToken: listingPrice.amountRaw,
@@ -183,7 +184,7 @@ const Modal = observer(() => {
 		disabled:
 			steps$.approval.exist.get() ||
 			tokenApprovalIsLoading ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			createListingModal$.invalidQuantity.get() ||
 			isLoading ||
 			listingIsBeingProcessed,
@@ -198,7 +199,7 @@ const Modal = observer(() => {
 		variant: 'secondary' as const,
 		disabled:
 			createListingModal$.invalidQuantity.get() ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			steps$?.approval.isExecuting.get() ||
 			tokenApprovalIsLoading ||
 			isLoading,
@@ -250,7 +251,7 @@ const Modal = observer(() => {
 							modalType="listing"
 						/>
 
-						{listingPrice.amountRaw !== '0' && (
+						{listingPrice.amountRaw !== 0n && (
 							<FloorPriceText
 								tokenId={collectibleId}
 								chainId={chainId}

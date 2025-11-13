@@ -82,8 +82,8 @@ export const useLoadData = () => {
 					contractAddress: props.salesContractAddress,
 					collectionAddress,
 					items: props.items.map((item) => ({
-						tokenId: item.tokenId ?? '0',
-						quantity: item.quantity ?? '1',
+						tokenId: item.tokenId ?? 0n,
+						quantity: item.quantity ?? 1n,
 					})),
 				}
 			: skipToken,

@@ -123,7 +123,7 @@ export const marketplaceStore = createStore({
 
 		setCollectibleId: (
 			context,
-			{ collectibleId }: { collectibleId: string },
+			{ collectibleId }: { collectibleId: bigint },
 		) => ({
 			...context,
 			collectibleId,

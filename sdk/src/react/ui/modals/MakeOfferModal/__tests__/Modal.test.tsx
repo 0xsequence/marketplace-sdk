@@ -78,8 +78,8 @@ describe('MakeOfferModal', () => {
 					id: StepType.tokenApproval,
 					data: '0x',
 					to: '0x0000000000000000000000000000000000000000',
-					value: '0',
-					price: '0',
+					value: 0n,
+					price: 0n,
 				},
 			}, // Approval needed
 			isLoading: false,
@@ -125,8 +125,8 @@ describe('MakeOfferModal', () => {
 						id: StepType.tokenApproval,
 						data: '0x',
 						to: '0x0000000000000000000000000000000000000000',
-						value: '0',
-						price: '0',
+						value: 0n,
+						price: 0n,
 					},
 				}, // Approval needed
 				isLoading: false,
@@ -137,7 +137,7 @@ describe('MakeOfferModal', () => {
 
 			makeOfferModal$.open(defaultArgs);
 			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
+				amountRaw: 1000000000000000000n,
 				currency: mockCurrency,
 			});
 			makeOfferModal$.offerPriceChanged.set(true);
@@ -166,7 +166,7 @@ describe('MakeOfferModal', () => {
 
 			makeOfferModal$.open(defaultArgs);
 			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
+				amountRaw: 1000000000000000000n,
 				currency: mockCurrency,
 			});
 			makeOfferModal$.offerPriceChanged.set(true);

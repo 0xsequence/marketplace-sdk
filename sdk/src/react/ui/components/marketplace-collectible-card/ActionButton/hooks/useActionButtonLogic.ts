@@ -6,7 +6,7 @@ import { CollectibleCardAction } from '../../../../../../types';
 import { useActionButtonStore } from '../store';
 
 type UseActionButtonLogicProps = {
-	tokenId: string;
+	tokenId: bigint;
 	owned?: boolean;
 	action: CollectibleCardAction;
 	onCannotPerformAction?: (

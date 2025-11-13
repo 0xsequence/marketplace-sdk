@@ -20,7 +20,7 @@ function handleOfferClick({
 	showSellModal: (args: {
 		chainId: number;
 		collectionAddress: Address;
-		tokenId: string;
+		tokenId: bigint;
 		order?: Order;
 	}) => void;
 	e: React.MouseEvent<HTMLButtonElement>;
@@ -44,7 +44,7 @@ function handleOfferClick({
 	showSellModal({
 		chainId,
 		collectionAddress,
-		tokenId: order.tokenId || '',
+		tokenId: order.tokenId || 0n,
 		order,
 	});
 }

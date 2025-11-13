@@ -1,20 +1,17 @@
+import { IndexerMocks, MarketplaceMocks } from '@0xsequence/marketplace-api';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseInventoryArgs } from '../../queries';
 import { useInventory } from './inventory';
 
 // Make sure mockCollectibleOrder has a tokenId of "1" for tests
-mockCollectibleOrder.metadata.tokenId = '1';
+mockCollectibleOrder.metadata.tokenId = 1n;
 
 describe('useInventory', () => {
 	const defaultArgs: UseInventoryArgs = {

@@ -25,7 +25,7 @@ export type CheckoutOptionsSalesContractProps = {
 };
 
 export type PaymentModalProps = {
-	collectibleId: string;
+	collectibleId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 	customCreditCardProviderCallback?: (buyStep: Step) => void;
@@ -47,9 +47,9 @@ export type BuyModalBaseProps = {
 export type ShopBuyModalProps = BuyModalBaseProps & {
 	cardType: 'shop';
 	salesContractAddress: Address;
-	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: string }>;
+	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: bigint }>;
 	quantityDecimals: number;
-	quantityRemaining: number;
+	quantityRemaining: bigint;
 	salePrice: {
 		amount: string;
 		currencyAddress: Address;
@@ -60,7 +60,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 // Marketplace type modal props
 export type MarketplaceBuyModalProps = BuyModalBaseProps & {
 	cardType?: 'market';
-	collectibleId: string;
+	collectibleId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 };

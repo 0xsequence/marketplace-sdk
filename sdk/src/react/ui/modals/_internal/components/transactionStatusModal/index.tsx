@@ -28,7 +28,7 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];

@@ -1,3 +1,6 @@
+// MSW mocks for indexer API
+// These mocks use RAW types directly from @0xsequence/indexer
+
 import type {
 	ContractInfo,
 	OrderbookOrder,
@@ -14,7 +17,6 @@ import {
 	TransactionType,
 } from '@0xsequence/indexer';
 import { HttpResponse, http } from 'msw';
-
 import { zeroAddress } from 'viem';
 
 // Mock data
@@ -79,6 +81,13 @@ export const mockTokenBalance: TokenBalance = {
 	contractInfo: mockContractInfo,
 	tokenMetadata: mockTokenMetadata,
 };
+
+import * as transforms from '../adapters/indexer/transforms';
+// Normalized mock data (with BigInt types) - for use in SDK tests
+import type * as Normalized from '../adapters/indexer/types';
+
+export const mockTokenBalanceNormalized: Normalized.TokenBalance =
+	transforms.toTokenBalance(mockTokenBalance);
 
 export const mockTokenSupply: TokenSupply = {
 	tokenID: '1',
@@ -161,8 +170,8 @@ export const mockIndexerHandler = <T extends Record<string, unknown>>(
 	endpoint: Endpoint,
 	response: T,
 ) => {
-	return http.post(mockIndexerEndpoint(endpoint), (request) => {
-		debugLog(endpoint, request, response);
+	return http.post(mockIndexerEndpoint(endpoint), () => {
+		debugLog(endpoint, {}, response);
 		return HttpResponse.json(response);
 	});
 };

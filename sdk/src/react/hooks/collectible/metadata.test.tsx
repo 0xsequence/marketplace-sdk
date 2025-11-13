@@ -1,11 +1,12 @@
+import { MetadataMocks } from '@0xsequence/marketplace-api';
+
+const { mockMetadataEndpoint, mockTokenMetadata, mockTokenMetadataNormalized } =
+	MetadataMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockMetadataEndpoint,
-	mockTokenMetadata,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import type { UseCollectibleMetadataParams as UseCollectibleDetailParams } from './metadata';
 import { useCollectibleMetadata as useCollectibleDetail } from './metadata';
 
@@ -13,7 +14,7 @@ describe('useCollectibleDetail', () => {
 	const defaultArgs: UseCollectibleDetailParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: '1',
+		collectibleId: 1n,
 		query: {},
 	};
 
@@ -29,8 +30,8 @@ describe('useCollectibleDetail', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toEqual(mockTokenMetadata);
+		// Verify the data matches our mock (normalized with BigInt)
+		expect(result.current.data).toEqual(mockTokenMetadataNormalized);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -68,7 +69,7 @@ describe('useCollectibleDetail', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectibleId: '2',
+			collectibleId: 2n,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		};
@@ -89,7 +90,7 @@ describe('useCollectibleDetail', () => {
 		const argsWithoutQuery: UseCollectibleDetailParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
-			collectibleId: '1',
+			collectibleId: 1n,
 			query: {},
 		};
 

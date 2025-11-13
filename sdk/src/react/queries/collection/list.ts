@@ -1,14 +1,16 @@
-import type { ContractInfo } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/marketplace-api';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { CardType, SdkConfig } from '../../../types';
 import type {
+	CardType,
 	MarketCollection,
 	MarketplaceConfig,
+	SdkConfig,
 	ShopCollection,
-} from '../../../types/new-marketplace-types';
+} from '../../../types';
 import { compareAddress } from '../../../utils';
 import { getMetadataClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
+import { createCollectionQueryKey } from './queryKeys';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [
@@ -60,7 +62,7 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 		([chainId, addresses]) =>
 			metadataClient
 				.getContractInfoBatch({
-					chainID: chainId,
+					chainId: Number(chainId),
 					contractAddresses: addresses,
 				})
 				.then((resp) => Object.values(resp.contractInfoMap)),
@@ -117,7 +119,7 @@ export function getListCollectionsQueryKey(
 		marketplaceConfig: params.marketplaceConfig,
 	} as const;
 
-	return ['collection', 'list', queryKeyParams] as const;
+	return createCollectionQueryKey('list', queryKeyParams);
 }
 
 export function listCollectionsQueryOptions(

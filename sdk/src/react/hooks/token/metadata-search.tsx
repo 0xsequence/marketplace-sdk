@@ -153,15 +153,15 @@ export function useTokenMetadataSearch(params: UseTokenMetadataSearchParams) {
 
 	const mintedTokenIds = new Set(
 		suppliesData?.pages
-			.flatMap((page) => page.tokenIDs)
-			?.filter((token) => BigInt(token.supply) > 0n)
-			.map((token) => token.tokenID) ?? [],
+			.flatMap((page) => page.supplies)
+			?.filter((supply) => supply.supply > 0n)
+			.map((supply) => supply.tokenId) ?? [],
 	);
 
 	// Filter minted tokens from all metadata pages
 	const filteredTokenMetadata = result.data?.pages
 		.flatMap((page) => page.tokenMetadata)
-		.filter((metadata) => mintedTokenIds.has(metadata.tokenId));
+		.filter((metadata) => mintedTokenIds.has(BigInt(metadata.tokenId)));
 
 	const lastPage = result.data?.pages[result.data.pages.length - 1]?.page;
 

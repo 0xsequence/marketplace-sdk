@@ -25,9 +25,9 @@ const testOrder: Order = {
 	feeBps: 250,
 	feeBreakdown: [],
 	marketplace: MarketplaceKind.sequence_marketplace_v2,
-	priceAmount: '1000000000000000000',
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1',
-	priceAmountNet: '975000000000000000',
+	priceAmountNet: 975000000000000000n,
 	side: OrderSide.listing,
 	status: OrderStatus.active,
 	originName: '',
@@ -37,11 +37,11 @@ const testOrder: Order = {
 	priceDecimals: 0,
 	priceUSD: 0,
 	priceUSDFormatted: '',
-	quantityInitial: '10',
+	quantityInitial: 10n,
 	quantityInitialFormatted: '10',
-	quantityRemaining: '10',
+	quantityRemaining: 10n,
 	quantityRemainingFormatted: '10',
-	quantityAvailable: '10',
+	quantityAvailable: 10n,
 	quantityAvailableFormatted: '10',
 	quantityDecimals: 0,
 	validFrom: '',
@@ -60,7 +60,7 @@ describe('ERC1155QuantityModal', () => {
 				orderId: '1',
 				collectionAddress:
 					'0x1234567890123456789012345678901234567890' as `0x${string}`,
-				collectibleId: '1',
+				collectibleId: 1n,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 				cardType: 'market',
 			},
@@ -80,7 +80,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -124,7 +124,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -167,7 +167,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -215,7 +215,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 

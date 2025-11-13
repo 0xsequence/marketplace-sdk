@@ -1,4 +1,4 @@
-import type { LookupMarketplaceReturn } from '../react/_internal/api/builder.gen';
+import type { LookupMarketplaceReturn } from '@0xsequence/marketplace-api';
 import type { DatabeatAnalytics } from '../react/_internal/databeat';
 import type { MarketplaceConfig } from './types';
 

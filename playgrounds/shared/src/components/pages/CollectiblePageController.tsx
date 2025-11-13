@@ -13,7 +13,6 @@ import {
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
-import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
 import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
@@ -45,7 +44,7 @@ export interface CollectiblePageControllerProps {
 	onCollectionClick: () => void;
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 }
 
 export function CollectiblePageController({
@@ -91,7 +90,7 @@ export function CollectiblePageController({
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
 		chainId,
-		collectableId: collectibleId,
+		collectableId: collectibleId.toString(),
 		userAddress: accountAddress,
 	});
 
@@ -139,7 +138,7 @@ export function CollectiblePageController({
 					<div className="flex flex-col gap-1">
 						<CollectibleDetails
 							name={collectible?.name}
-							id={collectibleId.toString()}
+							id={collectibleId}
 							balance={Number(balance?.balance)}
 							chainId={chainId}
 							collection={collection}
@@ -164,20 +163,12 @@ export function CollectiblePageController({
 				<ListingsTable
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					collectibleId={collectibleId.toString()}
+					collectibleId={collectibleId}
 				/>
 			)}
 
 			{!isShop && (
 				<OffersTable
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId.toString()}
-				/>
-			)}
-
-			{!isShop && (
-				<ActivitiesTable
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					collectibleId={collectibleId}

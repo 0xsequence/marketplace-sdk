@@ -1,6 +1,9 @@
-import { USDC_ADDRESS } from '@test/const';
 import { HttpResponse, http } from 'msw';
+import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
+
+const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as Address;
+
 import {
 	type Activity,
 	ActivityAction,
@@ -23,7 +26,7 @@ import {
 	type TokenMetadata,
 	TransactionCrypto,
 	WalletKind,
-} from '../marketplace.gen';
+} from '../adapters/marketplace/marketplace.gen';
 
 // Mock data
 export const mockCurrencies: Currency[] = [
@@ -62,7 +65,7 @@ export const mockCurrencies: Currency[] = [
 ];
 
 export const mockTokenMetadata: TokenMetadata = {
-	tokenId: '1',
+	tokenId: 1n,
 	name: 'Mock NFT',
 	description: 'A mock NFT for testing',
 	image: 'https://example.com/nft.png',
@@ -77,22 +80,23 @@ export const mockOrder: Order = {
 	status: OrderStatus.active,
 	chainId: 1,
 	originName: 'Sequence',
-	collectionContractAddress: '0x1234567890123456789012345678901234567890',
+	collectionContractAddress:
+		'0x1234567890123456789012345678901234567890' as Address,
 	// tokenId: '1', // TokenID is optional, so no part of the code should fail if it's not provided
-	createdBy: '0xabcdef0123456789abcdef0123456789abcdef01',
-	priceAmount: '1000000000000000000',
+	createdBy: '0xabcdef0123456789abcdef0123456789abcdef01' as Address,
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
-	priceAmountNet: '950000000000000000',
+	priceAmountNet: 950000000000000000n,
 	priceAmountNetFormatted: '0.95',
-	priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
+	priceCurrencyAddress: '0x1234567890123456789012345678901234567890' as Address,
 	priceDecimals: 18,
 	priceUSD: 1800.0,
 	priceUSDFormatted: '1800.0',
-	quantityInitial: '1',
+	quantityInitial: 1n,
 	quantityInitialFormatted: '1',
-	quantityRemaining: '1',
+	quantityRemaining: 1n,
 	quantityRemainingFormatted: '1',
-	quantityAvailable: '1',
+	quantityAvailable: 1n,
 	quantityAvailableFormatted: '1',
 	quantityDecimals: 0,
 	feeBps: 500,
@@ -112,17 +116,17 @@ export const mockCollectibleOrder: CollectibleOrder = {
 
 export const mockActivity: Activity = {
 	chainId: 1,
-	contractAddress: '0x1234567890123456789012345678901234567890',
-	tokenId: '1',
+	contractAddress: '0x1234567890123456789012345678901234567890' as Address,
+	tokenId: 1n,
 	action: ActivityAction.listing,
 	txHash: '0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789',
-	from: '0x1234567890123456789012345678901234567890',
-	to: '0xabcdef0123456789abcdef0123456789abcdef01',
-	quantity: '1',
+	from: '0x1234567890123456789012345678901234567890' as Address,
+	to: '0xabcdef0123456789abcdef0123456789abcdef01' as Address,
+	quantity: 1n,
 	quantityDecimals: 0,
-	priceAmount: '1000000000000000000',
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
-	priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
+	priceCurrencyAddress: '0x1234567890123456789012345678901234567890' as Address,
 	priceDecimals: 18,
 	activityCreatedAt: new Date().toISOString(),
 	uniqueHash: '0x9876543210987654321098765432109876543210',
@@ -133,7 +137,7 @@ export const mockActivity: Activity = {
 export const mockCollection: Collection = {
 	status: CollectionStatus.active,
 	chainId: 1,
-	contractAddress: '0x1234567890123456789012345678901234567890',
+	contractAddress: '0x1234567890123456789012345678901234567890' as Address,
 	contractType: ContractType.ERC721,
 	priority: CollectionPriority.normal,
 	tokenQuantityDecimals: 0,
@@ -152,8 +156,8 @@ export const createMockStep = (step: StepType): Step => ({
 	id: step,
 	data: '0x...',
 	to: '0x1234567890123456789012345678901234567890',
-	value: '0',
-	price: '0',
+	value: 0n,
+	price: 0n,
 });
 
 export const createMockSteps = (steps: StepType[]): Step[] =>
@@ -192,6 +196,7 @@ const debugLog = (endpoint: string, request: any, response: any) => {
 
 type Endpoint = Capitalize<keyof MarketplaceClient>;
 type EndpointReturn<E extends Endpoint> =
+	// biome-ignore lint/suspicious/noExplicitAny: Generic type helper for extracting return types
 	MarketplaceClient[Uncapitalize<E>] extends (...args: any[]) => any
 		? Awaited<ReturnType<MarketplaceClient[Uncapitalize<E>]>>
 		: never;

@@ -159,7 +159,7 @@ export const useTransactionSteps = ({
 					['token', 'balances'],
 				],
 				price: {
-					amountRaw: offerInput.offer.pricePerToken,
+					amountRaw: BigInt(offerInput.offer.pricePerToken),
 					currency,
 				} as Price,
 			});

@@ -2,7 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 // Mock data constants
 export const MOCK_TOKEN_METADATA = {
-	tokenId: '1',
+	tokenId: 1n,
 	contractAddress: '0x1234567890123456789012345678901234567890',
 	name: 'Mock NFT #1',
 	description: 'A mock NFT for testing ActionButton component',
@@ -127,7 +127,7 @@ export const MOCK_LISTING_ORDER = {
 	chainId: 1,
 	originName: 'Sequence',
 	collectionContractAddress: '0x1234567890123456789012345678901234567890',
-	tokenId: '1',
+	tokenId: 1n,
 	createdBy: '0xabcdef0123456789abcdef0123456789abcdef01',
 	priceAmount: '1000000000000000000',
 	priceAmountFormatted: '1.0',

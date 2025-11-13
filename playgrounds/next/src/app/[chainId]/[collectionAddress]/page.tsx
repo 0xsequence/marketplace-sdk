@@ -14,7 +14,7 @@ export default function CollectiblesPage() {
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress as string,
-			tokenId,
+			BigInt(tokenId),
 		);
 		router.push(route);
 	};

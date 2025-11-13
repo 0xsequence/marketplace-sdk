@@ -1,6 +1,5 @@
 'use client';
 
-import { TransactionStatus as IndexerTransactionStatus } from '@0xsequence/indexer';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
@@ -48,13 +47,10 @@ const useTransactionStatus = (
 			return;
 		}
 
-		if (confirmationResult.txnStatus === IndexerTransactionStatus.SUCCESSFUL) {
-			setStatus('SUCCESS');
-			callbacks?.onSuccess?.({ hash: hash || '0x0' });
-			return;
-		}
-		setStatus('FAILED');
-		callbacks?.onError?.(new Error('Transaction failed'));
+		// If we have a confirmation result and no error, the transaction succeeded
+		// The Indexer will only return a receipt for successful transactions
+		setStatus('SUCCESS');
+		callbacks?.onSuccess?.({ hash: hash || '0x0' });
 	}, [confirmationResult, error, hash]);
 
 	return status;

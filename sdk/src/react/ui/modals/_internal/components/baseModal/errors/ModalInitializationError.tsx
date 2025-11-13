@@ -31,6 +31,7 @@ export const ModalInitializationError = ({
 
 			{error.stack && (
 				<button
+					type="button"
 					onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
 					className="mb-4 flex items-center text-gray-400 text-sm transition-colors hover:text-gray-300"
 				>
@@ -39,7 +40,9 @@ export const ModalInitializationError = ({
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
+						aria-label="Toggle technical details"
 					>
+						<title>Toggle technical details</title>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"

@@ -1,6 +1,6 @@
+import { MetadataStatus } from '@0xsequence/marketplace-api';
 import { cleanup, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MetadataStatus } from '../../../../_internal/api/marketplace.gen';
 import type { ModalCallbacks } from '../../_internal/types';
 import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import { successfulPurchaseModalStore } from '../store';
@@ -20,10 +20,11 @@ describe('SuccessfulPurchaseModal', () => {
 		const mockPurchaseData = {
 			collectibles: [
 				{
-					tokenId: '1',
+					tokenId: 1n,
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					source: 'test',
 					status: MetadataStatus.AVAILABLE,
 				},
 			],
@@ -45,10 +46,11 @@ describe('SuccessfulPurchaseModal', () => {
 		const mockPurchaseData = {
 			collectibles: [
 				{
-					tokenId: '1',
+					tokenId: 1n,
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					source: 'test',
 					status: MetadataStatus.AVAILABLE,
 				},
 			],
@@ -72,10 +74,11 @@ describe('SuccessfulPurchaseModal', () => {
 			collectibles: Array(5)
 				.fill(null)
 				.map((_, index) => ({
-					tokenId: String(index + 1),
+					tokenId: BigInt(index + 1),
 					name: `Test NFT ${index + 1}`,
 					image: `https://test.com/image${index + 1}.png`,
 					attributes: [],
+					source: 'test',
 					status: MetadataStatus.AVAILABLE,
 				})),
 			totalPrice: '5.0 ETH',
@@ -94,10 +97,11 @@ describe('SuccessfulPurchaseModal', () => {
 		const mockPurchaseData = {
 			collectibles: [
 				{
-					tokenId: '1',
+					tokenId: 1n,
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					source: 'test',
 					status: MetadataStatus.AVAILABLE,
 				},
 			],
@@ -135,10 +139,11 @@ describe('SuccessfulPurchaseModal', () => {
 			const mockPurchaseData = {
 				collectibles: [
 					{
-						tokenId: '1',
+						tokenId: 1n,
 						name: 'Test NFT',
 						image: 'https://test.com/image.png',
 						attributes: [],
+						source: 'test',
 						status: MetadataStatus.AVAILABLE,
 					},
 				],

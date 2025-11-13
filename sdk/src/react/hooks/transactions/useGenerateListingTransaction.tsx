@@ -37,15 +37,15 @@ type GenerateListingTransactionRequestWithNumberChainId = Omit<
 export const generateListingTransaction = async (
 	params: GenerateListingTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
-		chainId: String(params.chainId),
+		chainId: params.chainId,
 		listing: {
 			...params.listing,
 			expiry: dateToUnixTime(params.listing.expiry),
 		},
-	} satisfies GenerateListingTransactionRequest;
+	};
 	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };

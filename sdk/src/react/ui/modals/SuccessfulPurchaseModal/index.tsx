@@ -7,7 +7,10 @@ import {
 	Modal,
 	Text,
 } from '@0xsequence/design-system';
-import type { TokenMetadata } from '../../../_internal';
+import type { Metadata } from '@0xsequence/marketplace-api';
+
+type TokenMetadata = Metadata.TokenMetadata;
+
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
