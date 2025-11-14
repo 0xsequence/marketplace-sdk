@@ -15,6 +15,11 @@ type OwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	highestOffer?: Order;
+	labelOverride?: {
+		listing?: string;
+		sell?: string;
+		transfer?: string;
+	};
 	className?: string;
 };
 
@@ -25,6 +30,7 @@ export function OwnerActions({
 	chainId,
 	orderbookKind,
 	highestOffer,
+	labelOverride,
 	className,
 }: OwnerActionsProps) {
 	const { show: showCreateListingModal } = useCreateListingModal();
@@ -34,7 +40,7 @@ export function OwnerActions({
 	if (action === CollectibleCardAction.LIST) {
 		return (
 			<ActionButtonBody
-				label="Create listing"
+				label={labelOverride?.listing ?? 'Create listing'}
 				tokenId={tokenId}
 				onClick={() =>
 					showCreateListingModal({
@@ -53,7 +59,7 @@ export function OwnerActions({
 		return (
 			<ActionButtonBody
 				tokenId={tokenId}
-				label="Sell"
+				label={labelOverride?.sell ?? 'Sell'}
 				onClick={() =>
 					showSellModal({
 						collectionAddress,
@@ -70,7 +76,7 @@ export function OwnerActions({
 	if (action === CollectibleCardAction.TRANSFER) {
 		return (
 			<ActionButtonBody
-				label="Transfer"
+				label={labelOverride?.transfer ?? 'Transfer'}
 				tokenId={tokenId}
 				onClick={() =>
 					showTransferModal({
