@@ -12,6 +12,9 @@ export { MarketCardPresentation } from './components/marketplace-collectible-car
 export { ShopCard } from './components/marketplace-collectible-card/variants/ShopCard';
 export type { ShopCardPresentationProps } from './components/marketplace-collectible-card/variants/ShopCardPresentation';
 export { ShopCardPresentation } from './components/marketplace-collectible-card/variants/ShopCardPresentation';
+// Card helpers
+export { ActionButton } from './components/marketplace-collectible-card/ActionButton';
+export { determineCardAction } from './components/marketplace-collectible-card/utils';
 // components
 export { Media } from './components/media/Media';
 export { useBuyModal } from './modals/BuyModal';
