@@ -2,9 +2,14 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
+import {
+	useConnectorMetadata,
+	useEnsureCorrectChain,
+	useListBalances,
+} from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
@@ -25,8 +30,25 @@ export type ShowTransferModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-export const useTransferModal = () => {
+export type UseTransferModalArgs = {
+	prefetch?: {
+		collectibleId: string;
+		chainId: number;
+		collectionAddress: Address;
+	};
+};
+
+export const useTransferModal = (args?: UseTransferModalArgs) => {
 	const { ensureCorrectChain } = useEnsureCorrectChain();
+	const { address: accountAddress } = useAccount();
+	// Prefetch balances if `prefetch` is provided
+	useListBalances({
+		chainId: args?.prefetch?.chainId!,
+		contractAddress: args?.prefetch?.collectionAddress,
+		tokenId: args?.prefetch?.collectibleId,
+		accountAddress,
+		query: { enabled: !!accountAddress && !!args?.prefetch },
+	});
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModalStore.send({ type: 'open', ...args });
