@@ -12,9 +12,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useShopFilters } from '../../hooks/useShopFilters';
-import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
-import { PaginatedView } from '../collectibles/PaginatedView';
 
 export interface ShopContentProps {
 	saleContractAddress: Address;
@@ -31,7 +29,6 @@ export function ShopContent({
 	chainId,
 	onCollectibleClick,
 }: ShopContentProps) {
-	const { paginationMode } = useMarketplace();
 	const { filterOptions } = useShopFilters();
 	const {
 		showListedOnly: showAvailableSales,
@@ -116,15 +113,7 @@ export function ShopContent({
 		return <div>No sale contract address or item ids found</div>;
 	}
 
-	return paginationMode === 'paginated' ? (
-		<PaginatedView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
-			collectibleCards={collectibleCards}
-			renderItemContent={renderItemContent}
-			isLoading={primarySaleItemsLoading || cardDataLoading}
-		/>
-	) : (
+	return (
 		<div>
 			<div className="mb-4 flex items-center gap-2 rounded-sm bg-background-secondary p-2">
 				<Switch

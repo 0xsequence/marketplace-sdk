@@ -12,6 +12,7 @@ import {
 	useListMarketCardData,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
+import { useState } from 'react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
@@ -61,14 +62,19 @@ export function MarketContent({
 		priceFilters,
 		collectionAddress,
 		chainId,
+		initialPage: 1,
+		initialPageSize: 30,
 	});
+
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(30);
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
 	}
 
-	const renderItemContent = (index: number) => {
-		const card = collectibleCards[index];
+	const renderItemContent = (index: number, overrideCard?: any) => {
+		const card = overrideCard ?? collectibleCards[index];
 		if (!card) return null;
 
 		return (
@@ -89,6 +95,14 @@ export function MarketContent({
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
 			isLoading={collectiblesLoading}
+			isFetchingNextPage={isFetchingNextPage}
+			page={page}
+			pageSize={pageSize}
+			onPageChange={setPage}
+			onPageSizeChange={setPageSize}
+			hasMore={hasNextPage}
+			fetchNextPage={fetchNextPage}
+			allCollectibles={collectibleCards}
 		/>
 	) : (
 		<InfiniteScrollView
