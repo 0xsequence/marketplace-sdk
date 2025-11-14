@@ -31,7 +31,7 @@ export type ShowTransferModalArgs = {
 };
 
 export type UseTransferModalArgs = {
-	isPrefetching?: {
+	prefetch?: {
 		collectibleId: string;
 		chainId: number;
 		collectionAddress: Address;
@@ -41,13 +41,13 @@ export type UseTransferModalArgs = {
 export const useTransferModal = (args?: UseTransferModalArgs) => {
 	const { ensureCorrectChain } = useEnsureCorrectChain();
 	const { address: accountAddress } = useAccount();
-	// Prefetch balances if isPrefetching is provided
+	// Prefetch balances if `prefetch` is provided
 	useListBalances({
-		chainId: args?.isPrefetching?.chainId!,
-		contractAddress: args?.isPrefetching?.collectionAddress,
-		tokenId: args?.isPrefetching?.collectibleId,
+		chainId: args?.prefetch?.chainId!,
+		contractAddress: args?.prefetch?.collectionAddress,
+		tokenId: args?.prefetch?.collectibleId,
 		accountAddress,
-		query: { enabled: !!accountAddress && !!args?.isPrefetching },
+		query: { enabled: !!accountAddress && !!args?.prefetch },
 	});
 
 	const openModal = (args: ShowTransferModalArgs) => {
