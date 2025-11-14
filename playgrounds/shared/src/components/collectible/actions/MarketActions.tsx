@@ -66,7 +66,13 @@ export function MarketActionsCard({
 		},
 	});
 
-	const { show: openTransferModal } = useTransferModal();
+	const { show: openTransferModal } = useTransferModal({
+		isPrefetching: {
+			collectionAddress,
+			chainId,
+			collectibleId,
+		},
+	});
 
 	const hooksProps = {
 		collectionAddress,
