@@ -1,8 +1,9 @@
 'use client';
 
+import { UserRejectedError } from '../../../../utils/errors';
+import { useConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -15,12 +16,13 @@ export function SellModal() {
 		chainId,
 		offer,
 		flow,
-		feeSelection,
 		error,
 		close,
 		isOpen,
 		queries,
 	} = useSellModalContext();
+	const isUserRejectedError = error instanceof UserRejectedError;
+	const { waasFeeOptionSelectionType } = useConfig();
 
 	if (!isOpen) {
 		return null;
@@ -28,6 +30,8 @@ export function SellModal() {
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
 	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
+	const pendingStep = flow.steps.find((s) => s.isPending);
+
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
 	const approvalAction = showApprovalButton
@@ -36,7 +40,8 @@ export function SellModal() {
 				actionName: approvalStep.label,
 				onClick: approvalStep.run,
 				loading: approvalStep.isPending,
-				disabled: !flow.nextStep || !!error || flow.isPending,
+				disabled:
+					!flow.nextStep || (!!error && !isUserRejectedError) || flow.isPending,
 				variant: 'secondary' as const,
 				testid: 'sell-modal-approve-button',
 			}
@@ -44,11 +49,14 @@ export function SellModal() {
 
 	const sellAction = {
 		label: sellStep.label,
-		actionName: sellStep.label,
-		onClick: sellStep.run,
-		loading: sellStep.isPending && !showApprovalButton,
+		actionName: sellStep?.label,
+		onClick: sellStep?.run || (() => {}),
+		loading: sellStep?.isPending && !showApprovalButton,
 		disabled:
-			!flow.nextStep || !!error || (showApprovalButton && flow.isPending),
+			!flow.nextStep ||
+			(!!error && !isUserRejectedError) ||
+			(showApprovalButton && flow.isPending) ||
+			flow.isPending,
 		testid: 'sell-modal-accept-button',
 	};
 
@@ -57,14 +65,25 @@ export function SellModal() {
 			chainId={chainId}
 			onClose={() => {
 				close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				//waasFees.reset();
 			}}
 			title="You have an offer"
 			type="sell"
-			primaryAction={sellAction}
-			secondaryAction={approvalAction}
+			primaryAction={
+				pendingStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: sellAction
+			}
+			secondaryAction={
+				pendingStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: approvalAction
+			}
 			queries={queries}
 			externalError={error}
+			actionError={pendingStep?.waasFee.waasFeeSelectionError}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -97,13 +116,36 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{feeSelection?.isSelecting && (
-						<SelectWaasFeeOptions
-							chainId={chainId}
-							onCancel={feeSelection.cancel}
-							titleOnConfirm="Accepting offer..."
-						/>
-					)}
+					{pendingStep?.waasFee.selectedOption &&
+						waasFeeOptionSelectionType === 'manual' && (
+							<SelectWaasFeeOptions
+								chainId={chainId}
+								feeOptionConfirmation={
+									pendingStep.waasFee.feeOptionConfirmation
+								}
+								selectedOption={pendingStep.waasFee.selectedOption}
+								onSelectedOptionChange={
+									pendingStep.waasFee.setSelectedFeeOption
+								}
+								onConfirm={() => {
+									const confirmationId =
+										pendingStep.waasFee.feeOptionConfirmation?.id;
+									// null is used to indicate that the currency is the native currency
+									const currencyAddress =
+										pendingStep.waasFee.selectedOption?.token.contractAddress ||
+										null;
+									if (confirmationId) {
+										pendingStep.waasFee.confirmFeeOption?.(
+											confirmationId,
+											currencyAddress,
+										);
+										pendingStep.waasFee.setOptionConfirmed(true);
+									}
+								}}
+								optionConfirmed={pendingStep.waasFee.optionConfirmed}
+								titleOnConfirm="Confirming sale..."
+							/>
+						)}
 				</>
 			)}
 		</ActionModal>

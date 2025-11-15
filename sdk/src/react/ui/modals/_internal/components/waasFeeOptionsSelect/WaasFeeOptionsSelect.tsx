@@ -3,7 +3,7 @@
 import { Image, Select, Text, Tooltip } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
-import type { FeeOption } from '../../../../../../types/waas-types';
+import type { FeeOptionExtended } from '../../../../../../types/waas-types';
 import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
 
 const WaasFeeOptionsSelect = ({
@@ -11,9 +11,9 @@ const WaasFeeOptionsSelect = ({
 	selectedFeeOption,
 	onSelectedFeeOptionChange,
 }: {
-	options: FeeOption[];
-	selectedFeeOption: FeeOption | undefined;
-	onSelectedFeeOptionChange: (option: FeeOption | undefined) => void;
+	options: FeeOptionExtended[];
+	selectedFeeOption: FeeOptionExtended | undefined;
+	onSelectedFeeOptionChange: (option: FeeOptionExtended | undefined) => void;
 }) => {
 	options = options.map((option) => ({
 		...option,
@@ -61,7 +61,7 @@ function FeeOptionSelectItem({
 	option,
 }: {
 	value: string;
-	option: FeeOption;
+	option: FeeOptionExtended;
 }) {
 	const formattedFee = formatUnits(
 		BigInt(option.value),
