@@ -30,22 +30,23 @@ export async function fetchBalances(
 	page: Indexer.Page,
 ) {
 	const indexerClient = getIndexerClient(args.chainId, config);
-	// Convert SDK args (tokenId: bigint) to API args (tokenID: string)
-	const { tokenId, ...restArgs } = args;
 	return indexerClient.getTokenBalances({
-		...restArgs,
-		tokenID: tokenId?.toString(),
-		page: page,
+		accountAddress: args.accountAddress!,
+		contractAddress: args.contractAddress,
+		tokenId: args.tokenId, // API now accepts bigint, no .toString() needed
+		includeMetadata: args.includeMetadata,
+		metadataOptions: args.metadataOptions,
+		page,
 	});
 }
 
 export function getListBalancesQueryKey(args: UseListBalancesArgs) {
-	// Convert SDK args (tokenId: bigint) to API args (tokenID: string) for query key
+	// Use normalized types for query key (tokenId as bigint)
 	const apiArgs = {
 		chainId: args.chainId,
 		accountAddress: args.accountAddress,
 		contractAddress: args.contractAddress,
-		tokenID: args.tokenId?.toString(),
+		tokenId: args.tokenId, // Keep as bigint for query key consistency
 		includeMetadata: args.includeMetadata,
 		metadataOptions: args.metadataOptions,
 		includeCollectionTokens: args.includeCollectionTokens,

@@ -76,7 +76,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId: collectibleId,
+		collectibleId,
 	});
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
@@ -90,7 +90,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId.toString(),
+		collectableId: collectibleId, // API now accepts bigint
 		userAddress: address ?? undefined,
 	});
 
@@ -133,7 +133,7 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => createListingModal$.close(),
-		steps$: steps$,
+		steps$,
 	});
 
 	const erc20NotConfiguredError =
