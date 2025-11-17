@@ -90,7 +90,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId, // API now accepts bigint
+		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
 

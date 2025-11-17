@@ -12,7 +12,7 @@ import { useCollectibleBalance } from './balance';
 describe('useCollectibleBalance', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
-		collectableId: '1',
+		collectableId: 1n,
 		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
@@ -95,7 +95,7 @@ describe('useCollectibleBalance', () => {
 		const specificCollectible = {
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectableId: '42',
+			collectableId: 42n,
 			userAddress:
 				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
@@ -106,7 +106,7 @@ describe('useCollectibleBalance', () => {
 			...mockTokenBalance,
 			contractAddress: specificCollectible.collectionAddress,
 			accountAddress: specificCollectible.userAddress,
-			tokenID: specificCollectible.collectableId,
+			tokenID: '42', // API expects string in response
 			balance: '2', // Raw format uses strings
 		};
 
@@ -115,7 +115,7 @@ describe('useCollectibleBalance', () => {
 			...mockTokenBalanceNormalized,
 			contractAddress: specificCollectible.collectionAddress,
 			accountAddress: specificCollectible.userAddress,
-			tokenId: BigInt(specificCollectible.collectableId),
+			tokenId: 42n,
 			balance: 2n,
 		};
 

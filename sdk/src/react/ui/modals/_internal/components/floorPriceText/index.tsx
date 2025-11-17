@@ -23,7 +23,7 @@ export default function FloorPriceText({
 }) {
 	const { data: listing, isLoading: listingLoading } =
 		useCollectibleMarketLowestListing({
-			tokenId: tokenId,
+			tokenId,
 			chainId,
 			collectionAddress,
 			filter: {

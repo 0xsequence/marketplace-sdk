@@ -74,7 +74,7 @@ export function usePrimarySale1155CardData({
 				source: '', // Add source field required by metadata API types
 			},
 			cardLoading: isLoading,
-			salesContractAddress: salesContractAddress,
+			salesContractAddress,
 			salePrice,
 			quantityInitial: supply,
 			quantityDecimals: collection?.decimals || 0,

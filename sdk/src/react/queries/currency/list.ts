@@ -29,7 +29,7 @@ export async function fetchMarketCurrencies(
 
 	let currencies = await marketplaceClient
 		.listCurrencies({
-			chainId: chainId,
+			chainId,
 		})
 		.then((resp) =>
 			resp.currencies.map((currency) => ({

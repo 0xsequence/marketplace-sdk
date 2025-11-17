@@ -29,7 +29,7 @@ const metadataURL = (env: Env = 'production') => {
 const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	const network = getNetwork(chain).name;
-	return stringTemplate(SERVICES.indexer, { network: network, prefix });
+	return stringTemplate(SERVICES.indexer, { network, prefix });
 };
 
 export const marketplaceApiURL = (env: Env = 'production') => {

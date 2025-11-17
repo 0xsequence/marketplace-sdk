@@ -24,7 +24,7 @@ export async function fetchCountOffersForCollectible(
 
 	const result = await client.getCountOfOffersForCollectible({
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		tokenId: collectibleId,
 		filter,
 	});

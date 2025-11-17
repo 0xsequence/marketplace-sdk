@@ -147,7 +147,7 @@ export function usePrimarySale721CardData({
 					source: '',
 				},
 				cardLoading: saleDetailsLoading,
-				salesContractAddress: salesContractAddress,
+				salesContractAddress,
 				salePrice,
 				quantityInitial,
 				quantityRemaining,
@@ -175,7 +175,7 @@ export function usePrimarySale721CardData({
 				status: (metadata as any).status || 'active',
 			} as unknown as TokenMetadata,
 			cardLoading: saleDetailsLoading,
-			salesContractAddress: salesContractAddress,
+			salesContractAddress,
 			salePrice: {
 				amount: 0n,
 				currencyAddress: '0x0000000000000000000000000000000000000000',

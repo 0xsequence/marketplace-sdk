@@ -30,7 +30,7 @@ export async function fetchPrimarySaleItems(
 	const marketplaceClient = getMarketplaceClient(config);
 
 	return marketplaceClient.listPrimarySaleItems({
-		chainId: chainId,
+		chainId,
 		primarySaleContractAddress,
 		filter,
 		page,

@@ -25,7 +25,7 @@ export async function fetchPrimarySaleItemsCount(
 
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.getCountOfPrimarySaleItems({
-		chainId: chainId,
+		chainId,
 		primarySaleContractAddress,
 		filter,
 	});

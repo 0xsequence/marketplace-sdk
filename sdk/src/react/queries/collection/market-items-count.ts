@@ -27,7 +27,7 @@ export async function fetchCountItemsOrdersForCollection(
 
 	const apiArgs: GetCountOfAllOrdersRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		side,
 	};
 

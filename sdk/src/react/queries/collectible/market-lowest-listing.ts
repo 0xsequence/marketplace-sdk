@@ -30,7 +30,7 @@ export async function fetchLowestListing(
 
 	const result = await marketplaceClient.getLowestPriceListingForCollectible({
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		...additionalApiParams,
 	});
 	return result.order || null;

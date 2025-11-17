@@ -30,7 +30,7 @@ export async function fetchCountOfCollectables(
 	if (filter && side) {
 		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
 			contractAddress: collectionAddress,
-			chainId: chainId,
+			chainId,
 			filter,
 			side,
 		};
@@ -41,7 +41,7 @@ export async function fetchCountOfCollectables(
 
 	const apiArgs: GetCountOfAllCollectiblesRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 	};
 
 	const result = await client.getCountOfAllCollectibles(apiArgs);

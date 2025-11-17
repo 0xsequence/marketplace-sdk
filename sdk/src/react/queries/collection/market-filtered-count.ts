@@ -26,7 +26,7 @@ export async function fetchGetCountOfFilteredOrders(
 
 	const apiArgs: GetCountOfFilteredOrdersRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		side,
 		filter,
 	};

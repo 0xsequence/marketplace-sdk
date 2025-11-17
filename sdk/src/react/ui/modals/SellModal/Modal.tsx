@@ -90,7 +90,7 @@ export function SellModal() {
 							offer.priceAmount
 								? {
 										amountRaw: offer.priceAmount,
-										currency: currency,
+										currency,
 									}
 								: undefined
 						}

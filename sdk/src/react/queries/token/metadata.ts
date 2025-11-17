@@ -26,9 +26,9 @@ export async function fetchListTokenMetadata(
 	const metadataClient = getMetadataClient(config);
 
 	const response = await metadataClient.getTokenMetadata({
-		chainId: chainId,
-		contractAddress: contractAddress,
-		tokenIds: tokenIds,
+		chainId,
+		contractAddress,
+		tokenIds,
 	});
 
 	return response.tokenMetadata;

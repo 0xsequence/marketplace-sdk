@@ -44,7 +44,7 @@ export async function fetchListCollectiblesPaginated(
 
 	return await marketplaceClient.listCollectibles({
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		page: pageParams,
 		...additionalApiParams,
 	});

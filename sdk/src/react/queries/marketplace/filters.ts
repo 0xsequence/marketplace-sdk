@@ -40,7 +40,7 @@ export async function fetchFilters(
 	const metadataClient = getMetadataClient(config);
 
 	const result = await metadataClient.getTokenMetadataPropertyFilters({
-		chainId: chainId,
+		chainId,
 		contractAddress: collectionAddress,
 		excludeProperties: [],
 		excludePropertyValues,

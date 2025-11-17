@@ -24,7 +24,7 @@ export async function fetchMarketCollectionDetail(
 
 	const apiArgs: GetCollectionDetailRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		...additionalApiParams,
 	};
 

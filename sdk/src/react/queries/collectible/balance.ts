@@ -7,7 +7,7 @@ import { createCollectibleQueryKey } from './queryKeys';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;
-	collectableId: bigint; // NORMALIZED: bigint (API handles conversion to string)
+	collectableId: bigint;
 	userAddress: Address | undefined;
 	chainId: number;
 	includeMetadata?: boolean;
@@ -32,7 +32,7 @@ export async function fetchBalanceOfCollectible(
 		.getTokenBalances({
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
-			tokenId: args.collectableId, // API now accepts bigint
+			tokenId: args.collectableId,
 			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
@@ -52,7 +52,7 @@ export function getBalanceOfCollectibleQueryKey(
 		chainId: args.chainId,
 		accountAddress: args.userAddress,
 		contractAddress: args.collectionAddress,
-		tokenId: args.collectableId, // Keep as bigint
+		tokenId: args.collectableId,
 		includeMetadata: args.includeMetadata,
 		metadataOptions: args.userAddress
 			? {
@@ -61,7 +61,6 @@ export function getBalanceOfCollectibleQueryKey(
 			: undefined,
 	};
 
-	// Use domain helper with automatic bigint serialization
 	return createCollectibleQueryKey('balance', apiArgs);
 }
 

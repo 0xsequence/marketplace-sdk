@@ -20,8 +20,8 @@ export default function TokenPreview({
 }: TokenPreviewProps) {
 	const { data: collectable, isLoading: collectibleLoading } =
 		useCollectibleDetail({
-			chainId: chainId,
-			collectionAddress: collectionAddress,
+			chainId,
+			collectionAddress,
 			collectibleId,
 		});
 

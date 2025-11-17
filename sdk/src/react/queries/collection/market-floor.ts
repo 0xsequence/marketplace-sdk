@@ -24,7 +24,7 @@ export async function fetchFloorOrder(params: FetchFloorOrderParams) {
 
 	const apiArgs: GetFloorOrderRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		...additionalApiParams,
 	};
 

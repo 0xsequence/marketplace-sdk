@@ -52,7 +52,7 @@ export async function fetchListCollectionActivities(
 
 	const apiArgs: ListCollectionActivitiesRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		page: pageParams,
 		...additionalApiParams,
 	};

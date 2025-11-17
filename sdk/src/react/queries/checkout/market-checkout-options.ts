@@ -38,7 +38,7 @@ export async function fetchMarketCheckoutOptions(
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsMarketplaceRequest = {
-		chainId: chainId,
+		chainId,
 		wallet: walletAddress,
 		orders: orders.map((order) => ({
 			contractAddress: order.collectionAddress,

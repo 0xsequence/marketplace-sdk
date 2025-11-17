@@ -33,7 +33,7 @@ export async function fetchPrimarySaleCheckoutOptions(
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsSalesContractRequest = {
-		chainId: chainId,
+		chainId,
 		wallet: walletAddress,
 		contractAddress,
 		collectionAddress,

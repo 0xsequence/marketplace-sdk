@@ -30,7 +30,7 @@ export async function fetchCollectible(params: FetchCollectibleParams) {
 
 	const apiArgs: GetTokenMetadataArgs = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		tokenIds: [collectibleId],
 	};
 

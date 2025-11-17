@@ -32,7 +32,7 @@ export async function fetchSearchTokenMetadata(
 	const metadataClient = getMetadataClient(config);
 
 	const response = await metadataClient.searchTokenMetadata({
-		chainId: chainId,
+		chainId,
 		contractAddress: collectionAddress,
 		filter: filter ?? {},
 		page,

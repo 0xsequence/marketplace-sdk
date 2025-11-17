@@ -87,7 +87,7 @@ export const getERC721SalePaymentParams = async ({
 			to: address,
 			amount: BigInt(quantity),
 			paymentToken: currencyAddress as Address,
-			price: price,
+			price,
 			proof: DEFAULT_PROOF,
 		});
 

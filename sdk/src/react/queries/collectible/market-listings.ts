@@ -37,7 +37,7 @@ export async function fetchListListingsForCollectible(
 
 	return await marketplaceClient.listListingsForCollectible({
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		tokenId: collectibleId,
 		...additionalApiParams,
 	});

@@ -27,7 +27,7 @@ export async function fetchHighestOffer(params: FetchHighestOfferParams) {
 
 	const result = await marketplaceClient.getHighestPriceOfferForCollectible({
 		contractAddress: collectionAddress,
-		chainId: chainId,
+		chainId,
 		...additionalApiParams,
 	});
 	return result.order ?? null;

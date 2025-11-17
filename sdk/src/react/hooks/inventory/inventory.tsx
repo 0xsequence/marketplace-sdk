@@ -11,7 +11,6 @@ export function useInventory(args: UseInventoryArgs) {
 	return useQuery(inventoryOptions({ ...args }, config));
 }
 
-// Re-export types for external use
 export type {
 	CollectiblesResponse,
 	CollectibleWithBalance,

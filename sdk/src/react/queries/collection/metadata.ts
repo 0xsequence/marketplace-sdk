@@ -25,7 +25,7 @@ export async function fetchCollection(params: FetchCollectionParams) {
 	const metadataClient = getMetadataClient(config);
 
 	const result = await metadataClient.getContractInfo({
-		chainId: chainId,
+		chainId,
 		contractAddress: collectionAddress,
 	});
 

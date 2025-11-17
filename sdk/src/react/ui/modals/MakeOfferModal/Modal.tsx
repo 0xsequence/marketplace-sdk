@@ -124,7 +124,7 @@ const Modal = observer(() => {
 		callbacks,
 		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
-		steps$: steps$,
+		steps$,
 	});
 
 	const erc20NotConfiguredError =

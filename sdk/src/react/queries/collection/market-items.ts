@@ -28,8 +28,8 @@ export async function fetchListItemsOrdersForCollection(
 
 	const apiArgs: ListOrdersWithCollectiblesRequest = {
 		contractAddress: collectionAddress,
-		chainId: chainId,
-		page: page,
+		chainId,
+		page,
 		...additionalApiParams,
 	};
 

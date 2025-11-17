@@ -1,5 +1,3 @@
-// Re-export commonly used types from API package for convenience
-// These are used throughout the SDK and having them available from _internal makes imports cleaner
 export type {
 	AdditionalFee,
 	CheckoutOptions,

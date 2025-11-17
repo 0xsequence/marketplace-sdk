@@ -70,13 +70,13 @@ export const getBuyCollectableParams = async ({
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
-		chainId: chainId,
+		chainId,
 		collectionAddress,
 		buyer: address,
-		marketplace: marketplace,
+		marketplace,
 		ordersData: [
 			{
-				orderId: orderId,
+				orderId,
 				quantity: BigInt(quantity),
 				tokenId: BigInt(collectibleId),
 			},
@@ -252,8 +252,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						fee,
 						priceCurrencyAddress,
 						callbacks: {
-							onSuccess: onSuccess,
-							onError: onError,
+							onSuccess,
+							onError,
 							successActionButtons: buyModalProps.successActionButtons,
 						},
 						customCreditCardProviderCallback,
