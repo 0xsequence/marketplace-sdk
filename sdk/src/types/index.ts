@@ -1,6 +1,8 @@
 export type {
 	CheckoutOptions,
 	CollectibleOrder,
+	ContractInfo,
+	ContractInfoExtensions,
 	Order,
 	OrderData,
 	Page,
