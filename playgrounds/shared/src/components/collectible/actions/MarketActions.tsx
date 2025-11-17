@@ -21,14 +21,14 @@ export function MarketActionsCard({
 	orderbookKind,
 	collectionAddress,
 	chainId,
-	collectibleId,
+	tokenId,
 	isOwner,
 }: {
 	lowestListing: Order | undefined | null;
 	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: bigint;
+	tokenId: bigint;
 	isOwner: boolean;
 }) {
 	const shouldShowBuyButton = !!lowestListing;
@@ -71,7 +71,7 @@ export function MarketActionsCard({
 	const hooksProps = {
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 	};
 
 	return (
@@ -92,7 +92,7 @@ export function MarketActionsCard({
 								openBuyModal({
 									collectionAddress,
 									chainId,
-									collectibleId,
+									tokenId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
 								})
@@ -144,7 +144,7 @@ export function MarketActionsCard({
 									openTransferModal({
 										collectionAddress,
 										chainId,
-										collectibleId,
+										tokenId,
 									})
 								}
 								rightIcon={SendIcon}
