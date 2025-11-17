@@ -45,7 +45,7 @@ export const TEST_PRIVATE_KEYS = [
 export const TEST_COLLECTIBLE = {
 	collectionAddress: '0xbabafdd8045740449a42b788a26e9b3a32f88ac1',
 	chainId: 1,
-	collectibleId: 7602n,
+	tokenId: 7602n,
 } as const;
 
 export const TEST_CURRENCY: Currency = {
