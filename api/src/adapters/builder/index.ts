@@ -6,7 +6,7 @@
  *
  * ## Key Normalizations
  *
- * - `projectId: number` (API) → `ProjectId: bigint` (normalized)
+ * - `projectId: number` (API) → `ProjectId: number` (passthrough)
  * - `chainId: number` (API) → `ChainId: bigint` (normalized)
  * - `tokenIds: string[]` (API) → `TokenId[]: bigint[]` (normalized)
  * - `customTokenIds: string[]` (API) → `TokenId[]: bigint[]` (normalized)

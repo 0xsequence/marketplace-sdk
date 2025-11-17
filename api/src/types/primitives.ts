@@ -47,6 +47,6 @@ export type Quantity = bigint;
 export type Hash = `0x${string}`;
 
 /**
- * Universal project identifier as bigint
+ * Universal project identifier as number
  */
-export type ProjectId = bigint;
+export type ProjectId = number;

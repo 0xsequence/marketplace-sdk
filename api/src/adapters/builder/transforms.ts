@@ -20,8 +20,7 @@ export function toLookupMarketplaceArgs(
 	args: BuilderGen.LookupMarketplaceArgs,
 ): Builder.LookupMarketplaceArgs {
 	return {
-		projectId:
-			args.projectId !== undefined ? BigInt(args.projectId) : undefined,
+		projectId: args.projectId,
 		domain: args.domain,
 		userAddress: args.userAddress,
 	};
@@ -47,7 +46,7 @@ export function toMarketplace(
 	data: BuilderGen.Marketplace,
 ): Builder.Marketplace {
 	return {
-		projectId: BigInt(data.projectId),
+		projectId: data.projectId,
 		settings: data.settings, // No bigint conversions needed
 		market: data.market,
 		shop: data.shop,
@@ -64,7 +63,7 @@ export function toMarketCollection(
 ): Builder.MarketCollection {
 	return {
 		id: data.id,
-		projectId: BigInt(data.projectId),
+		projectId: data.projectId,
 		chainId: normalizeChainId(data.chainId),
 		itemsAddress: data.itemsAddress,
 		contractType: data.contractType,
@@ -88,7 +87,7 @@ export function toShopCollection(
 ): Builder.ShopCollection {
 	return {
 		id: data.id,
-		projectId: BigInt(data.projectId),
+		projectId: data.projectId,
 		chainId: normalizeChainId(data.chainId),
 		itemsAddress: data.itemsAddress,
 		saleAddress: data.saleAddress,
@@ -114,8 +113,7 @@ export function fromLookupMarketplaceArgs(
 	args: Builder.LookupMarketplaceArgs,
 ): BuilderGen.LookupMarketplaceArgs {
 	return {
-		projectId:
-			args.projectId !== undefined ? Number(args.projectId) : undefined,
+		projectId: args.projectId,
 		domain: args.domain,
 		userAddress: args.userAddress,
 	};
@@ -141,7 +139,7 @@ export function fromMarketplace(
 	data: Builder.Marketplace,
 ): BuilderGen.Marketplace {
 	return {
-		projectId: Number(data.projectId),
+		projectId: data.projectId,
 		settings: data.settings,
 		market: data.market,
 		shop: data.shop,
@@ -158,7 +156,7 @@ export function fromMarketCollection(
 ): BuilderGen.MarketCollection {
 	return {
 		id: data.id,
-		projectId: Number(data.projectId),
+		projectId: data.projectId,
 		chainId: data.chainId, // Already number
 		itemsAddress: data.itemsAddress,
 		contractType: data.contractType,
@@ -182,7 +180,7 @@ export function fromShopCollection(
 ): BuilderGen.ShopCollection {
 	return {
 		id: data.id,
-		projectId: Number(data.projectId),
+		projectId: data.projectId,
 		chainId: data.chainId, // Already number
 		itemsAddress: data.itemsAddress,
 		saleAddress: data.saleAddress,
