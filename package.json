@@ -70,7 +70,7 @@
     "dnum": "2.15.0",
     "react-day-picker": "9.11.1",
     "tailwind-merge": "3.4.0",
-    "xtrails": "0.1.13"
+    "xtrails": "npm:0xtrails@^0.6.1"
   },
   "peerDependencies": {
     "0xsequence": "2.3.33",
