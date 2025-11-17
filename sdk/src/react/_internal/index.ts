@@ -72,6 +72,7 @@ export {
 export * from './api';
 export * from './consts';
 export * from './get-provider';
+export * from './query-builder';
 export * from './types';
 export * from './utils';
 export * from './wagmi';
