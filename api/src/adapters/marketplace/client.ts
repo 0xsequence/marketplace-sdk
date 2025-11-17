@@ -307,10 +307,13 @@ export type GetCountOfPrimarySaleItemsRequest = Omit<
 
 export type CheckoutOptionsMarketplaceRequest = Omit<
 	Gen.CheckoutOptionsMarketplaceRequest,
-	'chainId'
+	'chainId' | 'wallet'
 > & {
 	chainId: ChainId;
-};
+} & (
+		| { wallet: string; walletAddress?: never }
+		| { walletAddress: string; wallet?: never }
+	);
 
 export type GetCountOfFilteredCollectiblesRequest = Omit<
 	Gen.GetCountOfFilteredCollectiblesRequest,
@@ -615,8 +618,22 @@ export class MarketplaceClient {
 		);
 
 		// Checkout methods
-		this.checkoutOptionsMarketplace = wrapChainId((req) =>
-			this.client.checkoutOptionsMarketplace(req),
+		this.checkoutOptionsMarketplace = wrapWithTransform(
+			(req) => this.client.checkoutOptionsMarketplace(req),
+			(req: CheckoutOptionsMarketplaceRequest) => {
+				const wallet =
+					'walletAddress' in req && req.walletAddress
+						? req.walletAddress
+						: 'wallet' in req && req.wallet
+							? req.wallet
+							: '';
+
+				return {
+					...req,
+					chainId: chainIdToString(req.chainId),
+					wallet,
+				};
+			},
 		);
 		this.checkoutOptionsSalesContract = wrapWithTransform(
 			(req) => this.client.checkoutOptionsSalesContract(req),
