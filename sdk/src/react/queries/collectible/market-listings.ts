@@ -10,9 +10,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListListingsForCollectibleParams
-	extends Omit<ListCollectibleListingsRequest, 'chainId' | 'tokenId'> {
-	chainId: number;
-	collectionAddress: Address;
+	extends Omit<ListCollectibleListingsRequest, 'tokenId'> {
 	collectibleId: bigint;
 	config: SdkConfig;
 }

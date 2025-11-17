@@ -12,9 +12,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListOffersForCollectibleParams
-	extends Omit<ListOffersForCollectibleRequest, 'chainId' | 'tokenId'> {
-	chainId: number;
-	collectionAddress: Address;
+	extends Omit<ListOffersForCollectibleRequest, 'tokenId'> {
 	collectibleId: bigint;
 	config: SdkConfig;
 	sort?: Array<SortBy>;

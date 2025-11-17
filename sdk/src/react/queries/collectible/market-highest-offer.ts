@@ -8,8 +8,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchHighestOfferParams
-	extends Omit<GetHighestPriceOfferForCollectibleRequest, 'chainId'> {
-	chainId: number;
+	extends GetHighestPriceOfferForCollectibleRequest {
 	config: SdkConfig;
 }
 

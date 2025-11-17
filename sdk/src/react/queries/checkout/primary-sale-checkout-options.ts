@@ -9,8 +9,7 @@ import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchPrimarySaleCheckoutOptionsParams
-	extends Omit<CheckoutOptionsSalesContractRequest, 'chainId' | 'wallet'> {
-	chainId: number;
+	extends Omit<CheckoutOptionsSalesContractRequest, 'wallet'> {
 	walletAddress: Address;
 	config: SdkConfig;
 }

@@ -9,8 +9,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
-	extends Omit<GetLowestPriceListingForCollectibleRequest, 'chainId'> {
-	chainId: number;
+	extends GetHighestPriceOfferForCollectibleRequest {
 	config: SdkConfig;
 }
 

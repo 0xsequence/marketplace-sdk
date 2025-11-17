@@ -11,9 +11,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectibleActivitiesParams
-	extends Omit<ListCollectibleActivitiesRequest, 'chainId' | 'page'> {
-	chainId: number;
-	collectionAddress: Address;
+	extends Omit<ListCollectibleActivitiesRequest, 'page'> {
 	page?: number;
 	pageSize?: number;
 	sort?: SortBy[];
