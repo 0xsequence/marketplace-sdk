@@ -16,7 +16,7 @@ import "../../../../abi-D6HdxcvI.js";
 import "../../../../token-69Pf5v_7.js";
 import "../../../../utils-BfcOcwTy.js";
 import "../../../../marketplace-logos-iE2QtvXi.js";
-import { at as useHighestOffer, ct as useCountOffersForCollectible, et as useLowestListing, it as useListItemsOrdersForCollection, lt as useCountListingsForCollectible, nt as useListListingsForCollectible, ot as useGetCountOfFilteredOrders, rt as useListItemsOrdersForCollectionPaginated, st as useFloorOrder, tt as useListOffersForCollectible, ut as useCountItemsOrdersForCollection } from "../../../../react-8bGp_8rT.js";
+import { at as useHighestOffer, ct as useCountOffersForCollectible, et as useLowestListing, it as useListItemsOrdersForCollection, lt as useCountListingsForCollectible, nt as useListListingsForCollectible, ot as useGetCountOfFilteredOrders, rt as useListItemsOrdersForCollectionPaginated, st as useFloorOrder, tt as useListOffersForCollectible, ut as useCountItemsOrdersForCollection } from "../../../../react-Br_tDlws.js";
 import "../../../../marketplaceConfig-DsDqJlRk.js";
 import "../../../../contracts-D6Q47gQz.js";
 import "../../../../collectibles-VYwcU_LM.js";

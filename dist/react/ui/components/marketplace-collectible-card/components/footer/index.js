@@ -16,7 +16,7 @@ import "../../../../../../abi-D6HdxcvI.js";
 import "../../../../../../token-69Pf5v_7.js";
 import "../../../../../../utils-BfcOcwTy.js";
 import "../../../../../../marketplace-logos-iE2QtvXi.js";
-import { n as Footer, r as NonTradableInventoryFooter } from "../../../../../../react-8bGp_8rT.js";
+import { n as Footer, r as NonTradableInventoryFooter } from "../../../../../../react-Br_tDlws.js";
 import "../../../../../../marketplaceConfig-DsDqJlRk.js";
 import "../../../../../../contracts-D6Q47gQz.js";
 import "../../../../../../collectibles-VYwcU_LM.js";

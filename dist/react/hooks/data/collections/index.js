@@ -16,7 +16,7 @@ import "../../../../abi-D6HdxcvI.js";
 import "../../../../token-69Pf5v_7.js";
 import "../../../../utils-BfcOcwTy.js";
 import "../../../../marketplace-logos-iE2QtvXi.js";
-import { Ct as useCollection, St as useCollectionActiveListingsCurrencies, _t as collectionDetailsPollingOptions, bt as useCollectionBalanceDetails, gt as useListCollectionActivities, ht as useListCollections, vt as useCollectionDetailsPolling, xt as useCollectionActiveOffersCurrencies, yt as useCollectionDetails } from "../../../../react-8bGp_8rT.js";
+import { Ct as useCollection, St as useCollectionActiveListingsCurrencies, _t as collectionDetailsPollingOptions, bt as useCollectionBalanceDetails, gt as useListCollectionActivities, ht as useListCollections, vt as useCollectionDetailsPolling, xt as useCollectionActiveOffersCurrencies, yt as useCollectionDetails } from "../../../../react-Br_tDlws.js";
 import "../../../../marketplaceConfig-DsDqJlRk.js";
 import "../../../../contracts-D6Q47gQz.js";
 import "../../../../collectibles-VYwcU_LM.js";
