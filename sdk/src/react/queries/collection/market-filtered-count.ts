@@ -25,18 +25,9 @@ export async function fetchGetCountOfFilteredOrders(
 		'chainId' | 'collectionAddress' | 'side' | 'config'
 	>,
 ) {
-	const { chainId, collectionAddress, config, side, filter } = params;
-
+	const { config, ...apiParams } = params;
 	const client = getMarketplaceClient(config);
-
-	const apiArgs: GetCountOfFilteredOrdersRequest = {
-		chainId,
-		collectionAddress,
-		side,
-		filter,
-	};
-
-	const result = await client.getCountOfFilteredOrders(apiArgs);
+	const result = await client.getCountOfFilteredOrders(apiParams);
 	return result.count;
 }
 

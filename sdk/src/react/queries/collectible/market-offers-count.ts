@@ -26,16 +26,9 @@ export async function fetchCountOffersForCollectible(
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
 ) {
-	const { chainId, collectionAddress, tokenId, config, filter } = params;
-
+	const { config, ...apiParams } = params;
 	const client = getMarketplaceClient(config);
-
-	const result = await client.getCountOfOffersForCollectible({
-		chainId,
-		collectionAddress,
-		tokenId,
-		filter,
-	});
+	const result = await client.getCountOfOffersForCollectible(apiParams);
 	return result.count;
 }
 

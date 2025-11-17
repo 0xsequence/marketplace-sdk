@@ -26,17 +26,9 @@ export async function fetchCountItemsOrdersForCollection(
 		'chainId' | 'collectionAddress' | 'side' | 'config'
 	>,
 ) {
-	const { chainId, collectionAddress, config, side } = params;
-
+	const { config, ...apiParams } = params;
 	const client = getMarketplaceClient(config);
-
-	const apiArgs: GetCountOfAllOrdersRequest = {
-		chainId,
-		collectionAddress,
-		side,
-	};
-
-	const result = await client.getCountOfAllOrders(apiArgs);
+	const result = await client.getCountOfAllOrders(apiParams);
 	return result.count;
 }
 

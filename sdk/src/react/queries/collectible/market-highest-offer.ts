@@ -18,14 +18,10 @@ export async function fetchHighestOffer(
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
 ) {
-	const { chainId, config, ...additionalApiParams } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const result = await marketplaceClient.getHighestPriceOfferForCollectible({
-		chainId,
-		...additionalApiParams,
-	});
+	const result =
+		await marketplaceClient.getHighestPriceOfferForCollectible(apiParams);
 	return result.order ?? null;
 }
 

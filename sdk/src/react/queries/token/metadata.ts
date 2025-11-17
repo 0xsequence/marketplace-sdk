@@ -24,15 +24,9 @@ export async function fetchListTokenMetadata(
 		'chainId' | 'contractAddress' | 'tokenIds' | 'config'
 	>,
 ) {
-	const { chainId, contractAddress, tokenIds, config } = params;
+	const { config, ...apiParams } = params;
 	const metadataClient = getMetadataClient(config);
-
-	const response = await metadataClient.getTokenMetadata({
-		chainId,
-		contractAddress,
-		tokenIds,
-	});
-
+	const response = await metadataClient.getTokenMetadata(apiParams);
 	return response.tokenMetadata;
 }
 

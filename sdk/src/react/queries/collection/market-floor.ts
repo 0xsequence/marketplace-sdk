@@ -17,16 +17,9 @@ export async function fetchFloorOrder(
 		'chainId' | 'collectionAddress' | 'config'
 	>,
 ) {
-	const { chainId, config, ...additionalApiParams } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const apiArgs: GetFloorOrderRequest = {
-		chainId,
-		...additionalApiParams,
-	};
-
-	const result = await marketplaceClient.getFloorOrder(apiArgs);
+	const result = await marketplaceClient.getFloorOrder(apiParams);
 	return result.collectible;
 }
 

@@ -27,14 +27,9 @@ export async function fetchPrimarySaleItemsCount(
 		'chainId' | 'primarySaleContractAddress' | 'config'
 	>,
 ): Promise<GetCountOfPrimarySaleItemsResponse> {
-	const { chainId, primarySaleContractAddress, filter, config } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-	return marketplaceClient.getCountOfPrimarySaleItems({
-		chainId,
-		primarySaleContractAddress,
-		filter,
-	});
+	return marketplaceClient.getCountOfPrimarySaleItems(apiParams);
 }
 
 export function getPrimarySaleItemsCountQueryKey(

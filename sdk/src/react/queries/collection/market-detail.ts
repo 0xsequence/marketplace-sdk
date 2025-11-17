@@ -18,16 +18,9 @@ export async function fetchMarketCollectionDetail(
 		'collectionAddress' | 'chainId' | 'config'
 	>,
 ) {
-	const { chainId, config, ...additionalApiParams } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const apiArgs: GetCollectionDetailRequest = {
-		chainId,
-		...additionalApiParams,
-	};
-
-	const result = await marketplaceClient.getCollectionDetail(apiArgs);
+	const result = await marketplaceClient.getCollectionDetail(apiParams);
 	return result.collection;
 }
 

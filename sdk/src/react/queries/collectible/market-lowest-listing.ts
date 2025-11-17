@@ -19,14 +19,10 @@ export async function fetchLowestListing(
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
 ): Promise<MarketplaceAPI.GetCollectibleLowestListingResponse['order'] | null> {
-	const { chainId, config, ...additionalApiParams } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const result = await marketplaceClient.getLowestPriceListingForCollectible({
-		chainId,
-		...additionalApiParams,
-	});
+	const result =
+		await marketplaceClient.getLowestPriceListingForCollectible(apiParams);
 	return result.order || null;
 }
 
