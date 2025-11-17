@@ -26,15 +26,8 @@ export interface FetchListCollectibleActivitiesParams
 export async function fetchListCollectibleActivities(
 	params: FetchListCollectibleActivitiesParams,
 ): Promise<ListCollectibleActivitiesResponse> {
-	const {
-		collectionAddress,
-		chainId,
-		config,
-		page,
-		pageSize,
-		sort,
-		...additionalApiParams
-	} = params;
+	const { chainId, config, page, pageSize, sort, ...additionalApiParams } =
+		params;
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const pageParams: Page | undefined =

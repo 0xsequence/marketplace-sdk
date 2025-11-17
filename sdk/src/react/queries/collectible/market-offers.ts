@@ -26,15 +26,8 @@ export interface FetchListOffersForCollectibleParams
 export async function fetchListOffersForCollectible(
 	params: FetchListOffersForCollectibleParams,
 ): Promise<ListCollectibleOffersResponse> {
-	const {
-		collectionAddress,
-		chainId,
-		collectibleId,
-		config,
-		sort,
-		page,
-		...additionalApiParams
-	} = params;
+	const { chainId, collectibleId, config, sort, page, ...additionalApiParams } =
+		params;
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const finalSort = sort || (page && 'sort' in page ? page.sort : undefined);

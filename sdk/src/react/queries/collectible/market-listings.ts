@@ -23,13 +23,7 @@ export interface FetchListListingsForCollectibleParams
 export async function fetchListListingsForCollectible(
 	params: FetchListListingsForCollectibleParams,
 ): Promise<ListCollectibleListingsResponse> {
-	const {
-		collectionAddress,
-		chainId,
-		collectibleId,
-		config,
-		...additionalApiParams
-	} = params;
+	const { chainId, collectibleId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
 	return await marketplaceClient.listListingsForCollectible({
