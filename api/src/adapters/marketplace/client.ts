@@ -253,9 +253,10 @@ export type ListOffersForCollectibleRequest = Omit<
 
 export type ListOrdersWithCollectiblesRequest = Omit<
 	Gen.ListOrdersWithCollectiblesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: Address;
 };
 
 export type GetFloorOrderRequest = Omit<
@@ -347,16 +348,18 @@ export type GetCountOfOffersForCollectibleRequest = Omit<
 
 export type GetCountOfFilteredOrdersRequest = Omit<
 	Gen.GetCountOfFilteredOrdersRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: Address;
 };
 
 export type GetCountOfAllOrdersRequest = Omit<
 	Gen.GetCountOfAllOrdersRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: Address;
 };
 
 export type CheckoutOptionsSalesContractRequest = Omit<
@@ -565,8 +568,8 @@ export class MarketplaceClient {
 			this.client.listOffersForCollectible(req),
 		);
 
-		// Order methods (chainId only)
-		this.listOrdersWithCollectibles = wrapChainId((req) =>
+		// Order methods (chainId + contractAddress)
+		this.listOrdersWithCollectibles = wrapCollectionAddress((req) =>
 			this.client.listOrdersWithCollectibles(req),
 		);
 		this.getFloorOrder = wrapCollectionAddress((req) =>
@@ -604,10 +607,10 @@ export class MarketplaceClient {
 		this.getCountOfOffersForCollectible = wrapCollectionAddress((req) =>
 			this.client.getCountOfOffersForCollectible(req),
 		);
-		this.getCountOfFilteredOrders = wrapChainId((req) =>
+		this.getCountOfFilteredOrders = wrapCollectionAddress((req) =>
 			this.client.getCountOfFilteredOrders(req),
 		);
-		this.getCountOfAllOrders = wrapChainId((req) =>
+		this.getCountOfAllOrders = wrapCollectionAddress((req) =>
 			this.client.getCountOfAllOrders(req),
 		);
 
