@@ -44,8 +44,23 @@ export function toTokenMetadata(
 ): Normalized.TokenMetadata {
 	return spreadWith(raw, {
 		tokenId: normalizeTokenId(raw.tokenId),
-		attributes: raw.attributes as any, // Raw API attributes are more flexible
+		// biome-ignore lint/suspicious/noExplicitAny: Raw API attributes are more flexible than normalized type
+		attributes: raw.attributes as any,
 	});
+}
+
+/**
+ * Transform raw API NativeTokenBalance to normalized NativeTokenBalance
+ */
+export function toNativeTokenBalance(
+	raw: IndexerGen.NativeTokenBalance,
+): Normalized.NativeTokenBalance {
+	return {
+		accountAddress: raw.accountAddress as Address,
+		chainId: normalizeChainId(raw.chainId),
+		balance: BigInt(raw.balance),
+		errorReason: raw.errorReason,
+	};
 }
 
 /**
@@ -54,7 +69,9 @@ export function toTokenMetadata(
 export function toTokenBalance(
 	raw: IndexerGen.TokenBalance,
 ): Normalized.TokenBalance {
-	return spreadWith(raw, {
+	// biome-ignore lint/correctness/noUnusedVariables: Destructuring to exclude raw tokenID field
+	const { tokenID, ...rest } = raw;
+	return spreadWith(rest, {
 		contractAddress: raw.contractAddress as Address,
 		accountAddress: raw.accountAddress as Address,
 		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n, // Note: uppercase "ID" in API
@@ -182,12 +199,18 @@ export function toGetTokenIDRangesResponse(
 // ============================================================================
 
 /**
- * Transform normalized GetTokenBalancesRequest to API request (pass-through)
+ * Transform normalized GetTokenBalancesRequest to API request
+ * Converts tokenId (bigint) → tokenID (string)
  */
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
-	return req;
+	const { tokenId, ...rest } = req;
+	return {
+		...rest,
+		// Convert tokenId (bigint) → tokenID (string) for API
+		...(tokenId !== undefined && { tokenID: tokenId.toString() }),
+	};
 }
 
 /**

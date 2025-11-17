@@ -49,6 +49,7 @@ export interface Marketplace {
 }
 
 export interface MarketplaceSettings {
+	// biome-ignore lint/suspicious/noExplicitAny: Style object accepts arbitrary CSS properties
 	style: { [key: string]: any };
 	publisherId: string;
 	title: string;

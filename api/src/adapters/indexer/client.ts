@@ -26,11 +26,13 @@ export class IndexerClient {
 
 	/**
 	 * Get token balances for an account with normalized types (bigint)
+	 * Accepts tokenId as bigint, transforms to tokenID string for API
 	 */
 	async getTokenBalances(
-		args: IndexerGen.GetTokenBalancesArgs,
+		args: Normalized.GetTokenBalancesRequest,
 	): Promise<Normalized.GetTokenBalancesResponse> {
-		const rawResponse = await this.client.getTokenBalances(args);
+		const apiArgs = transforms.toGetTokenBalancesArgs(args);
+		const rawResponse = await this.client.getTokenBalances(apiArgs);
 		return transforms.toGetTokenBalancesResponse(rawResponse);
 	}
 

@@ -148,6 +148,7 @@ export interface Page {
 export interface GetTokenBalancesRequest {
 	accountAddress: Address;
 	contractAddress?: Address;
+	tokenId?: TokenId; // NORMALIZED: bigint (API expects tokenID: string)
 	includeMetadata?: boolean;
 	metadataOptions?: {
 		verifiedOnly?: boolean;
@@ -208,8 +209,19 @@ export interface GetTokenIDRangesResponse {
 	ranges: TokenIDRange[];
 }
 
+/**
+ * NORMALIZED: Native token balance (e.g., ETH, MATIC)
+ * Source: IndexerAPI.NativeTokenBalance with normalized types
+ */
+export interface NativeTokenBalance {
+	accountAddress: Address;
+	chainId: ChainId; // NORMALIZED: number (API is number)
+	balance: Amount; // NORMALIZED: bigint (API is string)
+	errorReason?: string;
+}
+
 export interface GetTokenBalancesDetailsResponse {
 	page: Page;
-	nativeBalances: Array<any>; // TODO: Add NativeTokenBalance type
+	nativeBalances: Array<NativeTokenBalance>;
 	balances: Array<TokenBalance>;
 }

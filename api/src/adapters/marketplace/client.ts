@@ -8,15 +8,14 @@
 
 import type { ContractType } from '@0xsequence/indexer';
 import type { ChainId, TokenId } from '../../types/primitives';
+import {
+	chainIdToString,
+	passthrough,
+	wrapChainId,
+	wrapWithTransform,
+} from '../../utils/client-proxy';
 import * as Gen from './marketplace.gen';
 import type { Step } from './types';
-
-/**
- * Convert chainId from number to string for API requests
- */
-function chainIdToString(chainId: ChainId): string {
-	return chainId.toString();
-}
 
 /**
  * SDK-facing CheckoutOptionsItem type with bigint tokenId
@@ -358,375 +357,253 @@ export type GetOrdersRequest = Omit<Gen.GetOrdersRequest, 'chainId'> & {
  * Wrapped Marketplace Client
  *
  * Wraps the raw Marketplace client with methods that accept normalized types (number chainId).
- * Automatically converts chainId from number to string for API calls.
- * Uses composition rather than inheritance to avoid type conflicts.
+ * Uses proxy utilities to automatically convert chainId from number to string for API calls.
+ * Methods are created using wrapper functions to eliminate repetitive conversion code.
  */
 export class MarketplaceClient {
 	private client: Gen.Marketplace;
 	public queryKey: Gen.Marketplace['queryKey'];
 
+	// Transaction generation methods (with custom transformations)
+	public readonly generateListingTransaction: (
+		req: GenerateListingTransactionRequest,
+	) => Promise<GenerateListingTransactionResponse>;
+	public readonly generateOfferTransaction: (
+		req: GenerateOfferTransactionRequest,
+	) => Promise<GenerateOfferTransactionResponse>;
+	public readonly generateSellTransaction: (
+		req: GenerateSellTransactionRequest,
+	) => Promise<GenerateSellTransactionResponse>;
+	public readonly generateCancelTransaction: (
+		req: GenerateCancelTransactionRequest,
+	) => Promise<GenerateCancelTransactionResponse>;
+	public readonly generateBuyTransaction: (
+		req: GenerateBuyTransactionRequest,
+	) => Promise<GenerateBuyTransactionResponse>;
+
+	// Collection and currency methods (chainId only)
+	public readonly getCollectionDetail: (
+		req: GetCollectionDetailRequest,
+	) => Promise<Gen.GetCollectionDetailResponse>;
+	public readonly listCurrencies: (
+		req: ListCurrenciesRequest,
+	) => Promise<Gen.ListCurrenciesResponse>;
+
+	// Collectible methods (chainId + optional tokenId)
+	public readonly getCollectible: (
+		req: GetCollectibleRequest,
+	) => Promise<Gen.GetCollectibleResponse>;
+	public readonly getLowestPriceListingForCollectible: (
+		req: GetLowestPriceListingForCollectibleRequest,
+	) => Promise<Gen.GetCollectibleLowestListingResponse>;
+	public readonly getHighestPriceOfferForCollectible: (
+		req: GetHighestPriceOfferForCollectibleRequest,
+	) => Promise<Gen.GetCollectibleHighestOfferResponse>;
+	public readonly listListingsForCollectible: (
+		req: ListListingsForCollectibleRequest,
+	) => Promise<Gen.ListCollectibleListingsResponse>;
+	public readonly listOffersForCollectible: (
+		req: ListOffersForCollectibleRequest,
+	) => Promise<Gen.ListCollectibleOffersResponse>;
+
+	// Order methods (chainId only)
+	public readonly listOrdersWithCollectibles: (
+		req: ListOrdersWithCollectiblesRequest,
+	) => Promise<Gen.ListOrdersWithCollectiblesResponse>;
+	public readonly getFloorOrder: (
+		req: GetFloorOrderRequest,
+	) => Promise<Gen.GetFloorOrderResponse>;
+	public readonly getOrders: (
+		req: GetOrdersRequest,
+	) => Promise<Gen.GetOrdersResponse>;
+
+	// List methods (chainId only)
+	public readonly listCollectibles: (
+		req: ListCollectiblesRequest,
+	) => Promise<Gen.ListCollectiblesResponse>;
+	public readonly listCollectibleActivities: (
+		req: ListCollectibleActivitiesRequest,
+	) => Promise<Gen.ListCollectibleActivitiesResponse>;
+	public readonly listCollectionActivities: (
+		req: ListCollectionActivitiesRequest,
+	) => Promise<Gen.ListCollectionActivitiesResponse>;
+	public readonly listPrimarySaleItems: (
+		req: ListPrimarySaleItemsRequest,
+	) => Promise<Gen.ListPrimarySaleItemsResponse>;
+
+	// Count methods (chainId + optional tokenId)
+	public readonly getCountOfPrimarySaleItems: (
+		req: GetCountOfPrimarySaleItemsRequest,
+	) => Promise<Gen.GetCountOfPrimarySaleItemsResponse>;
+	public readonly getCountOfFilteredCollectibles: (
+		req: GetCountOfFilteredCollectiblesRequest,
+	) => Promise<Gen.GetCountOfFilteredCollectiblesResponse>;
+	public readonly getCountOfAllCollectibles: (
+		req: GetCountOfAllCollectiblesRequest,
+	) => Promise<Gen.GetCountOfAllCollectiblesResponse>;
+	public readonly getCountOfListingsForCollectible: (
+		req: GetCountOfListingsForCollectibleRequest,
+	) => Promise<Gen.GetCountOfListingsForCollectibleResponse>;
+	public readonly getCountOfOffersForCollectible: (
+		req: GetCountOfOffersForCollectibleRequest,
+	) => Promise<Gen.GetCountOfOffersForCollectibleResponse>;
+	public readonly getCountOfFilteredOrders: (
+		req: GetCountOfFilteredOrdersRequest,
+	) => Promise<Gen.GetCountOfFilteredOrdersResponse>;
+	public readonly getCountOfAllOrders: (
+		req: GetCountOfAllOrdersRequest,
+	) => Promise<Gen.GetCountOfAllOrdersResponse>;
+
+	// Checkout methods (chainId + optional items with bigint tokenId)
+	public readonly checkoutOptionsMarketplace: (
+		req: CheckoutOptionsMarketplaceRequest,
+	) => Promise<Gen.CheckoutOptionsMarketplaceResponse>;
+	public readonly checkoutOptionsSalesContract: (
+		req: CheckoutOptionsSalesContractRequest,
+	) => Promise<Gen.CheckoutOptionsSalesContractResponse>;
+
+	// Passthrough methods (no chainId normalization)
+	public readonly execute: (
+		req: Gen.ExecuteRequest,
+	) => Promise<Gen.ExecuteResponse>;
+
 	constructor(hostname: string, fetch: typeof globalThis.fetch) {
 		this.client = new Gen.Marketplace(hostname, fetch);
-
-		// Expose queryKey for React Query integration
-		// Note: QueryKeys will have string chainId, but that's okay for cache keys
 		this.queryKey = this.client.queryKey;
-	}
 
-	/**
-	 * Generate listing transaction with normalized chainId (number) and bigint tokenId
-	 */
-	async generateListingTransaction(
-		req: GenerateListingTransactionRequest,
-	): Promise<GenerateListingTransactionResponse> {
-		return this.client.generateListingTransaction({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			// Cast ContractType - marketplace API accepts subset of indexer's ContractType
-			contractType: req.contractType as Gen.ContractType,
-			listing: transformCreateReq(req.listing),
-		}) as Promise<GenerateListingTransactionResponse>;
-	}
+		// Transaction generation methods (require custom transformations)
+		this.generateListingTransaction = wrapWithTransform(
+			(req) => this.client.generateListingTransaction(req),
+			(req: GenerateListingTransactionRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractType: req.contractType as Gen.ContractType,
+				listing: transformCreateReq(req.listing),
+			}),
+		) as (
+			req: GenerateListingTransactionRequest,
+		) => Promise<GenerateListingTransactionResponse>;
 
-	/**
-	 * Generate offer transaction with normalized chainId (number) and bigint tokenId
-	 */
-	async generateOfferTransaction(
-		req: GenerateOfferTransactionRequest,
-	): Promise<GenerateOfferTransactionResponse> {
-		return this.client.generateOfferTransaction({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			// Cast ContractType - marketplace API accepts subset of indexer's ContractType
-			contractType: req.contractType as Gen.ContractType,
-			offer: transformCreateReq(req.offer),
-		}) as Promise<GenerateOfferTransactionResponse>;
-	}
+		this.generateOfferTransaction = wrapWithTransform(
+			(req) => this.client.generateOfferTransaction(req),
+			(req: GenerateOfferTransactionRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractType: req.contractType as Gen.ContractType,
+				offer: transformCreateReq(req.offer),
+			}),
+		) as (
+			req: GenerateOfferTransactionRequest,
+		) => Promise<GenerateOfferTransactionResponse>;
 
-	/**
-	 * Generate sell transaction with normalized chainId (number) and bigint quantity
-	 */
-	async generateSellTransaction(
-		req: GenerateSellTransactionRequest,
-	): Promise<GenerateSellTransactionResponse> {
-		return this.client.generateSellTransaction({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			ordersData: req.ordersData.map(transformOrderData),
-		}) as Promise<GenerateSellTransactionResponse>;
-	}
+		this.generateSellTransaction = wrapWithTransform(
+			(req) => this.client.generateSellTransaction(req),
+			(req: GenerateSellTransactionRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				ordersData: req.ordersData.map(transformOrderData),
+			}),
+		) as (
+			req: GenerateSellTransactionRequest,
+		) => Promise<GenerateSellTransactionResponse>;
 
-	/**
-	 * Generate cancel transaction with normalized chainId (number)
-	 */
-	async generateCancelTransaction(
-		req: GenerateCancelTransactionRequest,
-	): Promise<GenerateCancelTransactionResponse> {
-		return this.client.generateCancelTransaction({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		}) as Promise<GenerateCancelTransactionResponse>;
-	}
+		this.generateCancelTransaction = wrapChainId((req) =>
+			this.client.generateCancelTransaction(req),
+		) as (
+			req: GenerateCancelTransactionRequest,
+		) => Promise<GenerateCancelTransactionResponse>;
 
-	/**
-	 * Generate buy transaction with normalized chainId (number)
-	 */
-	async generateBuyTransaction(
-		req: GenerateBuyTransactionRequest,
-	): Promise<GenerateBuyTransactionResponse> {
-		return this.client.generateBuyTransaction({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			ordersData: req.ordersData.map(transformOrderData),
-		}) as Promise<GenerateBuyTransactionResponse>;
-	}
+		this.generateBuyTransaction = wrapWithTransform(
+			(req) => this.client.generateBuyTransaction(req),
+			(req: GenerateBuyTransactionRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				ordersData: req.ordersData.map(transformOrderData),
+			}),
+		) as (
+			req: GenerateBuyTransactionRequest,
+		) => Promise<GenerateBuyTransactionResponse>;
 
-	/**
-	 * Get collection detail with normalized chainId (number)
-	 */
-	async getCollectionDetail(
-		req: GetCollectionDetailRequest,
-	): Promise<Gen.GetCollectionDetailResponse> {
-		return this.client.getCollectionDetail({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
+		// Collection and currency methods (chainId only)
+		this.getCollectionDetail = wrapChainId((req) =>
+			this.client.getCollectionDetail(req),
+		);
+		this.listCurrencies = wrapChainId((req) => this.client.listCurrencies(req));
 
-	/**
-	 * List currencies with normalized chainId (number)
-	 */
-	async listCurrencies(
-		req: ListCurrenciesRequest,
-	): Promise<Gen.ListCurrenciesResponse> {
-		return this.client.listCurrencies({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
+		// Collectible methods (chainId + tokenId passthrough since already bigint)
+		this.getCollectible = wrapChainId((req) => this.client.getCollectible(req));
+		this.getLowestPriceListingForCollectible = wrapChainId((req) =>
+			this.client.getLowestPriceListingForCollectible(req),
+		);
+		this.getHighestPriceOfferForCollectible = wrapChainId((req) =>
+			this.client.getHighestPriceOfferForCollectible(req),
+		);
+		this.listListingsForCollectible = wrapChainId((req) =>
+			this.client.listListingsForCollectible(req),
+		);
+		this.listOffersForCollectible = wrapChainId((req) =>
+			this.client.listOffersForCollectible(req),
+		);
 
-	/**
-	 * Get collectible with normalized chainId (number)
-	 */
-	async getCollectible(
-		req: GetCollectibleRequest,
-	): Promise<Gen.GetCollectibleResponse> {
-		return this.client.getCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
+		// Order methods (chainId only)
+		this.listOrdersWithCollectibles = wrapChainId((req) =>
+			this.client.listOrdersWithCollectibles(req),
+		);
+		this.getFloorOrder = wrapChainId((req) => this.client.getFloorOrder(req));
+		this.getOrders = wrapChainId((req) => this.client.getOrders(req));
 
-	/**
-	 * Get lowest price listing for collectible with normalized chainId (number)
-	 */
-	async getLowestPriceListingForCollectible(
-		req: GetLowestPriceListingForCollectibleRequest,
-	): Promise<Gen.GetCollectibleLowestListingResponse> {
-		return this.client.getLowestPriceListingForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
+		// List methods (chainId only)
+		this.listCollectibles = wrapChainId((req) =>
+			this.client.listCollectibles(req),
+		);
+		this.listCollectibleActivities = wrapChainId((req) =>
+			this.client.listCollectibleActivities(req),
+		);
+		this.listCollectionActivities = wrapChainId((req) =>
+			this.client.listCollectionActivities(req),
+		);
+		this.listPrimarySaleItems = wrapChainId((req) =>
+			this.client.listPrimarySaleItems(req),
+		);
 
-	/**
-	 * Get highest price offer for collectible with normalized chainId (number)
-	 */
-	async getHighestPriceOfferForCollectible(
-		req: GetHighestPriceOfferForCollectibleRequest,
-	): Promise<Gen.GetCollectibleHighestOfferResponse> {
-		return this.client.getHighestPriceOfferForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
+		// Count methods (chainId + optional tokenId)
+		this.getCountOfPrimarySaleItems = wrapChainId((req) =>
+			this.client.getCountOfPrimarySaleItems(req),
+		);
+		this.getCountOfFilteredCollectibles = wrapChainId((req) =>
+			this.client.getCountOfFilteredCollectibles(req),
+		);
+		this.getCountOfAllCollectibles = wrapChainId((req) =>
+			this.client.getCountOfAllCollectibles(req),
+		);
+		this.getCountOfListingsForCollectible = wrapChainId((req) =>
+			this.client.getCountOfListingsForCollectible(req),
+		);
+		this.getCountOfOffersForCollectible = wrapChainId((req) =>
+			this.client.getCountOfOffersForCollectible(req),
+		);
+		this.getCountOfFilteredOrders = wrapChainId((req) =>
+			this.client.getCountOfFilteredOrders(req),
+		);
+		this.getCountOfAllOrders = wrapChainId((req) =>
+			this.client.getCountOfAllOrders(req),
+		);
 
-	/**
-	 * List listings for collectible with normalized chainId (number)
-	 */
-	async listListingsForCollectible(
-		req: ListListingsForCollectibleRequest,
-	): Promise<Gen.ListCollectibleListingsResponse> {
-		return this.client.listListingsForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
+		// Checkout methods
+		this.checkoutOptionsMarketplace = wrapChainId((req) =>
+			this.client.checkoutOptionsMarketplace(req),
+		);
+		this.checkoutOptionsSalesContract = wrapWithTransform(
+			(req) => this.client.checkoutOptionsSalesContract(req),
+			(req: CheckoutOptionsSalesContractRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				items: req.items.map(transformCheckoutItem),
+			}),
+		);
 
-	/**
-	 * List offers for collectible with normalized chainId (number)
-	 */
-	async listOffersForCollectible(
-		req: ListOffersForCollectibleRequest,
-	): Promise<Gen.ListCollectibleOffersResponse> {
-		return this.client.listOffersForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
-
-	/**
-	 * List orders with collectibles with normalized chainId (number)
-	 */
-	async listOrdersWithCollectibles(
-		req: ListOrdersWithCollectiblesRequest,
-	): Promise<Gen.ListOrdersWithCollectiblesResponse> {
-		return this.client.listOrdersWithCollectibles({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get floor order with normalized chainId (number)
-	 */
-	async getFloorOrder(
-		req: GetFloorOrderRequest,
-	): Promise<Gen.GetFloorOrderResponse> {
-		return this.client.getFloorOrder({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * List collectibles with normalized chainId (number)
-	 */
-	async listCollectibles(
-		req: ListCollectiblesRequest,
-	): Promise<Gen.ListCollectiblesResponse> {
-		return this.client.listCollectibles({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * List collectible activities with normalized chainId (number)
-	 */
-	async listCollectibleActivities(
-		req: ListCollectibleActivitiesRequest,
-	): Promise<Gen.ListCollectibleActivitiesResponse> {
-		return this.client.listCollectibleActivities({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * List collection activities with normalized chainId (number)
-	 */
-	async listCollectionActivities(
-		req: ListCollectionActivitiesRequest,
-	): Promise<Gen.ListCollectionActivitiesResponse> {
-		return this.client.listCollectionActivities({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * List primary sale items with normalized chainId (number)
-	 */
-	async listPrimarySaleItems(
-		req: ListPrimarySaleItemsRequest,
-	): Promise<Gen.ListPrimarySaleItemsResponse> {
-		return this.client.listPrimarySaleItems({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get count of primary sale items with normalized chainId (number)
-	 */
-	async getCountOfPrimarySaleItems(
-		req: GetCountOfPrimarySaleItemsRequest,
-	): Promise<Gen.GetCountOfPrimarySaleItemsResponse> {
-		return this.client.getCountOfPrimarySaleItems({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get checkout options for marketplace with normalized chainId (number)
-	 */
-	async checkoutOptionsMarketplace(
-		req: CheckoutOptionsMarketplaceRequest,
-	): Promise<Gen.CheckoutOptionsMarketplaceResponse> {
-		return this.client.checkoutOptionsMarketplace({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get count of filtered collectibles with normalized chainId (number)
-	 */
-	async getCountOfFilteredCollectibles(
-		req: GetCountOfFilteredCollectiblesRequest,
-	): Promise<Gen.GetCountOfFilteredCollectiblesResponse> {
-		return this.client.getCountOfFilteredCollectibles({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get count of all collectibles with normalized chainId (number)
-	 */
-	async getCountOfAllCollectibles(
-		req: GetCountOfAllCollectiblesRequest,
-	): Promise<Gen.GetCountOfAllCollectiblesResponse> {
-		return this.client.getCountOfAllCollectibles({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get count of listings for collectible with normalized chainId (number) and tokenId (bigint)
-	 */
-	async getCountOfListingsForCollectible(
-		req: GetCountOfListingsForCollectibleRequest,
-	): Promise<Gen.GetCountOfListingsForCollectibleResponse> {
-		return this.client.getCountOfListingsForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
-
-	/**
-	 * Get count of offers for collectible with normalized chainId (number)
-	 */
-	async getCountOfOffersForCollectible(
-		req: GetCountOfOffersForCollectibleRequest,
-	): Promise<Gen.GetCountOfOffersForCollectibleResponse> {
-		return this.client.getCountOfOffersForCollectible({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			tokenId: req.tokenId,
-		});
-	}
-
-	/**
-	 * Get count of filtered orders with normalized chainId (number)
-	 */
-	async getCountOfFilteredOrders(
-		req: GetCountOfFilteredOrdersRequest,
-	): Promise<Gen.GetCountOfFilteredOrdersResponse> {
-		return this.client.getCountOfFilteredOrders({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get count of all orders with normalized chainId (number)
-	 */
-	async getCountOfAllOrders(
-		req: GetCountOfAllOrdersRequest,
-	): Promise<Gen.GetCountOfAllOrdersResponse> {
-		return this.client.getCountOfAllOrders({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Get checkout options for sales contract with normalized chainId (number) and bigint tokenId
-	 */
-	async checkoutOptionsSalesContract(
-		req: CheckoutOptionsSalesContractRequest,
-	): Promise<Gen.CheckoutOptionsSalesContractResponse> {
-		return this.client.checkoutOptionsSalesContract({
-			...req,
-			chainId: chainIdToString(req.chainId),
-			items: req.items.map(transformCheckoutItem),
-		});
-	}
-
-	/**
-	 * Get orders with normalized chainId (number)
-	 */
-	async getOrders(req: GetOrdersRequest): Promise<Gen.GetOrdersResponse> {
-		return this.client.getOrders({
-			...req,
-			chainId: chainIdToString(req.chainId),
-		});
-	}
-
-	/**
-	 * Execute transaction step (pass-through, no chainId conversion needed)
-	 */
-	async execute(req: Gen.ExecuteRequest): Promise<Gen.ExecuteResponse> {
-		return this.client.execute(req);
+		// Passthrough methods
+		this.execute = passthrough((req) => this.client.execute(req));
 	}
 
 	/**
