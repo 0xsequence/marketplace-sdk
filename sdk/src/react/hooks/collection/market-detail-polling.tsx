@@ -1,3 +1,4 @@
+import type { Address } from '@0xsequence/marketplace-api';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import { CollectionStatus } from '../../_internal';
@@ -5,7 +6,7 @@ import { collectionMarketDetailQueryOptions } from '../../queries/collection/mar
 import { useConfig } from '../config/useConfig';
 
 export type UseCollectionMarketDetailPollingParams = {
-	collectionAddress: string;
+	collectionAddress: Address;
 	chainId: number;
 	query?: {
 		enabled?: boolean;

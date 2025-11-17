@@ -3,17 +3,20 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type { CheckoutOptionsItem, Optional } from '../../_internal';
+import type {
+	CheckoutOptionsItem,
+	Optional,
+	WithOptionalParams,
+} from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
 	type fetchPrimarySaleCheckoutOptions,
-	type PrimarySaleCheckoutOptionsQueryOptions,
 	primarySaleCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/primary-sale-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	PrimarySaleCheckoutOptionsQueryOptions,
+	WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
 	'config' | 'walletAddress'
 >;
 
@@ -90,10 +93,7 @@ export function usePrimarySaleCheckoutOptions(
 
 export { primarySaleCheckoutOptionsQueryOptions };
 
-export type {
-	FetchPrimarySaleCheckoutOptionsParams,
-	PrimarySaleCheckoutOptionsQueryOptions,
-};
+export type { FetchPrimarySaleCheckoutOptionsParams };
 
 // Legacy exports for backward compatibility
 export type UsePrimarySaleCheckoutOptionsArgs = {

@@ -3,16 +3,19 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type { MarketplaceKind, Optional } from '../../_internal';
+import type {
+	MarketplaceKind,
+	Optional,
+	WithOptionalParams,
+} from '../../_internal';
 import {
 	type FetchMarketCheckoutOptionsParams,
-	type MarketCheckoutOptionsQueryOptions,
 	marketCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/market-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UseMarketCheckoutOptionsParams = Optional<
-	MarketCheckoutOptionsQueryOptions,
+	WithOptionalParams<FetchMarketCheckoutOptionsParams>,
 	'config' | 'walletAddress'
 >;
 
@@ -78,10 +81,7 @@ export function useMarketCheckoutOptions(
 
 export { marketCheckoutOptionsQueryOptions };
 
-export type {
-	FetchMarketCheckoutOptionsParams,
-	MarketCheckoutOptionsQueryOptions,
-};
+export type { FetchMarketCheckoutOptionsParams };
 
 // Legacy export for backward compatibility
 export type UseMarketCheckoutOptionsArgs = {
