@@ -7,6 +7,7 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	type CollectibleCardProps,
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
@@ -79,33 +80,20 @@ export function MarketContent({
 		enabled: paginationMode === 'paged',
 	});
 
-	// Select the appropriate result based on pagination mode
-	const {
-		collectibleCards,
-		isLoading: collectiblesLoading,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-	} = paginationMode === 'paged'
-		? {
-				collectibleCards: pagedQueryResult.collectibleCards,
-				isLoading: pagedQueryResult.isLoading,
-				hasNextPage: pagedQueryResult.hasMore,
-				isFetchingNextPage: false,
-				fetchNextPage: undefined,
-			}
-		: infiniteQueryResult;
-
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
 	}
 
-	const renderItemContent = (index: number, overrideCard?: any) => {
-		const card = overrideCard ?? collectibleCards[index];
+	const renderItemContent = (
+		index: number,
+		overrideCard?: CollectibleCardProps,
+	) => {
+		const card = overrideCard;
 		if (!card) return null;
 
 		return (
 			<button
+				key={index}
 				onClick={() => handleCollectibleClick(card.tokenId)}
 				className={cn('w-full cursor-pointer')}
 				type="button"
@@ -119,26 +107,25 @@ export function MarketContent({
 		<PaginatedView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleCards={collectibleCards}
+			collectibleCards={pagedQueryResult.collectibleCards}
 			renderItemContent={renderItemContent}
-			isLoading={collectiblesLoading}
-			isFetchingNextPage={false}
+			isLoading={pagedQueryResult.isLoading}
 			page={page}
 			pageSize={pageSize}
 			onPageChange={setPage}
 			onPageSizeChange={setPageSize}
-			hasMore={hasNextPage}
+			hasMore={pagedQueryResult.hasMore}
 		/>
 	) : (
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleCards={collectibleCards}
-			isLoading={collectiblesLoading}
+			collectibleCards={infiniteQueryResult.collectibleCards}
+			isLoading={infiniteQueryResult.isLoading}
 			renderItemContent={renderItemContent}
-			hasNextPage={hasNextPage}
-			isFetchingNextPage={isFetchingNextPage}
-			fetchNextPage={fetchNextPage}
+			hasNextPage={infiniteQueryResult.hasNextPage}
+			isFetchingNextPage={infiniteQueryResult.isFetchingNextPage}
+			fetchNextPage={infiniteQueryResult.fetchNextPage}
 		/>
 	);
 }
