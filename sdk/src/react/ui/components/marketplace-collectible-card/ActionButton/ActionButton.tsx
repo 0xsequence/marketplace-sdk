@@ -24,7 +24,7 @@ type ActionButtonProps = {
 	salesContractAddress?: Address;
 	prioritizeOwnerActions?: boolean;
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	quantityDecimals?: number;

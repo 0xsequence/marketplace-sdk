@@ -31,7 +31,7 @@ export const ERC721ShopModal = ({
 	} = useERC721SalePaymentParams({
 		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress: collection.address,
-		price: shopData.salePrice?.amount || '0',
+		price: shopData.salePrice?.amount || 0n,
 		currencyAddress: shopData.salePrice?.currencyAddress || '',
 		enabled: true,
 		chainId,

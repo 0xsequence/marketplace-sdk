@@ -24,7 +24,7 @@ type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 	cardType: 'shop';
 	salesContractAddress: Address;
 	salePrice: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	lowestListing?: never;

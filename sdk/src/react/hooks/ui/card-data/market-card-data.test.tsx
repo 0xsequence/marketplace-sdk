@@ -164,8 +164,8 @@ describe('useMarketCardData', () => {
 		});
 
 		// Simulate clicking the collectible
-		result.current.collectibleCards[0].onCollectibleClick?.('1');
-		expect(onCollectibleClick).toHaveBeenCalledWith('1');
+		result.current.collectibleCards[0].onCollectibleClick?.(1n);
+		expect(onCollectibleClick).toHaveBeenCalledWith(1n);
 	});
 
 	it('should handle cannot perform action callback', async () => {

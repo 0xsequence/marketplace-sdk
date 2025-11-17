@@ -45,7 +45,7 @@ export const ERC1155ShopModal = ({
 		return (
 			<ERC1155QuantityModal
 				salePrice={{
-					amount: shopData.salePrice?.amount ?? '0',
+					amount: shopData.salePrice?.amount ?? 0n,
 					currencyAddress:
 						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
 				}}

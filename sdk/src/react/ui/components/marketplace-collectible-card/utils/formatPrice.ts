@@ -62,13 +62,13 @@ export type FormattedPrice = {
  * This pure data transformation function is easily testable and
  * separates business logic from UI concerns.
  *
- * @param amount - Raw amount string (in base units)
+ * @param amount - Raw amount bigint (in base units)
  * @param currency - Currency object with symbol and decimals
  * @returns FormattedPrice object for presentation layer
  *
  * @example
  * ```ts
- * const priceData = formatPriceData('1000000000000000000', {
+ * const priceData = formatPriceData(1000000000000000000n, {
  *   symbol: 'ETH',
  *   decimals: 18
  * });
@@ -76,10 +76,10 @@ export type FormattedPrice = {
  * ```
  */
 export function formatPriceData(
-	amount: string,
+	amount: bigint,
 	currency: Currency,
 ): FormattedPrice {
-	const isFree = amount === '0';
+	const isFree = amount === 0n;
 
 	if (isFree) {
 		return { type: 'free', displayText: 'Free', symbol: '' };

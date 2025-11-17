@@ -41,7 +41,10 @@ describe('NonOwnerActions', () => {
 				{...baseProps}
 				cardType="shop"
 				salesContractAddress="0x123"
-				salePrice={{ amount: '0.1', currencyAddress: zeroAddress }}
+				salePrice={{
+					amount: 100000000000000000n,
+					currencyAddress: zeroAddress,
+				}}
 			/>,
 		);
 		expect(screen.getByText('Buy now')).toBeInTheDocument();

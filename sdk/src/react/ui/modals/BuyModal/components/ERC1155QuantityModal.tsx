@@ -23,7 +23,7 @@ type ERC1155QuantityModalProps = {
 	quantityRemaining: bigint;
 	unlimitedSupply?: boolean;
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	chainId: number;
@@ -119,7 +119,7 @@ type TotalPriceProps = {
 	order?: Order;
 	quantityStr: string;
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	chainId: number;
@@ -174,7 +174,7 @@ const TotalPrice = ({
 	}
 
 	if (isShop && salePrice && currency) {
-		const totalPriceRaw = BigInt(salePrice.amount) * quantityForCalculation;
+		const totalPriceRaw = salePrice.amount * quantityForCalculation;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
 			currency.decimals,

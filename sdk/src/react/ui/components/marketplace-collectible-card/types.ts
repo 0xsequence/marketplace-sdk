@@ -41,7 +41,7 @@ type ShopCardSpecificProps = {
 	tokenMetadata: TokenMetadataType;
 	salePrice:
 		| {
-				amount: string;
+				amount: bigint;
 				currencyAddress: Address;
 		  }
 		| undefined;
@@ -57,7 +57,7 @@ type ShopCardSpecificProps = {
 type MarketCardSpecificProps = {
 	orderbookKind?: OrderbookKind;
 	collectible: CollectibleOrder | undefined;
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	onOfferClick?: ({
 		order,
 		e,

@@ -27,7 +27,7 @@ interface UseMarketCardDataProps {
 	searchText?: string;
 	showListedOnly?: boolean;
 	priceFilters?: PriceFilter[];
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;

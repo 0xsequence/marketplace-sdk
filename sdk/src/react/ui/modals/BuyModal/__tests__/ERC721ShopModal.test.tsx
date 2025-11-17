@@ -47,7 +47,7 @@ const mockShopData = {
 	salesContractAddress: '0x456',
 	items: [{ tokenId: 1n, quantity: 1n }],
 	salePrice: {
-		amount: '1000000000000000000',
+		amount: 1000000000000000000n,
 		currencyAddress: '0x0',
 	},
 };

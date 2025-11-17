@@ -40,7 +40,7 @@ const mockShopData = {
 		{ tokenId: 2n, quantity: 1n },
 	],
 	salePrice: {
-		amount: '1000000000000000000',
+		amount: 1000000000000000000n,
 		currencyAddress: USDC_ADDRESS,
 	},
 	checkoutOptions: {

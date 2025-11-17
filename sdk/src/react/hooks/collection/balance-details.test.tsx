@@ -1,7 +1,6 @@
 import { IndexerMocks } from '@0xsequence/marketplace-api';
 
-const { mockIndexerEndpoint, mockTokenBalance, mockTokenBalanceNormalized } =
-	IndexerMocks;
+const { mockIndexerEndpoint, mockTokenBalanceNormalized } = IndexerMocks;
 
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';

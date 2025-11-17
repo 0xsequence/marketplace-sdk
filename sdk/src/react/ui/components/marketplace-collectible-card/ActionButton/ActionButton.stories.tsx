@@ -243,7 +243,7 @@ export const ShopBuyAction: Story = {
 		cardType: 'shop',
 		salesContractAddress: MOCK_ADDRESS,
 		salePrice: {
-			amount: '1000000000000000000',
+			amount: 1000000000000000000n,
 			currencyAddress:
 				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},

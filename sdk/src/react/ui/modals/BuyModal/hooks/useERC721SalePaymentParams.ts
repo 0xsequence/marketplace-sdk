@@ -156,7 +156,7 @@ export const getERC721SalePaymentParams = async ({
 interface UseERC721SalePaymentParams {
 	salesContractAddress: string | undefined;
 	collectionAddress: string | undefined;
-	price: string | undefined;
+	price: bigint | undefined;
 	currencyAddress: string | undefined;
 	enabled: boolean;
 	checkoutProvider?: string;
@@ -200,7 +200,7 @@ export const useERC721SalePaymentParams = (
 						address,
 						salesContractAddress,
 						collectionAddress,
-						price: BigInt(price),
+						price,
 						currencyAddress,
 						callbacks: {
 							onSuccess,

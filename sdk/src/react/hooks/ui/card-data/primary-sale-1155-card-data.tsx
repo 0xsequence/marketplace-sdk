@@ -60,7 +60,7 @@ export function usePrimarySale1155CardData({
 		const { metadata, primarySaleItem: saleData } = item;
 
 		const salePrice = {
-			amount: saleData?.priceAmount?.toString() || '',
+			amount: saleData?.priceAmount || 0n,
 			currencyAddress: (saleData?.currencyAddress ||
 				paymentToken ||
 				'0x') as Address,

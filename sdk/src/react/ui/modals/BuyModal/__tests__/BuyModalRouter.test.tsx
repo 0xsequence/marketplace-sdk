@@ -173,7 +173,7 @@ const mockShopData = {
 	salesContractAddress: '0x456' as `0x${string}`,
 	items: [{ tokenId: 1n, quantity: 1n } as any],
 	salePrice: {
-		amount: '1000000000000000000',
+		amount: 1000000000000000000n,
 		currencyAddress:
 			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	},
@@ -314,7 +314,7 @@ describe('BuyModalRouter', () => {
 					quantityDecimals: 0,
 					quantityRemaining: 10n,
 					salePrice: {
-						amount: '1000000000000000000',
+						amount: 1000000000000000000n,
 						currencyAddress: '0x0' as `0x${string}`,
 					},
 					cardType: 'shop',
@@ -356,7 +356,7 @@ describe('BuyModalRouter', () => {
 					quantityDecimals: 0,
 					quantityRemaining: 10n,
 					salePrice: {
-						amount: '1000000000000000000',
+						amount: 1000000000000000000n,
 						currencyAddress: '0x0' as `0x${string}`,
 					},
 					cardType: 'shop',
@@ -397,7 +397,7 @@ describe('BuyModalRouter', () => {
 					quantityDecimals: 0,
 					quantityRemaining: 10n,
 					salePrice: {
-						amount: '1000000000000000000',
+						amount: 1000000000000000000n,
 						currencyAddress: '0x0' as `0x${string}`,
 					},
 					cardType: 'shop',
@@ -501,7 +501,7 @@ describe('BuyModalRouter', () => {
 					quantityDecimals: 0,
 					quantityRemaining: 10n,
 					salePrice: {
-						amount: '1000000000000000000',
+						amount: 1000000000000000000n,
 						currencyAddress: '0x0' as `0x${string}`,
 					},
 					cardType: 'shop',

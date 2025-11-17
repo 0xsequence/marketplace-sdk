@@ -124,7 +124,7 @@ export function usePrimarySale721CardData({
 			const { metadata, primarySaleItem } = item;
 
 			const salePrice = {
-				amount: primarySaleItem.priceAmount?.toString(),
+				amount: primarySaleItem.priceAmount || 0n,
 				currencyAddress: primarySaleItem.currencyAddress as Address,
 			};
 
@@ -177,7 +177,7 @@ export function usePrimarySale721CardData({
 			cardLoading: saleDetailsLoading,
 			salesContractAddress: salesContractAddress,
 			salePrice: {
-				amount: '0',
+				amount: 0n,
 				currencyAddress: '0x0000000000000000000000000000000000000000',
 			},
 			quantityInitial: undefined,

@@ -51,7 +51,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 	quantityDecimals: number;
 	quantityRemaining: bigint;
 	salePrice: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	unlimitedSupply?: boolean;

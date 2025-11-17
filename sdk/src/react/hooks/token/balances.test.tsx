@@ -4,7 +4,7 @@ import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 
-const { mockTokenBalance, mockTokenBalanceNormalized } = IndexerMocks;
+const { mockTokenBalanceNormalized } = IndexerMocks;
 
 import { useTokenBalances } from './balances';
 

@@ -1,7 +1,6 @@
 import { MetadataMocks } from '@0xsequence/marketplace-api';
 
-const { mockMetadataEndpoint, mockTokenMetadata, mockTokenMetadataNormalized } =
-	MetadataMocks;
+const { mockMetadataEndpoint, mockTokenMetadataNormalized } = MetadataMocks;
 
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
