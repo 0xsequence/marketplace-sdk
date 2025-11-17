@@ -1,24 +1,27 @@
-import type { Address } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
+import type { Address, GetContractInfoArgs } from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	getMetadataClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchCollectionParams {
-	chainId: number;
+export interface FetchCollectionParams extends GetContractInfoArgs {
 	collectionAddress: Address;
-	config: SdkConfig;
-	query?: StandardQueryOptions;
 }
+
+export type CollectionQueryOptions = SdkQueryParams<FetchCollectionParams>;
 
 /**
  * Fetches collection information from the metadata API
  */
-export async function fetchCollection(params: FetchCollectionParams) {
+export async function fetchCollection(
+	params: WithRequired<
+		CollectionQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+) {
 	const { chainId, collectionAddress, config } = params;
 
 	const metadataClient = getMetadataClient(config);
@@ -30,8 +33,6 @@ export async function fetchCollection(params: FetchCollectionParams) {
 
 	return result.contractInfo;
 }
-
-export type CollectionQueryOptions = WithOptionalParams<FetchCollectionParams>;
 
 export function getCollectionQueryKey(params: CollectionQueryOptions) {
 	return createCollectionQueryKey('metadata', {

@@ -5,13 +5,12 @@ import type {
 	SearchTokenMetadataReturn,
 } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
 import {
 	getMetadataClient,
 	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchSearchTokenMetadataParams {
@@ -19,14 +18,19 @@ export interface FetchSearchTokenMetadataParams {
 	collectionAddress: string;
 	filter?: Filter;
 	page?: Page;
-	config: SdkConfig;
 }
+
+export type SearchTokenMetadataQueryOptions =
+	SdkInfiniteQueryParams<FetchSearchTokenMetadataParams>;
 
 /**
  * Fetches token metadata from the metadata API using search filters
  */
 export async function fetchSearchTokenMetadata(
-	params: FetchSearchTokenMetadataParams,
+	params: WithRequired<
+		SearchTokenMetadataQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ): Promise<SearchTokenMetadataReturn> {
 	const { chainId, collectionAddress, filter, page, config } = params;
 	const metadataClient = getMetadataClient(config);
@@ -43,11 +47,6 @@ export async function fetchSearchTokenMetadata(
 		page: response.page,
 	};
 }
-
-export type SearchTokenMetadataQueryOptions =
-	ValuesOptional<FetchSearchTokenMetadataParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getSearchTokenMetadataQueryKey(
 	params: SearchTokenMetadataQueryOptions,

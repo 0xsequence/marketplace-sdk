@@ -1,32 +1,33 @@
 import type {
-	Address,
 	CollectiblesFilter,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
 } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCountOfCollectablesParams {
-	chainId: number;
-	collectionAddress: Address;
-	config: SdkConfig;
+export interface FetchCountOfCollectablesParams
+	extends GetCountOfAllCollectiblesRequest {
 	filter?: CollectiblesFilter;
 	side?: OrderSide;
-	query?: StandardQueryOptions;
 }
+
+export type CountOfCollectablesQueryOptions =
+	SdkQueryParams<FetchCountOfCollectablesParams>;
 
 /**
  * Fetches count of collectibles from the marketplace API
  */
 export async function fetchCountOfCollectables(
-	params: FetchCountOfCollectablesParams,
+	params: WithRequired<
+		CountOfCollectablesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ) {
 	const { collectionAddress, chainId, config, filter, side } = params;
 
@@ -52,9 +53,6 @@ export async function fetchCountOfCollectables(
 	const result = await client.getCountOfAllCollectibles(apiArgs);
 	return result.count;
 }
-
-export type CountOfCollectablesQueryOptions =
-	WithOptionalParams<FetchCountOfCollectablesParams>;
 
 /**
  * Query key structure: [resource, operation, params]

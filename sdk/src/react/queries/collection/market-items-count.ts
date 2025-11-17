@@ -1,29 +1,30 @@
 import type {
-	Address,
 	GetCountOfAllOrdersRequest,
 	OrderSide,
 } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCountItemsOrdersForCollectionParams {
-	chainId: number;
-	collectionAddress: Address;
-	config: SdkConfig;
+export interface FetchCountItemsOrdersForCollectionParams
+	extends GetCountOfAllOrdersRequest {
 	side: OrderSide;
-	query?: StandardQueryOptions;
 }
+
+export type CountItemsOrdersForCollectionQueryOptions =
+	SdkQueryParams<FetchCountItemsOrdersForCollectionParams>;
 
 /**
  * Fetches count of orders for a collection from the marketplace API
  */
 export async function fetchCountItemsOrdersForCollection(
-	params: FetchCountItemsOrdersForCollectionParams,
+	params: WithRequired<
+		CountItemsOrdersForCollectionQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 ) {
 	const { chainId, collectionAddress, config, side } = params;
 
@@ -38,9 +39,6 @@ export async function fetchCountItemsOrdersForCollection(
 	const result = await client.getCountOfAllOrders(apiArgs);
 	return result.count;
 }
-
-export type CountItemsOrdersForCollectionQueryOptions =
-	WithOptionalParams<FetchCountItemsOrdersForCollectionParams>;
 
 export function getCountItemsOrdersForCollectionQueryKey(
 	params: CountItemsOrdersForCollectionQueryOptions,

@@ -1,29 +1,33 @@
+import type {
+	ListPrimarySaleItemsRequest,
+	ListPrimarySaleItemsResponse,
+	Page,
+	PrimarySaleItemsFilter,
+} from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	getMarketplaceClient,
-	type ListPrimarySaleItemsRequest,
-	type ListPrimarySaleItemsResponse,
-	type Page,
-	type PrimarySaleItemsFilter,
-	type ValuesOptional,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchPrimarySaleItemsParams {
-	chainId: number;
-	primarySaleContractAddress: Address;
+export interface FetchPrimarySaleItemsParams
+	extends Omit<ListPrimarySaleItemsRequest, 'page'> {
 	filter?: PrimarySaleItemsFilter;
 	page?: Page;
-	config: SdkConfig;
 }
+
+export type ListPrimarySaleItemsQueryOptions =
+	SdkInfiniteQueryParams<FetchPrimarySaleItemsParams>;
 
 /**
  * Fetches primary sale items from the marketplace API
  */
 export async function fetchPrimarySaleItems(
-	params: FetchPrimarySaleItemsParams,
+	params: WithRequired<
+		ListPrimarySaleItemsQueryOptions,
+		'chainId' | 'primarySaleContractAddress' | 'config'
+	>,
 ): Promise<ListPrimarySaleItemsResponse> {
 	const { chainId, primarySaleContractAddress, filter, page, config } = params;
 
@@ -36,11 +40,6 @@ export async function fetchPrimarySaleItems(
 		page,
 	});
 }
-
-export type ListPrimarySaleItemsQueryOptions =
-	ValuesOptional<FetchPrimarySaleItemsParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getPrimarySaleItemsQueryKey(
 	params: ListPrimarySaleItemsQueryOptions,

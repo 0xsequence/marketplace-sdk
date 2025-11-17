@@ -1,26 +1,30 @@
-import type { Address, OrderFilter } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
+import type {
+	GetCountOfListingsForCollectibleRequest,
+	OrderFilter,
+} from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCountListingsForCollectibleParams {
-	chainId: number;
-	collectionAddress: Address;
-	tokenId: bigint;
-	config: SdkConfig;
+export interface FetchCountListingsForCollectibleParams
+	extends GetCountOfListingsForCollectibleRequest {
 	filter?: OrderFilter;
-	query?: StandardQueryOptions;
 }
+
+export type CountListingsForCollectibleQueryOptions =
+	SdkQueryParams<FetchCountListingsForCollectibleParams>;
 
 /**
  * Fetches count of listings for a collectible from the marketplace API
  */
 export async function fetchCountListingsForCollectible(
-	params: FetchCountListingsForCollectibleParams,
+	params: WithRequired<
+		CountListingsForCollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
 ) {
 	const { chainId, collectionAddress, tokenId, config, filter } = params;
 
@@ -34,9 +38,6 @@ export async function fetchCountListingsForCollectible(
 	});
 	return result.count;
 }
-
-export type CountListingsForCollectibleQueryOptions =
-	WithOptionalParams<FetchCountListingsForCollectibleParams>;
 
 export function getCountListingsForCollectibleQueryKey(
 	params: CountListingsForCollectibleQueryOptions,

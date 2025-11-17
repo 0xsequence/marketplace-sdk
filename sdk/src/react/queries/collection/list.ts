@@ -4,14 +4,14 @@ import type {
 	CardType,
 	MarketCollection,
 	MarketplaceConfig,
-	SdkConfig,
 	ShopCollection,
 } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
 	getMetadataClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
@@ -25,13 +25,20 @@ const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 export interface FetchListCollectionsParams {
 	cardType?: CardType;
 	marketplaceConfig: MarketplaceConfig;
-	config: SdkConfig;
 }
+
+export type ListCollectionsQueryOptions =
+	SdkQueryParams<FetchListCollectionsParams>;
 
 /**
  * Fetches collections from the metadata API with marketplace config filtering
  */
-export async function fetchListCollections(params: FetchListCollectionsParams) {
+export async function fetchListCollections(
+	params: WithRequired<
+		ListCollectionsQueryOptions,
+		'marketplaceConfig' | 'config'
+	>,
+) {
 	const { cardType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
@@ -109,9 +116,6 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 	return collectionsWithMetadata;
 }
 
-export type ListCollectionsQueryOptions =
-	WithOptionalParams<FetchListCollectionsParams>;
-
 export function getListCollectionsQueryKey(
 	params: ListCollectionsQueryOptions,
 ) {
@@ -141,21 +145,20 @@ export const listCollectionsOptions = ({
 	cardType,
 	marketplaceConfig,
 	config,
-}: {
-	cardType?: CardType;
+}: ListCollectionsQueryOptions & {
 	marketplaceConfig: MarketplaceConfig | undefined;
-	config: SdkConfig;
 }) => {
 	return queryOptions({
 		queryKey: ['collection', 'list', { cardType, marketplaceConfig, config }],
-		queryFn: marketplaceConfig
-			? () =>
-					fetchListCollections({
-						marketplaceConfig,
-						config,
-						cardType,
-					})
-			: skipToken,
-		enabled: Boolean(marketplaceConfig),
+		queryFn:
+			marketplaceConfig && config
+				? () =>
+						fetchListCollections({
+							marketplaceConfig,
+							config,
+							cardType,
+						})
+				: skipToken,
+		enabled: Boolean(marketplaceConfig && config),
 	});
 };

@@ -1,11 +1,10 @@
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getIndexerClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createCollectibleQueryKey } from './queryKeys';
 
 export interface FetchTokenBalancesParams {
@@ -13,9 +12,10 @@ export interface FetchTokenBalancesParams {
 	userAddress: Address;
 	chainId: number;
 	includeMetadata?: boolean;
-	config: SdkConfig;
-	query?: StandardQueryOptions;
 }
+
+export type TokenBalancesQueryOptions =
+	SdkQueryParams<FetchTokenBalancesParams>;
 
 /**
  * Fetches the token balances for a user
@@ -23,7 +23,12 @@ export interface FetchTokenBalancesParams {
  * @param params - Parameters for the API call
  * @returns The balance data
  */
-export async function fetchTokenBalances(params: FetchTokenBalancesParams) {
+export async function fetchTokenBalances(
+	params: WithRequired<
+		TokenBalancesQueryOptions,
+		'chainId' | 'collectionAddress' | 'userAddress' | 'config'
+	>,
+) {
 	const { chainId, userAddress, collectionAddress, includeMetadata, config } =
 		params;
 	const indexerClient = getIndexerClient(chainId, config);
@@ -38,9 +43,6 @@ export async function fetchTokenBalances(params: FetchTokenBalancesParams) {
 		})
 		.then((res) => res.balances || []);
 }
-
-export type TokenBalancesQueryOptions =
-	WithOptionalParams<FetchTokenBalancesParams>;
 
 export function getTokenBalancesQueryKey(params: TokenBalancesQueryOptions) {
 	const apiArgs = {

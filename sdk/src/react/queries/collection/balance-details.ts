@@ -1,10 +1,10 @@
 import type { Indexer } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getIndexerClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
@@ -17,14 +17,19 @@ export interface CollectionBalanceFilter {
 export interface FetchCollectionBalanceDetailsParams {
 	chainId: number;
 	filter: CollectionBalanceFilter;
-	config: SdkConfig;
 }
+
+export type CollectionBalanceDetailsQueryOptions =
+	SdkQueryParams<FetchCollectionBalanceDetailsParams>;
 
 /**
  * Fetches detailed balance information for multiple accounts from the Indexer API
  */
 export async function fetchCollectionBalanceDetails(
-	params: FetchCollectionBalanceDetailsParams,
+	params: WithRequired<
+		CollectionBalanceDetailsQueryOptions,
+		'chainId' | 'filter' | 'config'
+	>,
 ): Promise<Indexer.GetTokenBalancesDetailsResponse> {
 	const { chainId, filter, config } = params;
 
@@ -67,9 +72,6 @@ export async function fetchCollectionBalanceDetails(
 
 	return mergedResponse;
 }
-
-export type CollectionBalanceDetailsQueryOptions =
-	WithOptionalParams<FetchCollectionBalanceDetailsParams>;
 
 export function getCollectionBalanceDetailsQueryKey(
 	params: CollectionBalanceDetailsQueryOptions,

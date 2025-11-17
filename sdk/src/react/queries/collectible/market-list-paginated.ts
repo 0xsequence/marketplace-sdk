@@ -1,5 +1,5 @@
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import type {
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
@@ -7,26 +7,28 @@ import type {
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
 export interface FetchListCollectiblesPaginatedParams
-	extends Omit<
-		ListCollectiblesRequest,
-		'chainId' | 'contractAddress' | 'page'
-	> {
-	chainId: number;
+	extends Omit<ListCollectiblesRequest, 'page'> {
 	collectionAddress: Address;
 	page?: number;
 	pageSize?: number;
-	config: SdkConfig;
 }
+
+export type ListCollectiblesPaginatedQueryOptions =
+	SdkQueryParams<FetchListCollectiblesPaginatedParams>;
 
 /**
  * Fetches a list of collectibles with pagination support from the Marketplace API
  */
 export async function fetchListCollectiblesPaginated(
-	params: FetchListCollectiblesPaginatedParams,
+	params: WithRequired<
+		ListCollectiblesPaginatedQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 ): Promise<ListCollectiblesResponse> {
 	const {
 		collectionAddress,
@@ -51,15 +53,12 @@ export async function fetchListCollectiblesPaginated(
 	});
 }
 
-export type ListCollectiblesPaginatedQueryOptions =
-	WithOptionalParams<FetchListCollectiblesPaginatedParams>;
-
 /**
  * Query key structure: [resource, operation, params]
  * @example ['collectible', 'market-list-paginated', { chainId, contractAddress, side, filter, page }]
  */
 export function getListCollectiblesPaginatedQueryKey(
-	params: WithOptionalParams<FetchListCollectiblesPaginatedParams>,
+	params: ListCollectiblesPaginatedQueryOptions,
 ) {
 	return [
 		'collectible',

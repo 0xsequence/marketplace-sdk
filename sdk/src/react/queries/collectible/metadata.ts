@@ -2,27 +2,30 @@ import type {
 	Address,
 	GetTokenMetadataArgs,
 } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMetadataClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchCollectibleParams {
-	chainId: number;
+export interface FetchCollectibleParams extends GetTokenMetadataArgs {
 	collectionAddress: Address;
 	tokenId: bigint;
-	config: SdkConfig;
-	query?: StandardQueryOptions;
 }
+
+export type CollectibleQueryOptions = SdkQueryParams<FetchCollectibleParams>;
 
 /**
  * Fetches collectible metadata from the metadata API
  */
-export async function fetchCollectible(params: FetchCollectibleParams) {
+export async function fetchCollectible(
+	params: WithRequired<
+		CollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
+) {
 	const { tokenId, chainId, collectionAddress, config } = params;
 
 	const metadataClient = getMetadataClient(config);
@@ -37,9 +40,6 @@ export async function fetchCollectible(params: FetchCollectibleParams) {
 	return result.tokenMetadata[0];
 }
 
-export type CollectibleQueryOptions =
-	WithOptionalParams<FetchCollectibleParams>;
-
 /**
  * Query key structure: [resource, operation, params]
  * @example ['collectible', 'metadata', { chainId, contractAddress, tokenIds }]
@@ -48,7 +48,7 @@ export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
-		tokenIds: [params.tokenId!],
+		tokenIds: params.tokenId !== undefined ? [params.tokenId] : [],
 	};
 
 	return createCollectibleQueryKey('metadata', apiArgs);

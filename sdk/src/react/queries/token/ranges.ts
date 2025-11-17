@@ -1,24 +1,29 @@
 import type { Indexer } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getIndexerClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchGetTokenRangesParams {
 	chainId: number;
 	collectionAddress: Address;
-	config: SdkConfig;
 }
+
+export type GetTokenRangesQueryOptions =
+	SdkQueryParams<FetchGetTokenRangesParams>;
 
 /**
  * Fetches token ID ranges for a collection from the Indexer API
  */
 export async function fetchGetTokenRanges(
-	params: FetchGetTokenRangesParams,
+	params: WithRequired<
+		GetTokenRangesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ): Promise<Indexer.GetTokenIDRangesResponse> {
 	const { chainId, collectionAddress, config } = params;
 
@@ -34,9 +39,6 @@ export async function fetchGetTokenRanges(
 
 	return response;
 }
-
-export type GetTokenRangesQueryOptions =
-	WithOptionalParams<FetchGetTokenRangesParams>;
 
 export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 	const apiArgs = {

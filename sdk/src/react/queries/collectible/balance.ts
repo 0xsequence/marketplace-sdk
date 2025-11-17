@@ -1,11 +1,10 @@
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getIndexerClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createCollectibleQueryKey } from './queryKeys';
 
 export interface FetchBalanceOfCollectibleParams {
@@ -14,9 +13,10 @@ export interface FetchBalanceOfCollectibleParams {
 	userAddress: Address;
 	chainId: number;
 	includeMetadata?: boolean;
-	config: SdkConfig;
-	query?: StandardQueryOptions;
 }
+
+export type BalanceOfCollectibleQueryOptions =
+	SdkQueryParams<FetchBalanceOfCollectibleParams>;
 
 /**
  * Fetches the balance of a specific collectible for a user
@@ -25,7 +25,10 @@ export interface FetchBalanceOfCollectibleParams {
  * @returns The balance data
  */
 export async function fetchBalanceOfCollectible(
-	params: FetchBalanceOfCollectibleParams,
+	params: WithRequired<
+		BalanceOfCollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'userAddress' | 'config'
+	>,
 ) {
 	const {
 		chainId,
@@ -48,9 +51,6 @@ export async function fetchBalanceOfCollectible(
 		})
 		.then((res) => res.balances[0] || null);
 }
-
-export type BalanceOfCollectibleQueryOptions =
-	WithOptionalParams<FetchBalanceOfCollectibleParams>;
 
 /**
  * Query key structure: [resource, operation, params]

@@ -1,25 +1,31 @@
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
+import type {
+	GetCountOfPrimarySaleItemsRequest,
+	GetCountOfPrimarySaleItemsResponse,
+	PrimarySaleItemsFilter,
+} from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
-	type GetCountOfPrimarySaleItemsResponse,
 	getMarketplaceClient,
-	type PrimarySaleItemsFilter,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
-export interface FetchPrimarySaleItemsCountParams {
-	chainId: number;
-	primarySaleContractAddress: Address;
+export interface FetchPrimarySaleItemsCountParams
+	extends GetCountOfPrimarySaleItemsRequest {
 	filter?: PrimarySaleItemsFilter;
-	config: SdkConfig;
 }
+
+export type PrimarySaleItemsCountQueryOptions =
+	SdkQueryParams<FetchPrimarySaleItemsCountParams>;
 
 /**
  * Fetches the count of primary sale items from the marketplace API
  */
 export async function fetchPrimarySaleItemsCount(
-	params: FetchPrimarySaleItemsCountParams,
+	params: WithRequired<
+		PrimarySaleItemsCountQueryOptions,
+		'chainId' | 'primarySaleContractAddress' | 'config'
+	>,
 ): Promise<GetCountOfPrimarySaleItemsResponse> {
 	const { chainId, primarySaleContractAddress, filter, config } = params;
 
@@ -30,9 +36,6 @@ export async function fetchPrimarySaleItemsCount(
 		filter,
 	});
 }
-
-export type PrimarySaleItemsCountQueryOptions =
-	WithOptionalParams<FetchPrimarySaleItemsCountParams>;
 
 export function getPrimarySaleItemsCountQueryKey(
 	params: PrimarySaleItemsCountQueryOptions,

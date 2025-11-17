@@ -1,5 +1,5 @@
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
@@ -7,26 +7,28 @@ import type {
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
 export interface FetchListItemsOrdersForCollectionPaginatedParams
-	extends Omit<
-		ListOrdersWithCollectiblesRequest,
-		'chainId' | 'contractAddress' | 'page'
-	> {
-	chainId: number;
+	extends Omit<ListOrdersWithCollectiblesRequest, 'page'> {
 	collectionAddress: Address;
 	page?: number;
 	pageSize?: number;
-	config: SdkConfig;
 }
+
+export type ListItemsOrdersForCollectionPaginatedQueryOptions =
+	SdkQueryParams<FetchListItemsOrdersForCollectionPaginatedParams>;
 
 /**
  * Fetches a list of items orders for a collection with pagination support from the Marketplace API
  */
 export async function fetchListItemsOrdersForCollectionPaginated(
-	params: FetchListItemsOrdersForCollectionPaginatedParams,
+	params: WithRequired<
+		ListItemsOrdersForCollectionPaginatedQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 ): Promise<ListOrdersWithCollectiblesResponse> {
 	const {
 		collectionAddress,
@@ -52,9 +54,6 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 
 	return await marketplaceClient.listOrdersWithCollectibles(apiArgs);
 }
-
-export type ListItemsOrdersForCollectionPaginatedQueryOptions =
-	WithOptionalParams<FetchListItemsOrdersForCollectionPaginatedParams>;
 
 export function getListItemsOrdersForCollectionPaginatedQueryKey(
 	params: ListItemsOrdersForCollectionPaginatedQueryOptions,

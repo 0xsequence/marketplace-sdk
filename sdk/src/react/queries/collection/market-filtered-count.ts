@@ -1,28 +1,29 @@
 import type {
-	Address,
 	GetCountOfFilteredOrdersRequest,
 	OrderSide,
 	OrdersFilter,
 } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchGetCountOfFilteredOrdersParams {
-	chainId: number;
-	collectionAddress: Address;
-	config: SdkConfig;
+export interface FetchGetCountOfFilteredOrdersParams
+	extends GetCountOfFilteredOrdersRequest {
 	side: OrderSide;
 	filter?: OrdersFilter;
-	query?: StandardQueryOptions;
 }
 
+export type GetCountOfFilteredOrdersQueryOptions =
+	SdkQueryParams<FetchGetCountOfFilteredOrdersParams>;
+
 export async function fetchGetCountOfFilteredOrders(
-	params: FetchGetCountOfFilteredOrdersParams,
+	params: WithRequired<
+		GetCountOfFilteredOrdersQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 ) {
 	const { chainId, collectionAddress, config, side, filter } = params;
 
@@ -38,9 +39,6 @@ export async function fetchGetCountOfFilteredOrders(
 	const result = await client.getCountOfFilteredOrders(apiArgs);
 	return result.count;
 }
-
-export type GetCountOfFilteredOrdersQueryOptions =
-	WithOptionalParams<FetchGetCountOfFilteredOrdersParams>;
 
 export function getCountOfFilteredOrdersQueryKey(
 	params: GetCountOfFilteredOrdersQueryOptions,
