@@ -52,18 +52,22 @@ export const useCreateListing = ({
 		collectionConfig?.destinationMarketplace ??
 		OrderbookKind.sequence_marketplace_v2;
 
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			tokenId: listingInput.listing.tokenId,
-			collectionAddress,
-			currencyAddress: listingInput.listing.currencyAddress,
-			contractType: listingInput.contractType,
-			orderbook: orderbookKind,
-			query: {
-				enabled: !marketplaceIsLoading,
-			},
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		tokenId: listingInput.listing.tokenId,
+		collectionAddress,
+		currencyAddress: listingInput.listing.currencyAddress,
+		contractType: listingInput.contractType,
+		orderbook: orderbookKind,
+		query: {
+			enabled: !marketplaceIsLoading,
+		},
+	});
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
@@ -88,5 +92,7 @@ export const useCreateListing = ({
 		createListing,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

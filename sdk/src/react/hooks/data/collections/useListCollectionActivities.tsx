@@ -7,7 +7,7 @@ import {
 	type fetchListCollectionActivities,
 	type ListCollectionActivitiesQueryOptions,
 	listCollectionActivitiesQueryOptions,
-} from '../../../queries/listCollectionActivities';
+} from '../../../queries/collections/listCollectionActivities';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListCollectionActivitiesParams = Optional<

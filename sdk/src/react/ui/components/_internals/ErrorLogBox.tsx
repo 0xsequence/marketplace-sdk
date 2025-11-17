@@ -68,6 +68,7 @@ export const ErrorLogBox = ({
 												{error.stack}
 											</>
 										)}
+										{JSON.stringify(error, null, 2)}
 									</Text>
 								</div>
 							)}

@@ -5,7 +5,7 @@ import type { Optional } from '../../../_internal';
 import {
 	type ListPrimarySaleItemsQueryOptions,
 	listPrimarySaleItemsQueryOptions,
-} from '../../../queries/primarySaleItems';
+} from '../../../queries/primary-sales/primarySaleItems';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListPrimarySaleItemsParams = Optional<

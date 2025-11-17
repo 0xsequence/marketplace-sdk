@@ -15,6 +15,7 @@ import {
 	ERC1155_ABI,
 	ERC1155_SALES_CONTRACT_ABI_V0,
 	ERC1155_SALES_CONTRACT_ABI_V1,
+	MAIN_MODULE_ABI,
 	networkToWagmiChain,
 	SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1_ABI,
@@ -37,6 +38,7 @@ import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import { SeaportABI } from '../../abis/seaport';
 
 const ABIs = {
+	MAIN_MODULE: MAIN_MODULE_ABI,
 	ERC20: ERC20_ABI,
 	ERC721: ERC721_ABI,
 	ERC1155: ERC1155_ABI,

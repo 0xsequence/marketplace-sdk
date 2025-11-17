@@ -8,7 +8,7 @@ import {
 	type ConvertPriceToUSDReturn,
 	convertPriceToUSDQueryOptions,
 	type FetchConvertPriceToUSDParams,
-} from '../../queries/convertPriceToUSD';
+} from '../../queries/utils/convertPriceToUSD';
 import { useConfig } from '../config/useConfig';
 
 export type UseConvertPriceToUSDParams = Optional<

@@ -22,9 +22,11 @@ export function MarketCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
+	hideQuantitySelector,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
+	const lowestListing = collectible?.listing;
 
 	if (!collectibleMetadata) {
 		console.error('Collectible metadata is undefined');
@@ -66,15 +68,15 @@ export function MarketCard({
 			isShop={false}
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={handleKeyDown}
+			hideQuantitySelector={hideQuantitySelector}
 		>
 			<Footer
 				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
 				name={collectibleMetadata.name || ''}
 				type={collectionType}
 				onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 				highestOffer={highestOffer}
+				lowestListing={lowestListing}
 				balance={balance}
 				decimals={collectibleMetadata.decimals}
 				quantityInitial={
@@ -107,6 +109,7 @@ export function MarketCard({
 				onCannotPerformAction={onCannotPerformAction}
 				cardType="market"
 				prioritizeOwnerActions={prioritizeOwnerActions}
+				hideQuantitySelector={hideQuantitySelector}
 			/>
 		</BaseCard>
 	);
