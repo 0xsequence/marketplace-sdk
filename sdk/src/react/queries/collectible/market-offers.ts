@@ -29,21 +29,20 @@ export async function fetchListOffersForCollectible(
 	const { config, sort, page, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const finalSort = sort || (page && 'sort' in page ? page.sort : undefined);
-
-	let finalPage: Page | undefined;
-	if (page || finalSort) {
-		finalPage = {
-			page: page?.page ?? 1,
-			pageSize: page?.pageSize ?? 20,
-			...(page?.more && { more: page.more }),
-			...(finalSort && { sort: finalSort }),
-		} as Page;
-	}
+	const effectiveSort =
+		sort || (page && 'sort' in page ? page.sort : undefined);
 
 	return await marketplaceClient.listOffersForCollectible({
 		...additionalApiParams,
-		page: finalPage,
+		page:
+			page || effectiveSort
+				? ({
+						page: page?.page ?? 1,
+						pageSize: page?.pageSize ?? 20,
+						...(page?.more && { more: page.more }),
+						...(effectiveSort && { sort: effectiveSort }),
+					} as Page)
+				: undefined,
 	});
 }
 

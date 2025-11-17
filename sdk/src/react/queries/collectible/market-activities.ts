@@ -1,4 +1,3 @@
-import type { Page } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
@@ -32,18 +31,16 @@ export async function fetchListCollectibleActivities(
 		params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const pageParams: Page | undefined =
-		page || pageSize || sort
-			? {
-					page: page ?? 1,
-					pageSize: pageSize ?? 10,
-					sort,
-				}
-			: undefined;
-
 	return await marketplaceClient.listCollectibleActivities({
 		chainId,
-		page: pageParams,
+		page:
+			page || pageSize || sort
+				? {
+						page: page ?? 1,
+						pageSize: pageSize ?? 10,
+						sort,
+					}
+				: undefined,
 		...additionalApiParams,
 	});
 }

@@ -1,4 +1,3 @@
-import type { Page } from '../../../types';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
@@ -32,22 +31,18 @@ export async function fetchListCollectionActivities(
 		params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const pageParams: Page | undefined =
-		page || pageSize || sort
-			? {
-					page: page ?? 1,
-					pageSize: pageSize ?? 10,
-					sort,
-				}
-			: undefined;
-
-	const apiArgs: ListCollectionActivitiesRequest = {
+	return await marketplaceClient.listCollectionActivities({
 		chainId,
-		page: pageParams,
+		page:
+			page || pageSize || sort
+				? {
+						page: page ?? 1,
+						pageSize: pageSize ?? 10,
+						sort,
+					}
+				: undefined,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectionActivities(apiArgs);
+	});
 }
 
 export function getListCollectionActivitiesQueryKey(
