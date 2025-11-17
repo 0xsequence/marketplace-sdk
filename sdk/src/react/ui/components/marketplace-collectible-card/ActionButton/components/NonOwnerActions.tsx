@@ -118,7 +118,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					showBuyModal({
 						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace as any,
 						cardType: 'market',
@@ -142,7 +142,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					showMakeOfferModal({
 						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderbookKind,
 					})
 				}

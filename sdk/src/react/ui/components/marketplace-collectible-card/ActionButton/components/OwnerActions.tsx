@@ -46,7 +46,7 @@ export function OwnerActions({
 					showCreateListingModal({
 						collectionAddress: collectionAddress as Address,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderbookKind,
 					})
 				}
@@ -82,7 +82,7 @@ export function OwnerActions({
 					showTransferModal({
 						collectionAddress: collectionAddress as Address,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 					})
 				}
 				className={className}

@@ -36,7 +36,7 @@ export const useActionButtonLogic = ({
 			pendingAction &&
 			address &&
 			actionsThatOwnersCannotPerform.includes(action) &&
-			pendingAction?.collectibleId === tokenId
+			pendingAction?.tokenId === tokenId
 		) {
 			onCannotPerformAction?.(
 				pendingActionType as
@@ -62,7 +62,7 @@ export const useActionButtonLogic = ({
 			address &&
 			!owned &&
 			pendingAction &&
-			pendingAction?.collectibleId === tokenId
+			pendingAction?.tokenId === tokenId
 		) {
 			executePendingAction();
 			clearPendingAction();
