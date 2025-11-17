@@ -98,3 +98,82 @@ export function spreadWith<TObj, TOverrides>(
 		...overrides,
 	} as Omit<TObj, keyof TOverrides> & TOverrides;
 }
+
+/**
+ * Page parameter type for pagination (matches generated API types)
+ */
+export interface Page {
+	page: number;
+	pageSize: number;
+	more?: boolean;
+	sort?: Array<SortBy>;
+}
+
+/**
+ * Sort parameter type for pagination
+ */
+export interface SortBy {
+	column: string;
+	order: 'ASC' | 'DESC';
+}
+
+/**
+ * Input parameters for building a page object
+ */
+export interface BuildPageParams {
+	page?: number;
+	pageSize?: number;
+	more?: boolean;
+	sort?: Array<SortBy>;
+}
+
+/**
+ * Build a Page object for API requests with pagination.
+ * Provides a consistent way to construct pagination parameters across the SDK.
+ *
+ * @param params - Page construction parameters
+ * @returns Page object for API requests, or undefined if no pagination params provided
+ *
+ * @example
+ * // Simple pagination
+ * const page = buildPage({ page: 1, pageSize: 30 });
+ * // result: { page: 1, pageSize: 30 }
+ *
+ * @example
+ * // With sorting
+ * const page = buildPage({
+ *   page: 2,
+ *   pageSize: 50,
+ *   sort: [{ column: 'price', order: 'ASC' }]
+ * });
+ *
+ * @example
+ * // Returns undefined when no params
+ * const page = buildPage({});
+ * // result: undefined
+ */
+export function buildPage(params: BuildPageParams): Page | undefined {
+	// If no pagination params are provided, return undefined
+	if (
+		params.page === undefined &&
+		params.pageSize === undefined &&
+		!params.sort?.length
+	) {
+		return undefined;
+	}
+
+	const page: Page = {
+		page: params.page ?? 1,
+		pageSize: params.pageSize ?? 30,
+	};
+
+	if (params.more !== undefined) {
+		page.more = params.more;
+	}
+
+	if (params.sort?.length) {
+		page.sort = params.sort;
+	}
+
+	return page;
+}

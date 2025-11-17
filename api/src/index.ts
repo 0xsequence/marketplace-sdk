@@ -93,6 +93,7 @@ export type {
 	ListCollectibleListingsRequest,
 	ListCollectibleListingsResponse,
 	ListCollectibleOffersResponse,
+	ListCollectiblesRequest,
 	ListCollectiblesResponse,
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
@@ -163,7 +164,6 @@ export { MarketplaceClient } from './adapters/marketplace/client';
 
 export type {
 	Asset as MarketplaceAsset,
-	ListCollectiblesRequest,
 	PostRequest,
 	Signature,
 } from './adapters/marketplace/marketplace.gen';
@@ -200,6 +200,7 @@ export * from './utils/bigint';
 
 export * from './utils/chain';
 export * from './utils/token';
+export { type BuildPageParams, buildPage } from './utils/transform';
 
 export * from './utils/type-assertions';
 
