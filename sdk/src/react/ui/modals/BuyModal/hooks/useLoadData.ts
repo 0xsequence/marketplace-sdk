@@ -15,7 +15,7 @@ export const useLoadData = () => {
 
 	const isMarket = isMarketProps(props);
 	const isShop = isShopProps(props);
-	const collectibleId = isMarket ? props.collectibleId : undefined;
+	const tokenId = isMarket ? props.tokenId : undefined;
 
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
@@ -36,9 +36,9 @@ export const useLoadData = () => {
 	} = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 		query: {
-			enabled: !!collectibleId,
+			enabled: !!tokenId,
 		},
 	});
 

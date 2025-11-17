@@ -14,7 +14,7 @@ vi.mock('../hooks/useGetTokenApproval', () => ({
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 // Mock currency object with all required properties

@@ -149,7 +149,7 @@ export const useTransactionSteps = ({
 				type: TransactionType.LISTING,
 				collectionAddress: collectionAddress as Address,
 				chainId,
-				collectibleId: listingInput.listing.tokenId,
+				tokenId: listingInput.listing.tokenId,
 				hash,
 				orderId,
 				callbacks,

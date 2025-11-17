@@ -32,7 +32,7 @@ interface GetBuyCollectableParams {
 	config: SdkConfig;
 	address: Address;
 	collectionAddress: string;
-	collectibleId: bigint;
+	tokenId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 	quantity: number;
@@ -51,7 +51,7 @@ interface GetBuyCollectableParams {
 export const getBuyCollectableParams = async ({
 	chainId,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 	callbacks,
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
@@ -78,7 +78,7 @@ export const getBuyCollectableParams = async ({
 			{
 				orderId,
 				quantity: BigInt(quantity),
-				tokenId: BigInt(collectibleId),
+				tokenId: BigInt(tokenId),
 			},
 		],
 		additionalFees: [fee],
@@ -122,7 +122,7 @@ export const getBuyCollectableParams = async ({
 		collectibles: [
 			{
 				// Checkout library expects string for tokenId
-				tokenId: collectibleId.toString(),
+				tokenId: tokenId.toString(),
 				// Checkout library expects string for quantity display
 				quantity: quantity.toString(),
 				decimals: collectable.decimals,
@@ -204,9 +204,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
-	const collectibleId = isMarketProps(buyModalProps)
-		? buyModalProps.collectibleId
-		: 0n;
+	const tokenId = isMarketProps(buyModalProps) ? buyModalProps.tokenId : 0n;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
@@ -243,7 +241,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						config,
 						address,
 						collectionAddress,
-						collectibleId,
+						tokenId,
 						marketplace,
 						orderId,
 						quantity,

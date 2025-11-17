@@ -89,7 +89,7 @@ export const useSellMutations = (
 				callbacks: state.callbacks,
 				queriesToInvalidate: [['balances']], //TODO: Add other queries to invalidate
 				collectionAddress: state.collectionAddress,
-				collectibleId: state.tokenId,
+				tokenId: state.tokenId,
 			});
 
 			state.callbacks?.onSuccess?.({

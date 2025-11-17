@@ -16,7 +16,7 @@ import { CreateListingModal } from '../Modal';
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 describe('MakeOfferModal', () => {

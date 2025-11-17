@@ -148,7 +148,7 @@ export const useTransactionSteps = ({
 				type: TransactionType.OFFER,
 				collectionAddress: collectionAddress as Address,
 				chainId,
-				collectibleId: offerInput.offer.tokenId,
+				tokenId: offerInput.offer.tokenId,
 				hash,
 				orderId,
 				callbacks,

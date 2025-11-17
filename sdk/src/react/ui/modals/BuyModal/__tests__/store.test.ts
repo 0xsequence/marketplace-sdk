@@ -24,7 +24,7 @@ describe('BuyModal Store', () => {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
-			collectibleId: 1n,
+			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',
 		};
@@ -47,7 +47,7 @@ describe('BuyModal Store', () => {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
-			collectibleId: 1n,
+			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',
 		};
@@ -74,7 +74,7 @@ describe('BuyModal Store', () => {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
-			collectibleId: 1n,
+			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',
 		};

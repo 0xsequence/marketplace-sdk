@@ -201,7 +201,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					cardType: 'market',
@@ -238,7 +238,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					cardType: 'market',
@@ -274,7 +274,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -432,7 +432,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -464,7 +464,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
@@ -539,7 +539,7 @@ describe('BuyModalRouter', () => {
 				props: {
 					chainId: 1,
 					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: 1n,
+					tokenId: 1n,
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 					// cardType not specified - should default to MARKET
