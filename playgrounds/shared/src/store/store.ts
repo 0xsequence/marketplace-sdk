@@ -121,12 +121,9 @@ export const marketplaceStore = createStore({
 			chainId,
 		}),
 
-		setCollectibleId: (
-			context,
-			{ collectibleId }: { collectibleId: bigint },
-		) => ({
+		setCollectibleId: (context, { tokenId }: { tokenId: bigint }) => ({
 			...context,
-			collectibleId,
+			tokenId,
 		}),
 
 		setProjectId: (context, { id }: { id: string }) => ({
