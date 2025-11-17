@@ -27,7 +27,7 @@
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -1025,6 +1025,10 @@
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
+  }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
   }
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
@@ -2531,6 +2535,11 @@
       display: flex;
     }
   }
+  .\[\&\>label\]\:w-16 {
+    &>label {
+      width: calc(var(--spacing) * 16);
+    }
+  }
   .\[\&\>label\]\:w-full {
     &>label {
       width: 100%;
@@ -3118,6 +3127,103 @@
 }
 .rdp-caption_before_exit {
   animation: rdp-fade_out var(--rdp-animation_duration) var(--rdp-animation_timing) forwards;
+}
+.rdp-root {
+  width: 100% !important;
+  padding: 0 !important;
+  user-select: none;
+}
+.rdp-nav {
+  position: absolute;
+  width: 100%;
+  height: fit-content !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rdp-caption_label {
+  color: var(--color-text-100) !important;
+}
+.rdp-months {
+  width: 100%;
+  max-width: unset !important;
+}
+.rdp-month_caption {
+  text-align: center;
+  width: 100%;
+  height: 36px !important;
+  display: block !important;
+  font-size: 14px !important;
+}
+.rdp-month_grid {
+  width: 100%;
+}
+.rdp-month {
+  width: 100%;
+}
+.rdp-button_previous {
+  background-color: var(--color-overlay-light) !important;
+  border-radius: 50%;
+}
+.rdp-button_previous:hover {
+  background-color: var(--color-overlay-glass) !important;
+}
+.rdp-button_previous > svg {
+  fill: var(--color-text-100) !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+.rdp-button_next {
+  background-color: var(--color-overlay-light) !important;
+  border-radius: 50%;
+}
+.rdp-button_next:hover {
+  background-color: var(--color-overlay-glass) !important;
+}
+.rdp-button_next > svg {
+  fill: var(--color-text-100) !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+.rdp-weekdays {
+  display: flex;
+  justify-content: space-between;
+}
+.rdp-weekday {
+  padding: 16px 0 !important;
+  font-size: 14px !important;
+  font-weight: var(--font-weight-medium) !important;
+  color: var(--color-text-80) !important;
+}
+.rdp-weeks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rdp-week {
+  display: flex;
+  justify-content: space-between;
+}
+.rdp-day {
+  width: 24px !important;
+  height: 24px !important;
+}
+.rdp-day_button {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: var(--text-xs) !important;
+  color: var(--color-text-80) !important;
+}
+.rdp-day_button:disabled {
+  color: var(--color-text-50) !important;
+}
+.rdp-day.rdp-today {
+  outline: 1px solid var(--color-violet-700) !important;
+  border-radius: 50% !important;
+}
+.rdp-day.rdp-selected {
+  background: var(--seq-color-gradient-primary) !important;
+  border-radius: 50% !important;
 }
 @keyframes fadeIn {
   0% {
