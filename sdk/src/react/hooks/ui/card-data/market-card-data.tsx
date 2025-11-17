@@ -26,6 +26,7 @@ export interface UseMarketCardDataProps {
 	filterOptions?: PropertyFilter[];
 	searchText?: string;
 	showListedOnly?: boolean;
+	inAccounts?: Address[];
 	priceFilters?: PriceFilter[];
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
@@ -46,6 +47,7 @@ export function useMarketCardData({
 	filterOptions,
 	searchText,
 	showListedOnly = false,
+	inAccounts,
 	priceFilters,
 	onCollectibleClick,
 	onCannotPerformAction,
@@ -75,6 +77,7 @@ export function useMarketCardData({
 			searchText,
 			properties: filterOptions,
 			prices: priceFilters,
+			inAccounts: inAccounts ?? [],
 		},
 		query: {
 			enabled: !!collectionAddress && !!chainId,
