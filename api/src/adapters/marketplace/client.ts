@@ -7,7 +7,7 @@
  */
 
 import type { ContractType } from '@0xsequence/indexer';
-import type { ChainId, TokenId } from '../../types/primitives';
+import type { Address, ChainId, TokenId } from '../../types/primitives';
 import {
 	chainIdToString,
 	passthrough,
@@ -197,7 +197,7 @@ export type GetCollectionDetailRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type ListCurrenciesRequest = Omit<
@@ -212,7 +212,7 @@ export type GetCollectibleRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type GetLowestPriceListingForCollectibleRequest = Omit<
@@ -220,7 +220,7 @@ export type GetLowestPriceListingForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
@@ -229,7 +229,7 @@ export type GetHighestPriceOfferForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
@@ -238,7 +238,7 @@ export type ListListingsForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
@@ -247,7 +247,7 @@ export type ListOffersForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
@@ -263,7 +263,7 @@ export type GetFloorOrderRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type ListCollectiblesRequest = Omit<
@@ -271,7 +271,7 @@ export type ListCollectiblesRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type ListCollectibleActivitiesRequest = Omit<
@@ -279,7 +279,7 @@ export type ListCollectibleActivitiesRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type ListCollectionActivitiesRequest = Omit<
@@ -287,7 +287,7 @@ export type ListCollectionActivitiesRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type ListPrimarySaleItemsRequest = Omit<
@@ -316,7 +316,7 @@ export type GetCountOfFilteredCollectiblesRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type GetCountOfAllCollectiblesRequest = Omit<
@@ -324,7 +324,7 @@ export type GetCountOfAllCollectiblesRequest = Omit<
 	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 };
 
 export type GetCountOfListingsForCollectibleRequest = Omit<
@@ -332,7 +332,7 @@ export type GetCountOfListingsForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
@@ -341,7 +341,7 @@ export type GetCountOfOffersForCollectibleRequest = Omit<
 	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
-	collectionAddress: string;
+	collectionAddress: Address;
 	tokenId: TokenId;
 };
 
