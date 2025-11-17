@@ -2,11 +2,11 @@ import type {
 	IndexerContractInfo as ContractInfo,
 	IndexerTokenBalance as TokenBalance,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
+	buildQueryOptions,
 	type ContractType,
 	getQueryClient,
 	MetadataStatus,
@@ -151,37 +151,29 @@ export async function fetchInventory(
 	};
 }
 
-export function inventoryOptions(params: InventoryQueryOptions) {
-	const enabledQuery = params.query?.enabled ?? true;
-	const enabled =
-		enabledQuery &&
-		!!params.accountAddress &&
-		!!params.collectionAddress &&
-		!!params.config;
+export function getInventoryQueryKey(params: InventoryQueryOptions) {
+	return [
+		'inventory',
+		params.accountAddress,
+		params.collectionAddress,
+		params.chainId,
+		params.page ?? 1,
+		params.pageSize ?? 30,
+	] as const;
+}
 
-	return queryOptions({
-		queryKey: [
-			'inventory',
-			params.accountAddress,
-			params.collectionAddress,
-			params.chainId,
-			params.page ?? 1,
-			params.pageSize ?? 30,
-		],
-		queryFn: () =>
-			fetchInventory({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				accountAddress: params.accountAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				page: params.page,
-				pageSize: params.pageSize,
-				includeNonTradable: params.includeNonTradable,
-			}),
-		enabled,
-	});
+export function inventoryOptions(params: InventoryQueryOptions) {
+	return buildQueryOptions(
+		{
+			getQueryKey: getInventoryQueryKey,
+			requiredParams: [
+				'accountAddress',
+				'collectionAddress',
+				'chainId',
+				'config',
+			] as const,
+			fetcher: fetchInventory,
+		},
+		params,
+	);
 }

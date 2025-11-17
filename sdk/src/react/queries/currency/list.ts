@@ -1,7 +1,7 @@
-import { queryOptions } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
 import { compareAddress } from '../../../utils';
 import {
+	buildQueryOptions,
 	getMarketplaceClient,
 	getQueryClient,
 	type SdkQueryParams,
@@ -14,6 +14,9 @@ export interface FetchMarketCurrenciesParams {
 	includeNativeCurrency?: boolean;
 	collectionAddress?: Address;
 }
+
+export type MarketCurrenciesQueryOptions =
+	SdkQueryParams<FetchMarketCurrenciesParams>;
 
 /**
  * Fetches supported currencies for a marketplace
@@ -62,9 +65,6 @@ export async function fetchMarketCurrencies(
 	return currencies;
 }
 
-export type MarketCurrenciesQueryOptions =
-	SdkQueryParams<FetchMarketCurrenciesParams>;
-
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,
 ) {
@@ -72,7 +72,7 @@ export function getMarketCurrenciesQueryKey(
 		'currency',
 		'list',
 		{
-			chainId: params.chainId ?? 0,
+			chainId: params.chainId,
 			includeNativeCurrency: params.includeNativeCurrency,
 			collectionAddress: params.collectionAddress,
 		},
@@ -82,22 +82,12 @@ export function getMarketCurrenciesQueryKey(
 export function marketCurrenciesQueryOptions(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId && params.config && (params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getMarketCurrenciesQueryKey,
+			requiredParams: ['chainId', 'config'] as const,
+			fetcher: fetchMarketCurrencies,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getMarketCurrenciesQueryKey(params),
-		queryFn: () =>
-			fetchMarketCurrencies({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				includeNativeCurrency: params.includeNativeCurrency,
-				collectionAddress: params.collectionAddress,
-			}),
-		...params.query,
-		enabled,
-	});
 }

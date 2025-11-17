@@ -1,6 +1,6 @@
-import { queryOptions } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import {
+	buildQueryOptions,
 	type Currency,
 	getQueryClient,
 	type SdkQueryParams,
@@ -18,6 +18,9 @@ export interface ConvertPriceToUSDReturn {
 	usdAmount: number;
 	usdAmountFormatted: string;
 }
+
+export type ConvertPriceToUSDQueryOptions =
+	SdkQueryParams<FetchConvertPriceToUSDParams>;
 
 /**
  * Converts a price amount from a specific currency to USD using exchange rates
@@ -58,16 +61,13 @@ export async function fetchConvertPriceToUSD(
 	};
 }
 
-export type ConvertPriceToUSDQueryOptions =
-	SdkQueryParams<FetchConvertPriceToUSDParams>;
-
 export function getConvertPriceToUSDQueryKey(
 	params: ConvertPriceToUSDQueryOptions,
 ) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		currencyAddress: params.currencyAddress!,
-		amountRaw: params.amountRaw!,
+		chainId: params.chainId,
+		currencyAddress: params.currencyAddress,
+		amountRaw: params.amountRaw,
 	};
 
 	return ['currency', 'convert-to-usd', apiArgs] as const;
@@ -76,28 +76,17 @@ export function getConvertPriceToUSDQueryKey(
 export function convertPriceToUSDQueryOptions(
 	params: ConvertPriceToUSDQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.currencyAddress &&
-			params.amountRaw &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getConvertPriceToUSDQueryKey,
+			requiredParams: [
+				'chainId',
+				'currencyAddress',
+				'amountRaw',
+				'config',
+			] as const,
+			fetcher: fetchConvertPriceToUSD,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getConvertPriceToUSDQueryKey(params),
-		queryFn: () =>
-			fetchConvertPriceToUSD({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				currencyAddress: params.currencyAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				amountRaw: params.amountRaw!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }
