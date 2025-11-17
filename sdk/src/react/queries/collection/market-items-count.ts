@@ -10,7 +10,6 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountItemsOrdersForCollectionParams {
 	chainId: number;
-	collectionAddress: string;
 	config: SdkConfig;
 	side: OrderSide;
 }
@@ -21,12 +20,11 @@ export interface FetchCountItemsOrdersForCollectionParams {
 export async function fetchCountItemsOrdersForCollection(
 	params: FetchCountItemsOrdersForCollectionParams,
 ) {
-	const { collectionAddress, chainId, config, side } = params;
+	const { chainId, config, side } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: GetCountOfAllOrdersRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		side,
 	};
@@ -48,7 +46,7 @@ export function getCountItemsOrdersForCollectionQueryKey(
 		'market-items-count',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			side: params.side,
 		},
 	] as const;

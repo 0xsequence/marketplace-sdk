@@ -38,7 +38,7 @@ export type TokenSuppliesQueryOptions =
 export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId!,
-		contractAddress: params.collectionAddress!,
+		collectionAddress: params.collectionAddress!,
 		includeMetadata: params.includeMetadata,
 		metadataOptions: params.metadataOptions,
 	};

@@ -9,11 +9,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
-	extends Omit<
-		GetLowestPriceListingForCollectibleRequest,
-		'contractAddress' | 'chainId'
-	> {
-	collectionAddress: string;
+	extends Omit<GetLowestPriceListingForCollectibleRequest, 'chainId'> {
 	chainId: number;
 	config: SdkConfig;
 }
@@ -24,12 +20,11 @@ export interface FetchLowestListingParams
 export async function fetchLowestListing(
 	params: FetchLowestListingParams,
 ): Promise<MarketplaceAPI.GetCollectibleLowestListingResponse['order'] | null> {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const result = await marketplaceClient.getLowestPriceListingForCollectible({
-		contractAddress: collectionAddress,
 		chainId,
 		...additionalApiParams,
 	});
@@ -47,7 +42,7 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 		'market-lowest-listing',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			tokenId: params.tokenId ?? 0n,
 			filter: params.filter,
 		},

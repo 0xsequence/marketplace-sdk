@@ -12,7 +12,6 @@ import { createCollectionQueryKey } from './queryKeys';
 
 export interface FetchCollectionParams {
 	chainId: number;
-	collectionAddress: string;
 	config: SdkConfig;
 }
 
@@ -20,13 +19,12 @@ export interface FetchCollectionParams {
  * Fetches collection information from the metadata API
  */
 export async function fetchCollection(params: FetchCollectionParams) {
-	const { collectionAddress, chainId, config } = params;
+	const { chainId, config } = params;
 
 	const metadataClient = getMetadataClient(config);
 
 	const result = await metadataClient.getContractInfo({
 		chainId,
-		contractAddress: collectionAddress,
 	});
 
 	return result.contractInfo;
@@ -39,7 +37,7 @@ export type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
 export function getCollectionQueryKey(params: CollectionQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId,
-		contractAddress: params.collectionAddress,
+		collectionAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetContractInfoArgs>;
 
 	return createCollectionQueryKey('metadata', apiArgs);

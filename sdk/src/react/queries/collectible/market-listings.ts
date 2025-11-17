@@ -10,10 +10,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListListingsForCollectibleParams
-	extends Omit<
-		ListCollectibleListingsRequest,
-		'chainId' | 'contractAddress' | 'tokenId'
-	> {
+	extends Omit<ListCollectibleListingsRequest, 'chainId' | 'tokenId'> {
 	chainId: number;
 	collectionAddress: Address;
 	collectibleId: bigint;
@@ -36,7 +33,6 @@ export async function fetchListListingsForCollectible(
 	const marketplaceClient = getMarketplaceClient(config);
 
 	return await marketplaceClient.listListingsForCollectible({
-		contractAddress: collectionAddress,
 		chainId,
 		tokenId: collectibleId,
 		...additionalApiParams,
@@ -56,7 +52,7 @@ export function getListListingsForCollectibleQueryKey(
 		'market-listings',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			tokenId: params.collectibleId ?? 0n,
 			filter: params.filter,
 			page: params.page,

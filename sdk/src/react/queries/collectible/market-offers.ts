@@ -12,10 +12,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListOffersForCollectibleParams
-	extends Omit<
-		ListOffersForCollectibleRequest,
-		'chainId' | 'contractAddress' | 'tokenId'
-	> {
+	extends Omit<ListOffersForCollectibleRequest, 'chainId' | 'tokenId'> {
 	chainId: number;
 	collectionAddress: Address;
 	collectibleId: bigint;
@@ -53,7 +50,6 @@ export async function fetchListOffersForCollectible(
 	}
 
 	return await marketplaceClient.listOffersForCollectible({
-		contractAddress: collectionAddress,
 		chainId,
 		tokenId: collectibleId,
 		page: finalPage,
@@ -74,7 +70,7 @@ export function getListOffersForCollectibleQueryKey(
 		'market-offers',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			tokenId: params.collectibleId ?? 0n,
 			filter: params.filter,
 			page: params.page,

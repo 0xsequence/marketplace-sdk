@@ -67,7 +67,7 @@ export function getListCollectiblesPaginatedQueryKey(
 		'market-list-paginated',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			side: params.side,
 			filter: params.filter,
 			page: params.page,

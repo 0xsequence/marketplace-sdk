@@ -11,7 +11,6 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchGetCountOfFilteredOrdersParams {
 	chainId: number;
-	collectionAddress: string;
 	config: SdkConfig;
 	side: OrderSide;
 	filter?: OrdersFilter;
@@ -20,12 +19,11 @@ export interface FetchGetCountOfFilteredOrdersParams {
 export async function fetchGetCountOfFilteredOrders(
 	params: FetchGetCountOfFilteredOrdersParams,
 ) {
-	const { collectionAddress, chainId, config, side, filter } = params;
+	const { chainId, config, side, filter } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: GetCountOfFilteredOrdersRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		side,
 		filter,
@@ -48,7 +46,7 @@ export function getCountOfFilteredOrdersQueryKey(
 		'market-filtered-count',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			side: params.side,
 			filter: params.filter,
 		},

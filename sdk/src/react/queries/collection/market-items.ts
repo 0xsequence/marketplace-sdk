@@ -10,10 +10,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardInfiniteQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
-	extends Omit<
-		ListOrdersWithCollectiblesRequest,
-		'chainId' | 'contractAddress'
-	> {
+	extends Omit<ListOrdersWithCollectiblesRequest, 'chainId'> {
 	chainId: number;
 	collectionAddress: Address;
 	config: SdkConfig;
@@ -23,11 +20,10 @@ export async function fetchListItemsOrdersForCollection(
 	params: FetchListItemsOrdersForCollectionParams,
 	page: Page,
 ): Promise<ListOrdersWithCollectiblesResponse> {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const apiArgs: ListOrdersWithCollectiblesRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		page,
 		...additionalApiParams,
@@ -49,7 +45,7 @@ export function getListItemsOrdersForCollectionQueryKey(
 		'market-items',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			side: params.side,
 			filter: params.filter,
 		},

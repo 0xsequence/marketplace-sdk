@@ -12,10 +12,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectionActivitiesParams
-	extends Omit<
-		ListCollectionActivitiesRequest,
-		'chainId' | 'contractAddress' | 'page'
-	> {
+	extends Omit<ListCollectionActivitiesRequest, 'chainId' | 'page'> {
 	chainId: number;
 	collectionAddress: Address;
 	page?: number;
@@ -51,7 +48,6 @@ export async function fetchListCollectionActivities(
 			: undefined;
 
 	const apiArgs: ListCollectionActivitiesRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		page: pageParams,
 		...additionalApiParams,
@@ -73,7 +69,7 @@ export function getListCollectionActivitiesQueryKey(
 		'market-activities',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			page: params.page,
 			pageSize: params.pageSize,
 			sort: params.sort,

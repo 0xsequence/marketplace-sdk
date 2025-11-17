@@ -8,8 +8,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchFloorOrderParams
-	extends Omit<GetFloorOrderRequest, 'contractAddress' | 'chainId'> {
-	collectionAddress: string;
+	extends Omit<GetFloorOrderRequest, 'chainId'> {
 	chainId: number;
 	config: SdkConfig;
 }
@@ -18,12 +17,11 @@ export interface FetchFloorOrderParams
  * Fetches the floor order for a collection from the marketplace API
  */
 export async function fetchFloorOrder(params: FetchFloorOrderParams) {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const apiArgs: GetFloorOrderRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		...additionalApiParams,
 	};
@@ -42,7 +40,7 @@ export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 		'market-floor',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			filter: params.filter,
 		},
 	] as const;

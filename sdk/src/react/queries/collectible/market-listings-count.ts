@@ -7,7 +7,6 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountListingsForCollectibleParams {
 	chainId: number;
-	collectionAddress: string;
 	collectibleId: bigint;
 	config: SdkConfig;
 	filter?: OrderFilter;
@@ -19,12 +18,11 @@ export interface FetchCountListingsForCollectibleParams {
 export async function fetchCountListingsForCollectible(
 	params: FetchCountListingsForCollectibleParams,
 ) {
-	const { collectionAddress, chainId, collectibleId, config, filter } = params;
+	const { chainId, collectibleId, config, filter } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const result = await client.getCountOfListingsForCollectible({
-		contractAddress: collectionAddress,
 		chainId,
 		tokenId: collectibleId,
 		filter,
@@ -45,7 +43,7 @@ export function getCountListingsForCollectibleQueryKey(
 		'market-listings-count',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			tokenId: params.collectibleId ?? 0n,
 			filter: params.filter,
 		},

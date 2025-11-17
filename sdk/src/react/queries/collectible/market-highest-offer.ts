@@ -8,11 +8,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchHighestOfferParams
-	extends Omit<
-		GetHighestPriceOfferForCollectibleRequest,
-		'contractAddress' | 'chainId'
-	> {
-	collectionAddress: string;
+	extends Omit<GetHighestPriceOfferForCollectibleRequest, 'chainId'> {
 	chainId: number;
 	config: SdkConfig;
 }
@@ -21,12 +17,11 @@ export interface FetchHighestOfferParams
  * Fetches the highest offer for a collectible from the marketplace API
  */
 export async function fetchHighestOffer(params: FetchHighestOfferParams) {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const result = await marketplaceClient.getHighestPriceOfferForCollectible({
-		contractAddress: collectionAddress,
 		chainId,
 		...additionalApiParams,
 	});
@@ -44,7 +39,7 @@ export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 		'market-highest-offer',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			tokenId: params.tokenId ?? 0n,
 			filter: params.filter,
 		},

@@ -41,7 +41,7 @@ export type GetTokenRangesQueryOptions =
 export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId!,
-		contractAddress: params.collectionAddress!,
+		collectionAddress: params.collectionAddress!,
 	};
 
 	return createTokenQueryKey('ranges', apiArgs);

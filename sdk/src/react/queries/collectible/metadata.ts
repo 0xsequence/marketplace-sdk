@@ -10,12 +10,8 @@ import type { StandardQueryOptions } from '../../types/query';
 import { createCollectibleQueryKey } from './queryKeys';
 
 export interface FetchCollectibleParams
-	extends Omit<
-		GetTokenMetadataArgs,
-		'chainId' | 'contractAddress' | 'tokenIds'
-	> {
+	extends Omit<GetTokenMetadataArgs, 'chainId' | 'tokenIds'> {
 	chainId: number;
-	collectionAddress: string;
 	collectibleId: bigint;
 	config: SdkConfig;
 }
@@ -24,12 +20,11 @@ export interface FetchCollectibleParams
  * Fetches collectible metadata from the metadata API
  */
 export async function fetchCollectible(params: FetchCollectibleParams) {
-	const { collectionAddress, collectibleId, chainId, config } = params;
+	const { collectibleId, chainId, config } = params;
 
 	const metadataClient = getMetadataClient(config);
 
 	const apiArgs: GetTokenMetadataArgs = {
-		contractAddress: collectionAddress,
 		chainId,
 		tokenIds: [collectibleId],
 	};
@@ -49,7 +44,7 @@ export type CollectibleQueryOptions = ValuesOptional<FetchCollectibleParams> & {
 export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId,
-		contractAddress: params.collectionAddress,
+		collectionAddress: params.collectionAddress,
 		// biome-ignore lint/style/noNonNullAssertion: Dont need to validate here
 		tokenIds: [params.collectibleId!],
 	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;

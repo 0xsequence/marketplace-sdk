@@ -13,7 +13,7 @@ import type { StandardInfiniteQueryOptions } from '../../types/query';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export interface FetchListCollectiblesParams
-	extends Omit<ListCollectiblesRequest, 'chainId' | 'contractAddress'> {
+	extends Omit<ListCollectiblesRequest, 'chainId'> {
 	chainId: number;
 	collectionAddress: Address;
 	cardType?: CardType;
@@ -28,7 +28,7 @@ export async function fetchListCollectibles(
 	params: FetchListCollectiblesParams,
 	page: Page,
 ): Promise<ListCollectiblesResponse> {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
 	const isMarketCollection = marketplaceConfig?.market.collections.some(
@@ -48,7 +48,6 @@ export async function fetchListCollectibles(
 	}
 
 	return await marketplaceClient.listCollectibles({
-		contractAddress: collectionAddress,
 		chainId,
 		page,
 		...additionalApiParams,
@@ -79,7 +78,7 @@ export function getListCollectiblesQueryKey(
 		'market-list',
 		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			side: params.side,
 			filter: params.filter,
 		},
