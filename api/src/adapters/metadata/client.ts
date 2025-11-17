@@ -100,8 +100,7 @@ export class MetadataClient {
 		args: NormalizedTypes.SearchTokenMetadataArgs,
 	): Promise<NormalizedTypes.SearchTokenMetadataReturn> {
 		const apiArgs = Transforms.toSearchTokenMetadataArgs(args);
-		// biome-ignore lint/suspicious/noExplicitAny: Type cast needed because of PropertyFilter type mismatch (string vs enum)
-		const rawResult = await this.client.searchTokenMetadata(apiArgs as any);
+		const rawResult = await this.client.searchTokenMetadata(apiArgs);
 		return Transforms.toSearchTokenMetadataReturn(rawResult);
 	}
 

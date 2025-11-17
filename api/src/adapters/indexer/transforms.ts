@@ -95,7 +95,7 @@ export function toTokenSupply(
 		tokenId: normalizeTokenId(raw.tokenID), // Note: uppercase "ID" in API
 		supply: BigInt(raw.supply),
 		chainId: normalizeChainId(raw.chainId),
-		contractAddress: contractAddress,
+		contractAddress,
 		contractInfo: transformOptional(raw.contractInfo, toContractInfo),
 		tokenMetadata: transformOptional(raw.tokenMetadata, toTokenMetadata),
 	};
@@ -171,7 +171,7 @@ export function toGetTokenSuppliesResponse(
 ): Normalized.GetTokenSuppliesResponse {
 	return {
 		contractType: raw.contractType,
-		contractAddress: contractAddress,
+		contractAddress,
 		supplies:
 			transformOptionalArray(raw.tokenIDs, (tokenSupply) =>
 				toTokenSupply(tokenSupply, contractAddress),
@@ -188,7 +188,7 @@ export function toGetTokenIDRangesResponse(
 	contractAddress: Address,
 ): Normalized.GetTokenIDRangesResponse {
 	return {
-		contractAddress: contractAddress,
+		contractAddress,
 		ranges: transformOptionalArray(raw.tokenIDRanges, toTokenIDRange) || [],
 	};
 }

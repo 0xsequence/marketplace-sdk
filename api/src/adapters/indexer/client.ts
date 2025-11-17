@@ -75,7 +75,9 @@ export class IndexerClient {
 				pageSize: 0,
 				more: false,
 			},
-			nativeBalances: rawResponse.nativeBalances || [],
+			nativeBalances: (rawResponse.nativeBalances || []).map(
+				transforms.toNativeTokenBalance,
+			),
 			balances: rawResponse.balances.map(transforms.toTokenBalance),
 		};
 	}
