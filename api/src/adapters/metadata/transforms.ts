@@ -5,11 +5,20 @@
  * - chainID: string → chainId: number (metadata API uses string)
  * - tokenId: string ↔ tokenId: bigint
  * - tokenIDs: string[] ↔ tokenIds: bigint[]
+ *
+ * REFACTORED: Now uses generic transform utilities for cleaner, more maintainable code
  */
 
 import type * as MetadataGen from '@0xsequence/metadata';
 import { normalizeChainId, toMetadataChainId } from '../../utils/chain';
 import { normalizeTokenId, toApiTokenId } from '../../utils/token';
+import {
+	spreadWith,
+	transformArray,
+	transformOptional,
+	transformOptionalArray,
+	transformRecord,
+} from '../../utils/transform';
 import type * as NormalizedTypes from './types';
 
 // ============================================================================
@@ -17,42 +26,29 @@ import type * as NormalizedTypes from './types';
 // ============================================================================
 
 /**
- * Transform ContractInfoExtensions from API to normalized format
- */
-export function toContractInfoExtensions(
-	raw: MetadataGen.ContractInfoExtensions,
-): NormalizedTypes.ContractInfoExtensions {
-	return {
-		...raw,
-		originChainId:
-			raw.originChainId !== undefined
-				? normalizeChainId(raw.originChainId)
-				: undefined,
-	};
-}
-
-/**
  * Transform ContractInfo from API to normalized format
  */
 export function toContractInfo(
 	raw: MetadataGen.ContractInfo,
 ): NormalizedTypes.ContractInfo {
-	return {
-		...raw,
+	return spreadWith(raw, {
 		chainId: normalizeChainId(raw.chainId),
-		extensions: toContractInfoExtensions(raw.extensions),
-	};
+		extensions: spreadWith(raw.extensions, {
+			originChainId: transformOptional(
+				raw.extensions.originChainId,
+				normalizeChainId,
+			),
+		}),
+	});
 }
 
 /**
  * Transform Asset from API to normalized format
  */
 export function toAsset(raw: MetadataGen.Asset): NormalizedTypes.Asset {
-	return {
-		...raw,
-		tokenId:
-			raw.tokenId !== undefined ? normalizeTokenId(raw.tokenId) : undefined,
-	};
+	return spreadWith(raw, {
+		tokenId: transformOptional(raw.tokenId, normalizeTokenId),
+	});
 }
 
 /**
@@ -61,20 +57,11 @@ export function toAsset(raw: MetadataGen.Asset): NormalizedTypes.Asset {
 export function toTokenMetadata(
 	raw: MetadataGen.TokenMetadata,
 ): NormalizedTypes.TokenMetadata {
-	return {
-		...raw,
-		chainId:
-			raw.chainId !== undefined ? normalizeChainId(raw.chainId) : undefined,
+	return spreadWith(raw, {
+		chainId: transformOptional(raw.chainId, normalizeChainId),
 		tokenId: normalizeTokenId(raw.tokenId),
-		assets: raw.assets?.map(toAsset),
-	};
-}
-
-/**
- * Transform Page (pass-through, no bigint fields)
- */
-export function toPage(raw: MetadataGen.Page): NormalizedTypes.Page {
-	return raw;
+		assets: transformOptionalArray(raw.assets, toAsset),
+	});
 }
 
 /**
@@ -83,10 +70,9 @@ export function toPage(raw: MetadataGen.Page): NormalizedTypes.Page {
 export function toGetContractInfoReturn(
 	raw: MetadataGen.GetContractInfoReturn,
 ): NormalizedTypes.GetContractInfoReturn {
-	return {
-		...raw,
+	return spreadWith(raw, {
 		contractInfo: toContractInfo(raw.contractInfo),
-	};
+	});
 }
 
 /**
@@ -95,15 +81,9 @@ export function toGetContractInfoReturn(
 export function toGetContractInfoBatchReturn(
 	raw: MetadataGen.GetContractInfoBatchReturn,
 ): NormalizedTypes.GetContractInfoBatchReturn {
-	return {
-		...raw,
-		contractInfoMap: Object.fromEntries(
-			Object.entries(raw.contractInfoMap).map(([address, info]) => [
-				address,
-				toContractInfo(info),
-			]),
-		),
-	};
+	return spreadWith(raw, {
+		contractInfoMap: transformRecord(raw.contractInfoMap, toContractInfo),
+	});
 }
 
 /**
@@ -112,10 +92,9 @@ export function toGetContractInfoBatchReturn(
 export function toGetTokenMetadataReturn(
 	raw: MetadataGen.GetTokenMetadataReturn,
 ): NormalizedTypes.GetTokenMetadataReturn {
-	return {
-		...raw,
-		tokenMetadata: raw.tokenMetadata.map(toTokenMetadata),
-	};
+	return spreadWith(raw, {
+		tokenMetadata: transformArray(raw.tokenMetadata, toTokenMetadata),
+	});
 }
 
 /**
@@ -124,15 +103,12 @@ export function toGetTokenMetadataReturn(
 export function toGetTokenMetadataBatchReturn(
 	raw: MetadataGen.GetTokenMetadataBatchReturn,
 ): NormalizedTypes.GetTokenMetadataBatchReturn {
-	return {
-		...raw,
-		contractTokenMetadata: Object.fromEntries(
-			Object.entries(raw.contractTokenMetadata).map(([address, metadata]) => [
-				address,
-				metadata.map(toTokenMetadata),
-			]),
+	return spreadWith(raw, {
+		contractTokenMetadata: transformRecord(
+			raw.contractTokenMetadata,
+			(metadata) => transformArray(metadata, toTokenMetadata),
 		),
-	};
+	});
 }
 
 /**
@@ -141,10 +117,9 @@ export function toGetTokenMetadataBatchReturn(
 export function toSearchTokenMetadataReturn(
 	raw: MetadataGen.SearchTokenMetadataReturn,
 ): NormalizedTypes.SearchTokenMetadataReturn {
-	return {
-		...raw,
-		tokenMetadata: raw.tokenMetadata.map(toTokenMetadata),
-	};
+	return spreadWith(raw, {
+		tokenMetadata: transformArray(raw.tokenMetadata, toTokenMetadata),
+	});
 }
 
 // ============================================================================
@@ -188,7 +163,7 @@ export function toGetTokenMetadataArgs(
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
 		contractAddress: normalized.contractAddress,
-		tokenIDs: normalized.tokenIds.map(toApiTokenId),
+		tokenIDs: transformArray(normalized.tokenIds, toApiTokenId),
 	};
 }
 
@@ -200,11 +175,8 @@ export function toGetTokenMetadataBatchArgs(
 ): MetadataGen.GetTokenMetadataBatchArgs {
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractTokenMap: Object.fromEntries(
-			Object.entries(normalized.contractTokenMap).map(([address, tokenIds]) => [
-				address,
-				tokenIds.map(toApiTokenId),
-			]),
+		contractTokenMap: transformRecord(normalized.contractTokenMap, (tokenIds) =>
+			transformArray(tokenIds, toApiTokenId),
 		),
 	};
 }
@@ -218,7 +190,7 @@ export function toRefreshTokenMetadataArgs(
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
 		contractAddress: normalized.contractAddress,
-		tokenIDs: normalized.tokenIds?.map(toApiTokenId),
+		tokenIDs: transformOptionalArray(normalized.tokenIds, toApiTokenId),
 		refreshAll: normalized.refreshAll,
 	};
 }
@@ -257,34 +229,5 @@ export function toGetTokenMetadataPropertyFiltersArgs(
 export function toGetTokenMetadataPropertyFiltersReturn(
 	raw: MetadataGen.GetTokenMetadataPropertyFiltersReturn,
 ): NormalizedTypes.GetTokenMetadataPropertyFiltersReturn {
-	return raw; // PropertyFilter[] doesn't contain bigint fields, pass through
-}
-
-// ============================================================================
-// Batch Transformers (convenience)
-// ============================================================================
-
-/**
- * Transform array of TokenMetadata
- */
-export function toTokenMetadataList(
-	raw: MetadataGen.TokenMetadata[],
-): NormalizedTypes.TokenMetadata[] {
-	return raw.map(toTokenMetadata);
-}
-
-/**
- * Transform array of ContractInfo
- */
-export function toContractInfoList(
-	raw: MetadataGen.ContractInfo[],
-): NormalizedTypes.ContractInfo[] {
-	return raw.map(toContractInfo);
-}
-
-/**
- * Transform array of Assets
- */
-export function toAssetList(raw: MetadataGen.Asset[]): NormalizedTypes.Asset[] {
-	return raw.map(toAsset);
+	return raw;
 }

@@ -11,6 +11,12 @@ import type * as IndexerGen from '@0xsequence/indexer';
 import type { Address } from '../../types/primitives';
 import { normalizeChainId } from '../../utils/chain';
 import { normalizeTokenId } from '../../utils/token';
+import {
+	spreadWith,
+	transformArray,
+	transformOptional,
+	transformOptionalArray,
+} from '../../utils/transform';
 import type * as Normalized from './types';
 
 /**
@@ -19,37 +25,15 @@ import type * as Normalized from './types';
 export function toContractInfo(
 	raw: IndexerGen.ContractInfo,
 ): Normalized.ContractInfo {
-	return {
+	return spreadWith(raw, {
 		chainId: normalizeChainId(raw.chainId),
 		address: raw.address as Address,
-		name: raw.name,
-		type: raw.type,
-		symbol: raw.symbol,
-		decimals: raw.decimals,
-		logoURI: raw.logoURI,
-		deployed: raw.deployed,
-		bytecodeHash: raw.bytecodeHash,
-		extensions: raw.extensions
-			? {
-					link: raw.extensions.link,
-					description: raw.extensions.description,
-					ogImage: raw.extensions.ogImage,
-					ogName: raw.extensions.ogName,
-					originChainId:
-						raw.extensions.originChainId !== undefined
-							? normalizeChainId(raw.extensions.originChainId)
-							: undefined,
-					originAddress: raw.extensions.originAddress as Address | undefined,
-					blacklist: raw.extensions.blacklist,
-					verified: raw.extensions.verified,
-					verifiedBy: raw.extensions.verifiedBy,
-					featured: raw.extensions.featured,
-					featureIndex: raw.extensions.featureIndex,
-					categories: raw.extensions.categories,
-				}
-			: undefined,
-		updatedAt: raw.updatedAt,
-	};
+		extensions: transformOptional(raw.extensions, (ext) => ({
+			...ext,
+			originChainId: transformOptional(ext.originChainId, normalizeChainId),
+			originAddress: ext.originAddress as Address | undefined,
+		})),
+	});
 }
 
 /**
@@ -58,21 +42,10 @@ export function toContractInfo(
 export function toTokenMetadata(
 	raw: IndexerGen.TokenMetadata,
 ): Normalized.TokenMetadata {
-	return {
+	return spreadWith(raw, {
 		tokenId: normalizeTokenId(raw.tokenId),
-		name: raw.name,
-		description: raw.description,
-		image: raw.image,
-		decimals: raw.decimals,
-		properties: raw.properties,
 		attributes: raw.attributes as any, // Raw API attributes are more flexible
-		video: raw.video,
-		audio: raw.audio,
-		image_data: raw.image_data,
-		external_url: raw.external_url,
-		background_color: raw.background_color,
-		animation_url: raw.animation_url,
-	};
+	});
 }
 
 /**
@@ -81,26 +54,16 @@ export function toTokenMetadata(
 export function toTokenBalance(
 	raw: IndexerGen.TokenBalance,
 ): Normalized.TokenBalance {
-	return {
-		contractType: raw.contractType,
+	return spreadWith(raw, {
 		contractAddress: raw.contractAddress as Address,
 		accountAddress: raw.accountAddress as Address,
 		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n, // Note: uppercase "ID" in API
 		balance: BigInt(raw.balance),
-		blockHash: raw.blockHash,
-		blockNumber: raw.blockNumber,
 		chainId: normalizeChainId(raw.chainId),
-		contractInfo: raw.contractInfo
-			? toContractInfo(raw.contractInfo)
-			: undefined,
-		tokenMetadata: raw.tokenMetadata
-			? toTokenMetadata(raw.tokenMetadata)
-			: undefined,
-		uniqueCollectibles: raw.uniqueCollectibles
-			? BigInt(raw.uniqueCollectibles)
-			: undefined,
-		isSummary: raw.isSummary,
-	};
+		contractInfo: transformOptional(raw.contractInfo, toContractInfo),
+		tokenMetadata: transformOptional(raw.tokenMetadata, toTokenMetadata),
+		uniqueCollectibles: transformOptional(raw.uniqueCollectibles, BigInt),
+	});
 }
 
 /**
@@ -116,12 +79,8 @@ export function toTokenSupply(
 		supply: BigInt(raw.supply),
 		chainId: normalizeChainId(raw.chainId),
 		contractAddress: contractAddress,
-		contractInfo: raw.contractInfo
-			? toContractInfo(raw.contractInfo)
-			: undefined,
-		tokenMetadata: raw.tokenMetadata
-			? toTokenMetadata(raw.tokenMetadata)
-			: undefined,
+		contractInfo: transformOptional(raw.contractInfo, toContractInfo),
+		tokenMetadata: transformOptional(raw.tokenMetadata, toTokenMetadata),
 	};
 }
 
@@ -132,25 +91,18 @@ export function toTokenSupply(
 export function toTransactionReceipt(
 	raw: IndexerGen.TransactionReceipt,
 ): Normalized.TransactionReceipt {
-	return {
-		txnHash: raw.txnHash,
-		blockHash: raw.blockHash,
-		blockNumber: raw.blockNumber,
+	return spreadWith(raw, {
 		chainId: undefined, // Not in raw API
-		txnIndex: raw.txnIndex,
 		from: raw.from as Address | undefined,
 		to: raw.to as Address | undefined,
-		gasUsed: raw.gasUsed,
-		effectiveGasPrice: raw.effectiveGasPrice
-			? BigInt(raw.effectiveGasPrice)
-			: undefined,
-		logs: raw.logs?.map((log) => ({
+		effectiveGasPrice: transformOptional(raw.effectiveGasPrice, BigInt),
+		logs: transformOptionalArray(raw.logs, (log) => ({
 			address: log.contractAddress as Address, // Raw API uses 'contractAddress' not 'address'
 			topics: log.topics,
 			data: log.data,
 			logIndex: log.index, // Raw API uses 'index' not 'logIndex'
 		})),
-	};
+	});
 }
 
 /**
@@ -187,7 +139,7 @@ export function toGetTokenBalancesResponse(
 	raw: IndexerGen.GetTokenBalancesReturn,
 ): Normalized.GetTokenBalancesResponse {
 	return {
-		balances: raw.balances.map(toTokenBalance),
+		balances: transformArray(raw.balances, toTokenBalance),
 		page: toPage(raw.page),
 	};
 }
@@ -204,7 +156,7 @@ export function toGetTokenSuppliesResponse(
 		contractType: raw.contractType,
 		contractAddress: contractAddress,
 		supplies:
-			raw.tokenIDs?.map((tokenSupply) =>
+			transformOptionalArray(raw.tokenIDs, (tokenSupply) =>
 				toTokenSupply(tokenSupply, contractAddress),
 			) || [],
 		page: toPage(raw.page),
@@ -220,82 +172,38 @@ export function toGetTokenIDRangesResponse(
 ): Normalized.GetTokenIDRangesResponse {
 	return {
 		contractAddress: contractAddress,
-		ranges: raw.tokenIDRanges?.map(toTokenIDRange) || [],
+		ranges: transformOptionalArray(raw.tokenIDRanges, toTokenIDRange) || [],
 	};
 }
 
 // ============================================================================
 // REQUEST TRANSFORMATIONS (Normalized → API)
+// Note: These are pass-through transformations - types are identical
 // ============================================================================
 
 /**
- * Transform normalized GetTokenBalancesRequest to API request
+ * Transform normalized GetTokenBalancesRequest to API request (pass-through)
  */
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
-	return {
-		accountAddress: req.accountAddress,
-		contractAddress: req.contractAddress,
-		includeMetadata: req.includeMetadata,
-		metadataOptions: req.metadataOptions,
-		page: req.page,
-	};
+	return req;
 }
 
 /**
- * Transform normalized GetTokenSuppliesRequest to API request
+ * Transform normalized GetTokenSuppliesRequest to API request (pass-through)
  */
 export function toGetTokenSuppliesArgs(
 	req: Normalized.GetTokenSuppliesRequest,
 ): IndexerGen.GetTokenSuppliesArgs {
-	return {
-		contractAddress: req.contractAddress,
-		includeMetadata: req.includeMetadata,
-		metadataOptions: req.metadataOptions,
-		page: req.page,
-	};
+	return req;
 }
 
 /**
- * Transform normalized GetTokenIDRangesRequest to API request
+ * Transform normalized GetTokenIDRangesRequest to API request (pass-through)
  */
 export function toGetTokenIDRangesArgs(
 	req: Normalized.GetTokenIDRangesRequest,
 ): IndexerGen.GetTokenIDRangesArgs {
-	return {
-		contractAddress: req.contractAddress,
-	};
-}
-
-// ============================================================================
-// CONVENIENCE TRANSFORMERS
-// ============================================================================
-
-/**
- * Transform array of raw TokenBalances to normalized TokenBalances
- */
-export function toTokenBalances(
-	raw: IndexerGen.TokenBalance[],
-): Normalized.TokenBalance[] {
-	return raw.map(toTokenBalance);
-}
-
-/**
- * Transform array of raw TokenSupplies to normalized TokenSupplies
- */
-export function toTokenSupplies(
-	raw: IndexerGen.TokenSupply[],
-	contractAddress?: Address,
-): Normalized.TokenSupply[] {
-	return raw.map((supply) => toTokenSupply(supply, contractAddress));
-}
-
-/**
- * Transform array of raw TokenIDRanges to normalized TokenIDRanges
- */
-export function toTokenIDRanges(
-	raw: IndexerGen.TokenIDRange[],
-): Normalized.TokenIDRange[] {
-	return raw.map(toTokenIDRange);
+	return req;
 }
