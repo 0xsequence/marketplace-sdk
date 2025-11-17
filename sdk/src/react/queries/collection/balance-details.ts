@@ -76,12 +76,9 @@ export async function fetchCollectionBalanceDetails(
 export function getCollectionBalanceDetailsQueryKey(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: params.chainId,
-		filter: params.filter,
-	};
+	const { chainId, filter } = params;
 
-	return createCollectionQueryKey('balance-details', apiArgs);
+	return createCollectionQueryKey('balance-details', { chainId, filter });
 }
 
 export function collectionBalanceDetailsQueryOptions(

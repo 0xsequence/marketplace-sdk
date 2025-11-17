@@ -47,6 +47,9 @@ export interface CollectiblesResponse {
 	isTradable: boolean;
 }
 
+/**
+ * Transforms an Indexer token balance into a collectible with metadata
+ */
 function collectibleFromTokenBalance(
 	token: TokenBalance,
 ): CollectibleWithBalance {

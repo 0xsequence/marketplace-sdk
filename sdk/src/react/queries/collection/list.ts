@@ -15,12 +15,44 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-const allCollections = (marketplaceConfig: MarketplaceConfig) => {
+/**
+ * Combines market and shop collections from marketplace config
+ */
+function getAllCollections(marketplaceConfig: MarketplaceConfig) {
 	return [
 		...marketplaceConfig.market.collections,
 		...marketplaceConfig.shop.collections,
 	];
-};
+}
+
+/**
+ * Filters collections by card type if specified
+ */
+function filterCollectionsByCardType(
+	collections: Array<MarketCollection | ShopCollection>,
+	cardType?: CardType,
+) {
+	if (!cardType) {
+		return collections;
+	}
+	return collections.filter((collection) => collection.cardType === cardType);
+}
+
+/**
+ * Groups collections by chain ID for batch fetching
+ */
+function groupCollectionsByChain(
+	collections: Array<MarketCollection | ShopCollection>,
+) {
+	return collections.reduce<Record<string, string[]>>((acc, curr) => {
+		const { chainId, itemsAddress } = curr;
+		if (!acc[chainId]) {
+			acc[chainId] = [];
+		}
+		acc[chainId].push(itemsAddress);
+		return acc;
+	}, {});
+}
 
 export interface FetchListCollectionsParams {
 	cardType?: CardType;
@@ -42,30 +74,16 @@ export async function fetchListCollections(
 	const { cardType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
-	let collections = allCollections(marketplaceConfig);
+	let collections = getAllCollections(marketplaceConfig);
 
 	if (!collections?.length) {
 		return [];
 	}
 
-	if (cardType) {
-		collections = collections.filter(
-			(collection) => collection.cardType === cardType,
-		);
-	}
+	collections = filterCollectionsByCardType(collections, cardType);
 
-	// Group collections by chainId
-	const collectionsByChain = collections.reduce<Record<string, string[]>>(
-		(acc, curr) => {
-			const { chainId, itemsAddress } = curr;
-			if (!acc[chainId]) {
-				acc[chainId] = [];
-			}
-			acc[chainId].push(itemsAddress);
-			return acc;
-		},
-		{},
-	);
+	// Group collections by chainId for batch fetching
+	const collectionsByChain = groupCollectionsByChain(collections);
 
 	// Fetch collections for each chain
 	const promises = Object.entries(collectionsByChain).map(

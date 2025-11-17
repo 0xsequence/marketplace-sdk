@@ -1,5 +1,4 @@
 import type { Address } from 'viem';
-import type { Page } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
@@ -40,19 +39,15 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const pageParams: Page = {
-		page,
-		pageSize,
-	};
-
-	const apiArgs: ListOrdersWithCollectiblesRequest = {
+	return await marketplaceClient.listOrdersWithCollectibles({
 		collectionAddress,
 		chainId,
-		page: pageParams,
+		page: {
+			page,
+			pageSize,
+		},
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listOrdersWithCollectibles(apiArgs);
+	});
 }
 
 export function getListItemsOrdersForCollectionPaginatedQueryKey(
