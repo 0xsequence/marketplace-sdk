@@ -33,7 +33,7 @@ const ListingsTable = ({
 
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
-			chainId: chainId,
+			chainId,
 			collectionAddress,
 			collectibleId,
 			page: {

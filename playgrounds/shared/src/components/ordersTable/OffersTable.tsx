@@ -33,7 +33,7 @@ const OffersTable = ({
 
 	const { data: offers, isLoading: offersLoading } =
 		useListOffersForCollectible({
-			chainId: chainId,
+			chainId,
 			collectionAddress,
 			collectibleId,
 			page: {

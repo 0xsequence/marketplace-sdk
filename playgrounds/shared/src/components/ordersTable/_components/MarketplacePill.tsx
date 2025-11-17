@@ -15,7 +15,7 @@ const MarketplacePill = ({
 	marketplace: MarketplaceKind;
 }) => {
 	const marketplaceDetails = getMarketplaceDetails({
-		originName: originName,
+		originName,
 		kind: marketplaceKind,
 	});
 
