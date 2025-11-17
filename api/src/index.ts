@@ -8,19 +8,18 @@
  * RAW API types are kept internal and only available through namespaced exports for testing.
  */
 
-// Export indexer enums (safe to re-export as they're the same in raw and normalized)
 export {
 	ContractType,
 	ResourceStatus,
 	TransactionStatus,
 	TransactionType,
 } from '@0xsequence/indexer';
-// MSW mocks for testing
+
 export * as BuilderMocks from './__mocks__/builder.msw';
 export * as IndexerMocks from './__mocks__/indexer.msw';
 export * as MarketplaceMocks from './__mocks__/marketplace.msw';
 export * as MetadataMocks from './__mocks__/metadata.msw';
-// Export builder types
+
 export type {
 	LookupMarketplaceReturn,
 	MarketplaceSettings,
@@ -32,11 +31,11 @@ export {
 	FilterCondition,
 	MarketplaceWalletType,
 } from './adapters/builder';
-// Export generated client types as namespaces (for MSW mocks)
+
 export * as BuilderAPI from './adapters/builder/builder.gen';
-// Export generated client classes (for SDK usage)
+
 export { MarketplaceService } from './adapters/builder/builder.gen';
-// Also export normalized Indexer types directly for SDK convenience
+
 // (wrapped IndexerClient returns these)
 export type {
 	ContractInfo as IndexerContractInfo,
@@ -50,10 +49,9 @@ export type {
 } from './adapters/indexer';
 export * as Indexer from './adapters/indexer';
 // Export wrapped client classes for SDK use
-// These clients automatically apply type normalization transforms
+
 export { IndexerClient as SequenceIndexer } from './adapters/indexer';
-// Export marketplace types needed by SDK
-// PropertyFilter is the same interface in both marketplace and metadata
+
 export type {
 	AdditionalFee,
 	CheckoutOptions,
@@ -120,10 +118,9 @@ export type {
 	Step,
 	WebrpcError,
 } from './adapters/marketplace';
-// Service adapters (use these for type normalization)
-// Export as namespaces to avoid type conflicts
+
 export * as Marketplace from './adapters/marketplace';
-// Export step type guards and utilities
+
 export {
 	type ApprovalStep,
 	type BuyStep,
@@ -161,9 +158,9 @@ export {
 	TransactionCrypto,
 	type TransactionStep,
 } from './adapters/marketplace';
-// Export wrapped MarketplaceClient (replaces raw Marketplace class)
+
 export { MarketplaceClient } from './adapters/marketplace/client';
-// Export types from generated marketplace client
+
 export type {
 	Asset as MarketplaceAsset,
 	ListCollectiblesRequest,
@@ -171,13 +168,12 @@ export type {
 	Signature,
 } from './adapters/marketplace/marketplace.gen';
 export * as MarketplaceAPI from './adapters/marketplace/marketplace.gen';
-// Export enums from generated marketplace client
+
 export {
 	TransactionOnRampProvider,
 	WalletKind,
 } from './adapters/marketplace/marketplace.gen';
-// Also export normalized Metadata types directly for SDK convenience
-// Export metadata types needed by SDK
+
 export type {
 	Asset as MetadataAsset,
 	ContractInfo,
@@ -196,15 +192,15 @@ export type {
 	TokenMetadata,
 } from './adapters/metadata';
 export * as Metadata from './adapters/metadata';
-// Export wrapped MetadataClient as SequenceMetadata (SDK-facing API)
+
 export { MetadataClient as SequenceMetadata } from './adapters/metadata';
-// Core primitives
+
 export * from './types';
 export * from './utils/bigint';
-// Utilities
+
 export * from './utils/chain';
 export * from './utils/token';
-// Type assertions - validates enum identity across packages at compile time
+
 export * from './utils/type-assertions';
 
 /**
@@ -230,7 +226,6 @@ export * from './utils/type-assertions';
  *    const args = Indexer.toGetTokenBalancesRequest({ accountAddress: '0x...' });
  *    const raw = await client.getTokenBalances(args);
  *    const normalized = Indexer.toGetTokenBalancesResponse(raw);
- *    // normalized.balances[0].tokenId is bigint ✅
  *
  * Recommended: Use the SDK's getIndexerClient() and getMetadataClient() helpers
  * from '@0xsequence/kit' which are internal and should always be paired with adapters.

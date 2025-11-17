@@ -5,13 +5,12 @@
  * the raw API types (number, string).
  */
 
-// Import and re-export Filter and PropertyFilter from gen - they don't need normalization
 import type { Filter, PropertyFilter } from '@0xsequence/metadata';
 import type { ChainId, TokenId } from '../../types/primitives';
 export type { Filter, PropertyFilter };
 
 export interface ContractInfo {
-	chainId: ChainId; // NORMALIZED: number
+	chainId: ChainId;
 	address: string;
 	source: string;
 	name: string;
@@ -24,7 +23,7 @@ export interface ContractInfo {
 	extensions: ContractInfoExtensions;
 	updatedAt: string;
 	queuedAt?: string;
-	status: string; // ResourceStatus enum
+	status: string;
 }
 
 export interface ContractInfoExtensions {
@@ -50,9 +49,9 @@ export interface ContractInfoExtensionBridgeInfo {
 }
 
 export interface TokenMetadata {
-	chainId?: ChainId; // NORMALIZED: number
+	chainId?: ChainId;
 	contractAddress?: string;
-	tokenId: TokenId; // NORMALIZED: bigint (was string)
+	tokenId: TokenId;
 	source: string;
 	name: string;
 	description?: string;
@@ -72,7 +71,7 @@ export interface TokenMetadata {
 	decimals?: number;
 	updatedAt?: string;
 	assets?: Asset[];
-	status: string; // ResourceStatus enum
+	status: string;
 	queuedAt?: string;
 	lastFetched?: string;
 }
@@ -80,7 +79,7 @@ export interface TokenMetadata {
 export interface Asset {
 	id: number;
 	collectionId: number;
-	tokenId?: TokenId; // NORMALIZED: bigint (was string)
+	tokenId?: TokenId;
 	url?: string;
 	metadataField: string;
 	name?: string;
@@ -100,9 +99,8 @@ export interface Page {
 	more?: boolean;
 }
 
-// Request argument types (normalized)
 export interface GetContractInfoArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractAddress: string;
 }
 
@@ -112,7 +110,7 @@ export interface GetContractInfoReturn {
 }
 
 export interface GetContractInfoBatchArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractAddresses: string[];
 }
 
@@ -124,9 +122,9 @@ export interface GetContractInfoBatchReturn {
 }
 
 export interface GetTokenMetadataArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractAddress: string;
-	tokenIds: TokenId[]; // NORMALIZED: bigint[] (API expects string[])
+	tokenIds: TokenId[];
 }
 
 export interface GetTokenMetadataReturn {
@@ -135,9 +133,9 @@ export interface GetTokenMetadataReturn {
 }
 
 export interface GetTokenMetadataBatchArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractTokenMap: {
-		[key: string]: TokenId[]; // NORMALIZED: bigint[] (API expects string[])
+		[key: string]: TokenId[];
 	};
 }
 
@@ -149,9 +147,9 @@ export interface GetTokenMetadataBatchReturn {
 }
 
 export interface RefreshTokenMetadataArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractAddress: string;
-	tokenIds?: TokenId[]; // NORMALIZED: bigint[] (API expects string[])
+	tokenIds?: TokenId[];
 	refreshAll?: boolean;
 }
 
@@ -160,7 +158,7 @@ export interface RefreshTokenMetadataReturn {
 }
 
 export interface SearchTokenMetadataArgs {
-	chainId: ChainId; // NORMALIZED: bigint (API expects string)
+	chainId: ChainId;
 	contractAddress: string;
 	filter: Filter;
 	page?: Page;
@@ -172,7 +170,7 @@ export interface SearchTokenMetadataReturn {
 }
 
 export interface GetTokenMetadataPropertyFiltersArgs {
-	chainId: ChainId; // NORMALIZED: number (API expects string chainID)
+	chainId: ChainId;
 	contractAddress: string;
 	excludeProperties: Array<string>;
 	excludePropertyValues?: boolean;

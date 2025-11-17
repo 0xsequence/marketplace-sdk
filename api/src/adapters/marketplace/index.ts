@@ -8,17 +8,17 @@ export type {
 	CheckoutOptionsItem,
 	CheckoutOptionsMarketplaceRequest,
 	CheckoutOptionsSalesContractRequest,
-	CreateReq, // SDK-facing CreateReq with bigint tokenId
+	CreateReq,
 	GenerateBuyTransactionRequest,
-	GenerateBuyTransactionResponse, // Enhanced with better Step types
+	GenerateBuyTransactionResponse,
 	GenerateCancelTransactionRequest,
-	GenerateCancelTransactionResponse, // Enhanced with better Step types
+	GenerateCancelTransactionResponse,
 	GenerateListingTransactionRequest,
-	GenerateListingTransactionResponse, // Enhanced with better Step types
+	GenerateListingTransactionResponse,
 	GenerateOfferTransactionRequest,
-	GenerateOfferTransactionResponse, // Enhanced with better Step types
+	GenerateOfferTransactionResponse,
 	GenerateSellTransactionRequest,
-	GenerateSellTransactionResponse, // Enhanced with better Step types
+	GenerateSellTransactionResponse,
 	GetCollectibleRequest,
 	GetCollectionDetailRequest,
 	GetCountOfAllCollectiblesRequest,
@@ -40,48 +40,18 @@ export type {
 	ListOffersForCollectibleRequest,
 	ListOrdersWithCollectiblesRequest,
 	ListPrimarySaleItemsRequest,
-	OrderData, // SDK-facing OrderData with bigint quantity
+	OrderData,
 } from './client';
-// Export wrapped client and its normalized request types
+
 export { MarketplaceClient } from './client';
-// Re-export request/response types that SDK needs (these don't require normalization)
-// IMPORTANT: Do NOT re-export types that are shadowed by normalized client types
+
 export type {
 	AdditionalFee,
 	CheckoutOptions,
-	// CheckoutOptionsItem - exported from client.ts with bigint tokenId
 	CheckoutOptionsMarketplaceResponse,
 	CheckoutOptionsSalesContractResponse,
 	CollectiblePrimarySaleItem,
 	CollectiblesFilter,
-	// CreateReq - exported from client.ts with bigint tokenId
-	// OrderData - exported from client.ts with bigint quantity
-	// Request/Response types are exported from client.ts with:
-	// - Normalized chainId (number instead of string)
-	// - Enhanced Step types (discriminated union instead of interface)
-	// DO NOT export these from gen:
-	// - CheckoutOptionsMarketplaceRequest
-	// - CheckoutOptionsSalesContractRequest
-	// - GenerateBuyTransactionRequest/Response
-	// - GenerateCancelTransactionRequest/Response
-	// - GenerateListingTransactionRequest/Response
-	// - GenerateOfferTransactionRequest/Response
-	// - GenerateSellTransactionRequest/Response
-	// - GetCollectionDetailRequest
-	// - GetCountOfAllCollectiblesRequest
-	// - GetCountOfAllOrdersRequest
-	// - GetCountOfFilteredCollectiblesRequest
-	// - GetCountOfFilteredOrdersRequest
-	// - GetCountOfListingsForCollectibleRequest
-	// - GetCountOfOffersForCollectibleRequest
-	// - GetCountOfPrimarySaleItemsRequest
-	// - GetFloorOrderRequest
-	// - ListCollectibleActivitiesRequest
-	// - ListCollectionActivitiesRequest
-	// - ListCurrenciesRequest
-	// - ListOffersForCollectibleRequest
-	// - ListOrdersWithCollectiblesRequest
-	// - ListPrimarySaleItemsRequest
 	GetCollectibleHighestOfferRequest,
 	GetCollectibleHighestOfferResponse,
 	GetCollectibleLowestListingRequest,
@@ -107,15 +77,14 @@ export type {
 	PrimarySaleItemsFilter,
 	PropertyFilter,
 	SortBy,
-	// Step - exported from types.ts with better discriminated types
 	WebrpcError,
 } from './marketplace.gen';
 // Export raw API types under a namespace (re-export from gen for convenience)
 export * as MarketplaceAPI from './marketplace.gen';
-// Re-export enums from generated types for SDK usage (enums are safe to re-export)
+
 export {
 	CollectionStatus,
-	ContractType as MarketplaceContractType, // Marketplace's subset of ContractType (no NATIVE)
+	ContractType as MarketplaceContractType,
 	CurrencyStatus,
 	ExecuteType,
 	MarketplaceKind,
@@ -129,6 +98,5 @@ export {
 	StepType,
 	TransactionCrypto,
 } from './marketplace.gen';
-// Note: transforms.ts no longer exports functions - all types are already normalized
-// Export normalized types FIRST (these are what consumers should use)
+
 export * from './types';

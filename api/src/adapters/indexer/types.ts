@@ -20,7 +20,7 @@ import type { Address, Amount, ChainId, TokenId } from '../../types/primitives';
  * Source: IndexerAPI.ContractInfo with normalized types
  */
 export interface ContractInfo {
-	chainId: ChainId; // NORMALIZED: number
+	chainId: ChainId;
 	address: Address;
 	name?: string;
 	type?: string;
@@ -34,7 +34,7 @@ export interface ContractInfo {
 		description?: string;
 		ogImage?: string;
 		ogName?: string;
-		originChainId?: ChainId; // NORMALIZED: bigint (was number)
+		originChainId?: ChainId;
 		originAddress?: Address;
 		blacklist?: boolean;
 		verified?: boolean;
@@ -51,7 +51,7 @@ export interface ContractInfo {
  * Source: IndexerAPI.TokenMetadata with normalized types
  */
 export interface TokenMetadata {
-	tokenId: TokenId; // NORMALIZED: bigint (was string)
+	tokenId: TokenId;
 	name?: string;
 	description?: string;
 	image?: string;
@@ -78,14 +78,14 @@ export interface TokenBalance {
 	contractType: string;
 	contractAddress: Address;
 	accountAddress: Address;
-	tokenId: TokenId; // NORMALIZED: bigint (was string with uppercase "ID")
-	balance: Amount; // NORMALIZED: bigint (was string)
+	tokenId: TokenId;
+	balance: Amount;
 	blockHash?: string;
 	blockNumber?: number;
-	chainId: ChainId; // NORMALIZED: number
+	chainId: ChainId;
 	contractInfo?: ContractInfo;
 	tokenMetadata?: TokenMetadata;
-	uniqueCollectibles?: Amount; // NORMALIZED: bigint (was string)
+	uniqueCollectibles?: Amount;
 	isSummary?: boolean;
 }
 
@@ -94,9 +94,9 @@ export interface TokenBalance {
  * Source: IndexerAPI.TokenSupply with normalized types
  */
 export interface TokenSupply {
-	tokenId: TokenId; // NORMALIZED: bigint (was string with uppercase "ID")
-	supply: Amount; // NORMALIZED: bigint (was string)
-	chainId: ChainId; // NORMALIZED: number
+	tokenId: TokenId;
+	supply: Amount;
+	chainId: ChainId;
 	contractAddress?: Address;
 	contractInfo?: ContractInfo;
 	tokenMetadata?: TokenMetadata;
@@ -110,12 +110,12 @@ export interface TransactionReceipt {
 	txnHash: string;
 	blockHash: string;
 	blockNumber: number;
-	chainId?: ChainId; // NORMALIZED: bigint (was number)
+	chainId?: ChainId;
 	txnIndex: number;
 	from?: Address;
 	to?: Address;
 	gasUsed?: number;
-	effectiveGasPrice?: Amount; // NORMALIZED: bigint (was string)
+	effectiveGasPrice?: Amount;
 	logs?: Array<{
 		address: Address;
 		topics: string[];
@@ -129,8 +129,8 @@ export interface TransactionReceipt {
  * Source: IndexerAPI.TokenIDRange with normalized types
  */
 export interface TokenIDRange {
-	startTokenId: TokenId; // NORMALIZED: bigint (was string with uppercase "ID")
-	endTokenId: TokenId; // NORMALIZED: bigint (was string with uppercase "ID")
+	startTokenId: TokenId;
+	endTokenId: TokenId;
 }
 
 /**
@@ -148,7 +148,7 @@ export interface Page {
 export interface GetTokenBalancesRequest {
 	accountAddress: Address;
 	contractAddress?: Address;
-	tokenId?: TokenId; // NORMALIZED: bigint (API expects tokenID: string)
+	tokenId?: TokenId;
 	includeMetadata?: boolean;
 	metadataOptions?: {
 		verifiedOnly?: boolean;
@@ -215,8 +215,8 @@ export interface GetTokenIDRangesResponse {
  */
 export interface NativeTokenBalance {
 	accountAddress: Address;
-	chainId: ChainId; // NORMALIZED: number (API is number)
-	balance: Amount; // NORMALIZED: bigint (API is string)
+	chainId: ChainId;
+	balance: Amount;
 	errorReason?: string;
 }
 

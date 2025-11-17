@@ -21,7 +21,7 @@ import type { Step } from './types';
  * SDK-facing CheckoutOptionsItem type with bigint tokenId
  */
 export interface CheckoutOptionsItem {
-	tokenId: TokenId; // bigint
+	tokenId: TokenId;
 	quantity: bigint;
 }
 
@@ -41,7 +41,7 @@ function transformCheckoutItem(
  * SDK-facing CreateReq type with bigint tokenId
  */
 export interface CreateReq {
-	tokenId: TokenId; // bigint
+	tokenId: TokenId;
 	quantity: bigint;
 	expiry: string;
 	currencyAddress: string;
@@ -145,18 +145,18 @@ export type GenerateListingTransactionRequest = Omit<
 	Gen.GenerateListingTransactionRequest,
 	'chainId' | 'contractType' | 'listing'
 > & {
-	chainId: ChainId; // number instead of string
-	contractType: ContractType; // Accept indexer's ContractType
-	listing: CreateReq; // SDK-facing bigint tokenId
+	chainId: ChainId;
+	contractType: ContractType;
+	listing: CreateReq;
 };
 
 export type GenerateOfferTransactionRequest = Omit<
 	Gen.GenerateOfferTransactionRequest,
 	'chainId' | 'contractType' | 'offer'
 > & {
-	chainId: ChainId; // number instead of string
-	contractType: ContractType; // Accept indexer's ContractType
-	offer: CreateReq; // SDK-facing bigint tokenId
+	chainId: ChainId;
+	contractType: ContractType;
+	offer: CreateReq;
 };
 
 /**
@@ -164,193 +164,193 @@ export type GenerateOfferTransactionRequest = Omit<
  */
 export interface OrderData {
 	orderId: string;
-	quantity: bigint; // bigint instead of string
-	tokenId?: TokenId; // bigint (already bigint in Gen type)
+	quantity: bigint;
+	tokenId?: TokenId;
 }
 
 export type GenerateSellTransactionRequest = Omit<
 	Gen.GenerateSellTransactionRequest,
 	'chainId' | 'ordersData'
 > & {
-	chainId: ChainId; // number instead of string
-	ordersData: Array<OrderData>; // SDK-facing bigint quantity
+	chainId: ChainId;
+	ordersData: Array<OrderData>;
 };
 
 export type GenerateCancelTransactionRequest = Omit<
 	Gen.GenerateCancelTransactionRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GenerateBuyTransactionRequest = Omit<
 	Gen.GenerateBuyTransactionRequest,
 	'chainId' | 'ordersData'
 > & {
-	chainId: ChainId; // number instead of string
-	ordersData: Array<OrderData>; // SDK-facing bigint quantity and tokenId
+	chainId: ChainId;
+	ordersData: Array<OrderData>;
 };
 
 export type GetCollectionDetailRequest = Omit<
 	Gen.GetCollectionDetailRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type ListCurrenciesRequest = Omit<
 	Gen.ListCurrenciesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCollectibleRequest = Omit<
 	Gen.GetCollectibleRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetLowestPriceListingForCollectibleRequest = Omit<
 	Gen.GetLowestPriceListingForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type GetHighestPriceOfferForCollectibleRequest = Omit<
 	Gen.GetHighestPriceOfferForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type ListListingsForCollectibleRequest = Omit<
 	Gen.ListListingsForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type ListOffersForCollectibleRequest = Omit<
 	Gen.ListOffersForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type ListOrdersWithCollectiblesRequest = Omit<
 	Gen.ListOrdersWithCollectiblesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetFloorOrderRequest = Omit<Gen.GetFloorOrderRequest, 'chainId'> & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type ListCollectiblesRequest = Omit<
 	Gen.ListCollectiblesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type ListCollectibleActivitiesRequest = Omit<
 	Gen.ListCollectibleActivitiesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type ListCollectionActivitiesRequest = Omit<
 	Gen.ListCollectionActivitiesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type ListPrimarySaleItemsRequest = Omit<
 	Gen.ListPrimarySaleItemsRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCountOfPrimarySaleItemsRequest = Omit<
 	Gen.GetCountOfPrimarySaleItemsRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type CheckoutOptionsMarketplaceRequest = Omit<
 	Gen.CheckoutOptionsMarketplaceRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCountOfFilteredCollectiblesRequest = Omit<
 	Gen.GetCountOfFilteredCollectiblesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCountOfAllCollectiblesRequest = Omit<
 	Gen.GetCountOfAllCollectiblesRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCountOfListingsForCollectibleRequest = Omit<
 	Gen.GetCountOfListingsForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type GetCountOfOffersForCollectibleRequest = Omit<
 	Gen.GetCountOfOffersForCollectibleRequest,
 	'chainId' | 'tokenId'
 > & {
-	chainId: ChainId; // number instead of string
-	tokenId: TokenId; // bigint instead of string
+	chainId: ChainId;
+	tokenId: TokenId;
 };
 
 export type GetCountOfFilteredOrdersRequest = Omit<
 	Gen.GetCountOfFilteredOrdersRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type GetCountOfAllOrdersRequest = Omit<
 	Gen.GetCountOfAllOrdersRequest,
 	'chainId'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 export type CheckoutOptionsSalesContractRequest = Omit<
 	Gen.CheckoutOptionsSalesContractRequest,
 	'chainId' | 'items'
 > & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 	items: Array<CheckoutOptionsItem>; // SDK-facing bigint tokenId
 };
 
 export type GetOrdersRequest = Omit<Gen.GetOrdersRequest, 'chainId'> & {
-	chainId: ChainId; // number instead of string
+	chainId: ChainId;
 };
 
 /**

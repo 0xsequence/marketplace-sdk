@@ -16,7 +16,6 @@ import {
 	StepType,
 } from './marketplace.gen';
 
-// Re-export gen types that are already normalized
 export type {
 	Collectible,
 	CollectibleOrder,

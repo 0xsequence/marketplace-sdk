@@ -7,7 +7,6 @@
 import type { ChainId, ProjectId, TokenId } from '../../types/primitives';
 import type { FilterCondition, MarketplaceWalletType } from './builder.gen';
 
-// Re-export enums and simple types unchanged
 export {
 	FilterCondition,
 	MarketplaceWalletType,
