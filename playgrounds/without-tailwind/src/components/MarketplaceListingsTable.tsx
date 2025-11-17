@@ -114,7 +114,7 @@ export function MarketplaceListingsTable({
 									openBuyModal({
 										collectionAddress,
 										chainId,
-										collectibleId: collectible.metadata.tokenId,
+										tokenId: collectible.metadata.tokenId,
 										orderId: collectible.listing.orderId,
 										marketplace: collectible.listing.marketplace,
 									});
