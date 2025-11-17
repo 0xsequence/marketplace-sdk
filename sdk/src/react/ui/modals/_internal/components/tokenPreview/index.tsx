@@ -8,21 +8,21 @@ import ChessTileImage from '../../../../images/chess-tile.png';
 type TokenPreviewProps = {
 	collectionName?: string;
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	chainId: number;
 };
 
 export default function TokenPreview({
 	collectionName,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 	chainId,
 }: TokenPreviewProps) {
 	const { data: collectable, isLoading: collectibleLoading } =
 		useCollectibleDetail({
 			chainId,
 			collectionAddress,
-			collectibleId,
+			tokenId,
 		});
 
 	if (collectibleLoading) {

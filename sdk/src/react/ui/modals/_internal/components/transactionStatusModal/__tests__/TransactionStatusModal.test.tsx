@@ -10,7 +10,7 @@ const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
 	collectionAddress: '0x456' as `0x${string}`,
 	chainId: 1,
-	collectibleId: 1n,
+	tokenId: 1n,
 	type: TransactionType.BUY,
 };
 

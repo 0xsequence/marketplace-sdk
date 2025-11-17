@@ -15,7 +15,7 @@ import { calculateEarningsAfterFees } from '../../../../../../utils/price';
 import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
 type TransactionDetailsProps = {
-	collectibleId: bigint;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	price?: Price;
@@ -26,7 +26,7 @@ type TransactionDetailsProps = {
 };
 
 export default function TransactionDetails({
-	collectibleId,
+	tokenId,
 	collectionAddress,
 	chainId,
 	includeMarketplaceFee,
@@ -45,7 +45,7 @@ export default function TransactionDetails({
 	const { data: royalty, isLoading: royaltyLoading } = useRoyalty({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const [overflow, setOverflow] = useState({
 		status: false,
