@@ -2,6 +2,7 @@ export type {
 	AdditionalFee,
 	CheckoutOptions,
 	CheckoutOptionsItem,
+	CheckoutOptionsMarketplaceRequest,
 	Collectible,
 	CollectibleOrder,
 	CollectiblesFilter,
