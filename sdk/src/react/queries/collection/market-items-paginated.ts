@@ -1,13 +1,14 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
-	ValuesOptional,
 } from '../../_internal';
-import { getMarketplaceClient } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 
 export interface FetchListItemsOrdersForCollectionPaginatedParams
 	extends Omit<
@@ -43,7 +44,7 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 	};
 
 	const apiArgs: ListOrdersWithCollectiblesRequest = {
-		contractAddress: collectionAddress,
+		collectionAddress,
 		chainId,
 		page: pageParams,
 		...additionalApiParams,
@@ -53,38 +54,28 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 }
 
 export type ListItemsOrdersForCollectionPaginatedQueryOptions =
-	ValuesOptional<FetchListItemsOrdersForCollectionPaginatedParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchListItemsOrdersForCollectionPaginatedParams>;
+
+export function getListItemsOrdersForCollectionPaginatedQueryKey(
+	params: ListItemsOrdersForCollectionPaginatedQueryOptions,
+) {
+	return ['order', 'collection-items-paginated', params] as const;
+}
 
 export function listItemsOrdersForCollectionPaginatedQueryOptions(
 	params: ListItemsOrdersForCollectionPaginatedQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			params.side &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListItemsOrdersForCollectionPaginatedQueryKey,
+			requiredParams: [
+				'collectionAddress',
+				'chainId',
+				'config',
+				'side',
+			] as const,
+			fetcher: fetchListItemsOrdersForCollectionPaginated,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: ['order', 'collection-items-paginated', params],
-		queryFn: () =>
-			fetchListItemsOrdersForCollectionPaginated({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				side: params.side!,
-				filter: params.filter,
-				page: params.page,
-				pageSize: params.pageSize,
-			}),
-		...params.query,
-		enabled,
-	});
 }

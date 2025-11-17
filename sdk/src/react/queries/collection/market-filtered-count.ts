@@ -1,30 +1,36 @@
 import type {
+	Address,
 	GetCountOfFilteredOrdersRequest,
 	OrderSide,
 	OrdersFilter,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
-
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchGetCountOfFilteredOrdersParams {
 	chainId: number;
+	collectionAddress: Address;
 	config: SdkConfig;
 	side: OrderSide;
 	filter?: OrdersFilter;
+	query?: StandardQueryOptions;
 }
 
 export async function fetchGetCountOfFilteredOrders(
 	params: FetchGetCountOfFilteredOrdersParams,
 ) {
-	const { chainId, config, side, filter } = params;
+	const { chainId, collectionAddress, config, side, filter } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: GetCountOfFilteredOrdersRequest = {
 		chainId,
+		collectionAddress,
 		side,
 		filter,
 	};
@@ -34,9 +40,7 @@ export async function fetchGetCountOfFilteredOrders(
 }
 
 export type GetCountOfFilteredOrdersQueryOptions =
-	ValuesOptional<FetchGetCountOfFilteredOrdersParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchGetCountOfFilteredOrdersParams>;
 
 export function getCountOfFilteredOrdersQueryKey(
 	params: GetCountOfFilteredOrdersQueryOptions,
@@ -56,29 +60,17 @@ export function getCountOfFilteredOrdersQueryKey(
 export function getCountOfFilteredOrdersQueryOptions(
 	params: GetCountOfFilteredOrdersQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			params.side &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCountOfFilteredOrdersQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'config',
+				'side',
+			] as const,
+			fetcher: fetchGetCountOfFilteredOrders,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCountOfFilteredOrdersQueryKey(params),
-		queryFn: () =>
-			fetchGetCountOfFilteredOrders({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				side: params.side!,
-				filter: params.filter,
-			}),
-		...params.query,
-		enabled,
-	});
 }

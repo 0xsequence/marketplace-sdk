@@ -2,21 +2,16 @@ import type {
 	CheckoutOptionsMarketplaceRequest,
 	CheckoutOptionsMarketplaceResponse,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	getMarketplaceClient,
 	type MarketplaceKind,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchMarketCheckoutOptionsParams
-	extends Omit<
-		CheckoutOptionsMarketplaceRequest,
-		'chainId' | 'wallet' | 'orders'
-	> {
+export interface FetchMarketCheckoutOptionsParams {
 	chainId: number;
 	walletAddress: Address;
 	orders: Array<{
@@ -24,6 +19,7 @@ export interface FetchMarketCheckoutOptionsParams
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}>;
+	additionalFee?: number;
 	config: SdkConfig;
 }
 
@@ -52,13 +48,8 @@ export async function fetchMarketCheckoutOptions(
 	return result;
 }
 
-export type MarketCheckoutOptionsQueryOptions =
-	ValuesOptional<FetchMarketCheckoutOptionsParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getMarketCheckoutOptionsQueryKey(
-	params: MarketCheckoutOptionsQueryOptions,
+	params: WithOptionalParams<FetchMarketCheckoutOptionsParams>,
 ) {
 	return [
 		'checkout',
@@ -73,31 +64,15 @@ export function getMarketCheckoutOptionsQueryKey(
 }
 
 export function marketCheckoutOptionsQueryOptions(
-	params: MarketCheckoutOptionsQueryOptions,
+	params: WithOptionalParams<FetchMarketCheckoutOptionsParams>,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.walletAddress &&
-			params.orders?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getMarketCheckoutOptionsQueryKey,
+			requiredParams: ['chainId', 'walletAddress', 'orders', 'config'] as const,
+			fetcher: fetchMarketCheckoutOptions,
+			customValidation: (params) => (params.orders?.length ?? 0) > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getMarketCheckoutOptionsQueryKey(params),
-		queryFn: () =>
-			fetchMarketCheckoutOptions({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				walletAddress: params.walletAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				orders: params.orders!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				additionalFee: params.additionalFee ?? 0,
-			}),
-		...params.query,
-		enabled,
-	});
 }

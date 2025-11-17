@@ -1,14 +1,15 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	type GetFloorOrderRequest,
 	getMarketplaceClient,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchFloorOrderParams extends GetFloorOrderRequest {
 	config: SdkConfig;
+	query?: StandardQueryOptions;
 }
 
 /**
@@ -28,9 +29,7 @@ export async function fetchFloorOrder(params: FetchFloorOrderParams) {
 	return result.collectible;
 }
 
-export type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
-	query?: StandardQueryOptions;
-};
+export type FloorOrderQueryOptions = WithOptionalParams<FetchFloorOrderParams>;
 
 export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 	return [
@@ -45,26 +44,12 @@ export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 }
 
 export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getFloorOrderQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchFloorOrder,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getFloorOrderQueryKey(params),
-		queryFn: () =>
-			fetchFloorOrder({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				...((params.filter && { filter: params.filter }) || {}),
-			}),
-		...params.query,
-		enabled,
-	});
 }

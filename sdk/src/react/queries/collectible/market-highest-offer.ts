@@ -1,15 +1,16 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	type GetHighestPriceOfferForCollectibleRequest,
 	getMarketplaceClient,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchHighestOfferParams
 	extends GetHighestPriceOfferForCollectibleRequest {
 	config: SdkConfig;
+	query?: StandardQueryOptions;
 }
 
 /**
@@ -28,9 +29,7 @@ export async function fetchHighestOffer(params: FetchHighestOfferParams) {
 }
 
 export type HighestOfferQueryOptions =
-	ValuesOptional<FetchHighestOfferParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchHighestOfferParams>;
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 	return [
@@ -46,28 +45,17 @@ export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 }
 
 export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getHighestOfferQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchHighestOffer,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getHighestOfferQueryKey(params),
-		queryFn: () =>
-			fetchHighestOffer({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

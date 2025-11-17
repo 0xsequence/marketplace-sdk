@@ -1,9 +1,11 @@
 import type { Indexer } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
-import { getIndexerClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type WithOptionalParams,
+} from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
 export interface CollectionBalanceFilter {
@@ -67,16 +69,14 @@ export async function fetchCollectionBalanceDetails(
 }
 
 export type CollectionBalanceDetailsQueryOptions =
-	ValuesOptional<FetchCollectionBalanceDetailsParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchCollectionBalanceDetailsParams>;
 
 export function getCollectionBalanceDetailsQueryKey(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		filter: params.filter!,
+		chainId: params.chainId,
+		filter: params.filter,
 	};
 
 	return createCollectionQueryKey('balance-details', apiArgs);
@@ -85,25 +85,12 @@ export function getCollectionBalanceDetailsQueryKey(
 export function collectionBalanceDetailsQueryOptions(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.filter?.accountAddresses?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionBalanceDetailsQueryKey,
+			requiredParams: ['chainId', 'filter', 'config'] as const,
+			fetcher: fetchCollectionBalanceDetails,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionBalanceDetailsQueryKey(params),
-		queryFn: () =>
-			fetchCollectionBalanceDetails({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				filter: params.filter!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

@@ -1,20 +1,25 @@
 import type {
+	Address,
 	CollectiblesFilter,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountOfCollectablesParams {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	config: SdkConfig;
 	filter?: CollectiblesFilter;
 	side?: OrderSide;
+	query?: StandardQueryOptions;
 }
 
 /**
@@ -29,7 +34,7 @@ export async function fetchCountOfCollectables(
 
 	if (filter && side) {
 		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
-			contractAddress: collectionAddress,
+			collectionAddress,
 			chainId,
 			filter,
 			side,
@@ -40,7 +45,7 @@ export async function fetchCountOfCollectables(
 	}
 
 	const apiArgs: GetCountOfAllCollectiblesRequest = {
-		contractAddress: collectionAddress,
+		collectionAddress,
 		chainId,
 	};
 
@@ -49,9 +54,7 @@ export async function fetchCountOfCollectables(
 }
 
 export type CountOfCollectablesQueryOptions =
-	ValuesOptional<FetchCountOfCollectablesParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchCountOfCollectablesParams>;
 
 /**
  * Query key structure: [resource, operation, params]
@@ -75,27 +78,12 @@ export function getCountOfCollectablesQueryKey(
 export function countOfCollectablesQueryOptions(
 	params: CountOfCollectablesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCountOfCollectablesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchCountOfCollectables,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCountOfCollectablesQueryKey(params),
-		queryFn: () =>
-			fetchCountOfCollectables({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				filter: params.filter,
-				side: params.side,
-			}),
-		...params.query,
-		enabled,
-	});
 }

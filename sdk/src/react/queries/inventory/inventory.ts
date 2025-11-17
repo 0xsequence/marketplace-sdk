@@ -80,15 +80,13 @@ async function fetchIndexerTokens(
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
-		tokenBalancesOptions(
-			{
-				collectionAddress,
-				userAddress: accountAddress,
-				chainId,
-				includeMetadata: true,
-			},
+		tokenBalancesOptions({
+			collectionAddress,
+			userAddress: accountAddress,
+			chainId,
+			includeMetadata: true,
 			config,
-		),
+		}),
 	);
 
 	const collectibles = balances.map((balance) =>

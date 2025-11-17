@@ -8,8 +8,11 @@ import type {
 	ShopCollection,
 } from '../../../types';
 import { compareAddress } from '../../../utils';
-import { getMetadataClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMetadataClient,
+	type WithOptionalParams,
+} from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
@@ -107,9 +110,7 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 }
 
 export type ListCollectionsQueryOptions =
-	ValuesOptional<FetchListCollectionsParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchListCollectionsParams>;
 
 export function getListCollectionsQueryKey(
 	params: ListCollectionsQueryOptions,
@@ -125,27 +126,14 @@ export function getListCollectionsQueryKey(
 export function listCollectionsQueryOptions(
 	params: ListCollectionsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.marketplaceConfig &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectionsQueryKey,
+			requiredParams: ['marketplaceConfig', 'config'] as const,
+			fetcher: fetchListCollections,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectionsQueryKey(params),
-		queryFn: enabled
-			? () =>
-					fetchListCollections({
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						marketplaceConfig: params.marketplaceConfig!,
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						config: params.config!,
-						cardType: params.cardType,
-					})
-			: skipToken,
-		...params.query,
-		enabled,
-	});
 }
 
 // Keep old function for backward compatibility during migration

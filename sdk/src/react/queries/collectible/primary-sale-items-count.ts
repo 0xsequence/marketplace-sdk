@@ -1,12 +1,12 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	type GetCountOfPrimarySaleItemsResponse,
 	getMarketplaceClient,
 	type PrimarySaleItemsFilter,
+	type WithOptionalParams,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchPrimarySaleItemsCountParams {
 	chainId: number;
@@ -32,47 +32,35 @@ export async function fetchPrimarySaleItemsCount(
 }
 
 export type PrimarySaleItemsCountQueryOptions =
-	Partial<FetchPrimarySaleItemsCountParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchPrimarySaleItemsCountParams>;
 
 export function getPrimarySaleItemsCountQueryKey(
-	args: PrimarySaleItemsCountQueryOptions,
+	params: PrimarySaleItemsCountQueryOptions,
 ) {
 	return [
 		'collectible',
 		'primary-sale-items-count',
 		{
-			chainId: args.chainId ?? 0,
-			primarySaleContractAddress: args.primarySaleContractAddress ?? '',
-			filter: args.filter,
+			chainId: params.chainId ?? 0,
+			primarySaleContractAddress: params.primarySaleContractAddress ?? '',
+			filter: params.filter,
 		},
 	] as const;
 }
 
 export const primarySaleItemsCountQueryOptions = (
-	args: PrimarySaleItemsCountQueryOptions,
+	params: PrimarySaleItemsCountQueryOptions,
 ) => {
-	const enabled = Boolean(
-		args.primarySaleContractAddress &&
-			args.chainId &&
-			args.config &&
-			(args.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getPrimarySaleItemsCountQueryKey,
+			requiredParams: [
+				'primarySaleContractAddress',
+				'chainId',
+				'config',
+			] as const,
+			fetcher: fetchPrimarySaleItemsCount,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getPrimarySaleItemsCountQueryKey(args),
-		queryFn: () =>
-			fetchPrimarySaleItemsCount({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: args.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				primarySaleContractAddress: args.primarySaleContractAddress!,
-				filter: args.filter,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: args.config!,
-			}),
-		...args.query,
-		enabled,
-	});
 };

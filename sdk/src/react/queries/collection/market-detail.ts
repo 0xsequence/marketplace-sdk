@@ -1,9 +1,10 @@
 import type { GetCollectionDetailRequest } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
-
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 
 export interface FetchMarketCollectionDetailParams
 	extends GetCollectionDetailRequest {
@@ -30,9 +31,7 @@ export async function fetchMarketCollectionDetail(
 }
 
 export type MarketCollectionDetailQueryOptions =
-	ValuesOptional<FetchMarketCollectionDetailParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchMarketCollectionDetailParams>;
 
 export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,
@@ -50,25 +49,12 @@ export function getCollectionMarketDetailQueryKey(
 export function collectionMarketDetailQueryOptions(
 	params: MarketCollectionDetailQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionMarketDetailQueryKey,
+			requiredParams: ['collectionAddress', 'chainId', 'config'] as const,
+			fetcher: fetchMarketCollectionDetail,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionMarketDetailQueryKey(params),
-		queryFn: () =>
-			fetchMarketCollectionDetail({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

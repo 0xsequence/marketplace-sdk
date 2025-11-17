@@ -1,39 +1,47 @@
-import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../../types';
-import { getIndexerClient } from '../../_internal';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type WithOptionalParams,
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export type UseBalanceOfCollectibleArgs = {
+export interface FetchBalanceOfCollectibleParams {
 	collectionAddress: Address;
 	collectibleId: bigint;
-	userAddress: Address | undefined;
+	userAddress: Address;
 	chainId: number;
 	includeMetadata?: boolean;
-	query?: UseQueryParameters;
-};
+	config: SdkConfig;
+	query?: StandardQueryOptions;
+}
 
 /**
  * Fetches the balance of a specific collectible for a user
  *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
+ * @param params - Parameters for the API call
  * @returns The balance data
  */
 export async function fetchBalanceOfCollectible(
-	args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & {
-		userAddress: Address;
-	},
-	config: SdkConfig,
+	params: FetchBalanceOfCollectibleParams,
 ) {
-	const indexerClient = getIndexerClient(args.chainId, config);
+	const {
+		chainId,
+		userAddress,
+		collectionAddress,
+		collectibleId,
+		includeMetadata,
+		config,
+	} = params;
+	const indexerClient = getIndexerClient(chainId, config);
 	return indexerClient
 		.getTokenBalances({
-			accountAddress: args.userAddress,
-			contractAddress: args.collectionAddress,
-			tokenId: args.collectibleId,
-			includeMetadata: args.includeMetadata ?? false,
+			accountAddress: userAddress,
+			contractAddress: collectionAddress,
+			tokenId: collectibleId,
+			includeMetadata: includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
 			},
@@ -41,20 +49,23 @@ export async function fetchBalanceOfCollectible(
 		.then((res) => res.balances[0] || null);
 }
 
+export type BalanceOfCollectibleQueryOptions =
+	WithOptionalParams<FetchBalanceOfCollectibleParams>;
+
 /**
  * Query key structure: [resource, operation, params]
  * @example ['collectible', 'balance', { chainId, accountAddress, contractAddress, tokenID }]
  */
 export function getBalanceOfCollectibleQueryKey(
-	args: UseBalanceOfCollectibleArgs,
+	params: BalanceOfCollectibleQueryOptions,
 ) {
 	const apiArgs = {
-		chainId: args.chainId,
-		accountAddress: args.userAddress,
-		contractAddress: args.collectionAddress,
-		tokenId: args.collectibleId,
-		includeMetadata: args.includeMetadata,
-		metadataOptions: args.userAddress
+		chainId: params.chainId,
+		accountAddress: params.userAddress,
+		contractAddress: params.collectionAddress,
+		tokenId: params.collectibleId,
+		includeMetadata: params.includeMetadata,
+		metadataOptions: params.userAddress
 			? {
 					verifiedOnly: true,
 				}
@@ -67,27 +78,24 @@ export function getBalanceOfCollectibleQueryKey(
 /**
  * Creates a tanstack query options object for the balance query
  *
- * @param args - The query arguments
- * @param config - SDK configuration
+ * @param params - The query parameters
  * @returns Query options configuration
  */
 export function balanceOfCollectibleOptions(
-	args: UseBalanceOfCollectibleArgs,
-	config: SdkConfig,
+	params: BalanceOfCollectibleQueryOptions,
 ) {
-	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
-	return queryOptions({
-		queryKey: getBalanceOfCollectibleQueryKey(args),
-		queryFn: enabled
-			? () =>
-					fetchBalanceOfCollectible(
-						{
-							...args,
-							// biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the userAddress check above
-							userAddress: args.userAddress!,
-						},
-						config,
-					)
-			: skipToken,
-	});
+	return buildQueryOptions(
+		{
+			getQueryKey: getBalanceOfCollectibleQueryKey,
+			requiredParams: [
+				'userAddress',
+				'collectionAddress',
+				'collectibleId',
+				'chainId',
+				'config',
+			] as const,
+			fetcher: fetchBalanceOfCollectible,
+		},
+		params,
+	);
 }

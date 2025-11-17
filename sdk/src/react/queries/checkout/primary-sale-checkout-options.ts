@@ -1,16 +1,22 @@
 import type {
+	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractRequest,
 	CheckoutOptionsSalesContractResponse,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 
-export interface FetchPrimarySaleCheckoutOptionsParams
-	extends Omit<CheckoutOptionsSalesContractRequest, 'wallet'> {
+export interface FetchPrimarySaleCheckoutOptionsParams {
+	chainId: number;
 	walletAddress: Address;
+	contractAddress: string;
+	collectionAddress: string;
+	items: CheckoutOptionsItem[];
 	config: SdkConfig;
 }
 
@@ -43,13 +49,8 @@ export async function fetchPrimarySaleCheckoutOptions(
 	return result;
 }
 
-export type PrimarySaleCheckoutOptionsQueryOptions =
-	ValuesOptional<FetchPrimarySaleCheckoutOptionsParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getPrimarySaleCheckoutOptionsQueryKey(
-	params: PrimarySaleCheckoutOptionsQueryOptions,
+	params: WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
 ) {
 	return [
 		'checkout',
@@ -65,36 +66,22 @@ export function getPrimarySaleCheckoutOptionsQueryKey(
 }
 
 export function primarySaleCheckoutOptionsQueryOptions(
-	params: PrimarySaleCheckoutOptionsQueryOptions,
+	params: WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.walletAddress &&
-			params.contractAddress &&
-			params.collectionAddress &&
-			params.items?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getPrimarySaleCheckoutOptionsQueryKey,
+			requiredParams: [
+				'chainId',
+				'walletAddress',
+				'contractAddress',
+				'collectionAddress',
+				'items',
+				'config',
+			] as const,
+			fetcher: fetchPrimarySaleCheckoutOptions,
+			customValidation: (params) => (params.items?.length ?? 0) > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getPrimarySaleCheckoutOptionsQueryKey(params),
-		queryFn: () =>
-			fetchPrimarySaleCheckoutOptions({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				walletAddress: params.walletAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				contractAddress: params.contractAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				items: params.items!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

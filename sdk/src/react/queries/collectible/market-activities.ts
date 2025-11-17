@@ -1,13 +1,11 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
 	SortBy,
-	ValuesOptional,
+	WithOptionalParams,
 } from '../../_internal';
-import { getMarketplaceClient } from '../../_internal';
+import { buildQueryOptions, getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectibleActivitiesParams
@@ -16,6 +14,7 @@ export interface FetchListCollectibleActivitiesParams
 	pageSize?: number;
 	sort?: SortBy[];
 	config: SdkConfig;
+	query?: StandardQueryOptions;
 }
 
 /**
@@ -45,9 +44,7 @@ export async function fetchListCollectibleActivities(
 }
 
 export type ListCollectibleActivitiesQueryOptions =
-	ValuesOptional<FetchListCollectibleActivitiesParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchListCollectibleActivitiesParams>;
 
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,
@@ -69,31 +66,17 @@ export function getListCollectibleActivitiesQueryKey(
 export function listCollectibleActivitiesQueryOptions(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectibleActivitiesQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchListCollectibleActivities,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectibleActivitiesQueryKey(params),
-		queryFn: () =>
-			fetchListCollectibleActivities({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				page: params.page,
-				pageSize: params.pageSize,
-				sort: params.sort,
-			}),
-		...params.query,
-		enabled,
-	});
 }

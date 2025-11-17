@@ -2,16 +2,15 @@ import type {
 	GetTokenMetadataPropertyFiltersArgs,
 	PropertyFilter,
 } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import { FilterCondition, type SdkConfig } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
+	buildQueryOptions,
 	getMetadataClient,
 	getQueryClient,
 	type QueryKeyArgs,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from './config';
 import { createMarketplaceQueryKey } from './queryKeys';
 
@@ -107,14 +106,12 @@ export async function fetchFilters(
 	return sortedFilters;
 }
 
-export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
-	query?: StandardQueryOptions;
-};
+export type FiltersQueryOptions = WithOptionalParams<FetchFiltersParams>;
 
 export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId,
-		collectionAddress: params.collectionAddress,
+		contractAddress: params.collectionAddress,
 		excludeProperties: undefined,
 		excludePropertyValues: params.excludePropertyValues,
 	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
@@ -126,27 +123,12 @@ export function getFiltersQueryKey(params: FiltersQueryOptions) {
 }
 
 export function filtersQueryOptions(params: FiltersQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.collectionAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getFiltersQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchFilters,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getFiltersQueryKey(params),
-		queryFn: () =>
-			fetchFilters({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				showAllFilters: params.showAllFilters,
-				excludePropertyValues: params.excludePropertyValues,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

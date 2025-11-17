@@ -1,16 +1,17 @@
 import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	type GetLowestPriceListingForCollectibleRequest,
 	getMarketplaceClient,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
-	extends GetHighestPriceOfferForCollectibleRequest {
+	extends GetLowestPriceListingForCollectibleRequest {
 	config: SdkConfig;
+	query?: StandardQueryOptions;
 }
 
 /**
@@ -31,9 +32,7 @@ export async function fetchLowestListing(
 }
 
 export type LowestListingQueryOptions =
-	ValuesOptional<FetchLowestListingParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchLowestListingParams>;
 
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 	return [
@@ -49,28 +48,17 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 }
 
 export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getLowestListingQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchLowestListing,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getLowestListingQueryKey(params),
-		queryFn: () =>
-			fetchLowestListing({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

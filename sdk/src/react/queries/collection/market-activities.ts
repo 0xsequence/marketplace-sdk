@@ -1,15 +1,14 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
 	SortBy,
-	ValuesOptional,
 } from '../../_internal';
-import { getMarketplaceClient } from '../../_internal';
-
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type WithOptionalParams,
+} from '../../_internal';
 
 export interface FetchListCollectionActivitiesParams
 	extends Omit<ListCollectionActivitiesRequest, 'page'> {
@@ -48,9 +47,7 @@ export async function fetchListCollectionActivities(
 }
 
 export type ListCollectionActivitiesQueryOptions =
-	ValuesOptional<FetchListCollectionActivitiesParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchListCollectionActivitiesParams>;
 
 export function getListCollectionActivitiesQueryKey(
 	params: ListCollectionActivitiesQueryOptions,
@@ -71,28 +68,12 @@ export function getListCollectionActivitiesQueryKey(
 export function listCollectionActivitiesQueryOptions(
 	params: ListCollectionActivitiesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectionActivitiesQueryKey,
+			requiredParams: ['collectionAddress', 'chainId', 'config'] as const,
+			fetcher: fetchListCollectionActivities,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectionActivitiesQueryKey(params),
-		queryFn: () =>
-			fetchListCollectionActivities({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				page: params.page,
-				pageSize: params.pageSize,
-				sort: params.sort,
-			}),
-		...params.query,
-		enabled,
-	});
 }

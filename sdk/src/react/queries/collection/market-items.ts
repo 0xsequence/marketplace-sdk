@@ -1,5 +1,4 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
