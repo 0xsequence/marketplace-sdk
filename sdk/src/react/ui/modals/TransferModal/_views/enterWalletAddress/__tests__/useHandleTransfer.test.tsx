@@ -43,7 +43,7 @@ describe('useHandleTransfer', () => {
 		receiverAddress: '0x1234567890123456789012345678901234567890',
 		collectionAddress:
 			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
-		collectibleId: 123n,
+		tokenId: 123n,
 		quantity: '2',
 		chainId: 1,
 		transferIsProcessing: false,
@@ -104,7 +104,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: defaultModalState.receiverAddress,
 				collectionAddress: defaultModalState.collectionAddress,
-				tokenId: defaultModalState.collectibleId,
+				tokenId: defaultModalState.tokenId,
 				chainId: defaultModalState.chainId,
 				contractType: ContractType.ERC721,
 			});
@@ -119,7 +119,7 @@ describe('useHandleTransfer', () => {
 				hash: mockHash,
 				collectionAddress: defaultModalState.collectionAddress,
 				chainId: defaultModalState.chainId,
-				collectibleId: defaultModalState.collectibleId,
+				tokenId: defaultModalState.tokenId,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
 					['token', 'balances'],
@@ -156,7 +156,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: erc1155State.receiverAddress,
 				collectionAddress: erc1155State.collectionAddress,
-				tokenId: erc1155State.collectibleId,
+				tokenId: erc1155State.tokenId,
 				chainId: erc1155State.chainId,
 				contractType: ContractType.ERC1155,
 				quantity: '5',
@@ -381,7 +381,7 @@ describe('useHandleTransfer', () => {
 
 			const fullState = {
 				...defaultModalState,
-				collectibleId: 999n,
+				tokenId: 999n,
 				quantity: '10',
 				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
 			};
@@ -395,7 +395,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: fullState.receiverAddress,
 				collectionAddress: fullState.collectionAddress,
-				tokenId: fullState.collectibleId,
+				tokenId: fullState.tokenId,
 				chainId: fullState.chainId,
 				contractType: ContractType.ERC721,
 			});

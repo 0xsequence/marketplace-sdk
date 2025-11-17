@@ -27,7 +27,7 @@ describe('TransferModal Store', () => {
 	describe('Open Action', () => {
 		const mockOpenArgs: ShowTransferModalArgs = {
 			collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-			collectibleId: 123n,
+			tokenId: 123n,
 			chainId: 1,
 		};
 
@@ -40,7 +40,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.collectionAddress).toBe(
 				mockOpenArgs.collectionAddress,
 			);
-			expect(state.context.collectibleId).toBe(mockOpenArgs.collectibleId);
+			expect(state.context.tokenId).toBe(mockOpenArgs.tokenId);
 			expect(state.context.chainId).toBe(mockOpenArgs.chainId);
 		});
 
@@ -83,7 +83,7 @@ describe('TransferModal Store', () => {
 		it('should reset all state when closing', () => {
 			const mockOpenArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -198,7 +198,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onSuccess },
 			});
@@ -214,7 +214,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 			});
 
@@ -244,7 +244,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onError },
 			});
@@ -261,7 +261,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 			});
 
@@ -276,7 +276,7 @@ describe('TransferModal Store', () => {
 		it('should handle complete transfer flow', () => {
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -320,7 +320,7 @@ describe('TransferModal Store', () => {
 		it('should handle transfer failure flow', () => {
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -350,7 +350,7 @@ describe('TransferModal Store', () => {
 
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: 123n,
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onSuccess, onError },
 			};
