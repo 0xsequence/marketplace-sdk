@@ -10,6 +10,7 @@ import {
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
+	useMarketCardDataPaged,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
@@ -47,13 +48,10 @@ export function MarketContent({
 		},
 	});
 
-	const {
-		collectibleCards,
-		isLoading: collectiblesLoading,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-	} = useListMarketCardData({
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(30);
+
+	const infiniteQueryResult = useListMarketCardData({
 		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
 		collectionType: collection?.type as ContractType,
 		filterOptions,
@@ -64,10 +62,39 @@ export function MarketContent({
 		chainId,
 		initialPage: 1,
 		initialPageSize: 30,
+		enabled: paginationMode === 'infinite',
 	});
 
-	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(30);
+	const pagedQueryResult = useMarketCardDataPaged({
+		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		searchText,
+		showListedOnly,
+		priceFilters,
+		collectionAddress,
+		chainId,
+		page,
+		pageSize,
+		enabled: paginationMode === 'paged',
+	});
+
+	// Select the appropriate result based on pagination mode
+	const {
+		collectibleCards,
+		isLoading: collectiblesLoading,
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+	} = paginationMode === 'paged'
+		? {
+				collectibleCards: pagedQueryResult.collectibleCards,
+				isLoading: pagedQueryResult.isLoading,
+				hasNextPage: pagedQueryResult.hasMore,
+				isFetchingNextPage: false,
+				fetchNextPage: undefined,
+			}
+		: infiniteQueryResult;
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
@@ -88,21 +115,19 @@ export function MarketContent({
 		);
 	};
 
-	return paginationMode === 'paginated' ? (
+	return paginationMode === 'paged' ? (
 		<PaginatedView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
 			isLoading={collectiblesLoading}
-			isFetchingNextPage={isFetchingNextPage}
+			isFetchingNextPage={false}
 			page={page}
 			pageSize={pageSize}
 			onPageChange={setPage}
 			onPageSizeChange={setPageSize}
 			hasMore={hasNextPage}
-			fetchNextPage={fetchNextPage}
-			allCollectibles={collectibleCards}
 		/>
 	) : (
 		<InfiniteScrollView

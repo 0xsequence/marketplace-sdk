@@ -1,7 +1,6 @@
 'use client';
 
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
-import { useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import {
 	ItemsPerPageSelect,
@@ -40,38 +39,10 @@ export function PaginatedView({
 	onPageChange,
 	onPageSizeChange,
 	hasMore,
-	fetchNextPage,
-	allCollectibles,
 }: PaginatedViewProps) {
-	const visibleCards = useMemo(() => {
-		const start = (page - 1) * pageSize;
-		const end = start + pageSize;
-		return collectibleCards.slice(start, end);
-	}, [collectibleCards, page, pageSize]);
-
-	useEffect(() => {
-		const required = page * pageSize;
-		if (
-			allCollectibles &&
-			allCollectibles.length < required &&
-			hasMore &&
-			!isFetchingNextPage &&
-			fetchNextPage
-		) {
-			void fetchNextPage();
-		}
-	}, [
-		page,
-		pageSize,
-		allCollectibles,
-		hasMore,
-		isFetchingNextPage,
-		fetchNextPage,
-	]);
-
 	const collectiblesLoading =
 		isLoading ||
-		(visibleCards.length === 0 && (isFetchingNextPage || !!hasMore));
+		(collectibleCards.length === 0 && (isFetchingNextPage || !!hasMore));
 
 	return (
 		<div className="flex w-full flex-col gap-3">
@@ -97,7 +68,7 @@ export function PaginatedView({
 				mode="paginated"
 				collectionAddress={collectionAddress}
 				chainId={chainId}
-				collectibleCards={visibleCards}
+				collectibleCards={collectibleCards}
 				isLoading={collectiblesLoading}
 				isFetchingNextPage={isFetchingNextPage}
 				renderItemContent={renderItemContent}
