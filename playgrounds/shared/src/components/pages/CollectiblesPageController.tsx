@@ -25,7 +25,7 @@ export interface CollectiblesPageControllerProps {
 		tokenIds: string[];
 		isLoading: boolean;
 		salePrice?: {
-			amount?: string;
+			amount?: bigint;
 			currencyAddress?: Address;
 		};
 	}) => React.ReactNode;
@@ -69,7 +69,8 @@ export function CollectiblesPageController({
 		});
 	const ERC721SalePrice = {
 		amount:
-			primarySaleItems?.pages[0].primarySaleItems[0].primarySaleItem.priceAmount?.toString(),
+			primarySaleItems?.pages[0].primarySaleItems[0].primarySaleItem
+				.priceAmount,
 		currencyAddress: primarySaleItems?.pages[0].primarySaleItems[0]
 			.primarySaleItem.currencyAddress as Address,
 	};

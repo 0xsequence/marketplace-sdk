@@ -36,7 +36,7 @@ export function Collectibles() {
 		tokenIds: string[];
 		isLoading: boolean;
 		salePrice?: {
-			amount?: string;
+			amount?: bigint;
 			currencyAddress?: Address;
 		};
 	}) => (

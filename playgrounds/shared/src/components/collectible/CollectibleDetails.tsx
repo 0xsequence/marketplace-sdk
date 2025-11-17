@@ -1,11 +1,11 @@
 import { Card, Separator, Text } from '@0xsequence/design-system';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
 import { cn } from '@0xsequence/marketplace-sdk';
 import {
 	useHighestOffer,
 	useLowestListing,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { useMarketplace } from '../../store';
 
 export interface CollectibleDetailsProps {

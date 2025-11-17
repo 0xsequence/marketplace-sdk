@@ -112,7 +112,7 @@ export function ShopActions({
 							],
 							cardType: 'shop',
 							salePrice: {
-								amount: primarySaleItem?.priceAmount?.toString() ?? '0',
+								amount: primarySaleItem?.priceAmount ?? 0n,
 								currencyAddress:
 									(primarySaleItem?.currencyAddress as Address) ?? '0x',
 							},
@@ -177,7 +177,7 @@ export function ShopActions({
 								],
 								cardType: 'shop',
 								salePrice: {
-									amount: primarySaleItem?.priceAmount?.toString() ?? '0',
+									amount: primarySaleItem?.priceAmount ?? 0n,
 									currencyAddress:
 										(primarySaleItem?.currencyAddress as Address) ?? '0x',
 								},

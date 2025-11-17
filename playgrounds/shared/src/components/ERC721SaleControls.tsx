@@ -23,7 +23,7 @@ interface ERC721SaleControlsProps {
 	tokenIds: string[];
 	isLoading: boolean;
 	salePrice?: {
-		amount?: string;
+		amount?: bigint;
 		currencyAddress?: Address;
 	};
 }
@@ -73,7 +73,7 @@ export function ERC721SaleControls({
 				},
 			],
 			salePrice: {
-				amount: salePrice?.amount || '0',
+				amount: salePrice?.amount || 0n,
 				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
 			},
 		});
