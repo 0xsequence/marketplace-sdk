@@ -52,7 +52,7 @@ export function getBalanceOfCollectibleQueryKey(
 		chainId: args.chainId,
 		accountAddress: args.userAddress,
 		contractAddress: args.collectionAddress,
-		tokenId: args.collectableId,
+		tokenId: args.collectibleId,
 		includeMetadata: args.includeMetadata,
 		metadataOptions: args.userAddress
 			? {

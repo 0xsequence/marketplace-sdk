@@ -95,7 +95,7 @@ describe('useCollectibleBalance', () => {
 		const specificCollectible = {
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectableId: 42n,
+			collectibleId: 42n,
 			userAddress:
 				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
