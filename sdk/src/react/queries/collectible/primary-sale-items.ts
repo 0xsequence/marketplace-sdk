@@ -68,20 +68,23 @@ export const primarySaleItemsQueryOptions = (
 	type PageParam = { page: number; pageSize: number };
 	const initialPage: PageParam = params.page || { page: 1, pageSize: 30 };
 
+	const queryFn = async ({ pageParam }: { pageParam: PageParam }) => {
+		const requiredParams = params as WithRequired<
+			ListPrimarySaleItemsQueryOptions,
+			'chainId' | 'primarySaleContractAddress' | 'config'
+		>;
+		return fetchPrimarySaleItems({
+			chainId: requiredParams.chainId,
+			primarySaleContractAddress: requiredParams.primarySaleContractAddress,
+			filter: params.filter,
+			page: pageParam,
+			config: requiredParams.config,
+		});
+	};
+
 	return infiniteQueryOptions({
 		queryKey: getPrimarySaleItemsQueryKey(params),
-		queryFn: async ({ pageParam }) => {
-			return fetchPrimarySaleItems({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				primarySaleContractAddress: params.primarySaleContractAddress!,
-				filter: params.filter,
-				page: pageParam,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			});
-		},
+		queryFn,
 		initialPageParam: initialPage,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,

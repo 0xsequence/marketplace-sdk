@@ -50,8 +50,8 @@ export function getSearchTokenMetadataQueryKey(
 	params: SearchTokenMetadataQueryOptions,
 ) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		collectionAddress: params.collectionAddress!,
+		chainId: params.chainId ?? 0,
+		collectionAddress: params.collectionAddress ?? '',
 		filter: params.filter,
 	};
 
@@ -70,20 +70,23 @@ export function searchTokenMetadataQueryOptions(
 
 	const initialPageParam = { page: 1, pageSize: 30 };
 
+	const queryFn = ({ pageParam = initialPageParam }) => {
+		const requiredParams = params as WithRequired<
+			SearchTokenMetadataQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>;
+		return fetchSearchTokenMetadata({
+			chainId: requiredParams.chainId,
+			collectionAddress: requiredParams.collectionAddress,
+			filter: params.filter,
+			config: requiredParams.config,
+			page: pageParam,
+		});
+	};
+
 	return infiniteQueryOptions({
 		queryKey: getSearchTokenMetadataQueryKey(params),
-		queryFn: ({ pageParam = initialPageParam }) =>
-			fetchSearchTokenMetadata({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				filter: params.filter!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				page: pageParam,
-			}),
+		queryFn,
 		initialPageParam,
 		getNextPageParam: (lastPage) => {
 			if (!lastPage.page?.more) return undefined;

@@ -81,23 +81,27 @@ export function listBalancesOptions(params: ListBalancesQueryOptions) {
 	const enabled =
 		!!params.chainId && !!params.accountAddress && !!params.config;
 
+	const queryFn = ({ pageParam }: { pageParam: Indexer.Page }) => {
+		const requiredParams = params as WithRequired<
+			ListBalancesQueryOptions,
+			'chainId' | 'accountAddress' | 'config'
+		>;
+		return fetchBalances(
+			{
+				...params,
+				chainId: requiredParams.chainId,
+				accountAddress: requiredParams.accountAddress,
+				config: requiredParams.config,
+			},
+			pageParam,
+		);
+	};
+
 	return infiniteQueryOptions({
 		...params.query,
 		enabled: (params.query?.enabled ?? true) && enabled,
 		queryKey: getListBalancesQueryKey(params),
-		queryFn: ({ pageParam }) =>
-			fetchBalances(
-				{
-					...params,
-					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-					chainId: params.chainId!,
-					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-					accountAddress: params.accountAddress!,
-					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-					config: params.config!,
-				},
-				pageParam,
-			),
+		queryFn,
 		initialPageParam: { page: 1, pageSize: 30, more: false },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more

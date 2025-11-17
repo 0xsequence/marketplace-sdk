@@ -55,8 +55,8 @@ export type CurrencyQueryOptions = SdkQueryParams<FetchCurrencyParams>;
 
 export function getCurrencyQueryKey(params: CurrencyQueryOptions) {
 	const apiArgs = {
-		chainId: String(params.chainId!),
-		currencyAddress: params.currencyAddress!,
+		chainId: String(params.chainId ?? 0),
+		currencyAddress: params.currencyAddress ?? '',
 	};
 
 	return ['currency', 'currency', apiArgs] as const;
@@ -70,20 +70,24 @@ export function currencyQueryOptions(params: CurrencyQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
+	const queryFn =
+		params.chainId && params.currencyAddress && params.config
+			? () => {
+					const requiredParams = params as WithRequired<
+						CurrencyQueryOptions,
+						'chainId' | 'currencyAddress' | 'config'
+					>;
+					return fetchCurrency({
+						chainId: requiredParams.chainId,
+						currencyAddress: requiredParams.currencyAddress,
+						config: requiredParams.config,
+					});
+				}
+			: skipToken;
+
 	return queryOptions({
 		queryKey: getCurrencyQueryKey(params),
-		queryFn:
-			params.chainId && params.currencyAddress && params.config
-				? () =>
-						fetchCurrency({
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							chainId: params.chainId!,
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							currencyAddress: params.currencyAddress!,
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							config: params.config!,
-						})
-				: skipToken,
+		queryFn,
 		...params.query,
 		enabled,
 	});

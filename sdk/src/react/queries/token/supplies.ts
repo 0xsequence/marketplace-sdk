@@ -37,8 +37,8 @@ export async function fetchTokenSupplies(
 
 export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		collectionAddress: params.collectionAddress!,
+		chainId: params.chainId ?? 0,
+		collectionAddress: params.collectionAddress ?? '',
 		includeMetadata: params.includeMetadata,
 		metadataOptions: params.metadataOptions,
 	};
@@ -56,18 +56,20 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 
 	const initialPageParam: Indexer.Page = { page: 1, pageSize: 30, more: false };
 
-	const queryFn = async ({ pageParam = initialPageParam }) =>
-		fetchTokenSupplies({
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			chainId: params.chainId!,
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			collectionAddress: params.collectionAddress!,
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			config: params.config!,
+	const queryFn = async ({ pageParam = initialPageParam }) => {
+		const requiredParams = params as WithRequired<
+			TokenSuppliesQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>;
+		return fetchTokenSupplies({
+			chainId: requiredParams.chainId,
+			collectionAddress: requiredParams.collectionAddress,
+			config: requiredParams.config,
 			includeMetadata: params.includeMetadata,
 			metadataOptions: params.metadataOptions,
 			page: pageParam,
 		});
+	};
 
 	return infiniteQueryOptions({
 		queryKey: getTokenSuppliesQueryKey(params),
