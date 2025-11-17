@@ -1,27 +1,32 @@
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
 	SortBy,
-	WithOptionalParams,
 } from '../../_internal';
-import { buildQueryOptions, getMarketplaceClient } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchListCollectibleActivitiesParams
-	extends Omit<ListCollectibleActivitiesRequest, 'page'> {
-	page?: number;
-	pageSize?: number;
-	sort?: SortBy[];
-	config: SdkConfig;
-	query?: StandardQueryOptions;
-}
+export type ListCollectibleActivitiesQueryOptions = SdkQueryParams<
+	Omit<ListCollectibleActivitiesRequest, 'page'> & {
+		page?: number;
+		pageSize?: number;
+		sort?: SortBy[];
+	}
+>;
 
 /**
  * Fetches collectible activities from the Marketplace API
  */
 export async function fetchListCollectibleActivities(
-	params: FetchListCollectibleActivitiesParams,
+	params: WithRequired<
+		ListCollectibleActivitiesQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
 ): Promise<ListCollectibleActivitiesResponse> {
 	const { chainId, config, page, pageSize, sort, ...additionalApiParams } =
 		params;
@@ -42,9 +47,6 @@ export async function fetchListCollectibleActivities(
 		...additionalApiParams,
 	});
 }
-
-export type ListCollectibleActivitiesQueryOptions =
-	WithOptionalParams<FetchListCollectibleActivitiesParams>;
 
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,

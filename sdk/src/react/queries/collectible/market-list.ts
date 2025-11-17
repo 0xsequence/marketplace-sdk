@@ -1,30 +1,33 @@
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import type { CardType } from '../../../types/types';
 import { compareAddress } from '../../../utils';
 import type {
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
-	WithOptionalInfiniteParams,
 } from '../../_internal';
 import {
 	buildInfiniteQueryOptions,
 	getMarketplaceClient,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardInfiniteQueryOptions } from '../../types/query';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
-export interface FetchListCollectiblesParams extends ListCollectiblesRequest {
-	cardType?: CardType;
-	config: SdkConfig;
-	query?: StandardInfiniteQueryOptions;
-	enabled?: boolean;
-}
+export type ListCollectiblesQueryOptions = SdkInfiniteQueryParams<
+	ListCollectiblesRequest & {
+		cardType?: CardType;
+		enabled?: boolean;
+	}
+>;
 
 /**
  * Fetches a list of collectibles with pagination support from the Marketplace API
  */
 export async function fetchListCollectibles(
-	params: FetchListCollectiblesParams,
+	params: WithRequired<
+		ListCollectiblesQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 	page: Page,
 ): Promise<ListCollectiblesResponse> {
 	const { chainId, collectionAddress, config, ...additionalApiParams } = params;
@@ -53,9 +56,6 @@ export async function fetchListCollectibles(
 		...additionalApiParams,
 	});
 }
-
-export type ListCollectiblesQueryOptions =
-	WithOptionalInfiniteParams<FetchListCollectiblesParams>;
 
 /**
  * Query key structure: [resource, operation, params]

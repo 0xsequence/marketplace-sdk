@@ -2,26 +2,27 @@ import type {
 	ListCollectibleListingsResponse,
 	ListListingsForCollectibleRequest,
 } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchListListingsForCollectibleParams
-	extends Omit<ListListingsForCollectibleRequest, 'tokenId'> {
-	collectibleId: bigint;
-	config: SdkConfig;
-	query?: StandardQueryOptions;
-}
+export type ListListingsForCollectibleQueryOptions = SdkQueryParams<
+	Omit<ListListingsForCollectibleRequest, 'tokenId'> & {
+		collectibleId: bigint;
+	}
+>;
 
 /**
  * Fetches listings for a specific collectible from the Marketplace API
  */
 export async function fetchListListingsForCollectible(
-	params: FetchListListingsForCollectibleParams,
+	params: WithRequired<
+		ListListingsForCollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'collectibleId' | 'config'
+	>,
 ): Promise<ListCollectibleListingsResponse> {
 	const { chainId, collectibleId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
@@ -32,9 +33,6 @@ export async function fetchListListingsForCollectible(
 		...additionalApiParams,
 	});
 }
-
-export type ListListingsForCollectibleQueryOptions =
-	WithOptionalParams<FetchListListingsForCollectibleParams>;
 
 export function getListListingsForCollectibleQueryKey(
 	params: ListListingsForCollectibleQueryOptions,

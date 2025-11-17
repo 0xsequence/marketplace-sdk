@@ -1,21 +1,22 @@
 import type { GetCollectionDetailRequest } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
-export interface FetchMarketCollectionDetailParams
-	extends GetCollectionDetailRequest {
-	config: SdkConfig;
-}
+export type MarketCollectionDetailQueryOptions =
+	SdkQueryParams<GetCollectionDetailRequest>;
 
 /**
  * Fetches collection details from the marketplace API
  */
 export async function fetchMarketCollectionDetail(
-	params: FetchMarketCollectionDetailParams,
+	params: WithRequired<
+		MarketCollectionDetailQueryOptions,
+		'collectionAddress' | 'chainId' | 'config'
+	>,
 ) {
 	const { chainId, config, ...additionalApiParams } = params;
 
@@ -29,9 +30,6 @@ export async function fetchMarketCollectionDetail(
 	const result = await marketplaceClient.getCollectionDetail(apiArgs);
 	return result.collection;
 }
-
-export type MarketCollectionDetailQueryOptions =
-	WithOptionalParams<FetchMarketCollectionDetailParams>;
 
 export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,

@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchHighestOfferParams,
 	type HighestOfferQueryOptions,
 	highestOfferQueryOptions,
 } from '../../queries/collectible/market-highest-offer';
@@ -71,4 +70,4 @@ export function useCollectibleMarketHighestOffer(
 
 export { highestOfferQueryOptions };
 
-export type { FetchHighestOfferParams, HighestOfferQueryOptions };
+export type { HighestOfferQueryOptions };

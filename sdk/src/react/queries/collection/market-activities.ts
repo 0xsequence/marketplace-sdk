@@ -1,4 +1,4 @@
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
@@ -7,22 +7,26 @@ import type {
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
-export interface FetchListCollectionActivitiesParams
-	extends Omit<ListCollectionActivitiesRequest, 'page'> {
-	page?: number;
-	pageSize?: number;
-	sort?: SortBy[];
-	config: SdkConfig;
-}
+export type ListCollectionActivitiesQueryOptions = SdkQueryParams<
+	Omit<ListCollectionActivitiesRequest, 'page'> & {
+		page?: number;
+		pageSize?: number;
+		sort?: SortBy[];
+	}
+>;
 
 /**
  * Fetches collection activities from the Marketplace API
  */
 export async function fetchListCollectionActivities(
-	params: FetchListCollectionActivitiesParams,
+	params: WithRequired<
+		ListCollectionActivitiesQueryOptions,
+		'collectionAddress' | 'chainId' | 'config'
+	>,
 ): Promise<ListCollectionActivitiesResponse> {
 	const { chainId, config, page, pageSize, sort, ...additionalApiParams } =
 		params;
@@ -45,9 +49,6 @@ export async function fetchListCollectionActivities(
 
 	return await marketplaceClient.listCollectionActivities(apiArgs);
 }
-
-export type ListCollectionActivitiesQueryOptions =
-	WithOptionalParams<FetchListCollectionActivitiesParams>;
 
 export function getListCollectionActivitiesQueryKey(
 	params: ListCollectionActivitiesQueryOptions,

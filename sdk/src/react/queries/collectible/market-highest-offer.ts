@@ -1,22 +1,23 @@
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	type GetHighestPriceOfferForCollectibleRequest,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchHighestOfferParams
-	extends GetHighestPriceOfferForCollectibleRequest {
-	config: SdkConfig;
-	query?: StandardQueryOptions;
-}
+export type HighestOfferQueryOptions =
+	SdkQueryParams<GetHighestPriceOfferForCollectibleRequest>;
 
 /**
  * Fetches the highest offer for a collectible from the marketplace API
  */
-export async function fetchHighestOffer(params: FetchHighestOfferParams) {
+export async function fetchHighestOffer(
+	params: WithRequired<
+		HighestOfferQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
+) {
 	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
@@ -27,9 +28,6 @@ export async function fetchHighestOffer(params: FetchHighestOfferParams) {
 	});
 	return result.order ?? null;
 }
-
-export type HighestOfferQueryOptions =
-	WithOptionalParams<FetchHighestOfferParams>;
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 	return [

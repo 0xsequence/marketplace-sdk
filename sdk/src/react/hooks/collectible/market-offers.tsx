@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchListOffersForCollectibleParams,
 	type ListOffersForCollectibleQueryOptions,
 	listOffersForCollectibleQueryOptions,
 } from '../../queries/collectible/market-offers';

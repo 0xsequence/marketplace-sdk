@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchLowestListingParams,
 	type LowestListingQueryOptions,
 	lowestListingQueryOptions,
 } from '../../queries/collectible/market-lowest-listing';
@@ -71,4 +70,4 @@ export function useCollectibleMarketLowestListing(
 
 export { lowestListingQueryOptions };
 
-export type { FetchLowestListingParams, LowestListingQueryOptions };
+export type { LowestListingQueryOptions };

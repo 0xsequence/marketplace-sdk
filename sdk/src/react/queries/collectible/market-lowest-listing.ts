@@ -1,24 +1,23 @@
 import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	type GetLowestPriceListingForCollectibleRequest,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchLowestListingParams
-	extends GetLowestPriceListingForCollectibleRequest {
-	config: SdkConfig;
-	query?: StandardQueryOptions;
-}
+export type LowestListingQueryOptions =
+	SdkQueryParams<GetLowestPriceListingForCollectibleRequest>;
 
 /**
  * Fetches the lowest listing for a collectible from the marketplace API
  */
 export async function fetchLowestListing(
-	params: FetchLowestListingParams,
+	params: WithRequired<
+		LowestListingQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
 ): Promise<MarketplaceAPI.GetCollectibleLowestListingResponse['order'] | null> {
 	const { chainId, config, ...additionalApiParams } = params;
 
@@ -30,9 +29,6 @@ export async function fetchLowestListing(
 	});
 	return result.order || null;
 }
-
-export type LowestListingQueryOptions =
-	WithOptionalParams<FetchLowestListingParams>;
 
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 	return [

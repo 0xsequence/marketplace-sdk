@@ -1,27 +1,31 @@
-import type { SdkConfig } from '../../../types';
 import type {
 	ListCollectibleOffersResponse,
 	ListOffersForCollectibleRequest,
 	Page,
 	SortBy,
-	WithOptionalParams,
 } from '../../_internal';
-import { buildQueryOptions, getMarketplaceClient } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchListOffersForCollectibleParams
-	extends Omit<ListOffersForCollectibleRequest, 'tokenId'> {
-	collectibleId: bigint;
-	config: SdkConfig;
-	sort?: Array<SortBy>;
-	query?: StandardQueryOptions;
-}
+export type ListOffersForCollectibleQueryOptions = SdkQueryParams<
+	Omit<ListOffersForCollectibleRequest, 'tokenId'> & {
+		collectibleId: bigint;
+		sort?: Array<SortBy>;
+	}
+>;
 
 /**
  * Fetches offers for a specific collectible from the Marketplace API
  */
 export async function fetchListOffersForCollectible(
-	params: FetchListOffersForCollectibleParams,
+	params: WithRequired<
+		ListOffersForCollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'collectibleId' | 'config'
+	>,
 ): Promise<ListCollectibleOffersResponse> {
 	const { chainId, collectibleId, config, sort, page, ...additionalApiParams } =
 		params;
@@ -46,9 +50,6 @@ export async function fetchListOffersForCollectible(
 		...additionalApiParams,
 	});
 }
-
-export type ListOffersForCollectibleQueryOptions =
-	WithOptionalParams<FetchListOffersForCollectibleParams>;
 
 export function getListOffersForCollectibleQueryKey(
 	params: ListOffersForCollectibleQueryOptions,

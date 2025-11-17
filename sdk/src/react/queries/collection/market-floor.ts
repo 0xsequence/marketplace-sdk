@@ -1,21 +1,22 @@
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	type GetFloorOrderRequest,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchFloorOrderParams extends GetFloorOrderRequest {
-	config: SdkConfig;
-	query?: StandardQueryOptions;
-}
+export type FloorOrderQueryOptions = SdkQueryParams<GetFloorOrderRequest>;
 
 /**
  * Fetches the floor order for a collection from the marketplace API
  */
-export async function fetchFloorOrder(params: FetchFloorOrderParams) {
+export async function fetchFloorOrder(
+	params: WithRequired<
+		FloorOrderQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+) {
 	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
@@ -28,8 +29,6 @@ export async function fetchFloorOrder(params: FetchFloorOrderParams) {
 	const result = await marketplaceClient.getFloorOrder(apiArgs);
 	return result.collectible;
 }
-
-export type FloorOrderQueryOptions = WithOptionalParams<FetchFloorOrderParams>;
 
 export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 	return [
