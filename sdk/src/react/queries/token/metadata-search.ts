@@ -54,7 +54,7 @@ export function getSearchTokenMetadataQueryKey(
 ) {
 	const apiArgs = {
 		chainId: params.chainId!,
-		collectionAddress: params.collectionAddress!,
+		contractAddress: params.collectionAddress!,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<Omit<SearchTokenMetadataArgs, 'page'>>;
 

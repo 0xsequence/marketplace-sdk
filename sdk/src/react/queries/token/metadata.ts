@@ -1,12 +1,11 @@
 import type { GetTokenMetadataArgs } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
+	buildQueryOptions,
 	getMetadataClient,
 	type QueryKeyArgs,
-	type ValuesOptional,
+	type WithOptionalParams,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchListTokenMetadataParams {
@@ -35,9 +34,7 @@ export async function fetchListTokenMetadata(
 }
 
 export type ListTokenMetadataQueryOptions =
-	ValuesOptional<FetchListTokenMetadataParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchListTokenMetadataParams>;
 
 export function getListTokenMetadataQueryKey(
 	params: ListTokenMetadataQueryOptions,
@@ -54,28 +51,17 @@ export function getListTokenMetadataQueryKey(
 export function listTokenMetadataQueryOptions(
 	params: ListTokenMetadataQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.contractAddress &&
-			params.tokenIds?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListTokenMetadataQueryKey,
+			requiredParams: [
+				'chainId',
+				'contractAddress',
+				'tokenIds',
+				'config',
+			] as const,
+			fetcher: fetchListTokenMetadata,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListTokenMetadataQueryKey(params),
-		queryFn: () =>
-			fetchListTokenMetadata({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				contractAddress: params.contractAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenIds: params.tokenIds!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

@@ -1,9 +1,11 @@
 import type { Indexer } from '@0xsequence/marketplace-api';
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
-import { getIndexerClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type WithOptionalParams,
+} from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchGetTokenRangesParams {
@@ -34,39 +36,24 @@ export async function fetchGetTokenRanges(
 }
 
 export type GetTokenRangesQueryOptions =
-	ValuesOptional<FetchGetTokenRangesParams> & {
-		query?: StandardQueryOptions;
-	};
+	WithOptionalParams<FetchGetTokenRangesParams>;
 
 export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		collectionAddress: params.collectionAddress!,
+		chainId: params.chainId,
+		collectionAddress: params.collectionAddress,
 	};
 
 	return createTokenQueryKey('ranges', apiArgs);
 }
 
 export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.collectionAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getTokenRangesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchGetTokenRanges,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getTokenRangesQueryKey(params),
-		queryFn: () =>
-			fetchGetTokenRanges({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }
