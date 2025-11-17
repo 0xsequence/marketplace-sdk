@@ -1,23 +1,21 @@
 import { useMemo } from 'react';
-
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type {
-	CollectibleCardAction,
-	CollectibleOrder,
-	ContractType,
-	Order,
-	OrderbookKind,
-	PropertyFilter,
+import {
+	type CollectibleCardAction,
+	type CollectibleOrder,
+	type ContractType,
+	type OrderbookKind,
+	OrderSide,
+	type PropertyFilter,
 } from '../../../../types';
-import { OrderSide } from '../../../../types';
-import type { PriceFilter } from '../../../_internal';
+import type { Order, PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
-import { useCollectibleMarketList } from '../../collectible/market-list';
+import { useCollectibleMarketListPaginated } from '../../collectible/market-list-paginated';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 
-export interface UseMarketCardDataProps {
+export interface UseMarketCardDataPagedProps {
 	collectionAddress: Address;
 	chainId: number;
 	// orderbookKind is optional — used to override marketplace config for internal tests
@@ -33,14 +31,27 @@ export interface UseMarketCardDataProps {
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
 	hideQuantitySelector?: boolean;
-	/** Initial page number for API requests (controls how many items fetched per API call). Defaults to 1. */
-	initialPage?: number;
-	/** Initial page size for API requests (controls batch size when fetching data from backend). Defaults to 30. */
-	initialPageSize?: number;
+	/** Page number to fetch (required for paged mode). */
+	page: number;
+	/** Number of items per page (required for paged mode). */
+	pageSize: number;
 	enabled?: boolean;
 }
 
-export function useMarketCardData({
+/**
+ * Hook to fetch collectible card data with pagination support.
+ *
+ * Unlike `useMarketCardData`, this hook uses a paged query that fetches
+ * only the specific page requested, eliminating the need for client-side slicing.
+ *
+ * @param params - Configuration parameters
+ * @param params.page - Page number to fetch (required)
+ * @param params.pageSize - Number of items per page (required)
+ *
+ * @returns Query result containing card data for the specific page only
+ */
+// TODO: Write test for this hook
+export function useMarketCardDataPaged({
 	collectionAddress,
 	chainId,
 	orderbookKind,
@@ -55,22 +66,19 @@ export function useMarketCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
-	initialPage,
-	initialPageSize,
+	page,
+	pageSize,
 	enabled,
-}: UseMarketCardDataProps) {
+}: UseMarketCardDataPagedProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
 
-	// Get collectibles with listings
+	// Get collectibles with listings for the specific page
 	const {
-		data: collectiblesList,
+		data: collectiblesListResponse,
 		isLoading: collectiblesListIsLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
 		error: collectiblesListError,
-	} = useCollectibleMarketList({
+	} = useCollectibleMarketListPaginated({
 		collectionAddress,
 		chainId,
 		side: OrderSide.listing,
@@ -84,8 +92,8 @@ export function useMarketCardData({
 		query: {
 			enabled: !!collectionAddress && !!chainId && enabled,
 		},
-		page: initialPage,
-		pageSize: initialPageSize,
+		page,
+		pageSize,
 	});
 
 	// Get user balances for this collection
@@ -102,15 +110,12 @@ export function useMarketCardData({
 			},
 		});
 
-	// Flatten all collectibles from all pages
-	const allCollectibles = useMemo(() => {
-		if (!collectiblesList?.pages) return [];
-		return collectiblesList.pages.flatMap((page) => page.collectibles);
-	}, [collectiblesList?.pages]);
+	// Get collectibles from the current page only (no flattening needed)
+	const currentPageCollectibles = collectiblesListResponse?.collectibles ?? [];
 
-	// Generate card props for each collectible
+	// Generate card props for each collectible in the current page
 	const collectibleCards = useMemo(() => {
-		return allCollectibles.map((collectible: CollectibleOrder) => {
+		return currentPageCollectibles.map((collectible: CollectibleOrder) => {
 			const balance = collectionBalance?.balances.find(
 				(balance) => balance.tokenID === collectible.metadata.tokenId,
 			)?.balance;
@@ -149,7 +154,7 @@ export function useMarketCardData({
 			return cardProps;
 		});
 	}, [
-		allCollectibles,
+		currentPageCollectibles,
 		chainId,
 		collectionAddress,
 		collectionType,
@@ -169,10 +174,6 @@ export function useMarketCardData({
 		collectibleCards,
 		isLoading: collectiblesListIsLoading || balanceLoading,
 		error: collectiblesListError,
-
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-		allCollectibles,
+		hasMore: collectiblesListResponse?.page?.more ?? false,
 	};
 }
