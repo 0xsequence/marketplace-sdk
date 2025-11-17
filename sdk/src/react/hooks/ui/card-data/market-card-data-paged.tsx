@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import {
@@ -15,42 +14,154 @@ import { useSellModal } from '../../../ui/modals/SellModal';
 import { useCollectibleMarketListPaginated } from '../../collectible/market-list-paginated';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 
+/**
+ * Props for the useMarketCardDataPaged hook
+ */
 export interface UseMarketCardDataPagedProps {
+	/** The collection contract address */
 	collectionAddress: Address;
+	/** The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) */
 	chainId: number;
-	// orderbookKind is optional — used to override marketplace config for internal tests
+	/** Optional orderbook kind override - used to override marketplace config for internal tests */
 	orderbookKind?: OrderbookKind;
+	/** The contract type of the collection (ERC721, ERC1155, etc.) */
 	collectionType: ContractType;
+	/** Optional property filters to apply to the collectible search */
 	filterOptions?: PropertyFilter[];
+	/** Optional search text to filter collectibles by name or metadata */
 	searchText?: string;
+	/** Whether to show only listed collectibles (defaults to false) */
 	showListedOnly?: boolean;
+	/** Optional array of account addresses to filter collectibles by owner */
 	inAccounts?: Address[];
+	/** Optional price filters to apply to the collectible search */
 	priceFilters?: PriceFilter[];
+	/** Optional callback function called when a collectible card is clicked */
 	onCollectibleClick?: (tokenId: string) => void;
+	/** Optional callback function called when an action cannot be performed on a collectible */
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
+	/** Whether to prioritize owner actions in the card UI */
 	prioritizeOwnerActions?: boolean;
+	/** Optional URL prefix for asset images */
 	assetSrcPrefixUrl?: string;
+	/** Whether to hide the quantity selector on collectible cards */
 	hideQuantitySelector?: boolean;
-	/** Page number to fetch (required for paged mode). */
+	/** The current page number (1-indexed) */
 	page: number;
-	/** Number of items per page (required for paged mode). */
+	/** The number of items per page */
 	pageSize: number;
+	/** Whether the query should be enabled (defaults to true when collectionAddress and chainId are provided) */
 	enabled?: boolean;
 }
 
 /**
- * Hook to fetch collectible card data with pagination support.
+ * Hook to fetch paginated market card data for a collection
  *
- * Unlike `useMarketCardData`, this hook uses a paged query that fetches
- * only the specific page requested, eliminating the need for client-side slicing.
+ * This hook fetches collectibles for a specific page from the marketplace API,
+ * combines them with user balance information, and generates card props ready
+ * for rendering collectible cards. Unlike `useMarketCardData`, this hook
+ * fetches a single page of results rather than using infinite scrolling.
  *
- * @param params - Configuration parameters
- * @param params.page - Page number to fetch (required)
- * @param params.pageSize - Number of items per page (required)
+ * @param props - Configuration parameters
+ * @param props.collectionAddress - The collection contract address
+ * @param props.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param props.orderbookKind - Optional orderbook kind override for internal tests
+ * @param props.collectionType - The contract type of the collection (ERC721, ERC1155, etc.)
+ * @param props.filterOptions - Optional property filters to apply to the collectible search
+ * @param props.searchText - Optional search text to filter collectibles by name or metadata
+ * @param props.showListedOnly - Whether to show only listed collectibles (defaults to false)
+ * @param props.inAccounts - Optional array of account addresses to filter collectibles by owner
+ * @param props.priceFilters - Optional price filters to apply to the collectible search
+ * @param props.onCollectibleClick - Optional callback function called when a collectible card is clicked
+ * @param props.onCannotPerformAction - Optional callback function called when an action cannot be performed
+ * @param props.prioritizeOwnerActions - Whether to prioritize owner actions in the card UI
+ * @param props.assetSrcPrefixUrl - Optional URL prefix for asset images
+ * @param props.hideQuantitySelector - Whether to hide the quantity selector on collectible cards
+ * @param props.page - The current page number
+ * @param props.pageSize - The number of items per page
+ * @param props.enabled - Whether the query should be enabled
  *
- * @returns Query result containing card data for the specific page only
+ * @returns An object containing:
+ * @returns collectibleCards - Array of card props ready for rendering collectible cards
+ * @returns isLoading - Whether the data is currently loading
+ * @returns error - Any error that occurred during fetching
+ * @returns hasMore - Whether there are more pages available after the current page
+ *
+ * @example
+ * Basic usage with pagination:
+ * ```typescript
+ * const [page, setPage] = useState(1);
+ * const pageSize = 20;
+ *
+ * const {
+ *   collectibleCards,
+ *   isLoading,
+ *   error,
+ *   hasMore
+ * } = useMarketCardDataPaged({
+ *   collectionAddress: '0x1234...',
+ *   chainId: 137,
+ *   collectionType: 'ERC721',
+ *   page,
+ *   pageSize
+ * });
+ *
+ * if (isLoading) return <div>Loading...</div>;
+ * if (error) return <div>Error: {error.message}</div>;
+ *
+ * return (
+ *   <div>
+ *     {collectibleCards.map(card => (
+ *       <CollectibleCard key={card.tokenId} {...card} />
+ *     ))}
+ *     {hasMore && (
+ *       <button onClick={() => setPage(p => p + 1)}>Next Page</button>
+ *     )}
+ *   </div>
+ * );
+ * ```
+ *
+ * @example
+ * With filters and search:
+ * ```typescript
+ * const { collectibleCards, isLoading } = useMarketCardDataPaged({
+ *   collectionAddress: '0x5678...',
+ *   chainId: 1,
+ *   collectionType: 'ERC1155',
+ *   searchText: 'rare',
+ *   showListedOnly: true,
+ *   filterOptions: [
+ *     { name: 'Rarity', values: ['Legendary'], type: PropertyType.STRING }
+ *   ],
+ *   priceFilters: [
+ *     { min: '0', max: '1', currency: 'ETH' }
+ *   ],
+ *   page: 1,
+ *   pageSize: 30,
+ *   onCollectibleClick: (tokenId) => {
+ *     console.log('Clicked collectible:', tokenId);
+ *   }
+ * });
+ * ```
+ *
+ * @example
+ * With owner filtering and custom callbacks:
+ * ```typescript
+ * const { collectibleCards } = useMarketCardDataPaged({
+ *   collectionAddress: '0x9abc...',
+ *   chainId: 137,
+ *   collectionType: 'ERC721',
+ *   inAccounts: ['0xowner1...', '0xowner2...'],
+ *   prioritizeOwnerActions: true,
+ *   onCannotPerformAction: (action) => {
+ *     console.warn(`Cannot perform action: ${action}`);
+ *   },
+ *   page: 2,
+ *   pageSize: 25,
+ *   enabled: Boolean(collectionAddress && chainId)
+ * });
+ * ```
  */
-// TODO: Write test for this hook
 export function useMarketCardDataPaged({
 	collectionAddress,
 	chainId,
@@ -72,8 +183,6 @@ export function useMarketCardDataPaged({
 }: UseMarketCardDataPagedProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
-
-	// Get collectibles with listings for the specific page
 	const {
 		data: collectiblesListResponse,
 		isLoading: collectiblesListIsLoading,
@@ -95,8 +204,6 @@ export function useMarketCardDataPaged({
 		page,
 		pageSize,
 	});
-
-	// Get user balances for this collection
 	const { data: collectionBalance, isLoading: balanceLoading } =
 		useCollectionBalanceDetails({
 			chainId,
@@ -110,12 +217,10 @@ export function useMarketCardDataPaged({
 			},
 		});
 
-	// Get collectibles from the current page only (no flattening needed)
 	const currentPageCollectibles = collectiblesListResponse?.collectibles ?? [];
 
-	// Generate card props for each collectible in the current page
-	const collectibleCards = useMemo(() => {
-		return currentPageCollectibles.map((collectible: CollectibleOrder) => {
+	const collectibleCards = currentPageCollectibles.map(
+		(collectible: CollectibleOrder) => {
 			const balance = collectionBalance?.balances.find(
 				(balance) => balance.tokenID === collectible.metadata.tokenId,
 			)?.balance;
@@ -152,23 +257,8 @@ export function useMarketCardDataPaged({
 			};
 
 			return cardProps;
-		});
-	}, [
-		currentPageCollectibles,
-		chainId,
-		collectionAddress,
-		collectionType,
-		collectiblesListIsLoading,
-		balanceLoading,
-		orderbookKind,
-		onCollectibleClick,
-		collectionBalance?.balances,
-		onCannotPerformAction,
-		prioritizeOwnerActions,
-		assetSrcPrefixUrl,
-		accountAddress,
-		showSellModal,
-	]);
+		},
+	);
 
 	return {
 		collectibleCards,
