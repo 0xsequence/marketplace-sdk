@@ -2450,7 +2450,7 @@ function decodeType(typ: string, obj: any): any {
 
 // Encode object to JSON with BigInts converted to decimal strings.
 export const JsonEncode = <T = any>(obj: T): string => {
-  return JSON.stringify(obj, (key, value) =>
+  return JSON.stringify(obj, (_key, value) =>
     typeof value === 'bigint' ? value.toString() : value
   )
 }
