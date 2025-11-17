@@ -90,7 +90,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId,
+		collectibleId,
 		userAddress: address ?? undefined,
 	});
 

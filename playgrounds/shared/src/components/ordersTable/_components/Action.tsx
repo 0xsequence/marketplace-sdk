@@ -26,7 +26,7 @@ const OrdersTableAction = ({
 }) => {
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId?.toString() ?? '',
+		collectibleId: tokenId?.toString() ?? '',
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,

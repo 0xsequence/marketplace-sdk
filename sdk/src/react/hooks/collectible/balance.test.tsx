@@ -12,7 +12,7 @@ import { useCollectibleBalance } from './balance';
 describe('useCollectibleBalance', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
-		collectableId: 1n,
+		collectibleId: 1n,
 		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
@@ -143,7 +143,7 @@ describe('useCollectibleBalance', () => {
 			specificCollectible.collectionAddress,
 		);
 		expect(result.current.data?.tokenId).toBe(
-			BigInt(specificCollectible.collectableId),
+			BigInt(specificCollectible.collectibleId),
 		);
 		expect(result.current.data?.accountAddress).toBe(
 			specificCollectible.userAddress,

@@ -7,7 +7,7 @@ import { createCollectibleQueryKey } from './queryKeys';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;
-	collectableId: bigint;
+	collectibleId: bigint;
 	userAddress: Address | undefined;
 	chainId: number;
 	includeMetadata?: boolean;
@@ -32,7 +32,7 @@ export async function fetchBalanceOfCollectible(
 		.getTokenBalances({
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
-			tokenId: args.collectableId,
+			tokenId: args.collectibleId,
 			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
