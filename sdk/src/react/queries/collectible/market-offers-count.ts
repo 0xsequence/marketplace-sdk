@@ -10,7 +10,7 @@ import type { StandardQueryOptions } from '../../types/query';
 export interface FetchCountOffersForCollectibleParams {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	config: SdkConfig;
 	filter?: OrderFilter;
 	query?: StandardQueryOptions;
@@ -22,14 +22,14 @@ export interface FetchCountOffersForCollectibleParams {
 export async function fetchCountOffersForCollectible(
 	params: FetchCountOffersForCollectibleParams,
 ) {
-	const { chainId, collectionAddress, collectibleId, config, filter } = params;
+	const { chainId, collectionAddress, tokenId, config, filter } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const result = await client.getCountOfOffersForCollectible({
 		chainId,
 		collectionAddress,
-		tokenId: collectibleId,
+		tokenId,
 		filter,
 	});
 	return result.count;
@@ -47,7 +47,7 @@ export function getCountOffersForCollectibleQueryKey(
 		{
 			chainId: params.chainId ?? 0,
 			collectionAddress: params.collectionAddress ?? '',
-			tokenId: params.collectibleId ?? 0n,
+			tokenId: params.tokenId ?? 0n,
 			filter: params.filter,
 		},
 	] as const;
@@ -62,7 +62,7 @@ export function countOffersForCollectibleQueryOptions(
 			requiredParams: [
 				'chainId',
 				'collectionAddress',
-				'collectibleId',
+				'tokenId',
 				'config',
 			] as const,
 			fetcher: fetchCountOffersForCollectible,

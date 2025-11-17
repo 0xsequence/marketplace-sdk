@@ -9,11 +9,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export type ListListingsForCollectibleQueryOptions = SdkQueryParams<
-	Omit<ListListingsForCollectibleRequest, 'tokenId'> & {
-		collectibleId: bigint;
-	}
->;
+export type ListListingsForCollectibleQueryOptions =
+	SdkQueryParams<ListListingsForCollectibleRequest>;
 
 /**
  * Fetches listings for a specific collectible from the Marketplace API
@@ -21,17 +18,13 @@ export type ListListingsForCollectibleQueryOptions = SdkQueryParams<
 export async function fetchListListingsForCollectible(
 	params: WithRequired<
 		ListListingsForCollectibleQueryOptions,
-		'chainId' | 'collectionAddress' | 'collectibleId' | 'config'
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
 ): Promise<ListCollectibleListingsResponse> {
-	const { chainId, collectibleId, config, ...additionalApiParams } = params;
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	return await marketplaceClient.listListingsForCollectible({
-		chainId,
-		tokenId: collectibleId,
-		...additionalApiParams,
-	});
+	return await marketplaceClient.listListingsForCollectible(apiParams);
 }
 
 export function getListListingsForCollectibleQueryKey(
@@ -43,7 +36,7 @@ export function getListListingsForCollectibleQueryKey(
 		{
 			chainId: params.chainId ?? 0,
 			collectionAddress: params.collectionAddress ?? '',
-			tokenId: params.collectibleId ?? 0n,
+			tokenId: params.tokenId ?? 0n,
 			filter: params.filter,
 			page: params.page,
 		},
@@ -59,7 +52,7 @@ export function listListingsForCollectibleQueryOptions(
 			requiredParams: [
 				'chainId',
 				'collectionAddress',
-				'collectibleId',
+				'tokenId',
 				'config',
 			] as const,
 			fetcher: fetchListListingsForCollectible,

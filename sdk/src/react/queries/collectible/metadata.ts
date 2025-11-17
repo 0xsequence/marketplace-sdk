@@ -14,7 +14,7 @@ import { createCollectibleQueryKey } from './queryKeys';
 export interface FetchCollectibleParams {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	config: SdkConfig;
 	query?: StandardQueryOptions;
 }
@@ -23,14 +23,14 @@ export interface FetchCollectibleParams {
  * Fetches collectible metadata from the metadata API
  */
 export async function fetchCollectible(params: FetchCollectibleParams) {
-	const { collectibleId, chainId, collectionAddress, config } = params;
+	const { tokenId, chainId, collectionAddress, config } = params;
 
 	const metadataClient = getMetadataClient(config);
 
 	const apiArgs: GetTokenMetadataArgs = {
 		chainId,
 		contractAddress: collectionAddress,
-		tokenIds: [collectibleId],
+		tokenIds: [tokenId],
 	};
 
 	const result = await metadataClient.getTokenMetadata(apiArgs);
@@ -48,7 +48,7 @@ export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
 	const apiArgs = {
 		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
-		tokenIds: [params.collectibleId!],
+		tokenIds: [params.tokenId!],
 	};
 
 	return createCollectibleQueryKey('metadata', apiArgs);
@@ -61,7 +61,7 @@ export function collectibleQueryOptions(params: CollectibleQueryOptions) {
 			requiredParams: [
 				'chainId',
 				'collectionAddress',
-				'collectibleId',
+				'tokenId',
 				'config',
 			] as const,
 			fetcher: fetchCollectible,

@@ -5,15 +5,15 @@ import { CollectiblePageController, createRoute } from 'shared-components';
 
 export default function CollectiblePage() {
 	const router = useRouter();
-	const { collectionAddress, chainId, collectibleId } = useParams<{
+	const { collectionAddress, chainId, tokenId } = useParams<{
 		collectionAddress: string;
 		chainId: string;
-		collectibleId: string;
+		tokenId: string;
 	}>();
 	const route = createRoute.collectible(
 		Number(chainId),
 		collectionAddress as string,
-		BigInt(collectibleId),
+		BigInt(tokenId),
 	);
 
 	return (
@@ -25,7 +25,7 @@ export default function CollectiblePage() {
 			}}
 			chainId={Number(chainId)}
 			collectionAddress={collectionAddress as `0x${string}`}
-			collectibleId={BigInt(collectibleId)}
+			tokenId={BigInt(tokenId)}
 		/>
 	);
 }

@@ -10,7 +10,7 @@ import { createCollectibleQueryKey } from './queryKeys';
 
 export interface FetchBalanceOfCollectibleParams {
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	userAddress: Address;
 	chainId: number;
 	includeMetadata?: boolean;
@@ -31,7 +31,7 @@ export async function fetchBalanceOfCollectible(
 		chainId,
 		userAddress,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 		includeMetadata,
 		config,
 	} = params;
@@ -40,7 +40,7 @@ export async function fetchBalanceOfCollectible(
 		.getTokenBalances({
 			accountAddress: userAddress,
 			contractAddress: collectionAddress,
-			tokenId: collectibleId,
+			tokenId,
 			includeMetadata: includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
@@ -63,7 +63,7 @@ export function getBalanceOfCollectibleQueryKey(
 		chainId: params.chainId,
 		accountAddress: params.userAddress,
 		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
+		tokenId: params.tokenId,
 		includeMetadata: params.includeMetadata,
 		metadataOptions: params.userAddress
 			? {
@@ -90,7 +90,7 @@ export function balanceOfCollectibleOptions(
 			requiredParams: [
 				'userAddress',
 				'collectionAddress',
-				'collectibleId',
+				'tokenId',
 				'chainId',
 				'config',
 			] as const,
