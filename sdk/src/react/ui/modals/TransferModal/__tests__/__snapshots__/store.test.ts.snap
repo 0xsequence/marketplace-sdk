@@ -3,7 +3,6 @@
 exports[`TransferModal Store > Initial State > should have correct initial state > initial-store-state 1`] = `
 {
   "chainId": 0,
-  "collectibleId": 0n,
   "collectionAddress": "0x",
   "hash": undefined,
   "isOpen": false,
@@ -11,6 +10,7 @@ exports[`TransferModal Store > Initial State > should have correct initial state
   "onSuccess": undefined,
   "quantity": "1",
   "receiverAddress": "",
+  "tokenId": 0n,
   "transferIsProcessing": false,
   "view": "enterReceiverAddress",
 }

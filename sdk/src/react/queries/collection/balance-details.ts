@@ -92,6 +92,8 @@ export function collectionBalanceDetailsQueryOptions(
 			getQueryKey: getCollectionBalanceDetailsQueryKey,
 			requiredParams: ['chainId', 'filter', 'config'] as const,
 			fetcher: fetchCollectionBalanceDetails,
+			customValidation: (p) =>
+				!!p.filter?.accountAddresses && p.filter.accountAddresses.length > 0,
 		},
 		params,
 	);

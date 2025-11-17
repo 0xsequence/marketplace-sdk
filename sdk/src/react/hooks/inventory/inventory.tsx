@@ -8,7 +8,7 @@ import { useConfig } from '../config/useConfig';
 export function useInventory(args: UseInventoryArgs) {
 	const config = useConfig();
 
-	return useQuery(inventoryOptions({ ...args }, config));
+	return useQuery(inventoryOptions({ ...args, config }));
 }
 
 export type {
