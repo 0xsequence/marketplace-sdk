@@ -4,11 +4,11 @@ import type {
 	CheckoutOptionsSalesContractResponse,
 } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
 export interface FetchPrimarySaleCheckoutOptionsParams {
@@ -17,14 +17,21 @@ export interface FetchPrimarySaleCheckoutOptionsParams {
 	contractAddress: string;
 	collectionAddress: string;
 	items: CheckoutOptionsItem[];
-	config: SdkConfig;
 }
 
 /**
  * Fetches checkout options for primary sales contract from the Marketplace API
  */
 export async function fetchPrimarySaleCheckoutOptions(
-	params: FetchPrimarySaleCheckoutOptionsParams,
+	params: WithRequired<
+		PrimarySaleCheckoutOptionsQueryOptions,
+		| 'chainId'
+		| 'walletAddress'
+		| 'contractAddress'
+		| 'collectionAddress'
+		| 'items'
+		| 'config'
+	>,
 ): Promise<CheckoutOptionsSalesContractResponse> {
 	const {
 		chainId,
@@ -49,8 +56,11 @@ export async function fetchPrimarySaleCheckoutOptions(
 	return result;
 }
 
+export type PrimarySaleCheckoutOptionsQueryOptions =
+	SdkQueryParams<FetchPrimarySaleCheckoutOptionsParams>;
+
 export function getPrimarySaleCheckoutOptionsQueryKey(
-	params: WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
+	params: PrimarySaleCheckoutOptionsQueryOptions,
 ) {
 	return [
 		'checkout',
@@ -66,7 +76,7 @@ export function getPrimarySaleCheckoutOptionsQueryKey(
 }
 
 export function primarySaleCheckoutOptionsQueryOptions(
-	params: WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
+	params: PrimarySaleCheckoutOptionsQueryOptions,
 ) {
 	return buildQueryOptions(
 		{

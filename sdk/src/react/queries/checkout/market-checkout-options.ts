@@ -3,12 +3,12 @@ import type {
 	CheckoutOptionsMarketplaceResponse,
 } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type MarketplaceKind,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 
 export interface FetchMarketCheckoutOptionsParams {
@@ -20,14 +20,16 @@ export interface FetchMarketCheckoutOptionsParams {
 		marketplace: MarketplaceKind;
 	}>;
 	additionalFee?: number;
-	config: SdkConfig;
 }
 
 /**
  * Fetches checkout options from the Marketplace API
  */
 export async function fetchMarketCheckoutOptions(
-	params: FetchMarketCheckoutOptionsParams,
+	params: WithRequired<
+		MarketCheckoutOptionsQueryOptions,
+		'chainId' | 'walletAddress' | 'orders' | 'config'
+	>,
 ): Promise<CheckoutOptionsMarketplaceResponse> {
 	const { chainId, walletAddress, orders, config, additionalFee } = params;
 
@@ -48,8 +50,11 @@ export async function fetchMarketCheckoutOptions(
 	return result;
 }
 
+export type MarketCheckoutOptionsQueryOptions =
+	SdkQueryParams<FetchMarketCheckoutOptionsParams>;
+
 export function getMarketCheckoutOptionsQueryKey(
-	params: WithOptionalParams<FetchMarketCheckoutOptionsParams>,
+	params: MarketCheckoutOptionsQueryOptions,
 ) {
 	return [
 		'checkout',
@@ -64,7 +69,7 @@ export function getMarketCheckoutOptionsQueryKey(
 }
 
 export function marketCheckoutOptionsQueryOptions(
-	params: WithOptionalParams<FetchMarketCheckoutOptionsParams>,
+	params: MarketCheckoutOptionsQueryOptions,
 ) {
 	return buildQueryOptions(
 		{

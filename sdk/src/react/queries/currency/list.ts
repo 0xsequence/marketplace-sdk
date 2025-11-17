@@ -1,27 +1,25 @@
 import { queryOptions } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
-import type { SdkConfig } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	getMarketplaceClient,
 	getQueryClient,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from '../marketplace/config';
 
 export interface FetchMarketCurrenciesParams {
 	chainId: number;
 	includeNativeCurrency?: boolean;
 	collectionAddress?: Address;
-	config: SdkConfig;
 }
 
 /**
  * Fetches supported currencies for a marketplace
  */
 export async function fetchMarketCurrencies(
-	params: FetchMarketCurrenciesParams,
+	params: WithRequired<MarketCurrenciesQueryOptions, 'chainId' | 'config'>,
 ) {
 	const { chainId, includeNativeCurrency, collectionAddress, config } = params;
 	const includeNativeCurrencyOption = includeNativeCurrency ?? true;
@@ -65,9 +63,7 @@ export async function fetchMarketCurrencies(
 }
 
 export type MarketCurrenciesQueryOptions =
-	ValuesOptional<FetchMarketCurrenciesParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<FetchMarketCurrenciesParams>;
 
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,

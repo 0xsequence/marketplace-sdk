@@ -1,25 +1,26 @@
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	type Currency,
 	getMarketplaceClient,
 	getQueryClient,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCurrencyParams {
 	chainId: number;
 	currencyAddress: Address;
-	config: SdkConfig;
 }
 
 /**
  * Fetches currency details from the marketplace API
  */
 export async function fetchCurrency(
-	params: FetchCurrencyParams,
+	params: WithRequired<
+		CurrencyQueryOptions,
+		'chainId' | 'currencyAddress' | 'config'
+	>,
 ): Promise<Currency | undefined> {
 	const { chainId, currencyAddress, config } = params;
 	const queryClient = getQueryClient();
@@ -50,9 +51,7 @@ export async function fetchCurrency(
 	return currency;
 }
 
-export type CurrencyQueryOptions = ValuesOptional<FetchCurrencyParams> & {
-	query?: StandardQueryOptions;
-};
+export type CurrencyQueryOptions = SdkQueryParams<FetchCurrencyParams>;
 
 export function getCurrencyQueryKey(params: CurrencyQueryOptions) {
 	const apiArgs = {
@@ -74,7 +73,7 @@ export function currencyQueryOptions(params: CurrencyQueryOptions) {
 	return queryOptions({
 		queryKey: getCurrencyQueryKey(params),
 		queryFn:
-			params.chainId && params.currencyAddress
+			params.chainId && params.currencyAddress && params.config
 				? () =>
 						fetchCurrency({
 							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

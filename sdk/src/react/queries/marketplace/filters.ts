@@ -2,14 +2,15 @@ import type {
 	GetTokenMetadataPropertyFiltersArgs,
 	PropertyFilter,
 } from '@0xsequence/marketplace-api';
-import { FilterCondition, type SdkConfig } from '../../../types';
+import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
 	getMetadataClient,
 	getQueryClient,
 	type QueryKeyArgs,
-	type WithOptionalParams,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 import { marketplaceConfigOptions } from './config';
 import { createMarketplaceQueryKey } from './queryKeys';
@@ -19,14 +20,16 @@ export interface FetchFiltersParams {
 	collectionAddress: string;
 	showAllFilters?: boolean;
 	excludePropertyValues?: boolean;
-	config: SdkConfig;
 }
 
 /**
  * Fetches collection filters from the Metadata API with optional marketplace filtering
  */
 export async function fetchFilters(
-	params: FetchFiltersParams,
+	params: WithRequired<
+		FiltersQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ): Promise<PropertyFilter[]> {
 	const {
 		chainId,
@@ -106,7 +109,7 @@ export async function fetchFilters(
 	return sortedFilters;
 }
 
-export type FiltersQueryOptions = WithOptionalParams<FetchFiltersParams>;
+export type FiltersQueryOptions = SdkQueryParams<FetchFiltersParams>;
 
 export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	const apiArgs = {

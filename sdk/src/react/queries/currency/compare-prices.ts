@@ -1,8 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import type { ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import type { SdkQueryParams, WithRequired } from '../../_internal';
 import { fetchConvertPriceToUSD } from './convert-to-usd';
 
 export interface FetchComparePricesParams {
@@ -13,7 +11,6 @@ export interface FetchComparePricesParams {
 	// Second price details (to compare against)
 	compareToPriceAmountRaw: string;
 	compareToPriceCurrencyAddress: Address;
-	config: SdkConfig;
 }
 
 export type ComparePricesReturn = {
@@ -26,7 +23,15 @@ export type ComparePricesReturn = {
  * Compares prices between different currencies by converting both to USD
  */
 export async function fetchComparePrices(
-	params: FetchComparePricesParams,
+	params: WithRequired<
+		ComparePricesQueryOptions,
+		| 'chainId'
+		| 'priceAmountRaw'
+		| 'priceCurrencyAddress'
+		| 'compareToPriceAmountRaw'
+		| 'compareToPriceCurrencyAddress'
+		| 'config'
+	>,
 ): Promise<ComparePricesReturn> {
 	const {
 		chainId,
@@ -70,9 +75,7 @@ export async function fetchComparePrices(
 }
 
 export type ComparePricesQueryOptions =
-	ValuesOptional<FetchComparePricesParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<FetchComparePricesParams>;
 
 export function getComparePricesQueryKey(params: ComparePricesQueryOptions) {
 	const apiArgs = {

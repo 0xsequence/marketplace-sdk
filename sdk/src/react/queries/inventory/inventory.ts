@@ -4,29 +4,26 @@ import type {
 } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../../types';
+import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	type ContractType,
 	getQueryClient,
 	MetadataStatus,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
 import { tokenBalancesOptions } from '../collectible/token-balances';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
-export interface UseInventoryArgs {
+export interface FetchInventoryParams {
 	accountAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
 	includeNonTradable?: boolean;
-	query?: {
-		enabled?: boolean;
-		page?: number;
-		pageSize?: number;
-	};
+	page?: number;
+	pageSize?: number;
 }
-
-type GetInventoryArgs = Omit<UseInventoryArgs, 'query'>;
 
 export interface CollectibleWithBalance {
 	metadata: {
@@ -73,11 +70,12 @@ function collectibleFromTokenBalance(
 }
 
 async function fetchIndexerTokens(
-	chainId: number,
-	accountAddress: Address,
-	collectionAddress: Address,
-	config: SdkConfig,
+	params: WithRequired<
+		InventoryQueryOptions,
+		'chainId' | 'accountAddress' | 'collectionAddress' | 'config'
+	>,
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
+	const { chainId, accountAddress, collectionAddress, config } = params;
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
 		tokenBalancesOptions({
@@ -98,12 +96,32 @@ async function fetchIndexerTokens(
 	};
 }
 
+export type InventoryQueryOptions = SdkQueryParams<
+	FetchInventoryParams,
+	{
+		enabled?: boolean;
+	}
+>;
+
+/**
+ * @deprecated Use InventoryQueryOptions instead
+ */
+export type UseInventoryArgs = InventoryQueryOptions;
+
 export async function fetchInventory(
-	args: GetInventoryArgs,
-	config: SdkConfig,
-	page: Page,
+	params: WithRequired<
+		InventoryQueryOptions,
+		'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+	>,
 ): Promise<CollectiblesResponse> {
-	const { accountAddress, collectionAddress, chainId } = args;
+	const {
+		accountAddress,
+		collectionAddress,
+		chainId,
+		config,
+		page = 1,
+		pageSize = 30,
+	} = params;
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
 
 	const marketCollections = marketplaceConfig?.market.collections || [];
@@ -116,48 +134,54 @@ export async function fetchInventory(
 	const isTradable = isMarketCollection;
 
 	// Fetch collectibles from indexer
-	const { collectibles } = await fetchIndexerTokens(
+	const { collectibles } = await fetchIndexerTokens({
 		chainId,
 		accountAddress,
 		collectionAddress,
 		config,
-	);
+	});
 
 	return {
 		collectibles,
 		page: {
-			page: page.page,
-			pageSize: page.pageSize,
+			page,
+			pageSize,
 		},
 		isTradable,
 	};
 }
 
-export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
-	const enabledQuery = args.query?.enabled ?? true;
+export function inventoryOptions(params: InventoryQueryOptions) {
+	const enabledQuery = params.query?.enabled ?? true;
 	const enabled =
-		enabledQuery && !!args.accountAddress && !!args.collectionAddress;
+		enabledQuery &&
+		!!params.accountAddress &&
+		!!params.collectionAddress &&
+		!!params.config;
 
 	return queryOptions({
 		queryKey: [
 			'inventory',
-			args.accountAddress,
-			args.collectionAddress,
-			args.chainId,
-			args.query?.page ?? 1,
-			args.query?.pageSize ?? 30,
+			params.accountAddress,
+			params.collectionAddress,
+			params.chainId,
+			params.page ?? 1,
+			params.pageSize ?? 30,
 		],
 		queryFn: () =>
-			fetchInventory(
-				{
-					...args,
-				},
-				config,
-				{
-					page: args.query?.page ?? 1,
-					pageSize: args.query?.pageSize ?? 30,
-				},
-			),
+			fetchInventory({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				accountAddress: params.accountAddress!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				collectionAddress: params.collectionAddress!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+				page: params.page,
+				pageSize: params.pageSize,
+				includeNonTradable: params.includeNonTradable,
+			}),
 		enabled,
 	});
 }

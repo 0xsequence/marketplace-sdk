@@ -1,19 +1,17 @@
 import { queryOptions } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	type Currency,
 	getQueryClient,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { marketCurrenciesQueryOptions } from './list';
 
 export interface FetchConvertPriceToUSDParams {
 	chainId: number;
 	currencyAddress: Address;
 	amountRaw: string;
-	config: SdkConfig;
 }
 
 export interface ConvertPriceToUSDReturn {
@@ -25,7 +23,10 @@ export interface ConvertPriceToUSDReturn {
  * Converts a price amount from a specific currency to USD using exchange rates
  */
 export async function fetchConvertPriceToUSD(
-	params: FetchConvertPriceToUSDParams,
+	params: WithRequired<
+		ConvertPriceToUSDQueryOptions,
+		'chainId' | 'currencyAddress' | 'amountRaw' | 'config'
+	>,
 ): Promise<ConvertPriceToUSDReturn> {
 	const { chainId, currencyAddress, amountRaw, config } = params;
 
@@ -58,9 +59,7 @@ export async function fetchConvertPriceToUSD(
 }
 
 export type ConvertPriceToUSDQueryOptions =
-	ValuesOptional<FetchConvertPriceToUSDParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<FetchConvertPriceToUSDParams>;
 
 export function getConvertPriceToUSDQueryKey(
 	params: ConvertPriceToUSDQueryOptions,
