@@ -1,19 +1,14 @@
-import type { Metadata } from '@0xsequence/marketplace-api';
+import type { CollectiblePrimarySaleItem } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ContractType, type PrimarySaleItem } from '../../../_internal';
+import { ContractType } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
-
-type TokenMetadata = Metadata.TokenMetadata;
 
 import { useCollectionMetadata } from '../../collection/metadata';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
 interface UsePrimarySale1155CardDataProps {
-	primarySaleItemsWithMetadata: Array<{
-		metadata: TokenMetadata;
-		primarySaleItem: PrimarySaleItem;
-	}>;
+	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
@@ -74,7 +69,10 @@ export function usePrimarySale1155CardData({
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,
-			tokenMetadata: metadata,
+			tokenMetadata: {
+				...metadata,
+				source: '', // Add source field required by metadata API types
+			},
 			cardLoading: isLoading,
 			salesContractAddress: salesContractAddress,
 			salePrice,

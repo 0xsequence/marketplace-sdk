@@ -73,7 +73,7 @@ describe('getERC721SalePaymentParams', () => {
 				},
 			],
 			currencyAddress: mockCurrencyAddress,
-			price: mockPrice,
+			price: mockPrice.toString(),
 			targetContractAddress: mockSalesContractAddress,
 			collectionAddress: mockCollectionAddress,
 			recipientAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',

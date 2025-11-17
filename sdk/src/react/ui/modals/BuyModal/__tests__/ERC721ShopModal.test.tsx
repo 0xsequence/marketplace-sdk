@@ -223,7 +223,7 @@ describe('ERC721ShopModal', () => {
 		expect(mockUseERC721SalePaymentParams).toHaveBeenCalledWith({
 			salesContractAddress: mockShopData.salesContractAddress,
 			collectionAddress: mockCollection.address,
-			price: '0',
+			price: 0n,
 			currencyAddress: '',
 			enabled: true,
 			chainId: 1,
