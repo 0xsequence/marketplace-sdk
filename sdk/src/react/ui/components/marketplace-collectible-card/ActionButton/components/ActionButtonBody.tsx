@@ -9,7 +9,13 @@ import { useOpenConnectModal } from '../../../../../hooks';
 import { useActionButtonStore } from '../store';
 
 type ActionButtonBodyProps = {
-	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
+	label:
+		| 'Buy now'
+		| 'Sell'
+		| 'Make an offer'
+		| 'Create listing'
+		| 'Transfer'
+		| string;
 	tokenId: bigint;
 	onClick: () => void;
 	icon?: JSX.Element;

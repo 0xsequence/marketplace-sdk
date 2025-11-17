@@ -17,6 +17,10 @@ type NonOwnerActionsBaseProps = {
 	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	labelOverride?: {
+		offer?: string;
+		buy?: string;
+	};
 	className?: string;
 };
 
@@ -54,6 +58,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		unlimitedSupply,
 		cardType,
 		hideQuantitySelector,
+		labelOverride,
 		className,
 	} = props;
 
@@ -67,7 +72,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.BUY}
 				tokenId={tokenId}
-				label="Buy now"
+				label={labelOverride?.buy ?? 'Buy now'}
 				onClick={() =>
 					showBuyModal({
 						chainId,
@@ -108,7 +113,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.BUY}
 				tokenId={tokenId}
-				label="Buy now"
+				label={labelOverride?.buy ?? 'Buy now'}
 				onClick={() =>
 					showBuyModal({
 						collectionAddress,
@@ -132,7 +137,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.OFFER}
 				tokenId={tokenId}
-				label="Make an offer"
+				label={labelOverride?.offer ?? 'Make an offer'}
 				onClick={() =>
 					showMakeOfferModal({
 						collectionAddress,

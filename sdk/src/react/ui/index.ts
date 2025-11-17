@@ -1,9 +1,12 @@
 export * from '../providers/modal-provider';
+// Card helpers
+export { ActionButton } from './components/marketplace-collectible-card/ActionButton';
 // Card primitives
 export { Card } from './components/marketplace-collectible-card/Card';
 export { CollectibleCard } from './components/marketplace-collectible-card/CollectibleCard';
 // types
 export * from './components/marketplace-collectible-card/types';
+export { determineCardAction } from './components/marketplace-collectible-card/utils';
 // Smart components (with data fetching)
 export { MarketCard } from './components/marketplace-collectible-card/variants/MarketCard';
 export type { MarketCardPresentationProps } from './components/marketplace-collectible-card/variants/MarketCardPresentation';
