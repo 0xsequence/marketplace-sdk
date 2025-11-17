@@ -5,77 +5,11 @@
  * API responses and requests between raw and normalized formats.
  *
  * Key features:
- * - Generic field transformation with type inference
  * - Safe optional field handling
- * - Deep object and array transformation
+ * - Array and record transformation
+ * - Partial object spreading with type safety
  * - Reusable across all adapters
  */
-
-/**
- * Transform a single field in an object using a transformer function
- *
- * @example
- * const result = transformField(
- *   { chainId: "1", name: "Ethereum" },
- *   "chainId",
- *   normalizeChainId
- * );
- * // result: { chainId: 1, name: "Ethereum" }
- */
-export function transformField<
-	TObj extends Record<string, unknown>,
-	TKey extends keyof TObj,
-	TResult,
->(
-	obj: TObj,
-	key: TKey,
-	transformer: (value: TObj[TKey]) => TResult,
-): Omit<TObj, TKey> & Record<TKey, TResult> {
-	return {
-		...obj,
-		[key]: transformer(obj[key]),
-	} as Omit<TObj, TKey> & Record<TKey, TResult>;
-}
-
-/**
- * Transform multiple fields in an object
- *
- * @example
- * const result = transformFields(
- *   { chainId: "1", tokenId: "123" },
- *   {
- *     chainId: normalizeChainId,
- *     tokenId: normalizeTokenId
- *   }
- * );
- */
-export function transformFields<
-	TObj extends Record<string, unknown>,
-	TTransforms extends {
-		[K in keyof TObj]?: (value: TObj[K]) => unknown;
-	},
->(
-	obj: TObj,
-	transforms: TTransforms,
-): {
-	[K in keyof TObj]: K extends keyof TTransforms
-		? TTransforms[K] extends (value: TObj[K]) => infer R
-			? R
-			: TObj[K]
-		: TObj[K];
-} {
-	const result = { ...obj };
-
-	for (const key in transforms) {
-		if (key in obj && transforms[key]) {
-			// biome-ignore lint/suspicious/noExplicitAny: Generic transformer requires flexible typing
-			(result as any)[key] = transforms[key]!(obj[key]);
-		}
-	}
-
-	// biome-ignore lint/suspicious/noExplicitAny: Return type is correctly inferred through generics
-	return result as any;
-}
 
 /**
  * Transform an optional field (undefined-safe)
@@ -144,65 +78,6 @@ export function transformRecord<K extends string, V, R>(
 			transformer(value as V, key as K),
 		]),
 	) as Record<K, R>;
-}
-
-/**
- * Deep transform an object by applying transformers to nested fields
- *
- * @example
- * const result = deepTransform(
- *   { user: { chainId: "1" }, tokens: [{ id: "123" }] },
- *   {
- *     'user.chainId': normalizeChainId,
- *     'tokens[].id': normalizeTokenId
- *   }
- * );
- */
-export function deepTransform<T extends Record<string, unknown>>(
-	obj: T,
-	pathTransformers: Record<string, (value: unknown) => unknown>,
-): T {
-	const result = { ...obj };
-
-	for (const path in pathTransformers) {
-		const transformer = pathTransformers[path];
-		if (!transformer) continue;
-
-		// Simple dot-notation path support (e.g., "user.chainId")
-		const parts = path.split('.');
-		let current = result;
-
-		for (let i = 0; i < parts.length - 1; i++) {
-			const part = parts[i];
-			if (!part) continue;
-			if (!(part in current)) break;
-			// biome-ignore lint/suspicious/noExplicitAny: Deep path traversal requires flexible typing
-			current = (current as any)[part];
-		}
-
-		const lastPart = parts[parts.length - 1];
-		if (lastPart && lastPart in current) {
-			// biome-ignore lint/suspicious/noExplicitAny: Deep transformation requires flexible typing
-			(current as any)[lastPart] = transformer((current as any)[lastPart]);
-		}
-	}
-
-	return result;
-}
-
-/**
- * Create a composite transformer that applies multiple transformations in sequence
- *
- * @example
- * const normalizeToken = compose(
- *   (t) => transformField(t, 'chainId', normalizeChainId),
- *   (t) => transformField(t, 'tokenId', normalizeTokenId)
- * );
- */
-export function compose<T>(
-	...transformers: Array<(value: T) => T>
-): (value: T) => T {
-	return (value: T) => transformers.reduce((acc, fn) => fn(acc), value);
 }
 
 /**

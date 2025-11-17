@@ -10,10 +10,15 @@ export type {
 	CheckoutOptionsSalesContractRequest,
 	CreateReq, // SDK-facing CreateReq with bigint tokenId
 	GenerateBuyTransactionRequest,
+	GenerateBuyTransactionResponse, // Enhanced with better Step types
 	GenerateCancelTransactionRequest,
+	GenerateCancelTransactionResponse, // Enhanced with better Step types
 	GenerateListingTransactionRequest,
+	GenerateListingTransactionResponse, // Enhanced with better Step types
 	GenerateOfferTransactionRequest,
+	GenerateOfferTransactionResponse, // Enhanced with better Step types
 	GenerateSellTransactionRequest,
+	GenerateSellTransactionResponse, // Enhanced with better Step types
 	GetCollectibleRequest,
 	GetCollectionDetailRequest,
 	GetCountOfAllCollectiblesRequest,
@@ -51,14 +56,17 @@ export type {
 	CollectiblesFilter,
 	// CreateReq - exported from client.ts with bigint tokenId
 	// OrderData - exported from client.ts with bigint quantity
-	// Request types are exported from client.ts with normalized chainId (number)
+	// Request/Response types are exported from client.ts with:
+	// - Normalized chainId (number instead of string)
+	// - Enhanced Step types (discriminated union instead of interface)
 	// DO NOT export these from gen:
 	// - CheckoutOptionsMarketplaceRequest
 	// - CheckoutOptionsSalesContractRequest
-	// - GenerateCancelTransactionRequest
-	// - GenerateListingTransactionRequest
-	// - GenerateOfferTransactionRequest
-	// - GenerateSellTransactionRequest
+	// - GenerateBuyTransactionRequest/Response
+	// - GenerateCancelTransactionRequest/Response
+	// - GenerateListingTransactionRequest/Response
+	// - GenerateOfferTransactionRequest/Response
+	// - GenerateSellTransactionRequest/Response
 	// - GetCollectionDetailRequest
 	// - GetCountOfAllCollectiblesRequest
 	// - GetCountOfAllOrdersRequest

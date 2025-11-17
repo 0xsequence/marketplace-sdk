@@ -72,8 +72,23 @@ function transformOrderData(data: OrderData): Gen.OrderData {
 }
 
 /**
- * Response types with our discriminated Step union (SDK-facing)
- * These override the generated response types to use our better-typed Step
+ * Enhanced response types with discriminated Step unions (SDK-facing)
+ *
+ * These types override the generated response types to replace the basic
+ * `Step` interface with our enhanced discriminated union type from types.ts.
+ *
+ * Benefits over generated types:
+ * - Type-safe discrimination by step.id
+ * - Guaranteed post field on signature steps
+ * - Separate TransactionStep and SignatureStep types
+ * - Better IDE autocomplete and type narrowing
+ *
+ * @see {@link Step} for the discriminated union implementation
+ * @public
+ */
+
+/**
+ * Response for listing transaction generation with enhanced Step types
  */
 export type GenerateListingTransactionResponse = Omit<
 	Gen.GenerateListingTransactionResponse,
@@ -82,6 +97,9 @@ export type GenerateListingTransactionResponse = Omit<
 	steps: Step[];
 };
 
+/**
+ * Response for offer transaction generation with enhanced Step types
+ */
 export type GenerateOfferTransactionResponse = Omit<
 	Gen.GenerateOfferTransactionResponse,
 	'steps'
@@ -89,6 +107,9 @@ export type GenerateOfferTransactionResponse = Omit<
 	steps: Step[];
 };
 
+/**
+ * Response for sell transaction generation with enhanced Step types
+ */
 export type GenerateSellTransactionResponse = Omit<
 	Gen.GenerateSellTransactionResponse,
 	'steps'
@@ -96,6 +117,9 @@ export type GenerateSellTransactionResponse = Omit<
 	steps: Step[];
 };
 
+/**
+ * Response for cancel transaction generation with enhanced Step types
+ */
 export type GenerateCancelTransactionResponse = Omit<
 	Gen.GenerateCancelTransactionResponse,
 	'steps'
@@ -103,6 +127,9 @@ export type GenerateCancelTransactionResponse = Omit<
 	steps: Step[];
 };
 
+/**
+ * Response for buy transaction generation with enhanced Step types
+ */
 export type GenerateBuyTransactionResponse = Omit<
 	Gen.GenerateBuyTransactionResponse,
 	'steps'
