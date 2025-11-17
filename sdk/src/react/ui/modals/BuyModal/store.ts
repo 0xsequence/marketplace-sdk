@@ -1,11 +1,15 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { CardType, CheckoutOptionsItem, MarketplaceKind } from '../../../../types';
+import type {
+	CardType,
+	CheckoutOptionsItem,
+	MarketplaceKind,
+} from '../../../../types';
+import type { TransactionOnRampProvider } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
-import { TransactionOnRampProvider } from '../../../_internal';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
