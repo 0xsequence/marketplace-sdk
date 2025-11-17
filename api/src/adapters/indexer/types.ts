@@ -145,9 +145,8 @@ export interface Page {
 /**
  * NORMALIZED: Get token balances request
  */
-export interface GetTokenBalancesRequest {
+export type GetTokenBalancesRequest = {
 	accountAddress: Address;
-	contractAddress?: Address;
 	tokenId?: TokenId;
 	includeMetadata?: boolean;
 	metadataOptions?: {
@@ -158,7 +157,10 @@ export interface GetTokenBalancesRequest {
 		pageSize?: number;
 		more?: boolean;
 	};
-}
+} & (
+	| { contractAddress?: Address; collectionAddress?: never }
+	| { collectionAddress?: Address; contractAddress?: never }
+);
 
 /**
  * NORMALIZED: Get token balances response
@@ -171,8 +173,7 @@ export interface GetTokenBalancesResponse {
 /**
  * NORMALIZED: Get token supplies request
  */
-export interface GetTokenSuppliesRequest {
-	contractAddress: Address;
+export type GetTokenSuppliesRequest = {
 	includeMetadata?: boolean;
 	metadataOptions?: {
 		verifiedOnly?: boolean;
@@ -182,7 +183,10 @@ export interface GetTokenSuppliesRequest {
 		pageSize?: number;
 		more?: boolean;
 	};
-}
+} & (
+	| { contractAddress: Address; collectionAddress?: never }
+	| { collectionAddress: Address; contractAddress?: never }
+);
 
 /**
  * NORMALIZED: Get token supplies response
@@ -197,9 +201,9 @@ export interface GetTokenSuppliesResponse {
 /**
  * NORMALIZED: Get token ID ranges request
  */
-export interface GetTokenIDRangesRequest {
-	contractAddress: Address;
-}
+export type GetTokenIDRangesRequest =
+	| { contractAddress: Address; collectionAddress?: never }
+	| { collectionAddress: Address; contractAddress?: never };
 
 /**
  * NORMALIZED: Get token ID ranges response

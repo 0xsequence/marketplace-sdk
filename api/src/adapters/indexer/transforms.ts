@@ -206,8 +206,18 @@ export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
 	const { tokenId, ...rest } = req;
+
+	// Handle collectionAddress → contractAddress transformation
+	const contractAddress =
+		'collectionAddress' in req && req.collectionAddress
+			? req.collectionAddress
+			: 'contractAddress' in req && req.contractAddress
+				? req.contractAddress
+				: undefined;
+
 	return {
 		...rest,
+		...(contractAddress && { contractAddress }),
 		// Convert tokenId (bigint) → tokenID (string) for API
 		...(tokenId !== undefined && { tokenID: tokenId.toString() }),
 	};

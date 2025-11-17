@@ -134,9 +134,16 @@ export function toSearchTokenMetadataReturn(
 export function toGetContractInfoArgs(
 	normalized: NormalizedTypes.GetContractInfoArgs,
 ): MetadataGen.GetContractInfoArgs {
+	const contractAddress =
+		'collectionAddress' in normalized && normalized.collectionAddress
+			? normalized.collectionAddress
+			: 'contractAddress' in normalized && normalized.contractAddress
+				? normalized.contractAddress
+				: '';
+
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractAddress: normalized.contractAddress,
+		contractAddress,
 	};
 }
 
@@ -160,9 +167,16 @@ export function toGetContractInfoBatchArgs(
 export function toGetTokenMetadataArgs(
 	normalized: NormalizedTypes.GetTokenMetadataArgs,
 ): MetadataGen.GetTokenMetadataArgs {
+	const contractAddress =
+		'collectionAddress' in normalized && normalized.collectionAddress
+			? normalized.collectionAddress
+			: 'contractAddress' in normalized && normalized.contractAddress
+				? normalized.contractAddress
+				: '';
+
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractAddress: normalized.contractAddress,
+		contractAddress,
 		tokenIDs: transformArray(normalized.tokenIds, toApiTokenId),
 	};
 }
@@ -187,9 +201,16 @@ export function toGetTokenMetadataBatchArgs(
 export function toRefreshTokenMetadataArgs(
 	normalized: NormalizedTypes.RefreshTokenMetadataArgs,
 ): MetadataGen.RefreshTokenMetadataArgs {
+	const contractAddress =
+		'collectionAddress' in normalized && normalized.collectionAddress
+			? normalized.collectionAddress
+			: 'contractAddress' in normalized && normalized.contractAddress
+				? normalized.contractAddress
+				: '';
+
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractAddress: normalized.contractAddress,
+		contractAddress,
 		tokenIDs: transformOptionalArray(normalized.tokenIds, toApiTokenId),
 		refreshAll: normalized.refreshAll,
 	};
@@ -201,9 +222,16 @@ export function toRefreshTokenMetadataArgs(
 export function toSearchTokenMetadataArgs(
 	normalized: NormalizedTypes.SearchTokenMetadataArgs,
 ): MetadataGen.SearchTokenMetadataArgs {
+	const contractAddress =
+		'collectionAddress' in normalized && normalized.collectionAddress
+			? normalized.collectionAddress
+			: 'contractAddress' in normalized && normalized.contractAddress
+				? normalized.contractAddress
+				: '';
+
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractAddress: normalized.contractAddress,
+		contractAddress,
 		filter: normalized.filter,
 		page: normalized.page,
 	};
@@ -215,9 +243,15 @@ export function toSearchTokenMetadataArgs(
 export function toGetTokenMetadataPropertyFiltersArgs(
 	normalized: NormalizedTypes.GetTokenMetadataPropertyFiltersArgs,
 ): MetadataGen.GetTokenMetadataPropertyFiltersArgs {
+	const contractAddress =
+		'collectionAddress' in normalized &&
+		normalized.collectionAddress !== undefined
+			? normalized.collectionAddress
+			: (normalized as { contractAddress: string }).contractAddress;
+
 	return {
 		chainID: toMetadataChainId(normalized.chainId),
-		contractAddress: normalized.contractAddress,
+		contractAddress,
 		excludeProperties: normalized.excludeProperties,
 		excludePropertyValues: normalized.excludePropertyValues,
 	};

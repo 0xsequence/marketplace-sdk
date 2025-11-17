@@ -99,10 +99,12 @@ export interface Page {
 	more?: boolean;
 }
 
-export interface GetContractInfoArgs {
+export type GetContractInfoArgs = {
 	chainId: ChainId;
-	contractAddress: string;
-}
+} & (
+	| { contractAddress: string; collectionAddress?: never }
+	| { collectionAddress: string; contractAddress?: never }
+);
 
 export interface GetContractInfoReturn {
 	contractInfo: ContractInfo;
@@ -121,11 +123,13 @@ export interface GetContractInfoBatchReturn {
 	taskID?: number;
 }
 
-export interface GetTokenMetadataArgs {
+export type GetTokenMetadataArgs = {
 	chainId: ChainId;
-	contractAddress: string;
 	tokenIds: TokenId[];
-}
+} & (
+	| { contractAddress: string; collectionAddress?: never }
+	| { collectionAddress: string; contractAddress?: never }
+);
 
 export interface GetTokenMetadataReturn {
 	tokenMetadata: TokenMetadata[];
@@ -146,35 +150,41 @@ export interface GetTokenMetadataBatchReturn {
 	taskID?: number;
 }
 
-export interface RefreshTokenMetadataArgs {
+export type RefreshTokenMetadataArgs = {
 	chainId: ChainId;
-	contractAddress: string;
 	tokenIds?: TokenId[];
 	refreshAll?: boolean;
-}
+} & (
+	| { contractAddress: string; collectionAddress?: never }
+	| { collectionAddress: string; contractAddress?: never }
+);
 
 export interface RefreshTokenMetadataReturn {
 	taskID: number;
 }
 
-export interface SearchTokenMetadataArgs {
+export type SearchTokenMetadataArgs = {
 	chainId: ChainId;
-	contractAddress: string;
 	filter: Filter;
 	page?: Page;
-}
+} & (
+	| { contractAddress: string; collectionAddress?: never }
+	| { collectionAddress: string; contractAddress?: never }
+);
 
 export interface SearchTokenMetadataReturn {
 	page: Page;
 	tokenMetadata: TokenMetadata[];
 }
 
-export interface GetTokenMetadataPropertyFiltersArgs {
+export type GetTokenMetadataPropertyFiltersArgs = {
 	chainId: ChainId;
-	contractAddress: string;
 	excludeProperties: Array<string>;
 	excludePropertyValues?: boolean;
-}
+} & (
+	| { contractAddress: string; collectionAddress?: never }
+	| { collectionAddress: string; contractAddress?: never }
+);
 
 export interface GetTokenMetadataPropertyFiltersReturn {
 	filters: Array<PropertyFilter>;

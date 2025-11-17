@@ -40,26 +40,43 @@ export class IndexerClient {
 	 * Get token supplies for a contract with normalized types (bigint)
 	 */
 	async getTokenSupplies(
-		args: IndexerGen.GetTokenSuppliesArgs,
+		args: Normalized.GetTokenSuppliesRequest,
 	): Promise<Normalized.GetTokenSuppliesResponse> {
-		const rawResponse = await this.client.getTokenSupplies(args);
-		return transforms.toGetTokenSuppliesResponse(
-			rawResponse,
-			args.contractAddress as Address,
-		);
+		const contractAddress =
+			'collectionAddress' in args && args.collectionAddress
+				? args.collectionAddress
+				: 'contractAddress' in args && args.contractAddress
+					? args.contractAddress
+					: ('' as Address);
+
+		const apiArgs: IndexerGen.GetTokenSuppliesArgs = {
+			...args,
+			contractAddress,
+		};
+
+		const rawResponse = await this.client.getTokenSupplies(apiArgs);
+		return transforms.toGetTokenSuppliesResponse(rawResponse, contractAddress);
 	}
 
 	/**
 	 * Get token ID ranges for a contract with normalized types (bigint)
 	 */
 	async getTokenIDRanges(
-		args: IndexerGen.GetTokenIDRangesArgs,
+		args: Normalized.GetTokenIDRangesRequest,
 	): Promise<Normalized.GetTokenIDRangesResponse> {
-		const rawResponse = await this.client.getTokenIDRanges(args);
-		return transforms.toGetTokenIDRangesResponse(
-			rawResponse,
-			args.contractAddress as Address,
-		);
+		const contractAddress =
+			'collectionAddress' in args && args.collectionAddress
+				? args.collectionAddress
+				: 'contractAddress' in args && args.contractAddress
+					? args.contractAddress
+					: ('' as Address);
+
+		const apiArgs: IndexerGen.GetTokenIDRangesArgs = {
+			contractAddress,
+		};
+
+		const rawResponse = await this.client.getTokenIDRanges(apiArgs);
+		return transforms.toGetTokenIDRangesResponse(rawResponse, contractAddress);
 	}
 
 	/**
