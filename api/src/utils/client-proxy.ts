@@ -40,6 +40,44 @@ export function wrapChainId<TRequest, TResponse>(
 }
 
 /**
+ * Creates a method wrapper that automatically normalizes chainId and collectionAddress fields.
+ * Handles the common pattern where both chainId and contractAddress→collectionAddress need conversion.
+ *
+ * @example
+ * ```typescript
+ * const listCollectibles = wrapCollectionAddress(
+ *   (req) => rawClient.listCollectibles(req)
+ * );
+ * // Usage: await listCollectibles({ chainId: 137, collectionAddress: '0x...' })
+ * // Auto-converts: chainId: "137", contractAddress: '0x...'
+ * ```
+ */
+export function wrapCollectionAddress<TRequest, TResponse>(
+	clientMethod: (
+		apiReq: Omit<TRequest, 'chainId' | 'collectionAddress'> & {
+			chainId: string;
+			contractAddress: string;
+		},
+	) => Promise<TResponse>,
+): (
+	req: TRequest & { chainId: ChainId; collectionAddress: string },
+) => Promise<TResponse> {
+	return async (
+		req: TRequest & { chainId: ChainId; collectionAddress: string },
+	) => {
+		const { collectionAddress, ...rest } = req;
+		return clientMethod({
+			...(rest as object),
+			chainId: chainIdToString(req.chainId),
+			contractAddress: collectionAddress,
+		} as Omit<TRequest, 'chainId' | 'collectionAddress'> & {
+			chainId: string;
+			contractAddress: string;
+		});
+	};
+}
+
+/**
  * Creates a method wrapper with custom request transformation.
  * Use this when you need to transform fields beyond just chainId.
  *

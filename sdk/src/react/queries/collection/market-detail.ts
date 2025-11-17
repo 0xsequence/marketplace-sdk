@@ -6,9 +6,8 @@ import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchMarketCollectionDetailParams
-	extends Omit<GetCollectionDetailRequest, 'chainId' | 'contractAddress'> {
+	extends Omit<GetCollectionDetailRequest, 'chainId'> {
 	chainId: number;
-	collectionAddress: string;
 	config: SdkConfig;
 }
 
@@ -18,12 +17,11 @@ export interface FetchMarketCollectionDetailParams
 export async function fetchMarketCollectionDetail(
 	params: FetchMarketCollectionDetailParams,
 ) {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	const { chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const apiArgs: GetCollectionDetailRequest = {
-		contractAddress: collectionAddress,
 		chainId,
 		...additionalApiParams,
 	};

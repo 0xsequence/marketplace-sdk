@@ -12,6 +12,7 @@ import {
 	chainIdToString,
 	passthrough,
 	wrapChainId,
+	wrapCollectionAddress,
 	wrapWithTransform,
 } from '../../utils/client-proxy';
 import * as Gen from './marketplace.gen';
@@ -193,9 +194,10 @@ export type GenerateBuyTransactionRequest = Omit<
 
 export type GetCollectionDetailRequest = Omit<
 	Gen.GetCollectionDetailRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type ListCurrenciesRequest = Omit<
@@ -207,40 +209,45 @@ export type ListCurrenciesRequest = Omit<
 
 export type GetCollectibleRequest = Omit<
 	Gen.GetCollectibleRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type GetLowestPriceListingForCollectibleRequest = Omit<
 	Gen.GetLowestPriceListingForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
 export type GetHighestPriceOfferForCollectibleRequest = Omit<
 	Gen.GetHighestPriceOfferForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
 export type ListListingsForCollectibleRequest = Omit<
 	Gen.ListListingsForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
 export type ListOffersForCollectibleRequest = Omit<
 	Gen.ListOffersForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
@@ -251,29 +258,36 @@ export type ListOrdersWithCollectiblesRequest = Omit<
 	chainId: ChainId;
 };
 
-export type GetFloorOrderRequest = Omit<Gen.GetFloorOrderRequest, 'chainId'> & {
+export type GetFloorOrderRequest = Omit<
+	Gen.GetFloorOrderRequest,
+	'chainId' | 'contractAddress'
+> & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type ListCollectiblesRequest = Omit<
 	Gen.ListCollectiblesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type ListCollectibleActivitiesRequest = Omit<
 	Gen.ListCollectibleActivitiesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type ListCollectionActivitiesRequest = Omit<
 	Gen.ListCollectionActivitiesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type ListPrimarySaleItemsRequest = Omit<
@@ -299,31 +313,35 @@ export type CheckoutOptionsMarketplaceRequest = Omit<
 
 export type GetCountOfFilteredCollectiblesRequest = Omit<
 	Gen.GetCountOfFilteredCollectiblesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type GetCountOfAllCollectiblesRequest = Omit<
 	Gen.GetCountOfAllCollectiblesRequest,
-	'chainId'
+	'chainId' | 'contractAddress'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 };
 
 export type GetCountOfListingsForCollectibleRequest = Omit<
 	Gen.GetCountOfListingsForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
 export type GetCountOfOffersForCollectibleRequest = Omit<
 	Gen.GetCountOfOffersForCollectibleRequest,
-	'chainId' | 'tokenId'
+	'chainId' | 'contractAddress' | 'tokenId'
 > & {
 	chainId: ChainId;
+	collectionAddress: string;
 	tokenId: TokenId;
 };
 
@@ -525,23 +543,25 @@ export class MarketplaceClient {
 		) => Promise<GenerateBuyTransactionResponse>;
 
 		// Collection and currency methods (chainId only)
-		this.getCollectionDetail = wrapChainId((req) =>
+		this.getCollectionDetail = wrapCollectionAddress((req) =>
 			this.client.getCollectionDetail(req),
 		);
 		this.listCurrencies = wrapChainId((req) => this.client.listCurrencies(req));
 
-		// Collectible methods (chainId + tokenId passthrough since already bigint)
-		this.getCollectible = wrapChainId((req) => this.client.getCollectible(req));
-		this.getLowestPriceListingForCollectible = wrapChainId((req) =>
+		// Collectible methods (chainId + contractAddress + tokenId passthrough since already bigint)
+		this.getCollectible = wrapCollectionAddress((req) =>
+			this.client.getCollectible(req),
+		);
+		this.getLowestPriceListingForCollectible = wrapCollectionAddress((req) =>
 			this.client.getLowestPriceListingForCollectible(req),
 		);
-		this.getHighestPriceOfferForCollectible = wrapChainId((req) =>
+		this.getHighestPriceOfferForCollectible = wrapCollectionAddress((req) =>
 			this.client.getHighestPriceOfferForCollectible(req),
 		);
-		this.listListingsForCollectible = wrapChainId((req) =>
+		this.listListingsForCollectible = wrapCollectionAddress((req) =>
 			this.client.listListingsForCollectible(req),
 		);
-		this.listOffersForCollectible = wrapChainId((req) =>
+		this.listOffersForCollectible = wrapCollectionAddress((req) =>
 			this.client.listOffersForCollectible(req),
 		);
 
@@ -549,37 +569,39 @@ export class MarketplaceClient {
 		this.listOrdersWithCollectibles = wrapChainId((req) =>
 			this.client.listOrdersWithCollectibles(req),
 		);
-		this.getFloorOrder = wrapChainId((req) => this.client.getFloorOrder(req));
+		this.getFloorOrder = wrapCollectionAddress((req) =>
+			this.client.getFloorOrder(req),
+		);
 		this.getOrders = wrapChainId((req) => this.client.getOrders(req));
 
-		// List methods (chainId only)
-		this.listCollectibles = wrapChainId((req) =>
+		// List methods (chainId + contractAddress)
+		this.listCollectibles = wrapCollectionAddress((req) =>
 			this.client.listCollectibles(req),
 		);
-		this.listCollectibleActivities = wrapChainId((req) =>
+		this.listCollectibleActivities = wrapCollectionAddress((req) =>
 			this.client.listCollectibleActivities(req),
 		);
-		this.listCollectionActivities = wrapChainId((req) =>
+		this.listCollectionActivities = wrapCollectionAddress((req) =>
 			this.client.listCollectionActivities(req),
 		);
 		this.listPrimarySaleItems = wrapChainId((req) =>
 			this.client.listPrimarySaleItems(req),
 		);
 
-		// Count methods (chainId + optional tokenId)
+		// Count methods (chainId + contractAddress + optional tokenId)
 		this.getCountOfPrimarySaleItems = wrapChainId((req) =>
 			this.client.getCountOfPrimarySaleItems(req),
 		);
-		this.getCountOfFilteredCollectibles = wrapChainId((req) =>
+		this.getCountOfFilteredCollectibles = wrapCollectionAddress((req) =>
 			this.client.getCountOfFilteredCollectibles(req),
 		);
-		this.getCountOfAllCollectibles = wrapChainId((req) =>
+		this.getCountOfAllCollectibles = wrapCollectionAddress((req) =>
 			this.client.getCountOfAllCollectibles(req),
 		);
-		this.getCountOfListingsForCollectible = wrapChainId((req) =>
+		this.getCountOfListingsForCollectible = wrapCollectionAddress((req) =>
 			this.client.getCountOfListingsForCollectible(req),
 		);
-		this.getCountOfOffersForCollectible = wrapChainId((req) =>
+		this.getCountOfOffersForCollectible = wrapCollectionAddress((req) =>
 			this.client.getCountOfOffersForCollectible(req),
 		);
 		this.getCountOfFilteredOrders = wrapChainId((req) =>
