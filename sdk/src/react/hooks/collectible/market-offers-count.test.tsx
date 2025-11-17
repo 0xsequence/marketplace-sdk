@@ -12,7 +12,7 @@ describe('useCollectibleMarketOffersCount', () => {
 	const defaultArgs = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: 1n,
+		tokenId: 1n,
 		query: {},
 	};
 
@@ -76,7 +76,7 @@ describe('useCollectibleMarketOffersCount', () => {
 			...defaultArgs,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectibleId: 2n,
+			tokenId: 2n,
 		};
 
 		rerender(() => useCollectibleMarketOffersCount(newArgs));

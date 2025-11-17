@@ -80,10 +80,7 @@ export function useCollectionMarketActivities(
 
 export { listCollectionActivitiesQueryOptions };
 
-export type {
-	FetchListCollectionActivitiesParams,
-	ListCollectionActivitiesQueryOptions,
-};
+export type { ListCollectionActivitiesQueryOptions };
 
 // Legacy exports for backward compatibility during migration
 export type UseListCollectionActivitiesRequest =

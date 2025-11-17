@@ -13,7 +13,7 @@ describe('useCollectibleDetail', () => {
 	const defaultArgs: UseCollectibleDetailParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: 1n,
+		tokenId: 1n,
 		query: {},
 	};
 
@@ -68,7 +68,7 @@ describe('useCollectibleDetail', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectibleId: 2n,
+			tokenId: 2n,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		};
@@ -89,7 +89,7 @@ describe('useCollectibleDetail', () => {
 		const argsWithoutQuery: UseCollectibleDetailParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
-			collectibleId: 1n,
+			tokenId: 1n,
 			query: {},
 		};
 
@@ -106,7 +106,7 @@ describe('useCollectibleDetail', () => {
 	it('should not fetch when required params are missing', async () => {
 		const incompleteArgs = {
 			chainId: 1,
-			// Missing collectionAddress and collectibleId
+			// Missing collectionAddress and tokenId
 		} as UseCollectibleDetailParams;
 
 		const { result } = renderHook(() => useCollectibleDetail(incompleteArgs));

@@ -23,7 +23,7 @@ export type UseCollectibleMarketListingsParams = Optional<
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
- * @param params.collectibleId - The specific token ID to fetch listings for
+ * @param params.tokenId - The specific token ID to fetch listings for
  * @param params.filter - Optional filtering parameters (marketplace, currencies, etc.)
  * @param params.page - Optional pagination parameters
  * @param params.query - Optional React Query configuration
@@ -36,7 +36,7 @@ export type UseCollectibleMarketListingsParams = Optional<
  * const { data, isLoading } = useCollectibleMarketListings({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '123'
+ *   tokenId: 123n
  * })
  * ```
  *
@@ -46,7 +46,7 @@ export type UseCollectibleMarketListingsParams = Optional<
  * const { data } = useCollectibleMarketListings({
  *   chainId: 1,
  *   collectionAddress: '0x...',
- *   collectibleId: '456',
+ *   tokenId: 456n,
  *   page: {
  *     page: 2,
  *     pageSize: 20
@@ -60,7 +60,7 @@ export type UseCollectibleMarketListingsParams = Optional<
  * const { data } = useCollectibleMarketListings({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '789',
+ *   tokenId: 789n,
  *   filter: {
  *     marketplace: [MarketplaceKind.sequence_marketplace_v2],
  *     currencies: ['0x...'] // Specific currency addresses
@@ -87,10 +87,7 @@ export function useCollectibleMarketListings(
 
 export { listListingsForCollectibleQueryOptions };
 
-export type {
-	FetchListListingsForCollectibleParams,
-	ListListingsForCollectibleQueryOptions,
-};
+export type { ListListingsForCollectibleQueryOptions };
 
 // Legacy exports for backward compatibility during migration
 export type UseListListingsForCollectibleArgs =

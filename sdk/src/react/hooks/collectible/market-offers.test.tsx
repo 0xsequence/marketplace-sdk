@@ -13,7 +13,7 @@ describe('useCollectibleMarketOffers', () => {
 	const defaultArgs = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: 1n,
+		tokenId: 1n,
 		page: {
 			page: 1,
 			pageSize: 10,
@@ -76,7 +76,7 @@ describe('useCollectibleMarketOffers', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectibleId: 2n,
+			tokenId: 2n,
 		};
 
 		rerender(() => useCollectibleMarketOffers(newArgs));

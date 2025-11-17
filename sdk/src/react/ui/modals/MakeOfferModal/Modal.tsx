@@ -45,7 +45,7 @@ const Modal = observer(() => {
 		offerPrice,
 		offerPriceChanged,
 		invalidQuantity,
-		collectibleId,
+		tokenId,
 		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
@@ -62,7 +62,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const { isWaaS } = useConnectorMetadata();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
@@ -92,7 +92,7 @@ const Modal = observer(() => {
 	const royaltyQuery = useRoyalty({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 
 	const modalLoading =
@@ -109,7 +109,7 @@ const Modal = observer(() => {
 		offerInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			offer: {
-				tokenId: collectibleId,
+				tokenId: tokenId,
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
@@ -138,7 +138,7 @@ const Modal = observer(() => {
 	const buyModal = useBuyModal(callbacks);
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
-		tokenId: collectibleId,
+		tokenId: tokenId,
 		chainId,
 		collectionAddress,
 		filter: {
@@ -236,7 +236,7 @@ const Modal = observer(() => {
 					<TokenPreview
 						collectionName={collection?.name}
 						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
+						tokenId={tokenId}
 						chainId={chainId}
 					/>
 
@@ -287,7 +287,7 @@ const Modal = observer(() => {
 						offerPriceChanged &&
 						!insufficientBalance && (
 							<FloorPriceText
-								tokenId={collectibleId}
+								tokenId={tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
 								price={offerPrice}
@@ -298,7 +298,7 @@ const Modal = observer(() => {
 										buyModal.show({
 											chainId,
 											collectionAddress,
-											collectibleId,
+											tokenId,
 											orderId: lowestListing.orderId,
 											marketplace: lowestListing.marketplace,
 										});

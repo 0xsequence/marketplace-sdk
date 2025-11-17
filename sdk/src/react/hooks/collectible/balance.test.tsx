@@ -12,7 +12,7 @@ import { useCollectibleBalance } from './balance';
 describe('useCollectibleBalance', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
-		collectibleId: 1n,
+		tokenId: 1n,
 		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
@@ -95,7 +95,7 @@ describe('useCollectibleBalance', () => {
 		const specificCollectible = {
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectibleId: 42n,
+			tokenId: 42n,
 			userAddress:
 				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
@@ -143,7 +143,7 @@ describe('useCollectibleBalance', () => {
 			specificCollectible.collectionAddress,
 		);
 		expect(result.current.data?.tokenId).toBe(
-			BigInt(specificCollectible.collectibleId),
+			BigInt(specificCollectible.tokenId),
 		);
 		expect(result.current.data?.accountAddress).toBe(
 			specificCollectible.userAddress,

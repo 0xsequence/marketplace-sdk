@@ -15,14 +15,14 @@ export interface RoyaltyInfo {
 export interface FetchRoyaltyParams {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	publicClient: PublicClient | undefined;
 }
 
 export interface UseRoyaltyArgs {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: bigint;
+	tokenId: bigint;
 	query?: QueryArg;
 }
 
@@ -32,7 +32,7 @@ export interface UseRoyaltyArgs {
 async function fetchRoyalty(
 	params: FetchRoyaltyParams,
 ): Promise<RoyaltyInfo | null> {
-	const { collectionAddress, collectibleId, publicClient } = params;
+	const { collectionAddress, tokenId, publicClient } = params;
 
 	if (!publicClient) {
 		throw new Error('Public client is required');
@@ -42,7 +42,7 @@ async function fetchRoyalty(
 		abi: EIP2981_ABI,
 		address: collectionAddress,
 		functionName: 'royaltyInfo',
-		args: [BigInt(collectibleId), BigInt(100)],
+		args: [BigInt(tokenId), BigInt(100)],
 	});
 
 	const [recipient, percentage] = result;
@@ -61,7 +61,7 @@ function getRoyaltyQueryKey(params: Omit<FetchRoyaltyParams, 'publicClient'>) {
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
-		collectibleId: params.collectibleId,
+		tokenId: params.tokenId,
 	};
 
 	return ['royalty-percentage', apiArgs] as const;
@@ -74,7 +74,7 @@ function royaltyQueryOptions(
 	const enabled = Boolean(
 		params.collectionAddress &&
 			params.chainId &&
-			params.collectibleId &&
+			params.tokenId &&
 			params.publicClient &&
 			(query?.enabled ?? true),
 	);
@@ -97,7 +97,7 @@ function royaltyQueryOptions(
  * @param args - Configuration parameters
  * @param args.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param args.collectionAddress - The collection contract address
- * @param args.collectibleId - The token ID within the collection
+ * @param args.tokenId - The token ID within the collection
  * @param args.query - Optional TanStack Query configuration
  *
  * @returns Query result containing royalty information (percentage and recipient) or null
@@ -108,7 +108,7 @@ function royaltyQueryOptions(
  * const { data, isLoading } = useRoyalty({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '1'
+ *   tokenId: '1'
  * })
  *
  * if (data) {
@@ -122,7 +122,7 @@ function royaltyQueryOptions(
  * const { data, isLoading } = useRoyalty({
  *   chainId: 1,
  *   collectionAddress: '0x...',
- *   collectibleId: '42',
+ *   tokenId: '42',
  *   query: {
  *     refetchInterval: 60000,
  *     enabled: hasTokenId
@@ -131,14 +131,14 @@ function royaltyQueryOptions(
  * ```
  */
 export function useRoyalty(args: UseRoyaltyArgs) {
-	const { chainId, collectionAddress, collectibleId, query } = args;
+	const { chainId, collectionAddress, tokenId, query } = args;
 	const publicClient = usePublicClient({ chainId });
 
 	const queryOptions = royaltyQueryOptions(
 		{
 			chainId,
 			collectionAddress,
-			collectibleId,
+			tokenId,
 			publicClient,
 		},
 		query,

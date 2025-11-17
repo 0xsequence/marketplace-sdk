@@ -77,12 +77,12 @@ export function SellModal() {
 					<TokenPreview
 						collectionName={collection.name}
 						collectionAddress={collectionAddress}
-						collectibleId={tokenId}
+						tokenId={tokenId}
 						chainId={chainId}
 					/>
 
 					<TransactionDetails
-						collectibleId={tokenId}
+						tokenId={tokenId}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 						includeMarketplaceFee={true}

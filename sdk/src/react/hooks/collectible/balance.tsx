@@ -15,7 +15,7 @@ import { useConfig } from '../config/useConfig';
  * ```tsx
  * const { data, isLoading, error } = useCollectibleBalance({
  *   collectionAddress: '0x123...',
- *   collectibleId: 1n,
+ *   tokenId: 1n,
  *   userAddress: '0x456...',
  *   chainId: 1,
  *   query: {

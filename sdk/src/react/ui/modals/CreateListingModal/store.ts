@@ -6,7 +6,7 @@ import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type CreateListingState = BaseModalState & {
-	collectibleId: bigint;
+	tokenId: bigint;
 	collectionName: string;
 	orderbookKind?: OrderbookKind;
 	collectionType: CollectionType | undefined;
@@ -24,7 +24,7 @@ type CreateListingState = BaseModalState & {
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: bigint;
+	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 };
@@ -60,7 +60,7 @@ const initialState: CreateListingState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	collectibleId: 0n,
+	tokenId: 0n,
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
 	collectionType: undefined,
@@ -77,7 +77,7 @@ const actions: Actions = {
 	open: (args) => {
 		createListingModal$.collectionAddress.set(args.collectionAddress);
 		createListingModal$.chainId.set(args.chainId);
-		createListingModal$.collectibleId.set(args.collectibleId);
+		createListingModal$.tokenId.set(args.tokenId);
 		createListingModal$.orderbookKind.set(args.orderbookKind);
 		createListingModal$.callbacks.set(args.callbacks);
 		createListingModal$.isOpen.set(true);
