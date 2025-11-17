@@ -8,9 +8,12 @@ import {
 import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchTokenSuppliesParams
-	extends Omit<Indexer.GetTokenSuppliesRequest, 'contractAddress'> {
+	extends Omit<
+		Indexer.GetTokenSuppliesRequest,
+		'contractAddress' | 'collectionAddress'
+	> {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: `0x${string}`;
 	page?: Indexer.Page;
 }
 
@@ -26,16 +29,9 @@ export async function fetchTokenSupplies(
 		'chainId' | 'collectionAddress' | 'config'
 	>,
 ) {
-	const { chainId, collectionAddress, config, ...rest } = params;
-
+	const { chainId, config, ...apiParams } = params;
 	const indexerClient = getIndexerClient(chainId, config);
-
-	const apiArgs: Indexer.GetTokenSuppliesRequest = {
-		contractAddress: collectionAddress as `0x${string}`,
-		...rest,
-	};
-
-	const result = await indexerClient.getTokenSupplies(apiArgs);
+	const result = await indexerClient.getTokenSupplies(apiParams);
 	return result;
 }
 

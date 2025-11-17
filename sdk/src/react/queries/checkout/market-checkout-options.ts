@@ -1,10 +1,8 @@
-import type {
-	CheckoutOptionsMarketplaceRequest,
-	CheckoutOptionsMarketplaceResponse,
-} from '@0xsequence/marketplace-api';
+import type { CheckoutOptionsMarketplaceResponse } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
 import {
 	buildQueryOptions,
+	type CheckoutOptionsMarketplaceRequest,
 	getMarketplaceClient,
 	type MarketplaceKind,
 	type SdkQueryParams,
@@ -37,7 +35,7 @@ export async function fetchMarketCheckoutOptions(
 
 	const apiArgs: CheckoutOptionsMarketplaceRequest = {
 		chainId,
-		wallet: walletAddress,
+		walletAddress,
 		orders: orders.map((order) => ({
 			contractAddress: order.collectionAddress,
 			orderId: order.orderId,

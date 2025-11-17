@@ -26,12 +26,8 @@ export async function fetchGetTokenRanges(
 	>,
 ): Promise<Indexer.GetTokenIDRangesResponse> {
 	const { chainId, collectionAddress, config } = params;
-
 	const indexerClient = getIndexerClient(chainId, config);
-
-	const response = await indexerClient.getTokenIDRanges({
-		contractAddress: collectionAddress,
-	});
+	const response = await indexerClient.getTokenIDRanges({ collectionAddress });
 
 	if (!response) {
 		throw new Error('Failed to fetch token ranges');

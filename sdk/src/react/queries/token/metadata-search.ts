@@ -1,13 +1,11 @@
 import type {
 	Filter,
 	Page,
-	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
 } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import {
 	getMetadataClient,
-	type QueryKeyArgs,
 	type SdkInfiniteQueryParams,
 	type WithRequired,
 } from '../../_internal';
@@ -37,7 +35,7 @@ export async function fetchSearchTokenMetadata(
 
 	const response = await metadataClient.searchTokenMetadata({
 		chainId,
-		contractAddress: collectionAddress,
+		collectionAddress,
 		filter: filter ?? {},
 		page,
 	});
@@ -53,9 +51,9 @@ export function getSearchTokenMetadataQueryKey(
 ) {
 	const apiArgs = {
 		chainId: params.chainId!,
-		contractAddress: params.collectionAddress!,
+		collectionAddress: params.collectionAddress!,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<SearchTokenMetadataArgs, 'page'>>;
+	};
 
 	return createTokenQueryKey('metadata-search', apiArgs);
 }

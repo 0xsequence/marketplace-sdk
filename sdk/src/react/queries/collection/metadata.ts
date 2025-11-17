@@ -1,4 +1,4 @@
-import type { Address, GetContractInfoArgs } from '@0xsequence/marketplace-api';
+import type { Address } from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -7,7 +7,8 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchCollectionParams extends GetContractInfoArgs {
+export interface FetchCollectionParams {
+	chainId: number;
 	collectionAddress: Address;
 }
 
@@ -23,14 +24,12 @@ export async function fetchCollection(
 	>,
 ) {
 	const { chainId, collectionAddress, config } = params;
-
 	const metadataClient = getMetadataClient(config);
-
+	// API wrapper handles collectionAddress → contractAddress transformation
 	const result = await metadataClient.getContractInfo({
 		chainId,
-		contractAddress: collectionAddress,
+		collectionAddress,
 	});
-
 	return result.contractInfo;
 }
 
