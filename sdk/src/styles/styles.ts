@@ -27,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -45,6 +45,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-orange-400: oklch(75% 0.183 55.934);
     --color-orange-800: oklch(47% 0.157 37.304);
     --color-orange-950: oklch(26.6% 0.079 36.259);
+    --color-amber-300: oklch(87.9% 0.169 91.605);
+    --color-amber-500: oklch(76.9% 0.188 70.08);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
@@ -564,6 +566,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[64px\] {
     height: 64px;
   }
+  .h-\[84px\] {
+    height: 84px;
+  }
   .h-\[98px\] {
     height: 98px;
   }
@@ -695,6 +700,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .w-\[52px\] {
     width: 52px;
+  }
+  .w-\[84px\] {
+    width: 84px;
   }
   .w-\[100px\] {
     width: 100px;
@@ -1038,6 +1046,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-border-style: solid;
     border-style: solid;
   }
+  .border-amber-500 {
+    border-color: var(--color-amber-500);
+  }
+  .border-amber-500\/30 {
+    border-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-amber-500) 30%, transparent);
+    }
+  }
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
@@ -1085,6 +1102,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-\[hsla\(247\,100\%\,75\%\,0\.3\)\] {
     background-color: hsla(247,100%,75%,0.3);
+  }
+  .bg-amber-500 {
+    background-color: var(--color-amber-500);
+  }
+  .bg-amber-500\/10 {
+    background-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
+    }
   }
   .bg-background-backdrop {
     background-color: var(--seq-color-background-backdrop);
@@ -1484,6 +1510,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .whitespace-pre-wrap {
     white-space: pre-wrap;
+  }
+  .text-amber-300 {
+    color: var(--color-amber-300);
   }
   .text-background-raised {
     color: var(--seq-color-background-raised);

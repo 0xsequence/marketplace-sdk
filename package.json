@@ -22,7 +22,7 @@
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
 		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
-	"packageManager": "pnpm@10.18.2",
+	"packageManager": "pnpm@10.22.0",
 	"engines": {
 		"node": "24.x"
 	},
@@ -38,9 +38,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.9.1",
-		"knip": "^5.66.4",
-		"lefthook": "^2.0.1",
+		"@types/node": "^24.10.1",
+		"knip": "^5.69.1",
+		"lefthook": "^2.0.4",
 		"typescript": "catalog:"
 	},
 	"prepare": "lefthook install",
