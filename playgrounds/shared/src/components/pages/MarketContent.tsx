@@ -61,8 +61,6 @@ export function MarketContent({
 		priceFilters,
 		collectionAddress,
 		chainId,
-		initialPage: 1,
-		initialPageSize: 30,
 		enabled: paginationMode === 'infinite',
 	});
 
