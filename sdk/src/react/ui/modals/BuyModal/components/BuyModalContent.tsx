@@ -106,6 +106,7 @@ export const BuyModalContent = () => {
 					width: '450px',
 					height: 'auto',
 				},
+				className: 'overflow-y-auto',
 			}}
 		>
 			<div className="relative flex grow flex-col items-center gap-4 p-6">
@@ -125,7 +126,7 @@ export const BuyModalContent = () => {
 				{useTrailsModal && (
 					<div className="w-full">
 						<TrailsWidget
-							appId={config.projectAccessKey}
+							apiKey={config.projectAccessKey}
 							toChainId={modalProps.chainId}
 							toAddress={buyStep.to}
 							toToken={currencyAddress}
@@ -133,6 +134,7 @@ export const BuyModalContent = () => {
 							toAmount={formattedAmount}
 							renderInline={true}
 							theme="dark"
+							mode="pay"
 							customCss={TRAILS_CUSTOM_CSS}
 							onDestinationConfirmation={handleTrailsSuccess}
 						/>
