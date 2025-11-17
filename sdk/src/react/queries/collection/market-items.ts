@@ -10,9 +10,7 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardInfiniteQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
-	extends Omit<ListOrdersWithCollectiblesRequest, 'chainId'> {
-	chainId: number;
-	collectionAddress: Address;
+	extends ListOrdersWithCollectiblesRequest {
 	config: SdkConfig;
 }
 

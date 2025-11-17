@@ -7,9 +7,7 @@ import {
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchFloorOrderParams
-	extends Omit<GetFloorOrderRequest, 'chainId'> {
-	chainId: number;
+export interface FetchFloorOrderParams extends GetFloorOrderRequest {
 	config: SdkConfig;
 }
 

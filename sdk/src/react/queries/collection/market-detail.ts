@@ -6,8 +6,7 @@ import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchMarketCollectionDetailParams
-	extends Omit<GetCollectionDetailRequest, 'chainId'> {
-	chainId: number;
+	extends GetCollectionDetailRequest {
 	config: SdkConfig;
 }
 
