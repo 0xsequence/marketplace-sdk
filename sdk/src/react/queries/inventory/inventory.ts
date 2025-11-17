@@ -28,7 +28,7 @@ export interface UseInventoryArgs {
 
 type GetInventoryArgs = Omit<UseInventoryArgs, 'query'>;
 
-interface CollectibleWithBalance {
+export interface CollectibleWithBalance {
 	metadata: {
 		tokenId: bigint;
 		attributes: Array<any>;
