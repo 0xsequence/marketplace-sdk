@@ -1,5 +1,5 @@
 import { $ as SdkConfig, Gt as ContractType, mi as Page$1, ni as MetadataStatus } from "./create-config.js";
-import * as _tanstack_react_query273 from "@tanstack/react-query";
+import * as _tanstack_react_query0 from "@tanstack/react-query";
 import { ContractInfo } from "@0xsequence/indexer";
 import { Address } from "viem";
 
@@ -37,8 +37,8 @@ interface CollectiblesResponse {
   isTradable: boolean;
 }
 declare function fetchInventory(args: GetInventoryArgs, config: SdkConfig, page: Page$1): Promise<CollectiblesResponse>;
-declare function inventoryOptions(args: UseInventoryArgs, config: SdkConfig): _tanstack_react_query273.OmitKeyof<_tanstack_react_query273.UseQueryOptions<CollectiblesResponse, Error, CollectiblesResponse, (string | number)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query273.QueryFunction<CollectiblesResponse, (string | number)[], never> | undefined;
+declare function inventoryOptions(args: UseInventoryArgs, config: SdkConfig): _tanstack_react_query0.OmitKeyof<_tanstack_react_query0.UseQueryOptions<CollectiblesResponse, Error, CollectiblesResponse, (string | number)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query0.QueryFunction<CollectiblesResponse, (string | number)[], never> | undefined;
 } & {
   queryKey: (string | number)[] & {
     [dataTagSymbol]: CollectiblesResponse;

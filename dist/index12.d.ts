@@ -1,7 +1,7 @@
 import { Ft as CollectibleOrder, Gt as ContractType, Oi as PropertyFilter, _i as PriceFilter, fi as OrderbookKind, j as Optional, jr as ListCollectiblesReturn, nn as CurrencyStatus, tn as Currency, tt as CollectibleCardAction } from "./create-config.js";
 import { n as MarketCurrenciesQueryOptions, o as CurrencyQueryOptions } from "./marketCurrencies.js";
 import { r as MarketCollectibleCardProps } from "./types.js";
-import * as _tanstack_react_query215 from "@tanstack/react-query";
+import * as _tanstack_react_query303 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/hooks/data/market/useCurrency.d.ts
@@ -40,7 +40,7 @@ type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query215.UseQueryResult<Currency | undefined, Error>;
+declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query303.UseQueryResult<Currency | undefined, Error>;
 //#endregion
 //#region src/react/hooks/data/market/useListMarketCardData.d.ts
 interface UseListMarketCardDataProps {
@@ -78,7 +78,7 @@ declare function useListMarketCardData({
   error: Error | null;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
-  fetchNextPage: (options?: _tanstack_react_query215.FetchNextPageOptions) => Promise<_tanstack_react_query215.InfiniteQueryObserverResult<_tanstack_react_query215.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query303.FetchNextPageOptions) => Promise<_tanstack_react_query303.InfiniteQueryObserverResult<_tanstack_react_query303.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
   allCollectibles: CollectibleOrder[];
 };
 //#endregion
@@ -115,7 +115,7 @@ type UseMarketCurrenciesParams = Optional<MarketCurrenciesQueryOptions, 'config'
  * })
  * ```
  */
-declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query215.UseQueryResult<{
+declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query303.UseQueryResult<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;

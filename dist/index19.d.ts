@@ -1,6 +1,6 @@
 import { $ as SdkConfig, $r as ListPrimarySaleItemsReturn, It as CollectiblePrimarySaleItem, Si as PrimarySaleItemsFilter, ir as GetCountOfPrimarySaleItemsReturn, mi as Page, rr as GetCountOfPrimarySaleItemsArgs, vr as GetPrimarySaleItemArgs, z as ValuesOptional } from "./create-config.js";
 import { n as StandardQueryOptions } from "./query.js";
-import * as _tanstack_react_query194 from "@tanstack/react-query";
+import * as _tanstack_react_query28 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/primary-sales/countOfPrimarySaleItems.d.ts
@@ -18,12 +18,12 @@ declare function getCountOfPrimarySaleItemsQueryKey(args: UseCountOfPrimarySaleI
   primarySaleContractAddress: `0x${string}`;
   filter: PrimarySaleItemsFilter | undefined;
 }];
-declare function countOfPrimarySaleItemsOptions(args: UseCountOfPrimarySaleItemsArgs, config: SdkConfig): _tanstack_react_query194.OmitKeyof<_tanstack_react_query194.UseQueryOptions<number, Error, number, readonly ["primarySaleItemsCount", {
+declare function countOfPrimarySaleItemsOptions(args: UseCountOfPrimarySaleItemsArgs, config: SdkConfig): _tanstack_react_query28.OmitKeyof<_tanstack_react_query28.UseQueryOptions<number, Error, number, readonly ["primarySaleItemsCount", {
   chainId: string;
   primarySaleContractAddress: `0x${string}`;
   filter: PrimarySaleItemsFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query194.QueryFunction<number, readonly ["primarySaleItemsCount", {
+  queryFn?: _tanstack_react_query28.QueryFunction<number, readonly ["primarySaleItemsCount", {
     chainId: string;
     primarySaleContractAddress: `0x${string}`;
     filter: PrimarySaleItemsFilter | undefined;
@@ -56,12 +56,12 @@ declare function getPrimarySaleItemQueryKey(params: PrimarySaleItemQueryOptions)
   primarySaleContractAddress: string | undefined;
   tokenId: string | undefined;
 }];
-declare function primarySaleItemQueryOptions(params: PrimarySaleItemQueryOptions): _tanstack_react_query194.OmitKeyof<_tanstack_react_query194.UseQueryOptions<CollectiblePrimarySaleItem, Error, CollectiblePrimarySaleItem, readonly ["primarySaleItem", {
+declare function primarySaleItemQueryOptions(params: PrimarySaleItemQueryOptions): _tanstack_react_query28.OmitKeyof<_tanstack_react_query28.UseQueryOptions<CollectiblePrimarySaleItem, Error, CollectiblePrimarySaleItem, readonly ["primarySaleItem", {
   chainId: string;
   primarySaleContractAddress: string | undefined;
   tokenId: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query194.QueryFunction<CollectiblePrimarySaleItem, readonly ["primarySaleItem", {
+  queryFn?: _tanstack_react_query28.QueryFunction<CollectiblePrimarySaleItem, readonly ["primarySaleItem", {
     chainId: string;
     primarySaleContractAddress: string | undefined;
     tokenId: string | undefined;
@@ -97,7 +97,7 @@ declare function getListPrimarySaleItemsQueryKey(params: ListPrimarySaleItemsQue
   primarySaleContractAddress: `0x${string}` | undefined;
   filter: PrimarySaleItemsFilter | undefined;
 }];
-declare const listPrimarySaleItemsQueryOptions: (params: ListPrimarySaleItemsQueryOptions) => _tanstack_react_query194.OmitKeyof<_tanstack_react_query194.UseInfiniteQueryOptions<ListPrimarySaleItemsReturn, Error, _tanstack_react_query194.InfiniteData<ListPrimarySaleItemsReturn, unknown>, readonly ["listPrimarySaleItems", {
+declare const listPrimarySaleItemsQueryOptions: (params: ListPrimarySaleItemsQueryOptions) => _tanstack_react_query28.OmitKeyof<_tanstack_react_query28.UseInfiniteQueryOptions<ListPrimarySaleItemsReturn, Error, _tanstack_react_query28.InfiniteData<ListPrimarySaleItemsReturn, unknown>, readonly ["listPrimarySaleItems", {
   chainId: string;
   primarySaleContractAddress: `0x${string}` | undefined;
   filter: PrimarySaleItemsFilter | undefined;
@@ -105,7 +105,7 @@ declare const listPrimarySaleItemsQueryOptions: (params: ListPrimarySaleItemsQue
   page: number;
   pageSize: number;
 }>, "queryFn"> & {
-  queryFn?: _tanstack_react_query194.QueryFunction<ListPrimarySaleItemsReturn, readonly ["listPrimarySaleItems", {
+  queryFn?: _tanstack_react_query28.QueryFunction<ListPrimarySaleItemsReturn, readonly ["listPrimarySaleItems", {
     chainId: string;
     primarySaleContractAddress: `0x${string}` | undefined;
     filter: PrimarySaleItemsFilter | undefined;
@@ -119,7 +119,7 @@ declare const listPrimarySaleItemsQueryOptions: (params: ListPrimarySaleItemsQue
     primarySaleContractAddress: `0x${string}` | undefined;
     filter: PrimarySaleItemsFilter | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query194.InfiniteData<ListPrimarySaleItemsReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query28.InfiniteData<ListPrimarySaleItemsReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -143,12 +143,12 @@ declare function getPrimarySaleItemsCountQueryKey(args: PrimarySaleItemsCountQue
   primarySaleContractAddress: `0x${string}` | undefined;
   filter: PrimarySaleItemsFilter | undefined;
 }];
-declare const primarySaleItemsCountQueryOptions: (args: PrimarySaleItemsCountQueryOptions) => _tanstack_react_query194.OmitKeyof<_tanstack_react_query194.UseQueryOptions<GetCountOfPrimarySaleItemsReturn, Error, GetCountOfPrimarySaleItemsReturn, readonly ["primarySaleItemsCount", {
+declare const primarySaleItemsCountQueryOptions: (args: PrimarySaleItemsCountQueryOptions) => _tanstack_react_query28.OmitKeyof<_tanstack_react_query28.UseQueryOptions<GetCountOfPrimarySaleItemsReturn, Error, GetCountOfPrimarySaleItemsReturn, readonly ["primarySaleItemsCount", {
   chainId: string;
   primarySaleContractAddress: `0x${string}` | undefined;
   filter: PrimarySaleItemsFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query194.QueryFunction<GetCountOfPrimarySaleItemsReturn, readonly ["primarySaleItemsCount", {
+  queryFn?: _tanstack_react_query28.QueryFunction<GetCountOfPrimarySaleItemsReturn, readonly ["primarySaleItemsCount", {
     chainId: string;
     primarySaleContractAddress: `0x${string}` | undefined;
     filter: PrimarySaleItemsFilter | undefined;

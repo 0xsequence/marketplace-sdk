@@ -1,11 +1,11 @@
-import { $ as SdkConfig, Ar as ListCollectiblesArgs, Mi as SortBy, Tr as ListCollectibleActivitiesReturn, et as CardType, jr as ListCollectiblesReturn, mi as Page$1, ui as OrderSide, wr as ListCollectibleActivitiesArgs, z as ValuesOptional, zt as CollectiblesFilter } from "./create-config.js";
+import { $ as SdkConfig, Ar as ListCollectiblesArgs, Mi as SortBy, Tr as ListCollectibleActivitiesReturn, et as CardType, jr as ListCollectiblesReturn, mi as Page$2, ui as OrderSide, wr as ListCollectibleActivitiesArgs, z as ValuesOptional, zt as CollectiblesFilter } from "./create-config.js";
 import { n as StandardQueryOptions, t as StandardInfiniteQueryOptions } from "./query.js";
-import * as _tanstack_react_query332 from "@tanstack/react-query";
+import * as _tanstack_react_query107 from "@tanstack/react-query";
 import { UseQueryParameters } from "wagmi/query";
-import * as _0xsequence_metadata135 from "@0xsequence/metadata";
+import * as _0xsequence_indexer0 from "@0xsequence/indexer";
+import * as _0xsequence_metadata0 from "@0xsequence/metadata";
 import { GetTokenMetadataArgs } from "@0xsequence/metadata";
 import { Address } from "viem";
-import * as xtrails6 from "xtrails";
 
 //#region src/react/queries/collectibles/balanceOfCollectible.d.ts
 type UseBalanceOfCollectibleArgs = {
@@ -25,7 +25,7 @@ type UseBalanceOfCollectibleArgs = {
  */
 declare function fetchBalanceOfCollectible(args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & {
   userAddress: Address;
-}, config: SdkConfig): Promise<xtrails6.TokenBalance>;
+}, config: SdkConfig): Promise<_0xsequence_indexer0.TokenBalance>;
 declare function getBalanceOfCollectibleQueryKey(args: UseBalanceOfCollectibleArgs): readonly ["collectable", "collectable", "details", "userBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
@@ -44,7 +44,7 @@ declare function getBalanceOfCollectibleQueryKey(args: UseBalanceOfCollectibleAr
  * @param config - SDK configuration
  * @returns Query options configuration
  */
-declare function balanceOfCollectibleOptions(args: UseBalanceOfCollectibleArgs, config: SdkConfig): _tanstack_react_query332.UseQueryOptions<xtrails6.TokenBalance, Error, xtrails6.TokenBalance, readonly ["collectable", "collectable", "details", "userBalances", {
+declare function balanceOfCollectibleOptions(args: UseBalanceOfCollectibleArgs, config: SdkConfig): _tanstack_react_query107.UseQueryOptions<_0xsequence_indexer0.TokenBalance, Error, _0xsequence_indexer0.TokenBalance, readonly ["collectable", "collectable", "details", "userBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
   contractAddress: `0x${string}`;
@@ -55,7 +55,7 @@ declare function balanceOfCollectibleOptions(args: UseBalanceOfCollectibleArgs, 
     includeContracts: `0x${string}`[];
   } | undefined;
 }]> & {
-  initialData?: xtrails6.TokenBalance | _tanstack_react_query332.InitialDataFunction<xtrails6.TokenBalance> | undefined;
+  initialData?: _0xsequence_indexer0.TokenBalance | _tanstack_react_query107.InitialDataFunction<_0xsequence_indexer0.TokenBalance> | undefined;
 } & {
   queryKey: readonly ["collectable", "collectable", "details", "userBalances", {
     chainId: number;
@@ -68,7 +68,7 @@ declare function balanceOfCollectibleOptions(args: UseBalanceOfCollectibleArgs, 
       includeContracts: `0x${string}`[];
     } | undefined;
   }] & {
-    [dataTagSymbol]: xtrails6.TokenBalance;
+    [dataTagSymbol]: _0xsequence_indexer0.TokenBalance;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -83,7 +83,7 @@ interface FetchCollectibleParams extends Omit<GetTokenMetadataArgs, 'chainID' | 
 /**
  * Fetches collectible metadata from the metadata API
  */
-declare function fetchCollectible(params: FetchCollectibleParams): Promise<_0xsequence_metadata135.TokenMetadata>;
+declare function fetchCollectible(params: FetchCollectibleParams): Promise<_0xsequence_metadata0.TokenMetadata>;
 type CollectibleQueryOptions = ValuesOptional<FetchCollectibleParams> & {
   query?: StandardQueryOptions;
 };
@@ -92,12 +92,12 @@ declare function getCollectibleQueryKey(params: CollectibleQueryOptions): readon
   contractAddress: string | undefined;
   tokenIDs: string[];
 }];
-declare function collectibleQueryOptions(params: CollectibleQueryOptions): _tanstack_react_query332.OmitKeyof<_tanstack_react_query332.UseQueryOptions<_0xsequence_metadata135.TokenMetadata, Error, _0xsequence_metadata135.TokenMetadata, readonly ["collectable", "details", {
+declare function collectibleQueryOptions(params: CollectibleQueryOptions): _tanstack_react_query107.OmitKeyof<_tanstack_react_query107.UseQueryOptions<_0xsequence_metadata0.TokenMetadata, Error, _0xsequence_metadata0.TokenMetadata, readonly ["collectable", "details", {
   chainID: string;
   contractAddress: string | undefined;
   tokenIDs: string[];
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query332.QueryFunction<_0xsequence_metadata135.TokenMetadata, readonly ["collectable", "details", {
+  queryFn?: _tanstack_react_query107.QueryFunction<_0xsequence_metadata0.TokenMetadata, readonly ["collectable", "details", {
     chainID: string;
     contractAddress: string | undefined;
     tokenIDs: string[];
@@ -108,7 +108,7 @@ declare function collectibleQueryOptions(params: CollectibleQueryOptions): _tans
     contractAddress: string | undefined;
     tokenIDs: string[];
   }] & {
-    [dataTagSymbol]: _0xsequence_metadata135.TokenMetadata;
+    [dataTagSymbol]: _0xsequence_metadata0.TokenMetadata;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -132,11 +132,11 @@ declare function getCountOfCollectablesQueryKey(params: CountOfCollectablesQuery
   chainId: string;
   contractAddress: string | undefined;
 }];
-declare function countOfCollectablesQueryOptions(params: CountOfCollectablesQueryOptions): _tanstack_react_query332.OmitKeyof<_tanstack_react_query332.UseQueryOptions<number, Error, number, readonly ["collectable", "counts", {
+declare function countOfCollectablesQueryOptions(params: CountOfCollectablesQueryOptions): _tanstack_react_query107.OmitKeyof<_tanstack_react_query107.UseQueryOptions<number, Error, number, readonly ["collectable", "counts", {
   chainId: string;
   contractAddress: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query332.QueryFunction<number, readonly ["collectable", "counts", {
+  queryFn?: _tanstack_react_query107.QueryFunction<number, readonly ["collectable", "counts", {
     chainId: string;
     contractAddress: string | undefined;
   }], never> | undefined;
@@ -176,7 +176,7 @@ declare function getListCollectibleActivitiesQueryKey(params: ListCollectibleAct
     sort: SortBy[] | undefined;
   } | undefined;
 }];
-declare function listCollectibleActivitiesQueryOptions(params: ListCollectibleActivitiesQueryOptions): _tanstack_react_query332.OmitKeyof<_tanstack_react_query332.UseQueryOptions<ListCollectibleActivitiesReturn, Error, ListCollectibleActivitiesReturn, readonly ["collectable", "collectibleActivities", {
+declare function listCollectibleActivitiesQueryOptions(params: ListCollectibleActivitiesQueryOptions): _tanstack_react_query107.OmitKeyof<_tanstack_react_query107.UseQueryOptions<ListCollectibleActivitiesReturn, Error, ListCollectibleActivitiesReturn, readonly ["collectable", "collectibleActivities", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   tokenId: string | undefined;
@@ -186,7 +186,7 @@ declare function listCollectibleActivitiesQueryOptions(params: ListCollectibleAc
     sort: SortBy[] | undefined;
   } | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query332.QueryFunction<ListCollectibleActivitiesReturn, readonly ["collectable", "collectibleActivities", {
+  queryFn?: _tanstack_react_query107.QueryFunction<ListCollectibleActivitiesReturn, readonly ["collectable", "collectibleActivities", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     tokenId: string | undefined;
@@ -223,7 +223,7 @@ interface FetchListCollectiblesParams extends Omit<ListCollectiblesArgs, 'chainI
 /**
  * Fetches a list of collectibles with pagination support from the Marketplace API
  */
-declare function fetchListCollectibles(params: FetchListCollectiblesParams, page: Page$1): Promise<ListCollectiblesReturn>;
+declare function fetchListCollectibles(params: FetchListCollectiblesParams, page: Page$2): Promise<ListCollectiblesReturn>;
 type ListCollectiblesQueryOptions = ValuesOptional<FetchListCollectiblesParams> & {
   query?: StandardInfiniteQueryOptions;
 };
@@ -233,18 +233,18 @@ declare function getListCollectiblesQueryKey(params: ListCollectiblesQueryOption
   side: OrderSide | undefined;
   filter: CollectiblesFilter | undefined;
 }];
-declare function listCollectiblesQueryOptions(params: ListCollectiblesQueryOptions): _tanstack_react_query332.OmitKeyof<_tanstack_react_query332.UseInfiniteQueryOptions<ListCollectiblesReturn, Error, _tanstack_react_query332.InfiniteData<ListCollectiblesReturn, unknown>, readonly ["collectable", "list", {
+declare function listCollectiblesQueryOptions(params: ListCollectiblesQueryOptions): _tanstack_react_query107.OmitKeyof<_tanstack_react_query107.UseInfiniteQueryOptions<ListCollectiblesReturn, Error, _tanstack_react_query107.InfiniteData<ListCollectiblesReturn, unknown>, readonly ["collectable", "list", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   side: OrderSide | undefined;
   filter: CollectiblesFilter | undefined;
-}], Page$1>, "queryFn"> & {
-  queryFn?: _tanstack_react_query332.QueryFunction<ListCollectiblesReturn, readonly ["collectable", "list", {
+}], Page$2>, "queryFn"> & {
+  queryFn?: _tanstack_react_query107.QueryFunction<ListCollectiblesReturn, readonly ["collectable", "list", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     side: OrderSide | undefined;
     filter: CollectiblesFilter | undefined;
-  }], Page$1> | undefined;
+  }], Page$2> | undefined;
 } & {
   queryKey: readonly ["collectable", "list", {
     chainId: string;
@@ -252,7 +252,7 @@ declare function listCollectiblesQueryOptions(params: ListCollectiblesQueryOptio
     side: OrderSide | undefined;
     filter: CollectiblesFilter | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query332.InfiniteData<ListCollectiblesReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query107.InfiniteData<ListCollectiblesReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -282,7 +282,7 @@ declare function getListCollectiblesPaginatedQueryKey(params: ListCollectiblesPa
     pageSize: number;
   } | undefined;
 }];
-declare function listCollectiblesPaginatedQueryOptions(params: ListCollectiblesPaginatedQueryOptions): _tanstack_react_query332.OmitKeyof<_tanstack_react_query332.UseQueryOptions<ListCollectiblesReturn, Error, ListCollectiblesReturn, readonly ["collectable", "list", "paginated", {
+declare function listCollectiblesPaginatedQueryOptions(params: ListCollectiblesPaginatedQueryOptions): _tanstack_react_query107.OmitKeyof<_tanstack_react_query107.UseQueryOptions<ListCollectiblesReturn, Error, ListCollectiblesReturn, readonly ["collectable", "list", "paginated", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   side: OrderSide | undefined;
@@ -292,7 +292,7 @@ declare function listCollectiblesPaginatedQueryOptions(params: ListCollectiblesP
     pageSize: number;
   } | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query332.QueryFunction<ListCollectiblesReturn, readonly ["collectable", "list", "paginated", {
+  queryFn?: _tanstack_react_query107.QueryFunction<ListCollectiblesReturn, readonly ["collectable", "list", "paginated", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     side: OrderSide | undefined;

@@ -1,6 +1,6 @@
 import { Gt as ContractType, et as CardType, si as Order, tn as Currency } from "../../../../../../create-config.js";
 import { a as FooterName, i as formatPrice, n as SaleDetailsPill, r as PriceDisplay, t as TokenTypeBalancePill } from "../../../../../../index27.js";
-import * as react_jsx_runtime0 from "react/jsx-runtime";
+import * as react_jsx_runtime24 from "react/jsx-runtime";
 
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/Footer.d.ts
 type FooterProps = {
@@ -34,7 +34,7 @@ declare const Footer: ({
   cardType,
   salePriceAmount,
   salePriceCurrency
-}: FooterProps) => react_jsx_runtime0.JSX.Element;
+}: FooterProps) => react_jsx_runtime24.JSX.Element;
 declare const NonTradableInventoryFooter: ({
   name,
   balance,
@@ -45,7 +45,7 @@ declare const NonTradableInventoryFooter: ({
   balance?: string;
   decimals?: number;
   type: ContractType;
-}) => react_jsx_runtime0.JSX.Element;
+}) => react_jsx_runtime24.JSX.Element;
 //#endregion
 export { Footer, FooterName, NonTradableInventoryFooter, PriceDisplay, SaleDetailsPill, TokenTypeBalancePill, formatPrice };
 //# sourceMappingURL=index.d.ts.map
