@@ -149,6 +149,13 @@ export function toCollectibleOrder(
 ): import('./types').CollectibleOrder {
 	return {
 		...raw,
+		metadata: {
+			...raw.metadata,
+			tokenId:
+				typeof raw.metadata.tokenId === 'string'
+					? BigInt(raw.metadata.tokenId)
+					: raw.metadata.tokenId,
+		},
 		order: raw.order ? toOrder(raw.order) : undefined,
 		listing: raw.listing ? toOrder(raw.listing) : undefined,
 		offer: raw.offer ? toOrder(raw.offer) : undefined,

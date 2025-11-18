@@ -25,9 +25,11 @@ export async function fetchCurrency(
 	const { chainId, currencyAddress, config } = params;
 	const queryClient = getQueryClient();
 
-	let currencies = queryClient.getQueryData(['currency', 'list', chainId]) as
-		| Currency[]
-		| undefined;
+	let currencies = queryClient.getQueryData<Currency[]>([
+		'currency',
+		'list',
+		chainId,
+	]);
 
 	if (!currencies) {
 		const marketplaceClient = getMarketplaceClient(config);

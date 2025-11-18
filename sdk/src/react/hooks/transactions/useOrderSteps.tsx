@@ -80,7 +80,7 @@ const useTransactionOperations = () => {
 			logger.error('Signature failed', error);
 
 			if (error.cause instanceof BaseError) {
-				const viemError = error.cause as BaseError;
+				const viemError = error.cause;
 				if (viemError instanceof ViemUserRejectedRequestError) {
 					throw new UserRejectedRequestError();
 				}
@@ -121,7 +121,7 @@ const useTransactionOperations = () => {
 			logger.error('Transaction failed', error);
 
 			if (error.cause instanceof BaseError) {
-				const viemError = error.cause as BaseError;
+				const viemError = error.cause;
 				if (viemError instanceof ViemUserRejectedRequestError) {
 					throw new UserRejectedRequestError();
 				}

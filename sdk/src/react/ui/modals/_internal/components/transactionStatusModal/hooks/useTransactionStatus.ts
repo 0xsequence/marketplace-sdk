@@ -38,7 +38,7 @@ const useTransactionStatus = (
 					? 'TIMEOUT'
 					: 'FAILED',
 			);
-			callbacks?.onError?.(error as Error);
+			callbacks?.onError?.(error);
 			return;
 		}
 

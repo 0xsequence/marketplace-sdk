@@ -99,7 +99,7 @@ export default function PriceInput({
 
 	const { data: balance, isSuccess: isBalanceSuccess } =
 		useTokenCurrencyBalance({
-			currencyAddress: currencyAddress as undefined | Address,
+			currencyAddress,
 			chainId,
 			userAddress: accountAddress,
 		});

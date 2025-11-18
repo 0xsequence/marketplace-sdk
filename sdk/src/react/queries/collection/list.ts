@@ -101,7 +101,7 @@ export async function fetchListCollections(
 
 	// If all promises failed, throw the first error
 	if (settled.every((result) => result.status === 'rejected')) {
-		const firstError = settled[0] as PromiseRejectedResult;
+		const firstError = settled[0];
 		throw firstError.reason;
 	}
 

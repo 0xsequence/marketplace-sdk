@@ -48,7 +48,7 @@ export const useProcessStep = () => {
 		// EIP-191 Signature - plain text or hex message
 		if (step.id === StepType.signEIP191) {
 			const data = step.data;
-			const message = isHex(data) ? ({ raw: data as Hex } as const) : data;
+			const message = isHex(data) ? ({ raw: data } as const) : data;
 			const signature = await signMessageAsync({ message });
 
 			// Call execute endpoint with signature

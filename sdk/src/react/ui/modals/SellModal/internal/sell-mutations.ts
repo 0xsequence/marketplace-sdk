@@ -40,7 +40,7 @@ export const useSellMutations = (
 			if (!tx?.approveStep) throw new Error('No approval step available');
 			return await executeStepAndWait(tx.approveStep);
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
+		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	const sell = useMutation({
@@ -93,7 +93,7 @@ export const useSellMutations = (
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
 			});
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
+		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	return {

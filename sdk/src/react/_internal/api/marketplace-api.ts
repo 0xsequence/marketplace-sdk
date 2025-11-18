@@ -58,6 +58,6 @@ export class SequenceMarketplace extends MarketplaceClient {
 				}
 				return originalMethod;
 			},
-		}) as typeof parentQueryKey;
+		});
 	}
 }
