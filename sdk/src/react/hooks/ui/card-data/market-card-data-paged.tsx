@@ -1,26 +1,23 @@
-import { useMemo } from 'react';
-
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type {
-	CollectibleCardAction,
-	CollectibleOrder,
-	ContractType,
-	Order,
-	OrderbookKind,
-	PropertyFilter,
+import {
+	type CollectibleCardAction,
+	type CollectibleOrder,
+	type ContractType,
+	type OrderbookKind,
+	OrderSide,
+	type PropertyFilter,
 } from '../../../../types';
-import { OrderSide } from '../../../../types';
-import type { PriceFilter } from '../../../_internal';
+import type { Order, PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
-import { useCollectibleMarketList } from '../../collectible/market-list';
+import { useCollectibleMarketListPaginated } from '../../collectible/market-list-paginated';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 
 /**
- * Props for the useMarketCardData hook
+ * Props for the useMarketCardDataPaged hook
  */
-export interface UseMarketCardDataProps {
+export interface UseMarketCardDataPagedProps {
 	/** The collection contract address */
 	collectionAddress: Address;
 	/** The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) */
@@ -49,17 +46,21 @@ export interface UseMarketCardDataProps {
 	assetSrcPrefixUrl?: string;
 	/** Whether to hide the quantity selector on collectible cards */
 	hideQuantitySelector?: boolean;
+	/** The current page number (1-indexed) */
+	page: number;
+	/** The number of items per page */
+	pageSize: number;
 	/** Whether the query should be enabled (defaults to true when collectionAddress and chainId are provided) */
 	enabled?: boolean;
 }
 
 /**
- * Hook to fetch market card data for a collection with infinite scrolling support
+ * Hook to fetch paginated market card data for a collection
  *
- * This hook fetches collectibles from the marketplace API using infinite scrolling,
+ * This hook fetches collectibles for a specific page from the marketplace API,
  * combines them with user balance information, and generates card props ready
- * for rendering collectible cards. Unlike `useMarketCardDataPaged`, this hook
- * uses infinite scrolling to load additional pages as needed.
+ * for rendering collectible cards. Unlike `useMarketCardData`, this hook
+ * fetches a single page of results rather than using infinite scrolling.
  *
  * @param props - Configuration parameters
  * @param props.collectionAddress - The collection contract address
@@ -76,50 +77,92 @@ export interface UseMarketCardDataProps {
  * @param props.prioritizeOwnerActions - Whether to prioritize owner actions in the card UI
  * @param props.assetSrcPrefixUrl - Optional URL prefix for asset images
  * @param props.hideQuantitySelector - Whether to hide the quantity selector on collectible cards
+ * @param props.page - The current page number
+ * @param props.pageSize - The number of items per page
  * @param props.enabled - Whether the query should be enabled
  *
  * @returns An object containing:
- * @returns collectibleCards - Array of card props ready for rendering collectible cards (includes all loaded pages)
+ * @returns collectibleCards - Array of card props ready for rendering collectible cards
  * @returns isLoading - Whether the data is currently loading
  * @returns error - Any error that occurred during fetching
- * @returns hasNextPage - Whether there are more pages available to load
- * @returns isFetchingNextPage - Whether the next page is currently being fetched
- * @returns fetchNextPage - Function to fetch the next page of results
- * @returns allCollectibles - Array of all collectibles from all loaded pages
+ * @returns hasMore - Whether there are more pages available after the current page
  *
  * @example
- * Basic usage with infinite scrolling:
+ * Basic usage with pagination:
  * ```typescript
+ * const [page, setPage] = useState(1);
+ * const pageSize = 20;
+ *
  * const {
  *   collectibleCards,
  *   isLoading,
  *   error,
- *   hasNextPage,
- *   isFetchingNextPage,
- *   fetchNextPage
- * } = useMarketCardData({
+ *   hasMore
+ * } = useMarketCardDataPaged({
  *   collectionAddress: '0x1234...',
  *   chainId: 137,
  *   collectionType: 'ERC721',
+ *   page,
+ *   pageSize
  * });
  *
  * if (isLoading) return <div>Loading...</div>;
  * if (error) return <div>Error: {error.message}</div>;
  *
  * return (
- *   <InfiniteRenderer   // use your favorite infinite scroll component here
- *     items={collectibleCards}
- *     hasNextPage={hasNextPage}
- *     isFetchingNextPage={isFetchingNextPage}
- *     onLoadMore={fetchNextPage}
- *     renderItem={(card) => (
+ *   <div>
+ *     {collectibleCards.map(card => (
  *       <CollectibleCard key={card.tokenId} {...card} />
+ *     ))}
+ *     {hasMore && (
+ *       <button onClick={() => setPage(p => p + 1)}>Next Page</button>
  *     )}
- *   />
+ *   </div>
  * );
  * ```
+ *
+ * @example
+ * With filters and search:
+ * ```typescript
+ * const { collectibleCards, isLoading } = useMarketCardDataPaged({
+ *   collectionAddress: '0x5678...',
+ *   chainId: 1,
+ *   collectionType: 'ERC1155',
+ *   searchText: 'rare',
+ *   showListedOnly: true,
+ *   filterOptions: [
+ *     { name: 'Rarity', values: ['Legendary'], type: PropertyType.STRING }
+ *   ],
+ *   priceFilters: [
+ *     { min: '0', max: '1', currency: 'ETH' }
+ *   ],
+ *   page: 1,
+ *   pageSize: 30,
+ *   onCollectibleClick: (tokenId) => {
+ *     console.log('Clicked collectible:', tokenId);
+ *   }
+ * });
+ * ```
+ *
+ * @example
+ * With owner filtering and custom callbacks:
+ * ```typescript
+ * const { collectibleCards } = useMarketCardDataPaged({
+ *   collectionAddress: '0x9abc...',
+ *   chainId: 137,
+ *   collectionType: 'ERC721',
+ *   inAccounts: ['0xowner1...', '0xowner2...'],
+ *   prioritizeOwnerActions: true,
+ *   onCannotPerformAction: (action) => {
+ *     console.warn(`Cannot perform action: ${action}`);
+ *   },
+ *   page: 2,
+ *   pageSize: 25,
+ *   enabled: Boolean(collectionAddress && chainId)
+ * });
+ * ```
  */
-export function useMarketCardData({
+export function useMarketCardDataPaged({
 	collectionAddress,
 	chainId,
 	orderbookKind,
@@ -134,19 +177,17 @@ export function useMarketCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
+	page,
+	pageSize,
 	enabled,
-}: UseMarketCardDataProps) {
+}: UseMarketCardDataPagedProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
-
 	const {
-		data: collectiblesList,
+		data: collectiblesListResponse,
 		isLoading: collectiblesListIsLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
 		error: collectiblesListError,
-	} = useCollectibleMarketList({
+	} = useCollectibleMarketListPaginated({
 		collectionAddress,
 		chainId,
 		side: OrderSide.listing,
@@ -160,8 +201,9 @@ export function useMarketCardData({
 		query: {
 			enabled: !!collectionAddress && !!chainId && enabled,
 		},
+		page,
+		pageSize,
 	});
-
 	const { data: collectionBalance, isLoading: balanceLoading } =
 		useCollectionBalanceDetails({
 			chainId,
@@ -175,14 +217,10 @@ export function useMarketCardData({
 			},
 		});
 
-	// Flatten all collectibles from all pages
-	const allCollectibles = useMemo(() => {
-		if (!collectiblesList?.pages) return [];
-		return collectiblesList.pages.flatMap((page) => page.collectibles);
-	}, [collectiblesList?.pages]);
+	const currentPageCollectibles = collectiblesListResponse?.collectibles ?? [];
 
-	const collectibleCards = useMemo(() => {
-		return allCollectibles.map((collectible: CollectibleOrder) => {
+	const collectibleCards = currentPageCollectibles.map(
+		(collectible: CollectibleOrder) => {
 			const balance = collectionBalance?.balances.find(
 				(balance) => balance.tokenID === collectible.metadata.tokenId,
 			)?.balance;
@@ -219,32 +257,13 @@ export function useMarketCardData({
 			};
 
 			return cardProps;
-		});
-	}, [
-		allCollectibles,
-		chainId,
-		collectionAddress,
-		collectionType,
-		collectiblesListIsLoading,
-		balanceLoading,
-		orderbookKind,
-		onCollectibleClick,
-		collectionBalance?.balances,
-		onCannotPerformAction,
-		prioritizeOwnerActions,
-		assetSrcPrefixUrl,
-		accountAddress,
-		showSellModal,
-	]);
+		},
+	);
 
 	return {
 		collectibleCards,
 		isLoading: collectiblesListIsLoading || balanceLoading,
 		error: collectiblesListError,
-
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-		allCollectibles,
+		hasMore: collectiblesListResponse?.page?.more ?? false,
 	};
 }
