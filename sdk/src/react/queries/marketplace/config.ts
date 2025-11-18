@@ -1,16 +1,6 @@
-import type { LookupMarketplaceReturn } from '@0xsequence/marketplace-api';
+import type { Builder } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type {
-	ContractType,
-	MarketCollection,
-	MarketPage,
-	MarketplaceConfig,
-	OrderbookKind,
-	SdkConfig,
-	ShopCollection,
-	ShopPage,
-} from '../../../types';
+import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { getBuilderClient } from '../../_internal';
 import { persistentQueryMeta } from '../../_internal/query-meta';
 import { createMarketplaceQueryKey } from './queryKeys';
@@ -20,7 +10,7 @@ export const fetchMarketplaceConfig = async ({
 	prefetchedMarketplaceSettings,
 }: {
 	config: SdkConfig;
-	prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
+	prefetchedMarketplaceSettings?: Builder.LookupMarketplaceReturn;
 }): Promise<MarketplaceConfig> => {
 	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
 
@@ -30,53 +20,26 @@ export const fetchMarketplaceConfig = async ({
 			projectId: Number(config.projectId),
 		});
 
-		builderMarketplaceConfig = response as unknown as LookupMarketplaceReturn;
+		builderMarketplaceConfig = response;
 	}
 
 	if (!builderMarketplaceConfig) {
 		throw new Error('Failed to fetch marketplace config');
 	}
 
-	const marketCollections = (
-		builderMarketplaceConfig.marketCollections ?? []
-	).map((collection) => {
-		return {
-			...collection,
-			contractType: collection.contractType as ContractType,
-			destinationMarketplace:
-				collection.destinationMarketplace as OrderbookKind,
-			itemsAddress: collection.itemsAddress as Address,
-			cardType: 'market',
-		} satisfies MarketCollection;
-	});
+	// The API wrapper's toLookupMarketplaceReturn transform already:
+	// 1. Nests collections within market.collections and shop.collections
+	// 2. Adds marketplaceCollectionType discriminator to each collection
+	// 3. Returns correctly typed MarketPage and ShopPage interfaces
+	// No transformation or type casting needed here!
+	const { market, shop, settings } = builderMarketplaceConfig.marketplace;
 
-	const shopCollections = (builderMarketplaceConfig.shopCollections ?? []).map(
-		(collection) => {
-			return {
-				...collection,
-				itemsAddress: collection.itemsAddress as Address,
-				saleAddress: collection.saleAddress as Address,
-				cardType: 'shop',
-			} satisfies ShopCollection;
-		},
-	);
-
-	const market = {
-		...builderMarketplaceConfig.marketplace.market,
-		collections: marketCollections,
-	} satisfies MarketPage;
-
-	const shop = {
-		...builderMarketplaceConfig.marketplace.shop,
-		collections: shopCollections ?? [],
-	} satisfies ShopPage;
-
-	let marketplaceConfig = {
+	let marketplaceConfig: MarketplaceConfig = {
 		projectId: Number(config.projectId),
-		settings: builderMarketplaceConfig.marketplace.settings,
+		settings,
 		market,
 		shop,
-	} satisfies MarketplaceConfig;
+	};
 
 	if (config._internal?.overrides?.marketplaceConfig) {
 		const overrides = config._internal.overrides.marketplaceConfig;
@@ -86,14 +49,12 @@ export const fetchMarketplaceConfig = async ({
 			market: {
 				...marketplaceConfig.market,
 				...overrides.market,
-				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.market?.collections ?? marketplaceConfig.market.collections,
 			},
 			shop: {
 				...marketplaceConfig.shop,
 				...overrides.shop,
-				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.shop?.collections ?? marketplaceConfig.shop.collections,
 			},

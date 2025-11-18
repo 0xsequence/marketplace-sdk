@@ -1,13 +1,24 @@
 import type {
-	ContractType,
 	Currency,
 	FilterCondition,
+	MarketCollection,
+	MarketPage,
+	MarketplaceCollection,
 	MarketplaceSettings,
 	MarketplaceWalletType,
 	OpenIdProvider,
-	OrderbookKind,
+	ShopCollection,
+	ShopPage,
 } from '@0xsequence/marketplace-api';
-import type { Address } from 'viem';
+
+// Re-export collection types from API - these are the source of truth
+export type {
+	MarketCollection,
+	MarketPage,
+	MarketplaceCollection,
+	ShopCollection,
+	ShopPage,
+};
 
 // ============================================================================
 // Marketplace Configuration
@@ -20,50 +31,24 @@ export interface MarketplaceConfig {
 	shop: ShopPage;
 }
 
-interface MarketplacePage {
-	enabled: boolean;
-	bannerUrl: string;
-	ogImage?: string;
-	private: boolean;
+/**
+ * Type guard to check if a collection is a ShopCollection
+ * Shop collections are for primary sales
+ */
+export function isShopCollection(
+	collection: MarketplaceCollection,
+): collection is ShopCollection {
+	return collection.marketplaceCollectionType === 'shop';
 }
 
-export interface MarketPage extends MarketplacePage {
-	collections: MarketCollection[];
-}
-
-export interface ShopPage extends MarketplacePage {
-	collections: ShopCollection[];
-}
-
-export interface MarketplaceSocials {
-	twitter: string;
-	discord: string;
-	website: string;
-	tiktok: string;
-	instagram: string;
-	youtube: string;
-}
-
-interface MarketplaceCollection {
-	chainId: number;
-	bannerUrl: string;
-	itemsAddress: Address;
-	filterSettings?: CollectionFilterSettings;
-	sortOrder?: number;
-	private: boolean;
-}
-
-export interface MarketCollection extends MarketplaceCollection {
-	cardType: CardType;
-	contractType: ContractType; //TODO: This should be added to the shop collection too in builder.gen.ts. Then update shop collections map from prefetchedMarketplaceSettings in "sdk/src/react/queries/marketplaceConfig.ts"
-	feePercentage: number;
-	destinationMarketplace: OrderbookKind;
-	currencyOptions: Array<string>;
-}
-
-export interface ShopCollection extends MarketplaceCollection {
-	cardType: CardType;
-	saleAddress: Address;
+/**
+ * Type guard to check if a collection is a MarketCollection
+ * Market collections are for secondary market trading
+ */
+export function isMarketCollection(
+	collection: MarketplaceCollection,
+): collection is MarketCollection {
+	return collection.marketplaceCollectionType === 'market';
 }
 
 // ============================================================================
@@ -116,6 +101,10 @@ export type Price = {
 	currency: Currency;
 };
 
+/**
+ * Card type for UI rendering
+ * Note: For collections, use type guards (isShopCollection/isMarketCollection) instead
+ */
 export type CardType = 'market' | 'shop' | 'inventory-non-tradable';
 
 export enum CollectibleCardAction {

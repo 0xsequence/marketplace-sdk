@@ -4,7 +4,14 @@
  * These are the normalized versions with bigint primitives.
  */
 
-import type { ChainId, ProjectId, TokenId } from '../../types/primitives';
+import type { ContractType } from '@0xsequence/indexer';
+import type {
+	Address,
+	ChainId,
+	ProjectId,
+	TokenId,
+} from '../../types/primitives';
+import type { OrderbookKind } from '../marketplace';
 import type { FilterCondition, MarketplaceWalletType } from './builder.gen';
 
 export {
@@ -34,15 +41,13 @@ export interface LookupMarketplaceArgs {
 
 export interface LookupMarketplaceReturn {
 	marketplace: Marketplace;
-	marketCollections: MarketCollection[];
-	shopCollections: ShopCollection[];
 }
 
 export interface Marketplace {
 	projectId: ProjectId;
 	settings: MarketplaceSettings;
-	market: MarketplacePage;
-	shop: MarketplacePage;
+	market: MarketPage;
+	shop: ShopPage;
 	createdAt?: string;
 	updatedAt?: string;
 }
@@ -65,6 +70,14 @@ export interface MarketplacePage {
 	bannerUrl: string;
 	ogImage: string;
 	private: boolean;
+}
+
+export interface MarketPage extends MarketplacePage {
+	collections: MarketCollection[];
+}
+
+export interface ShopPage extends MarketplacePage {
+	collections: ShopCollection[];
 }
 
 export interface MarketplaceSocials {
@@ -103,21 +116,26 @@ export interface OpenIdProvider {
 	aud: string[];
 }
 
-export interface MarketCollection {
+// Base interface for shared collection properties
+interface BaseMarketplaceCollection {
 	id: number;
 	projectId: ProjectId;
 	chainId: ChainId;
-	itemsAddress: string;
-	contractType: string;
+	itemsAddress: Address;
 	bannerUrl: string;
-	feePercentage: number;
-	currencyOptions: string[];
-	destinationMarketplace: string;
-	filterSettings?: CollectionFilterSettings;
 	sortOrder?: number;
 	private: boolean;
 	createdAt?: string;
 	updatedAt?: string;
+}
+
+export interface MarketCollection extends BaseMarketplaceCollection {
+	marketplaceCollectionType: 'market';
+	contractType: ContractType;
+	feePercentage: number;
+	currencyOptions: string[];
+	destinationMarketplace: OrderbookKind;
+	filterSettings?: CollectionFilterSettings;
 }
 
 export interface CollectionFilterSettings {
@@ -131,21 +149,23 @@ export interface MetadataFilterRule {
 	value?: string;
 }
 
-export interface ShopCollection {
-	id: number;
-	projectId: ProjectId;
-	chainId: ChainId;
-	itemsAddress: string;
-	saleAddress: string;
+export interface ShopCollection extends BaseMarketplaceCollection {
+	marketplaceCollectionType: 'shop';
+	saleAddress: Address;
 	name: string;
-	bannerUrl: string;
 	tokenIds: TokenId[];
 	customTokenIds: TokenId[];
-	sortOrder?: number;
-	private: boolean;
-	createdAt?: string;
-	updatedAt?: string;
 }
+
+/**
+ * Union type for all marketplace collections
+ * Use TypeScript's discriminated union to narrow types:
+ * @example
+ * if (collection.marketplaceCollectionType === 'shop') {
+ *   // TypeScript knows: collection.saleAddress exists
+ * }
+ */
+export type MarketplaceCollection = MarketCollection | ShopCollection;
 
 export interface MarketplaceService {
 	lookupMarketplace(

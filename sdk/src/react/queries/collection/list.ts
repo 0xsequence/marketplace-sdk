@@ -1,7 +1,6 @@
 import type { ContractInfo } from '@0xsequence/marketplace-api';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type {
-	CardType,
 	MarketCollection,
 	MarketplaceConfig,
 	ShopCollection,
@@ -26,16 +25,18 @@ function getAllCollections(marketplaceConfig: MarketplaceConfig) {
 }
 
 /**
- * Filters collections by card type if specified
+ * Filters collections by type if specified
  */
-function filterCollectionsByCardType(
+function filterCollectionsByType(
 	collections: Array<MarketCollection | ShopCollection>,
-	cardType?: CardType,
+	collectionType?: 'market' | 'shop',
 ) {
-	if (!cardType) {
+	if (!collectionType) {
 		return collections;
 	}
-	return collections.filter((collection) => collection.cardType === cardType);
+	return collections.filter(
+		(c) => c.marketplaceCollectionType === collectionType,
+	);
 }
 
 /**
@@ -55,7 +56,7 @@ function groupCollectionsByChain(
 }
 
 export interface FetchListCollectionsParams {
-	cardType?: CardType;
+	collectionType?: 'market' | 'shop';
 	marketplaceConfig: MarketplaceConfig;
 }
 
@@ -71,7 +72,7 @@ export async function fetchListCollections(
 		'marketplaceConfig' | 'config'
 	>,
 ) {
-	const { cardType, marketplaceConfig, config } = params;
+	const { collectionType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	let collections = getAllCollections(marketplaceConfig);
@@ -80,7 +81,7 @@ export async function fetchListCollections(
 		return [];
 	}
 
-	collections = filterCollectionsByCardType(collections, cardType);
+	collections = filterCollectionsByType(collections, collectionType);
 
 	// Group collections by chainId for batch fetching
 	const collectionsByChain = groupCollectionsByChain(collections);
@@ -138,7 +139,7 @@ export function getListCollectionsQueryKey(
 	params: ListCollectionsQueryOptions,
 ) {
 	const queryKeyParams = {
-		cardType: params.cardType,
+		collectionType: params.collectionType,
 		marketplaceConfig: params.marketplaceConfig,
 	} as const;
 
@@ -160,23 +161,26 @@ export function listCollectionsQueryOptions(
 
 // Keep old function for backward compatibility during migration
 export const listCollectionsOptions = ({
-	cardType,
+	collectionType,
 	marketplaceConfig,
 	config,
-}: ListCollectionsQueryOptions & {
-	marketplaceConfig: MarketplaceConfig | undefined;
-}) => {
+	query,
+}: ListCollectionsQueryOptions) => {
 	return queryOptions({
-		queryKey: ['collection', 'list', { cardType, marketplaceConfig, config }],
+		queryKey: [
+			'collection',
+			'list',
+			{ collectionType, marketplaceConfig, config },
+		],
 		queryFn:
 			marketplaceConfig && config
 				? () =>
 						fetchListCollections({
 							marketplaceConfig,
 							config,
-							cardType,
+							collectionType,
 						})
 				: skipToken,
-		enabled: Boolean(marketplaceConfig && config),
+		...query,
 	});
 };

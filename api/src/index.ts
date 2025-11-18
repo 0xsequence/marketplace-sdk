@@ -22,9 +22,15 @@ export * as MetadataMocks from './__mocks__/metadata.msw';
 
 export type {
 	LookupMarketplaceReturn,
+	MarketCollection,
+	MarketPage,
+	Marketplace as BuilderMarketplace,
+	MarketplaceCollection,
 	MarketplaceSettings,
 	MarketplaceWallet,
 	OpenIdProvider,
+	ShopCollection,
+	ShopPage,
 } from './adapters/builder';
 export * as Builder from './adapters/builder';
 export {
@@ -196,6 +202,7 @@ export * as Metadata from './adapters/metadata';
 export { MetadataClient as SequenceMetadata } from './adapters/metadata';
 
 export * from './types';
+export * from './utils/address';
 export * from './utils/bigint';
 
 export * from './utils/chain';
