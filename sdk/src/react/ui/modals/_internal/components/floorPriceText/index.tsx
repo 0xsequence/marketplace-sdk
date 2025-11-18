@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Text } from '@0xsequence/design-system';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import {
 	useCollectibleMarketLowestListing,
@@ -38,10 +38,10 @@ export default function FloorPriceText({
 		useCurrencyComparePrices({
 			chainId,
 			priceAmountRaw: price.amountRaw?.toString() || '0',
-			priceCurrencyAddress: price.currency.contractAddress as Address,
+			priceCurrencyAddress: price.currency.contractAddress,
 			compareToPriceAmountRaw: floorPriceRaw?.toString() || '0',
-			compareToPriceCurrencyAddress: (listing?.priceCurrencyAddress ||
-				price.currency.contractAddress) as Address,
+			compareToPriceCurrencyAddress:
+				listing?.priceCurrencyAddress || price.currency.contractAddress,
 			query: {
 				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== 0n,
 			},

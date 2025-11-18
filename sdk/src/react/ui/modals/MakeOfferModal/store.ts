@@ -78,7 +78,7 @@ const steps = {
 
 const initialState: MakeOfferState = {
 	isOpen: false,
-	collectionAddress: '0x0000000000000000000000000000000000000000' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
 	tokenId: 0n,
 	orderbookKind: undefined,

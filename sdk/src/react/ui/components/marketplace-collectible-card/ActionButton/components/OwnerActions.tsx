@@ -44,7 +44,7 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showCreateListingModal({
-						collectionAddress: collectionAddress as Address,
+						collectionAddress,
 						chainId,
 						tokenId,
 						orderbookKind,
@@ -80,7 +80,7 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showTransferModal({
-						collectionAddress: collectionAddress as Address,
+						collectionAddress,
 						chainId,
 						tokenId,
 					})

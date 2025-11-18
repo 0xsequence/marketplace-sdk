@@ -48,13 +48,13 @@ function transformCheckoutItem(
 }
 
 /**
- * SDK-facing CreateReq type with bigint tokenId
+ * SDK-facing CreateReq type with bigint tokenId and Address type
  */
 export interface CreateReq {
 	tokenId: TokenId;
 	quantity: bigint;
 	expiry: string;
-	currencyAddress: string;
+	currencyAddress: Address;
 	pricePerToken: bigint;
 }
 

@@ -27,6 +27,7 @@ const useHandleTransfer = () => {
 
 	const getHash = async (): Promise<Hex> => {
 		const baseParams = {
+			// receiverAddress is validated by isAddress() in WalletAddressInput before transfer is enabled
 			receiverAddress: receiverAddress as Address,
 			collectionAddress,
 			tokenId,

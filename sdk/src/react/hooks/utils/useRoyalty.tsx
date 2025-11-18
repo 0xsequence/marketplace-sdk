@@ -50,7 +50,7 @@ async function fetchRoyalty(
 	if (recipient && percentage) {
 		return {
 			percentage,
-			recipient: recipient as Address,
+			recipient,
 		};
 	}
 

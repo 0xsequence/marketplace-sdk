@@ -147,7 +147,7 @@ export const useTransactionSteps = ({
 
 			showTransactionStatusModal({
 				type: TransactionType.LISTING,
-				collectionAddress: collectionAddress as Address,
+				collectionAddress,
 				chainId,
 				tokenId: listingInput.listing.tokenId,
 				hash,

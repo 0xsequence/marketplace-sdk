@@ -80,7 +80,7 @@ const steps = {
 
 const initialState: CreateListingState = {
 	isOpen: false,
-	collectionAddress: '0x0000000000000000000000000000000000000000' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
 	tokenId: 0n,
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,

@@ -93,7 +93,9 @@ export function useAutoSelectFeeOption({
 }: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
 
-	// one token that has null contract address is native token, so we need to replace it with zero address
+	// FeeOption.token.contractAddress is string | null (from @0xsequence/connect package)
+	// null represents native token, which we convert to zeroAddress
+	// string addresses from WaaS are guaranteed to be valid hex addresses
 	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
 		(option) =>
 			option.token.contractAddress === null

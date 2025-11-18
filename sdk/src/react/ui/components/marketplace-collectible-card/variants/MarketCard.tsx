@@ -1,6 +1,5 @@
 'use client';
 
-import type { Address } from 'viem';
 import type { ContractType } from '../../../../_internal';
 import { useCurrency } from '../../../../hooks/currency/currency';
 import type { MarketCollectibleCardProps } from '../types';
@@ -50,7 +49,7 @@ export function MarketCard({
 	// Fetch currency details for the listing price
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: lowestListing?.priceCurrencyAddress as Address,
+		currencyAddress: lowestListing?.priceCurrencyAddress,
 		query: {
 			enabled: !!lowestListing?.priceCurrencyAddress,
 		},
