@@ -168,5 +168,13 @@ export function useMarketCardData({
 		isFetchingNextPage,
 		fetchNextPage,
 		allCollectibles,
+	} as {
+		collectibleCards: MarketCollectibleCardProps[];
+		isLoading: boolean;
+		error: Error | null;
+		hasNextPage: boolean | undefined;
+		isFetchingNextPage: boolean;
+		fetchNextPage: () => void;
+		allCollectibles: CollectibleOrder[];
 	};
 }

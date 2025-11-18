@@ -1,6 +1,7 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import type { Order } from '@0xsequence/marketplace-api';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
 	type LowestListingQueryOptions,
@@ -53,7 +54,7 @@ export type UseCollectibleMarketLowestListingParams = Optional<
  */
 export function useCollectibleMarketLowestListing(
 	params: UseCollectibleMarketLowestListingParams,
-) {
+): UseQueryResult<Order | undefined, Error> {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
