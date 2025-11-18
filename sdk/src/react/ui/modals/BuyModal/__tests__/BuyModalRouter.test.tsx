@@ -125,7 +125,7 @@ const mockOrder = {
 	priceAmountFormatted: '1.0',
 	priceAmountNet: 1000000000000000000n,
 	priceAmountNetFormatted: '1.0',
-	priceCurrencyAddress: '0x0',
+	priceCurrencyAddress: '0x0' as `0x${string}`,
 	priceDecimals: 18,
 	priceUSD: 3000,
 	priceUSDFormatted: '$3,000.00',

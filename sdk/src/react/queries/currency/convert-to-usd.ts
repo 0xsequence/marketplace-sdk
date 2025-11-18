@@ -34,12 +34,12 @@ export async function fetchConvertPriceToUSD(
 	const { chainId, currencyAddress, amountRaw, config } = params;
 
 	const queryClient = getQueryClient();
-	const currencies = (await queryClient.fetchQuery(
+	const currencies = await queryClient.fetchQuery(
 		marketCurrenciesQueryOptions({
 			chainId,
 			config,
 		}),
-	)) as Currency[];
+	);
 
 	const currencyDetails = currencies.find(
 		(c: Currency) =>

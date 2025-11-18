@@ -7,7 +7,7 @@ import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
-	type ContractType,
+	ContractType,
 	getQueryClient,
 	MetadataStatus,
 	type SdkQueryParams,
@@ -48,11 +48,30 @@ export interface CollectiblesResponse {
 }
 
 /**
+ * Validates if a contract type is a valid collectible type (ERC721 or ERC1155)
+ */
+function isCollectibleContractType(
+	contractType: string,
+): contractType is ContractType.ERC721 | ContractType.ERC1155 {
+	return (
+		contractType === ContractType.ERC721 ||
+		contractType === ContractType.ERC1155
+	);
+}
+
+/**
  * Transforms an Indexer token balance into a collectible with metadata
+ * @throws Error if token is not a valid collectible type (ERC721/ERC1155)
  */
 function collectibleFromTokenBalance(
 	token: TokenBalance,
 ): CollectibleWithBalance {
+	if (!isCollectibleContractType(token.contractType)) {
+		throw new Error(
+			`Invalid collectible type: ${token.contractType}. Only ERC721 and ERC1155 tokens are supported.`,
+		);
+	}
+
 	return {
 		metadata: {
 			tokenId: token.tokenId ?? 0n,
@@ -65,9 +84,7 @@ function collectibleFromTokenBalance(
 			status: MetadataStatus.AVAILABLE,
 		},
 		contractInfo: token.contractInfo,
-		contractType: token.contractType as unknown as
-			| ContractType.ERC1155
-			| ContractType.ERC721,
+		contractType: token.contractType,
 		balance: token.balance.toString(),
 	};
 }

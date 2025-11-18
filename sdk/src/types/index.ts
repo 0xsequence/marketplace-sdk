@@ -6,6 +6,7 @@ export type {
 	Order,
 	OrderData,
 	Page,
+	PriceFilter,
 	PropertyFilter,
 	Step,
 	TokenMetadata,

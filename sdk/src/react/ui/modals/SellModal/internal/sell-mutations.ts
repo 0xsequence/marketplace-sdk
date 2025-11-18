@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { type Address, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type MarketplaceKind,
@@ -59,10 +59,11 @@ export const useSellMutations = (
 
 				analytics.trackSellItems({
 					props: {
+						// Note: API returns MarketplaceKind as string, cast is safe
 						marketplaceKind: state.order.marketplace as MarketplaceKind,
 						userId: address || '',
 						collectionAddress: state.collectionAddress,
-						currencyAddress: currency.contractAddress as Address,
+						currencyAddress: currency.contractAddress, // Currency now has Address type
 						currencySymbol: currency.symbol || '',
 						requestId: state.order.orderId,
 						tokenId: state.tokenId.toString(),

@@ -103,6 +103,35 @@ export function wrapWithTransform<TRequest, TApiRequest, TResponse>(
 }
 
 /**
+ * Creates a method wrapper with custom request AND response transformation.
+ * Use this when you need to transform both the request and response.
+ *
+ * @example
+ * ```typescript
+ * const generateBuyTransaction = wrapWithBothTransform(
+ *   (req) => rawClient.generateBuyTransaction(req),
+ *   (req) => ({ ...req, chainId: chainIdToString(req.chainId) }),
+ *   (res) => ({ ...res, steps: transformSteps(res.steps) })
+ * );
+ * ```
+ */
+export function wrapWithBothTransform<
+	TRequest,
+	TApiRequest,
+	TApiResponse,
+	TResponse,
+>(
+	clientMethod: (apiReq: TApiRequest) => Promise<TApiResponse>,
+	requestTransform: (req: TRequest) => TApiRequest,
+	responseTransform: (res: TApiResponse) => TResponse,
+): (req: TRequest) => Promise<TResponse> {
+	return async (req: TRequest) => {
+		const apiResponse = await clientMethod(requestTransform(req));
+		return responseTransform(apiResponse);
+	};
+}
+
+/**
  * Type-safe passthrough wrapper for methods that don't need transformation.
  *
  * @example
@@ -115,3 +144,6 @@ export function passthrough<TRequest, TResponse>(
 ): (req: TRequest) => Promise<TResponse> {
 	return clientMethod;
 }
+
+// Alias for clarity
+export { wrapWithBothTransform as wrapBothTransform };

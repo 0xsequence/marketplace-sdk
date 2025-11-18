@@ -19,7 +19,7 @@ type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
 
 const initialContext: SellModalState = {
 	isOpen: false,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000' as Address,
 	chainId: 0,
 	tokenId: 0n,
 	order: null,
@@ -55,7 +55,7 @@ export const useSellModalState = () => {
 		useSelector(sellModalStore, (state) => state.context);
 
 	const closeModal = () => sellModalStore.send({ type: 'close' });
-	const currencyAddress = order?.priceCurrencyAddress as Address | undefined;
+	const currencyAddress = order?.priceCurrencyAddress;
 
 	return {
 		isOpen,

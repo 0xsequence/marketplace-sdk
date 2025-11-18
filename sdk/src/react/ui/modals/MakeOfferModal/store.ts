@@ -31,9 +31,27 @@ type Actions = {
 	close: () => void;
 };
 
+// Empty Currency object for initial state - will be set when modal opens
+const emptyCurrency: Currency = {
+	chainId: 0,
+	contractAddress: '0x0000000000000000000000000000000000000000',
+	status: 0 as any, // CurrencyStatus enum
+	name: '',
+	symbol: '',
+	decimals: 0,
+	imageUrl: '',
+	exchangeRate: 0,
+	defaultChainCurrency: false,
+	nativeCurrency: false,
+	openseaListing: false,
+	openseaOffer: false,
+	createdAt: '',
+	updatedAt: '',
+};
+
 const offerPrice = {
 	amountRaw: 0n,
-	currency: {} as Currency,
+	currency: emptyCurrency,
 };
 
 const approval = {
@@ -55,7 +73,7 @@ const steps = {
 
 const initialState: MakeOfferState = {
 	isOpen: false,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000' as Address,
 	chainId: 0,
 	tokenId: 0n,
 	orderbookKind: undefined,

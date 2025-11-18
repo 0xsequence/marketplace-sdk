@@ -37,7 +37,7 @@ const initialContext: TransactionStatusModalContext = {
 	status: 'PENDING',
 	transactionType: undefined,
 	price: undefined,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000' as Address,
 	chainId: 0,
 	tokenId: 0n,
 	callbacks: undefined,
