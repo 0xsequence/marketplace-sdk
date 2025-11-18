@@ -1,9 +1,9 @@
 import { $ as SdkConfig, z as ValuesOptional } from "./create-config.js";
 import { n as StandardQueryOptions, t as StandardInfiniteQueryOptions } from "./query.js";
-import * as _tanstack_react_query317 from "@tanstack/react-query";
-import * as _0xsequence_indexer17 from "@0xsequence/indexer";
+import * as _tanstack_react_query54 from "@tanstack/react-query";
+import * as _0xsequence_indexer0 from "@0xsequence/indexer";
 import { GetTokenBalancesReturn, GetTokenIDRangesReturn, GetTokenSuppliesArgs, Page } from "@0xsequence/indexer";
-import * as _0xsequence_metadata86 from "@0xsequence/metadata";
+import * as _0xsequence_metadata48 from "@0xsequence/metadata";
 import { Filter, Page as Page$1, SearchTokenMetadataReturn } from "@0xsequence/metadata";
 import { Address, Hex } from "viem";
 
@@ -24,11 +24,11 @@ declare function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions): rea
   chainId: number;
   contractAddress: `0x${string}`;
 }];
-declare function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions): _tanstack_react_query317.OmitKeyof<_tanstack_react_query317.UseQueryOptions<GetTokenIDRangesReturn, Error, GetTokenIDRangesReturn, readonly ["tokens", "ranges", {
+declare function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions): _tanstack_react_query54.OmitKeyof<_tanstack_react_query54.UseQueryOptions<GetTokenIDRangesReturn, Error, GetTokenIDRangesReturn, readonly ["tokens", "ranges", {
   chainId: number;
   contractAddress: `0x${string}`;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query317.QueryFunction<GetTokenIDRangesReturn, readonly ["tokens", "ranges", {
+  queryFn?: _tanstack_react_query54.QueryFunction<GetTokenIDRangesReturn, readonly ["tokens", "ranges", {
     chainId: number;
     contractAddress: `0x${string}`;
   }], never> | undefined;
@@ -81,7 +81,7 @@ declare function getListBalancesQueryKey(args: UseListBalancesArgs): readonly ["
  * @param config - SDK configuration
  * @returns Query options configuration
  */
-declare function listBalancesOptions(args: UseListBalancesArgs, config: SdkConfig): _tanstack_react_query317.OmitKeyof<_tanstack_react_query317.UseInfiniteQueryOptions<GetTokenBalancesReturn, Error, _tanstack_react_query317.InfiniteData<GetTokenBalancesReturn, unknown>, readonly ["balances", "tokenBalances", {
+declare function listBalancesOptions(args: UseListBalancesArgs, config: SdkConfig): _tanstack_react_query54.OmitKeyof<_tanstack_react_query54.UseInfiniteQueryOptions<GetTokenBalancesReturn, Error, _tanstack_react_query54.InfiniteData<GetTokenBalancesReturn, unknown>, readonly ["balances", "tokenBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
   contractAddress: `0x${string}` | undefined;
@@ -94,7 +94,7 @@ declare function listBalancesOptions(args: UseListBalancesArgs, config: SdkConfi
   } | undefined;
   includeCollectionTokens: boolean | undefined;
 }], any>, "queryFn"> & {
-  queryFn?: _tanstack_react_query317.QueryFunction<GetTokenBalancesReturn, readonly ["balances", "tokenBalances", {
+  queryFn?: _tanstack_react_query54.QueryFunction<GetTokenBalancesReturn, readonly ["balances", "tokenBalances", {
     chainId: number;
     accountAddress: `0x${string}` | undefined;
     contractAddress: `0x${string}` | undefined;
@@ -121,7 +121,7 @@ declare function listBalancesOptions(args: UseListBalancesArgs, config: SdkConfi
     } | undefined;
     includeCollectionTokens: boolean | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query317.InfiniteData<GetTokenBalancesReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query54.InfiniteData<GetTokenBalancesReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -136,7 +136,7 @@ interface FetchListTokenMetadataParams {
 /**
  * Fetches token metadata from the metadata API
  */
-declare function fetchListTokenMetadata(params: FetchListTokenMetadataParams): Promise<_0xsequence_metadata86.TokenMetadata[]>;
+declare function fetchListTokenMetadata(params: FetchListTokenMetadataParams): Promise<_0xsequence_metadata48.TokenMetadata[]>;
 type ListTokenMetadataQueryOptions = ValuesOptional<FetchListTokenMetadataParams> & {
   query?: StandardQueryOptions;
 };
@@ -145,12 +145,12 @@ declare function getListTokenMetadataQueryKey(params: ListTokenMetadataQueryOpti
   contractAddress: string | undefined;
   tokenIDs: string[] | undefined;
 }];
-declare function listTokenMetadataQueryOptions(params: ListTokenMetadataQueryOptions): _tanstack_react_query317.OmitKeyof<_tanstack_react_query317.UseQueryOptions<_0xsequence_metadata86.TokenMetadata[], Error, _0xsequence_metadata86.TokenMetadata[], readonly ["tokens", "metadata", {
+declare function listTokenMetadataQueryOptions(params: ListTokenMetadataQueryOptions): _tanstack_react_query54.OmitKeyof<_tanstack_react_query54.UseQueryOptions<_0xsequence_metadata48.TokenMetadata[], Error, _0xsequence_metadata48.TokenMetadata[], readonly ["tokens", "metadata", {
   chainID: string;
   contractAddress: string | undefined;
   tokenIDs: string[] | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query317.QueryFunction<_0xsequence_metadata86.TokenMetadata[], readonly ["tokens", "metadata", {
+  queryFn?: _tanstack_react_query54.QueryFunction<_0xsequence_metadata48.TokenMetadata[], readonly ["tokens", "metadata", {
     chainID: string;
     contractAddress: string | undefined;
     tokenIDs: string[] | undefined;
@@ -161,7 +161,7 @@ declare function listTokenMetadataQueryOptions(params: ListTokenMetadataQueryOpt
     contractAddress: string | undefined;
     tokenIDs: string[] | undefined;
   }] & {
-    [dataTagSymbol]: _0xsequence_metadata86.TokenMetadata[];
+    [dataTagSymbol]: _0xsequence_metadata48.TokenMetadata[];
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -186,7 +186,7 @@ declare function getSearchTokenMetadataQueryKey(params: SearchTokenMetadataQuery
   contractAddress: string;
   filter: Filter | undefined;
 }];
-declare function searchTokenMetadataQueryOptions(params: SearchTokenMetadataQueryOptions): _tanstack_react_query317.OmitKeyof<_tanstack_react_query317.UseInfiniteQueryOptions<SearchTokenMetadataReturn, Error, _tanstack_react_query317.InfiniteData<SearchTokenMetadataReturn, unknown>, readonly ["tokens", "metadata", "search", {
+declare function searchTokenMetadataQueryOptions(params: SearchTokenMetadataQueryOptions): _tanstack_react_query54.OmitKeyof<_tanstack_react_query54.UseInfiniteQueryOptions<SearchTokenMetadataReturn, Error, _tanstack_react_query54.InfiniteData<SearchTokenMetadataReturn, unknown>, readonly ["tokens", "metadata", "search", {
   chainID: string;
   contractAddress: string;
   filter: Filter | undefined;
@@ -194,7 +194,7 @@ declare function searchTokenMetadataQueryOptions(params: SearchTokenMetadataQuer
   page: number;
   pageSize: number;
 }>, "queryFn"> & {
-  queryFn?: _tanstack_react_query317.QueryFunction<SearchTokenMetadataReturn, readonly ["tokens", "metadata", "search", {
+  queryFn?: _tanstack_react_query54.QueryFunction<SearchTokenMetadataReturn, readonly ["tokens", "metadata", "search", {
     chainID: string;
     contractAddress: string;
     filter: Filter | undefined;
@@ -208,7 +208,7 @@ declare function searchTokenMetadataQueryOptions(params: SearchTokenMetadataQuer
     contractAddress: string;
     filter: Filter | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query317.InfiniteData<SearchTokenMetadataReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query54.InfiniteData<SearchTokenMetadataReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -223,7 +223,7 @@ interface FetchTokenSuppliesParams extends Omit<GetTokenSuppliesArgs, 'contractA
 /**
  * Fetches token supplies with support for indexer API
  */
-declare function fetchTokenSupplies(params: FetchTokenSuppliesParams): Promise<_0xsequence_indexer17.GetTokenSuppliesReturn>;
+declare function fetchTokenSupplies(params: FetchTokenSuppliesParams): Promise<_0xsequence_indexer0.GetTokenSuppliesReturn>;
 type TokenSuppliesQueryOptions = ValuesOptional<FetchTokenSuppliesParams> & {
   query?: StandardInfiniteQueryOptions;
 };
@@ -231,28 +231,28 @@ declare function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions): re
   chainId: number;
   contractAddress: string;
   includeMetadata: boolean | undefined;
-  metadataOptions: _0xsequence_indexer17.MetadataOptions | undefined;
+  metadataOptions: _0xsequence_indexer0.MetadataOptions | undefined;
 }];
-declare function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions): _tanstack_react_query317.OmitKeyof<_tanstack_react_query317.UseInfiniteQueryOptions<_0xsequence_indexer17.GetTokenSuppliesReturn, Error, _tanstack_react_query317.InfiniteData<_0xsequence_indexer17.GetTokenSuppliesReturn, unknown>, readonly ["tokens", "supplies", {
+declare function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions): _tanstack_react_query54.OmitKeyof<_tanstack_react_query54.UseInfiniteQueryOptions<_0xsequence_indexer0.GetTokenSuppliesReturn, Error, _tanstack_react_query54.InfiniteData<_0xsequence_indexer0.GetTokenSuppliesReturn, unknown>, readonly ["tokens", "supplies", {
   chainId: number;
   contractAddress: string;
   includeMetadata: boolean | undefined;
-  metadataOptions: _0xsequence_indexer17.MetadataOptions | undefined;
+  metadataOptions: _0xsequence_indexer0.MetadataOptions | undefined;
 }], Page>, "queryFn"> & {
-  queryFn?: _tanstack_react_query317.QueryFunction<_0xsequence_indexer17.GetTokenSuppliesReturn, readonly ["tokens", "supplies", {
+  queryFn?: _tanstack_react_query54.QueryFunction<_0xsequence_indexer0.GetTokenSuppliesReturn, readonly ["tokens", "supplies", {
     chainId: number;
     contractAddress: string;
     includeMetadata: boolean | undefined;
-    metadataOptions: _0xsequence_indexer17.MetadataOptions | undefined;
+    metadataOptions: _0xsequence_indexer0.MetadataOptions | undefined;
   }], Page> | undefined;
 } & {
   queryKey: readonly ["tokens", "supplies", {
     chainId: number;
     contractAddress: string;
     includeMetadata: boolean | undefined;
-    metadataOptions: _0xsequence_indexer17.MetadataOptions | undefined;
+    metadataOptions: _0xsequence_indexer0.MetadataOptions | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query317.InfiniteData<_0xsequence_indexer17.GetTokenSuppliesReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query54.InfiniteData<_0xsequence_indexer0.GetTokenSuppliesReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };

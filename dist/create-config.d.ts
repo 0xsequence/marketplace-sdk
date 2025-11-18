@@ -1,7 +1,7 @@
 import * as wagmi0 from "wagmi";
 import { CreateConnectorFn } from "wagmi";
 import { Wallet } from "@0xsequence/connect";
-import * as _tanstack_react_query19 from "@tanstack/react-query";
+import * as _tanstack_react_query410 from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { SequenceAPIClient } from "@0xsequence/api";
 import { SequenceIndexer } from "@0xsequence/indexer";
@@ -1989,10 +1989,10 @@ declare const fetchMarketplaceConfig: ({
   config: SdkConfig;
   prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 }) => Promise<MarketplaceConfig>;
-declare const marketplaceConfigOptions: (config: SdkConfig) => _tanstack_react_query19.OmitKeyof<_tanstack_react_query19.UseQueryOptions<MarketplaceConfig, Error, MarketplaceConfig, ("configs" | "marketplace")[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query19.QueryFunction<MarketplaceConfig, ("configs" | "marketplace")[], never> | undefined;
+declare const marketplaceConfigOptions: (config: SdkConfig) => _tanstack_react_query410.OmitKeyof<_tanstack_react_query410.UseQueryOptions<MarketplaceConfig, Error, MarketplaceConfig, ("marketplace" | "configs")[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query410.QueryFunction<MarketplaceConfig, ("marketplace" | "configs")[], never> | undefined;
 } & {
-  queryKey: ("configs" | "marketplace")[] & {
+  queryKey: ("marketplace" | "configs")[] & {
     [dataTagSymbol]: MarketplaceConfig;
     [dataTagErrorSymbol]: Error;
   };

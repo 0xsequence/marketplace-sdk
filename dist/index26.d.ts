@@ -1,8 +1,8 @@
 import { j as Optional } from "./create-config.js";
 import { S as fetchGetTokenRanges, f as ListTokenMetadataQueryOptions, g as UseListBalancesArgs, n as TokenSuppliesQueryOptions, s as SearchTokenMetadataQueryOptions, x as GetTokenRangesQueryOptions } from "./tokenSupplies.js";
-import * as _tanstack_react_query122 from "@tanstack/react-query";
-import * as _0xsequence_indexer12 from "@0xsequence/indexer";
-import * as _0xsequence_metadata79 from "@0xsequence/metadata";
+import * as _tanstack_react_query164 from "@tanstack/react-query";
+import * as _0xsequence_indexer11 from "@0xsequence/indexer";
+import * as _0xsequence_metadata58 from "@0xsequence/metadata";
 import { Address } from "viem";
 
 //#region src/react/hooks/data/tokens/useGetTokenRanges.d.ts
@@ -51,7 +51,7 @@ type UseGetTokenRangesParams = Optional<GetTokenRangesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query122.UseQueryResult<_0xsequence_indexer12.GetTokenIDRangesReturn, Error>;
+declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query164.UseQueryResult<_0xsequence_indexer11.GetTokenIDRangesReturn, Error>;
 type UseGetTokenRangesProps = {
   chainId: number;
   collectionAddress: Address;
@@ -81,7 +81,7 @@ type UseGetTokenRangesReturn = Awaited<ReturnType<typeof fetchGetTokenRanges>>;
  * });
  * ```
  */
-declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query122.UseInfiniteQueryResult<_tanstack_react_query122.InfiniteData<_0xsequence_indexer12.GetTokenBalancesReturn, unknown>, Error>;
+declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query164.UseInfiniteQueryResult<_tanstack_react_query164.InfiniteData<_0xsequence_indexer11.GetTokenBalancesReturn, unknown>, Error>;
 //#endregion
 //#region src/react/hooks/data/tokens/useListTokenMetadata.d.ts
 type UseListTokenMetadataParams = Optional<ListTokenMetadataQueryOptions, 'config'>;
@@ -124,7 +124,7 @@ type UseListTokenMetadataParams = Optional<ListTokenMetadataQueryOptions, 'confi
  * })
  * ```
  */
-declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query122.UseQueryResult<_0xsequence_metadata79.TokenMetadata[], Error>;
+declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query164.UseQueryResult<_0xsequence_metadata58.TokenMetadata[], Error>;
 //#endregion
 //#region src/react/hooks/data/tokens/useSearchTokenMetadata.d.ts
 type UseSearchTokenMetadataParams = Optional<SearchTokenMetadataQueryOptions, 'config'> & {
@@ -212,8 +212,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchNextPageError: boolean;
@@ -233,9 +233,9 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   isError: boolean;
   error: Error;
@@ -249,8 +249,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: true;
   isPlaceholderData: false;
   status: "success";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -268,9 +268,9 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   isError: boolean;
   error: Error;
@@ -284,8 +284,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -303,9 +303,9 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   isError: boolean;
   error: Error;
@@ -318,8 +318,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "pending";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -338,9 +338,9 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   isError: boolean;
   error: Error;
@@ -354,8 +354,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isFetchNextPageError: false;
   isFetchPreviousPageError: false;
   status: "success";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -373,13 +373,13 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page;
   } | undefined;
   error: Error;
   isError: true;
@@ -390,8 +390,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchNextPageError: boolean;
@@ -411,13 +411,13 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page;
   } | undefined;
   error: null;
   isError: false;
@@ -430,8 +430,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: true;
   isPlaceholderData: false;
   status: "success";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -449,13 +449,13 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page;
   } | undefined;
   error: Error;
   isError: true;
@@ -468,8 +468,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -487,13 +487,13 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page;
   } | undefined;
   error: null;
   isError: false;
@@ -505,8 +505,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "pending";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -525,13 +525,13 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page;
   } | undefined;
   isError: false;
   error: null;
@@ -544,8 +544,8 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isFetchNextPageError: false;
   isFetchPreviousPageError: false;
   status: "success";
-  fetchNextPage: (options?: _tanstack_react_query122.FetchNextPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query164.FetchNextPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
@@ -563,14 +563,14 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   hasNextPage: boolean;
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page | undefined;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page | undefined;
   } | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -583,7 +583,7 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasPreviousPage: boolean;
   isFetchNextPageError: boolean;
   isFetchingNextPage: boolean;
@@ -601,14 +601,14 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   hasNextPage: boolean;
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page | undefined;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page | undefined;
   } | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -623,7 +623,7 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: true;
   isPlaceholderData: false;
   status: "success";
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
   isFetchingPreviousPage: boolean;
@@ -639,14 +639,14 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   hasNextPage: boolean;
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page | undefined;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page | undefined;
   } | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -661,7 +661,7 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "error";
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
   isFetchingPreviousPage: boolean;
@@ -677,14 +677,14 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   hasNextPage: boolean;
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page | undefined;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page | undefined;
   } | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -699,7 +699,7 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isSuccess: false;
   isPlaceholderData: false;
   status: "pending";
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
   isFetchingPreviousPage: boolean;
@@ -715,14 +715,14 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 } | {
   hasNextPage: boolean;
   data: {
-    tokenMetadata: _0xsequence_metadata79.TokenMetadata[];
-    page: _0xsequence_metadata79.Page | undefined;
+    tokenMetadata: _0xsequence_metadata58.TokenMetadata[];
+    page: _0xsequence_metadata58.Page | undefined;
   } | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -737,7 +737,7 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isFetchNextPageError: false;
   isFetchPreviousPageError: false;
   status: "success";
-  fetchPreviousPage: (options?: _tanstack_react_query122.FetchPreviousPageOptions) => Promise<_tanstack_react_query122.InfiniteQueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchPreviousPage: (options?: _tanstack_react_query164.FetchPreviousPageOptions) => Promise<_tanstack_react_query164.InfiniteQueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
   hasPreviousPage: boolean;
   isFetchingNextPage: boolean;
   isFetchingPreviousPage: boolean;
@@ -753,9 +753,9 @@ declare function useSearchTokenMetadata(params: UseSearchTokenMetadataParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query122.RefetchOptions) => Promise<_tanstack_react_query122.QueryObserverResult<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>, Error>>;
-  fetchStatus: _tanstack_react_query122.FetchStatus;
-  promise: Promise<_tanstack_react_query122.InfiniteData<_0xsequence_metadata79.SearchTokenMetadataReturn, unknown>>;
+  refetch: (options?: _tanstack_react_query164.RefetchOptions) => Promise<_tanstack_react_query164.QueryObserverResult<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>, Error>>;
+  fetchStatus: _tanstack_react_query164.FetchStatus;
+  promise: Promise<_tanstack_react_query164.InfiniteData<_0xsequence_metadata58.SearchTokenMetadataReturn, unknown>>;
 };
 //#endregion
 //#region src/react/hooks/data/tokens/useTokenSupplies.d.ts
@@ -795,7 +795,7 @@ type UseTokenSuppliesParams = Optional<TokenSuppliesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query122.UseInfiniteQueryResult<_tanstack_react_query122.InfiniteData<_0xsequence_indexer12.GetTokenSuppliesReturn, unknown>, Error>;
+declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query164.UseInfiniteQueryResult<_tanstack_react_query164.InfiniteData<_0xsequence_indexer11.GetTokenSuppliesReturn, unknown>, Error>;
 //#endregion
 export { UseListTokenMetadataParams as a, UseGetTokenRangesParams as c, useGetTokenRanges as d, useSearchTokenMetadata as i, UseGetTokenRangesProps as l, useTokenSupplies as n, useListTokenMetadata as o, UseSearchTokenMetadataParams as r, useListBalances as s, UseTokenSuppliesParams as t, UseGetTokenRangesReturn as u };
 //# sourceMappingURL=index26.d.ts.map

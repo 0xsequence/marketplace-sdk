@@ -1,8 +1,8 @@
 import { $ as SdkConfig } from "./create-config.js";
-import * as _tanstack_react_query112 from "@tanstack/react-query";
+import * as _tanstack_react_query390 from "@tanstack/react-query";
 import { UseQueryParameters } from "wagmi/query";
-import * as _0xsequence_indexer5 from "@0xsequence/indexer";
 import { Address } from "viem";
+import * as xtrails5 from "xtrails";
 
 //#region src/react/queries/collectibles/tokenBalances.d.ts
 type UseTokenBalancesArgs = {
@@ -21,7 +21,7 @@ type UseTokenBalancesArgs = {
  */
 declare function fetchTokenBalances(args: Omit<UseTokenBalancesArgs, 'userAddress'> & {
   userAddress: Address;
-}, config: SdkConfig): Promise<_0xsequence_indexer5.TokenBalance[]>;
+}, config: SdkConfig): Promise<xtrails5.TokenBalance[]>;
 declare function getTokenBalancesQueryKey(args: UseTokenBalancesArgs): readonly ["collectable", "collectable", "details", "userBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
@@ -39,7 +39,7 @@ declare function getTokenBalancesQueryKey(args: UseTokenBalancesArgs): readonly 
  * @param config - SDK configuration
  * @returns Query options configuration
  */
-declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkConfig): _tanstack_react_query112.UseQueryOptions<_0xsequence_indexer5.TokenBalance[], Error, _0xsequence_indexer5.TokenBalance[], readonly ["collectable", "collectable", "details", "userBalances", {
+declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkConfig): _tanstack_react_query390.UseQueryOptions<xtrails5.TokenBalance[], Error, xtrails5.TokenBalance[], readonly ["collectable", "collectable", "details", "userBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
   contractAddress: `0x${string}`;
@@ -49,7 +49,7 @@ declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkCon
     includeContracts: `0x${string}`[];
   } | undefined;
 }]> & {
-  initialData?: _0xsequence_indexer5.TokenBalance[] | _tanstack_react_query112.InitialDataFunction<_0xsequence_indexer5.TokenBalance[]> | undefined;
+  initialData?: xtrails5.TokenBalance[] | _tanstack_react_query390.InitialDataFunction<xtrails5.TokenBalance[]> | undefined;
 } & {
   queryKey: readonly ["collectable", "collectable", "details", "userBalances", {
     chainId: number;
@@ -61,7 +61,7 @@ declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkCon
       includeContracts: `0x${string}`[];
     } | undefined;
   }] & {
-    [dataTagSymbol]: _0xsequence_indexer5.TokenBalance[];
+    [dataTagSymbol]: xtrails5.TokenBalance[];
     [dataTagErrorSymbol]: Error;
   };
 };

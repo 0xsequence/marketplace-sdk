@@ -1,6 +1,6 @@
 import React, { ComponentProps } from "react";
 import { Button } from "@0xsequence/design-system";
-import * as react_jsx_runtime26 from "react/jsx-runtime";
+import * as react_jsx_runtime0 from "react/jsx-runtime";
 
 //#region src/react/ui/modals/_internal/components/actionModal/ActionModal.d.ts
 interface ActionModalProps {
@@ -34,7 +34,7 @@ declare const ActionModal: ({
   modalLoading,
   spinnerContainerClassname,
   hideCtas
-}: ActionModalProps) => react_jsx_runtime26.JSX.Element | null;
+}: ActionModalProps) => react_jsx_runtime0.JSX.Element | null;
 //#endregion
 export { ActionModal, ActionModalProps };
 //# sourceMappingURL=index.d.ts.map

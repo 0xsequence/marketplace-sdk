@@ -1,7 +1,7 @@
 import { Ki as TokenMetadata, O as CollectionType, fi as OrderbookKind, lt as BuyModalProps, si as Order, ut as ModalCallbacks } from "./create-config.js";
 import { ComponentType, ReactNode } from "react";
 import { IconProps } from "@0xsequence/design-system";
-import * as react_jsx_runtime34 from "react/jsx-runtime";
+import * as react_jsx_runtime33 from "react/jsx-runtime";
 import { Address } from "viem";
 import "@legendapp/state";
 import "@xstate/store";
@@ -12,7 +12,7 @@ interface ModalProviderProps {
 }
 declare const ModalProvider: ({
   children
-}: ModalProviderProps) => react_jsx_runtime34.JSX.Element;
+}: ModalProviderProps) => react_jsx_runtime33.JSX.Element;
 //#endregion
 //#region src/react/ui/components/media/types.d.ts
 type MediaProps = {
@@ -55,7 +55,7 @@ declare function Media({
   isLoading,
   fallbackContent,
   shouldListenForLoad
-}: MediaProps): react_jsx_runtime34.JSX.Element;
+}: MediaProps): react_jsx_runtime33.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/BuyModal/index.d.ts
 declare const useBuyModal: (callbacks?: ModalCallbacks) => {

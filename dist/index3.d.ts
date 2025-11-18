@@ -2592,82 +2592,7 @@ declare const getSaleContractABI: (tokenType: "ERC721" | "ERC1155", version: Sal
 /**
  * Get the appropriate marketplace ABI based on version
  */
-declare const getMarketplaceABI: (version: "v1" | "v2") => ({
-  type: string;
-  inputs: never[];
-  stateMutability: string;
-  name?: undefined;
-  outputs?: undefined;
-  anonymous?: undefined;
-} | {
-  type: string;
-  name: string;
-  inputs: {
-    name: string;
-    type: string;
-    internalType: string;
-    components: {
-      name: string;
-      type: string;
-      internalType: string;
-    }[];
-  }[];
-  outputs: {
-    name: string;
-    type: string;
-    internalType: string;
-  }[];
-  stateMutability: string;
-  anonymous?: undefined;
-} | {
-  type: string;
-  name: string;
-  inputs: {
-    name: string;
-    type: string;
-    internalType: string;
-  }[];
-  outputs: ({
-    name: string;
-    type: string;
-    internalType: string;
-    components?: undefined;
-  } | {
-    name: string;
-    type: string;
-    internalType: string;
-    components: {
-      name: string;
-      type: string;
-      internalType: string;
-    }[];
-  })[];
-  stateMutability: string;
-  anonymous?: undefined;
-} | {
-  type: string;
-  name: string;
-  inputs: {
-    name: string;
-    type: string;
-    indexed: boolean;
-    internalType: string;
-  }[];
-  anonymous: boolean;
-  stateMutability?: undefined;
-  outputs?: undefined;
-} | {
-  type: string;
-  name: string;
-  inputs: {
-    name: string;
-    type: string;
-    internalType: string;
-  }[];
-  stateMutability?: undefined;
-  outputs?: undefined;
-  anonymous?: undefined;
-})[] | readonly [{
+declare const getMarketplaceABI: (version: "v1" | "v2") => readonly [{
   readonly inputs: readonly [{
     readonly internalType: "address";
     readonly name: "_owner";
@@ -3368,7 +3293,82 @@ declare const getMarketplaceABI: (version: "v1" | "v2") => ({
   readonly outputs: readonly [];
   readonly stateMutability: "nonpayable";
   readonly type: "function";
-}];
+}] | ({
+  type: string;
+  inputs: never[];
+  stateMutability: string;
+  name?: undefined;
+  outputs?: undefined;
+  anonymous?: undefined;
+} | {
+  type: string;
+  name: string;
+  inputs: {
+    name: string;
+    type: string;
+    internalType: string;
+    components: {
+      name: string;
+      type: string;
+      internalType: string;
+    }[];
+  }[];
+  outputs: {
+    name: string;
+    type: string;
+    internalType: string;
+  }[];
+  stateMutability: string;
+  anonymous?: undefined;
+} | {
+  type: string;
+  name: string;
+  inputs: {
+    name: string;
+    type: string;
+    internalType: string;
+  }[];
+  outputs: ({
+    name: string;
+    type: string;
+    internalType: string;
+    components?: undefined;
+  } | {
+    name: string;
+    type: string;
+    internalType: string;
+    components: {
+      name: string;
+      type: string;
+      internalType: string;
+    }[];
+  })[];
+  stateMutability: string;
+  anonymous?: undefined;
+} | {
+  type: string;
+  name: string;
+  inputs: {
+    name: string;
+    type: string;
+    indexed: boolean;
+    internalType: string;
+  }[];
+  anonymous: boolean;
+  stateMutability?: undefined;
+  outputs?: undefined;
+} | {
+  type: string;
+  name: string;
+  inputs: {
+    name: string;
+    type: string;
+    internalType: string;
+  }[];
+  stateMutability?: undefined;
+  outputs?: undefined;
+  anonymous?: undefined;
+})[];
 //#endregion
 //#region src/utils/abi/mainModule.d.ts
 declare const MAIN_MODULE_ABI: ({

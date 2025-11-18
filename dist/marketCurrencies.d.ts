@@ -1,6 +1,6 @@
 import { $ as SdkConfig, nn as CurrencyStatus, tn as Currency, z as ValuesOptional } from "./create-config.js";
 import { n as StandardQueryOptions } from "./query.js";
-import * as _tanstack_react_query14 from "@tanstack/react-query";
+import * as _tanstack_react_query402 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/market/currency.d.ts
@@ -20,11 +20,11 @@ declare function getCurrencyQueryKey(params: CurrencyQueryOptions): readonly ["c
   chainId: string;
   currencyAddress: `0x${string}`;
 }];
-declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query14.UseQueryOptions<Currency | undefined, Error, Currency | undefined, readonly ["currencies", "details", {
+declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query402.UseQueryOptions<Currency | undefined, Error, Currency | undefined, readonly ["currencies", "details", {
   chainId: string;
   currencyAddress: `0x${string}`;
 }]> & {
-  initialData?: Currency | _tanstack_react_query14.InitialDataFunction<Currency> | undefined;
+  initialData?: Currency | _tanstack_react_query402.InitialDataFunction<Currency> | undefined;
 } & {
   queryKey: readonly ["currencies", "details", {
     chainId: string;
@@ -71,7 +71,7 @@ declare function getMarketCurrenciesQueryKey(params: MarketCurrenciesQueryOption
   readonly includeNativeCurrency: boolean | undefined;
   readonly collectionAddress: `0x${string}` | undefined;
 }];
-declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query14.OmitKeyof<_tanstack_react_query14.UseQueryOptions<{
+declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query402.OmitKeyof<_tanstack_react_query402.UseQueryOptions<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;
@@ -109,7 +109,7 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
   readonly includeNativeCurrency: boolean | undefined;
   readonly collectionAddress: `0x${string}` | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query14.QueryFunction<{
+  queryFn?: _tanstack_react_query402.QueryFunction<{
     contractAddress: string;
     chainId: number;
     status: CurrencyStatus;
