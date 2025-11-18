@@ -1,8 +1,10 @@
 import { Button, Separator, Skeleton, Text } from '@0xsequence/design-system';
-import { useMarketCurrencies } from '@0xsequence/marketplace-sdk/react';
+import {
+	useFilterState,
+	useMarketCurrencies,
+} from '@0xsequence/marketplace-sdk/react';
 import { useEffect, useState } from 'react';
 import { type Address, formatUnits, parseUnits } from 'viem';
-import { useFilterState } from '../../../../../sdk/src/react';
 import { CustomSelect } from '../../../../../sdk/src/react/ui/components/_internals/custom-select/CustomSelect';
 
 export function PriceFilter({

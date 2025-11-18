@@ -1,11 +1,11 @@
 'use client';
 
 import { Skeleton, Text } from '@0xsequence/design-system';
+import { cn, formatPrice, type Order } from '@0xsequence/marketplace-sdk';
+import { useCurrency } from '@0xsequence/marketplace-sdk/react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { cn, formatPrice, type Order } from '../../../../../../sdk/src';
-import { useCurrency } from '../../../../../../sdk/src/react';
 import { Table } from '../../Table';
 import OrdersTableAction from './Action';
 import AddressPill from './AddressPill';

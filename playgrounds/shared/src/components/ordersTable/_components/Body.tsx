@@ -1,4 +1,4 @@
-import type { Order } from '../../../../../../sdk/src';
+import type { Order } from '@0xsequence/marketplace-sdk';
 import { Table } from '../../Table';
 import OrdersTableRow from './TableRow';
 

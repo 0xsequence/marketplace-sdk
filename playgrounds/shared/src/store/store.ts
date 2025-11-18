@@ -1,12 +1,12 @@
-import { createStore } from '@xstate/store';
 import type {
 	ApiConfig,
+	CardType,
 	ContractType,
 	MarketplaceConfig,
 	OrderbookKind,
 	SdkConfig,
-} from '../../../../sdk/src';
-import type { CardType } from '../../../../sdk/src/types/types';
+} from '@0xsequence/marketplace-sdk';
+import { createStore } from '@xstate/store';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_MARKETPLACE_TYPE,

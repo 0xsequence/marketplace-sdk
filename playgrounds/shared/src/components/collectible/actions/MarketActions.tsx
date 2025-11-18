@@ -6,6 +6,7 @@ import {
 	SendIcon,
 	Text,
 } from '@0xsequence/design-system';
+import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -14,7 +15,6 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { toast } from 'sonner';
 import type { Address } from 'viem';
-import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
 export function MarketActionsCard({
 	lowestListing,

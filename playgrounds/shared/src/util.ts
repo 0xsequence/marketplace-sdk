@@ -1,7 +1,7 @@
 import type { TokenBalance } from '@0xsequence/indexer';
+import type { Order } from '@0xsequence/marketplace-sdk';
+import { compareAddress } from '@0xsequence/marketplace-sdk';
 import type { Address } from 'viem';
-import type { Order } from '../../../sdk/src';
-import { compareAddress } from '../../../sdk/src/utils/address';
 
 function handleOfferClick({
 	balances,
