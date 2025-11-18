@@ -1,5 +1,5 @@
 import type { CollectiblePrimarySaleItem } from '@0xsequence/marketplace-api';
-import type { Address } from 'viem';
+import { type Address, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ContractType } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
@@ -56,9 +56,7 @@ export function usePrimarySale1155CardData({
 
 		const salePrice = {
 			amount: saleData?.priceAmount || 0n,
-			currencyAddress: (saleData?.currencyAddress ||
-				paymentToken ||
-				'0x') as Address,
+			currencyAddress: saleData?.currencyAddress || paymentToken || zeroAddress,
 		};
 
 		const supply = saleData?.supply;

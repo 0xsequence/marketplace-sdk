@@ -12,8 +12,10 @@
 import type { Address, Hash, TypedDataDomain } from 'viem';
 import {
 	type CollectibleOrder as GenCollectibleOrder,
+	type CollectiblePrimarySaleItem as GenCollectiblePrimarySaleItem,
 	type Currency as GenCurrency,
 	type Order as GenOrder,
+	type PrimarySaleItem as GenPrimarySaleItem,
 	type Step as GenStep,
 	type PostRequest,
 	StepType,
@@ -34,6 +36,29 @@ export type {
  */
 export interface Currency extends Omit<GenCurrency, 'contractAddress'> {
 	contractAddress: Address;
+}
+
+// ============================================================================
+// PrimarySaleItem - Normalized with Address type
+// ============================================================================
+
+/**
+ * PrimarySaleItem type with normalized Address for currencyAddress.
+ *
+ * Uses Omit + intersection to stay type-safe with generated API types.
+ */
+export interface PrimarySaleItem
+	extends Omit<GenPrimarySaleItem, 'currencyAddress' | 'itemAddress'> {
+	currencyAddress: Address;
+	itemAddress: Address;
+}
+
+/**
+ * CollectiblePrimarySaleItem with normalized PrimarySaleItem
+ */
+export interface CollectiblePrimarySaleItem
+	extends Omit<GenCollectiblePrimarySaleItem, 'primarySaleItem'> {
+	primarySaleItem: PrimarySaleItem;
 }
 
 // ============================================================================

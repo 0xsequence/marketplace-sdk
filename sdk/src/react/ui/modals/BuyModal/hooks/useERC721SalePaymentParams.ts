@@ -55,7 +55,7 @@ interface GetERC721SalePaymentParams {
 	salesContractAddress: string;
 	collectionAddress: string;
 	price: bigint;
-	currencyAddress: string;
+	currencyAddress: Address;
 	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
@@ -86,7 +86,7 @@ export const getERC721SalePaymentParams = async ({
 		const purchaseTransactionData = encodeERC721MintData({
 			to: address,
 			amount: BigInt(quantity),
-			paymentToken: currencyAddress as Address,
+			paymentToken: currencyAddress,
 			price,
 			proof: DEFAULT_PROOF,
 		});
@@ -201,7 +201,8 @@ export const useERC721SalePaymentParams = (
 						salesContractAddress,
 						collectionAddress,
 						price,
-						currencyAddress,
+						// currencyAddress is validated to exist by queryEnabled check above
+						currencyAddress: currencyAddress as Address,
 						callbacks: {
 							onSuccess,
 							onError,

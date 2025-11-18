@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type {
 	MarketplaceKind,
@@ -71,8 +70,12 @@ export function useMarketCheckoutOptions(
 
 	const queryOptions = marketCheckoutOptionsQueryOptions({
 		config: config ?? defaultConfig,
-		walletAddress: address as Address,
+		walletAddress: address ?? '0x0000000000000000000000000000000000000000',
 		...rest,
+		query: {
+			...rest.query,
+			enabled: address ? (rest.query?.enabled ?? true) : false,
+		},
 	});
 
 	return useQuery({

@@ -9,7 +9,9 @@ import { normalizeAddress } from '../../utils/normalize';
 import type * as Gen from './marketplace.gen';
 import { StepType } from './marketplace.gen';
 import type {
+	CollectiblePrimarySaleItem,
 	Currency,
+	PrimarySaleItem,
 	Signature,
 	SignatureStep,
 	Step,
@@ -160,4 +162,45 @@ export function toCollectibleOrders(
 	raw: Gen.CollectibleOrder[],
 ): import('./types').CollectibleOrder[] {
 	return raw.map(toCollectibleOrder);
+}
+
+/**
+ * Transform raw PrimarySaleItem to typed PrimarySaleItem with Address for currencyAddress
+ */
+export function toPrimarySaleItem(raw: Gen.PrimarySaleItem): PrimarySaleItem {
+	return {
+		...raw,
+		currencyAddress: normalizeAddress(raw.currencyAddress),
+		itemAddress: normalizeAddress(raw.itemAddress),
+	};
+}
+
+/**
+ * Transform array of raw PrimarySaleItems to typed PrimarySaleItems
+ */
+export function toPrimarySaleItems(
+	raw: Gen.PrimarySaleItem[],
+): PrimarySaleItem[] {
+	return raw.map(toPrimarySaleItem);
+}
+
+/**
+ * Transform raw CollectiblePrimarySaleItem to typed CollectiblePrimarySaleItem with normalized PrimarySaleItem
+ */
+export function toCollectiblePrimarySaleItem(
+	raw: Gen.CollectiblePrimarySaleItem,
+): CollectiblePrimarySaleItem {
+	return {
+		...raw,
+		primarySaleItem: toPrimarySaleItem(raw.primarySaleItem),
+	};
+}
+
+/**
+ * Transform array of raw CollectiblePrimarySaleItems to typed CollectiblePrimarySaleItems
+ */
+export function toCollectiblePrimarySaleItems(
+	raw: Gen.CollectiblePrimarySaleItem[],
+): CollectiblePrimarySaleItem[] {
+	return raw.map(toCollectiblePrimarySaleItem);
 }

@@ -1,8 +1,9 @@
+import type { Address } from 'viem';
 import type { CheckoutOptions } from '../../../../_internal';
 
 export interface ShopData {
-	salesContractAddress: string;
+	salesContractAddress: Address;
 	items: Array<{ tokenId?: bigint; quantity?: bigint }>;
-	salePrice?: { currencyAddress?: string; amount?: bigint };
+	salePrice?: { currencyAddress?: Address; amount?: bigint };
 	checkoutOptions?: CheckoutOptions;
 }

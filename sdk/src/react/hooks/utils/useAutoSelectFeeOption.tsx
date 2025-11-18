@@ -87,20 +87,31 @@ type UseAutoSelectFeeOptionArgs = {
  * }
  * ```
  */
+/**
+ * Normalizes WaaS fee option token address to viem Address type
+ * - null represents native token (converted to zeroAddress)
+ * - string addresses from WaaS are validated and guaranteed to be hex addresses
+ */
+function normalizeWaasFeeTokenAddress(contractAddress: string | null): Address {
+	if (contractAddress === null) {
+		return zeroAddress;
+	}
+	// WaaS returns validated hex addresses, but TypeScript doesn't know they're `0x${string}`
+	// We validate to be safe and satisfy the type system
+	if (!contractAddress.startsWith('0x')) {
+		throw new Error(`Invalid address from WaaS: ${contractAddress}`);
+	}
+	return contractAddress as Address;
+}
+
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
 	enabled,
 }: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
 
-	// FeeOption.token.contractAddress is string | null (from @0xsequence/connect package)
-	// null represents native token, which we convert to zeroAddress
-	// string addresses from WaaS are guaranteed to be valid hex addresses
 	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
-		(option) =>
-			option.token.contractAddress === null
-				? zeroAddress
-				: (option.token.contractAddress as Address),
+		(option) => normalizeWaasFeeTokenAddress(option.token.contractAddress),
 	);
 
 	const {
@@ -171,13 +182,13 @@ export function useAutoSelectFeeOption({
 
 		const selectedOption = pendingFeeOptionConfirmation.options.find(
 			(option) => {
+				const normalizedAddress = normalizeWaasFeeTokenAddress(
+					option.token.contractAddress,
+				);
 				const tokenBalance = combinedBalances.find(
 					(balance) =>
 						balance.contractAddress.toLowerCase() ===
-						(option.token.contractAddress === null
-							? zeroAddress
-							: option.token.contractAddress
-						).toLowerCase(),
+						normalizedAddress.toLowerCase(),
 				);
 
 				if (!tokenBalance) return false;

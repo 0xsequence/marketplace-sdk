@@ -78,7 +78,9 @@ export default function PriceInput({
 	const { data: conversion, isLoading: isConversionLoading } =
 		useConvertPriceToUSD({
 			chainId,
-			currencyAddress: currencyAddress as Address,
+			currencyAddress:
+				currencyAddress ??
+				('0x0000000000000000000000000000000000000000' as Address),
 			amountRaw: priceAmountRaw?.toString(),
 			query: {
 				enabled:

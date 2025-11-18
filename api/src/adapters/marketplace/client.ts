@@ -20,6 +20,7 @@ import * as Gen from './marketplace.gen';
 import {
 	toCollectibleOrder,
 	toCollectibleOrders,
+	toCollectiblePrimarySaleItems,
 	toCurrencies,
 	toOrder,
 	toOrders,
@@ -204,6 +205,13 @@ export type ListCurrenciesResponse = Omit<
 	'currencies'
 > & {
 	currencies: Currency[];
+};
+
+export type ListPrimarySaleItemsResponse = Omit<
+	Gen.ListPrimarySaleItemsResponse,
+	'primarySaleItems'
+> & {
+	primarySaleItems: Array<import('./types').CollectiblePrimarySaleItem>;
 };
 
 /**
@@ -522,7 +530,7 @@ export class MarketplaceClient {
 	) => Promise<Gen.ListCollectionActivitiesResponse>;
 	public readonly listPrimarySaleItems: (
 		req: ListPrimarySaleItemsRequest,
-	) => Promise<Gen.ListPrimarySaleItemsResponse>;
+	) => Promise<ListPrimarySaleItemsResponse>;
 
 	// Count methods (chainId + optional tokenId)
 	public readonly getCountOfPrimarySaleItems: (
@@ -741,8 +749,18 @@ export class MarketplaceClient {
 		this.listCollectionActivities = wrapCollectionAddress((req) =>
 			this.client.listCollectionActivities(req),
 		);
-		this.listPrimarySaleItems = wrapChainId((req) =>
-			this.client.listPrimarySaleItems(req),
+		this.listPrimarySaleItems = wrapBothTransform(
+			(req) => this.client.listPrimarySaleItems(req),
+			(req: ListPrimarySaleItemsRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+			}),
+			(
+				res: Gen.ListPrimarySaleItemsResponse,
+			): ListPrimarySaleItemsResponse => ({
+				...res,
+				primarySaleItems: toCollectiblePrimarySaleItems(res.primarySaleItems),
+			}),
 		);
 
 		// Count methods (chainId + contractAddress + optional tokenId)

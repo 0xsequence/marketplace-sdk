@@ -1,7 +1,6 @@
 'use client';
 
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type {
 	CheckoutOptionsItem,
@@ -70,10 +69,11 @@ export function usePrimarySaleCheckoutOptions(
 	const defaultConfig = useConfig();
 
 	const queryOptions = primarySaleCheckoutOptionsQueryOptions(
-		params === skipToken
+		params === skipToken || !address
 			? {
 					config: defaultConfig,
-					walletAddress: address as Address,
+					walletAddress:
+						address ?? '0x0000000000000000000000000000000000000000',
 					chainId: 0,
 					contractAddress: '',
 					collectionAddress: '',
@@ -83,7 +83,7 @@ export function usePrimarySaleCheckoutOptions(
 			: {
 					...params,
 					config: params.config ?? defaultConfig,
-					walletAddress: address as Address,
+					walletAddress: address,
 				},
 	);
 

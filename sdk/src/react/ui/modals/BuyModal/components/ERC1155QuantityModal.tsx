@@ -53,9 +53,10 @@ export const ERC1155QuantityModal = ({
 
 	const currencyQuery = useCurrencyDetail({
 		chainId,
-		currencyAddress: (order
-			? order.priceCurrencyAddress
-			: salePrice?.currencyAddress) as Address,
+		currencyAddress:
+			order?.priceCurrencyAddress ??
+			salePrice?.currencyAddress ??
+			('0x0000000000000000000000000000000000000000' as Address),
 	});
 	const marketplaceConfigQuery = useMarketplaceConfig();
 

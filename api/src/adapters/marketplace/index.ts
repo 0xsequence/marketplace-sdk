@@ -50,7 +50,6 @@ export type {
 	CheckoutOptions,
 	CheckoutOptionsMarketplaceResponse,
 	CheckoutOptionsSalesContractResponse,
-	CollectiblePrimarySaleItem,
 	CollectiblesFilter,
 	GetCollectibleHighestOfferRequest,
 	GetCollectibleHighestOfferResponse,
@@ -73,7 +72,6 @@ export type {
 	OrdersFilter,
 	Page,
 	PriceFilter,
-	PrimarySaleItem,
 	PrimarySaleItemsFilter,
 	PropertyFilter,
 	SortBy,
@@ -81,7 +79,6 @@ export type {
 } from './marketplace.gen';
 // Export raw API types under a namespace (re-export from gen for convenience)
 export * as MarketplaceAPI from './marketplace.gen';
-
 export {
 	CollectionStatus,
 	ContractType as MarketplaceContractType,
@@ -98,5 +95,7 @@ export {
 	StepType,
 	TransactionCrypto,
 } from './marketplace.gen';
+// Re-export normalized types from types.ts (with Address instead of string)
+export type { CollectiblePrimarySaleItem, PrimarySaleItem } from './types';
 
 export * from './types';

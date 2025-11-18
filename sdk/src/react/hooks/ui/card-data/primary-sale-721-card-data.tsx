@@ -158,7 +158,7 @@ export function usePrimarySale721CardData({
 
 			const salePrice = {
 				amount: primarySaleItem.priceAmount || 0n,
-				currencyAddress: primarySaleItem.currencyAddress as Address,
+				currencyAddress: primarySaleItem.currencyAddress,
 			};
 
 			const quantityInitial = primarySaleItem.supply;

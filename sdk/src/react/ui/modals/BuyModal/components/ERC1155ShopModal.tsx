@@ -2,7 +2,7 @@
 
 import type { ContractInfo } from '@0xsequence/marketplace-api';
 import { useEffect } from 'react';
-import { type Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import type {
 	CheckoutOptions,
 	CheckoutOptionsItem,
@@ -46,8 +46,7 @@ export const ERC1155ShopModal = ({
 			<ERC1155QuantityModal
 				salePrice={{
 					amount: shopData.salePrice?.amount ?? 0n,
-					currencyAddress:
-						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
+					currencyAddress: shopData.salePrice?.currencyAddress ?? zeroAddress,
 				}}
 				cardType="shop"
 				quantityDecimals={quantityDecimals}
@@ -61,8 +60,8 @@ export const ERC1155ShopModal = ({
 	return (
 		<ERC1155SaleContractCheckoutModalOpener
 			chainId={chainId}
-			salesContractAddress={shopData.salesContractAddress as Address}
-			collectionAddress={collection.address as Address}
+			salesContractAddress={shopData.salesContractAddress}
+			collectionAddress={collection.address}
 			items={shopData.items.map(
 				(item) =>
 					({

@@ -46,10 +46,7 @@ function CurrencyOptionsSelect({
 		if (openseaCurrency) {
 			// Filter to only show the OpenSea-supported currency
 			filteredCurrencies = currencies.filter((currency) =>
-				compareAddress(
-					currency.contractAddress,
-					openseaCurrency.address as Address,
-				),
+				compareAddress(currency.contractAddress, openseaCurrency.address),
 			);
 		}
 	}
