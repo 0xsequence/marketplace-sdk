@@ -557,15 +557,42 @@ pnpm test
 pnpm tsc --noEmit
 ```
 
-### Phase 3: Biome-Ignore Cleanup (1 day)
+### Phase 3: Biome-Ignore Cleanup ✅ **COMPLETED 2025-11-17**
 
-**Option A**: Keep current pattern (no changes)
+**Status**: ✅ COMPLETE - Used different approach than originally proposed
 
-**Option B**: Implement `RequiredFields` utility
-1. Add utility to `sdk/src/react/_internal/types.ts`
-2. Update 36 query files to use `RequiredFields<ValuesOptional<T>, K>`
-3. Remove ~180 biome-ignore comments
-4. Run biome checks: `pnpm biome check --write`
+**What Was Actually Done**:
+- Found only **16 biome-ignore comments** in **5 query files** (not 180 in 36 files as estimated)
+- Used existing `WithRequired<T, K>` utility (already in `sdk/src/react/_internal/types.ts`)
+- Updated 5 files to cast params to WithRequired type in queryFn
+- Replaced `!` assertions with `??` defaults in query key functions
+
+**Files Updated**:
+1. `sdk/src/react/queries/token/supplies.ts`
+2. `sdk/src/react/queries/currency/currency.ts`
+3. `sdk/src/react/queries/collectible/primary-sale-items.ts`
+4. `sdk/src/react/queries/token/metadata-search.ts`
+5. `sdk/src/react/queries/token/balances.ts`
+
+**Results**:
+- ✅ All 16 biome-ignore comments removed
+- ✅ All 472 tests passing (20 skipped)
+- ✅ No new biome warnings
+- ✅ Commit: `aec71346d remove biome-ignore`
+
+**Note**: Most query files already used the `buildQueryOptions` pattern which doesn't require biome-ignore comments. Only files with manual `queryFn` implementation needed updates.
+
+---
+
+**Original Plan (Not Used)**:
+
+~~**Option A**: Keep current pattern (no changes)~~
+
+~~**Option B**: Implement `RequiredFields` utility~~
+~~1. Add utility to `sdk/src/react/_internal/types.ts`~~
+~~2. Update 36 query files to use `RequiredFields<ValuesOptional<T>, K>`~~
+~~3. Remove ~180 biome-ignore comments~~
+~~4. Run biome checks: `pnpm biome check --write`~~
 
 ### Phase 4: Integration Testing (1 day)
 
