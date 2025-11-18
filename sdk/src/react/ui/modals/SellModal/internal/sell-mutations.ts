@@ -1,11 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type MarketplaceKind,
-	type Step,
-	TransactionType,
-} from '../../../../_internal';
+import { type Step, TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
@@ -59,8 +55,7 @@ export const useSellMutations = (
 
 				analytics.trackSellItems({
 					props: {
-						// Note: API returns MarketplaceKind as string, cast is safe
-						marketplaceKind: state.order.marketplace as MarketplaceKind,
+						marketplaceKind: state.order.marketplace,
 						userId: address || '',
 						collectionAddress: state.collectionAddress,
 						currencyAddress: currency.contractAddress, // Currency now has Address type

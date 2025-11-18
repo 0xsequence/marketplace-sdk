@@ -7,11 +7,7 @@ import {
 import type { ContractInfo, TokenMetadata } from '@0xsequence/marketplace-api';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import type {
-	CheckoutOptions,
-	MarketplaceKind,
-	Order,
-} from '../../../../_internal';
+import type { CheckoutOptions, Order } from '../../../../_internal';
 import { ErrorModal, LoadingModal } from '../../_internal/components/baseModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
@@ -123,7 +119,7 @@ const Modal = ({
 	} = usePaymentModalParams({
 		address,
 		quantity,
-		marketplace: order?.marketplace as MarketplaceKind | undefined,
+		marketplace: order?.marketplace,
 		collectable,
 		checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,

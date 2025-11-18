@@ -1,6 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useAccount } from 'wagmi';
-import type { MarketplaceKind } from '../../../../_internal';
 import {
 	useCollectionDetail,
 	useConnectorMetadata,
@@ -54,7 +53,7 @@ export function useSellModalContext() {
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		seller: address,
-		marketplace: state.order?.marketplace as MarketplaceKind | undefined,
+		marketplace: state.order?.marketplace,
 		walletType: walletKind,
 		ordersData: state.order
 			? [
