@@ -47,7 +47,7 @@ vi.mock('../components/ERC1155ShopModal', () => ({
 const mockCollection721 = {
 	type: 'ERC721' as const,
 	name: 'Test Collection',
-	address: '0x123',
+	address: '0x123' as `0x${string}`,
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
@@ -60,7 +60,8 @@ const mockCollection721 = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -75,7 +76,7 @@ const mockCollection721 = {
 const mockCollection1155 = {
 	type: 'ERC1155' as const,
 	name: 'Test Collection',
-	address: '0x123',
+	address: '0x123' as `0x${string}`,
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
@@ -88,7 +89,8 @@ const mockCollection1155 = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],

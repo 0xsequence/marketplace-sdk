@@ -10,6 +10,7 @@
  */
 
 import type * as MetadataGen from '@0xsequence/metadata';
+import { normalizeAddress } from '../../utils/address';
 import { normalizeChainId, toMetadataChainId } from '../../utils/chain';
 import { normalizeTokenId, toApiTokenId } from '../../utils/token';
 import {
@@ -26,18 +27,37 @@ import type * as NormalizedTypes from './types';
 // ============================================================================
 
 /**
+ * Transform ContractInfoExtensionBridgeInfo from API to normalized format
+ */
+function toBridgeInfo(
+	raw: MetadataGen.ContractInfoExtensionBridgeInfo,
+): NormalizedTypes.ContractInfoExtensionBridgeInfo {
+	return {
+		tokenAddress: normalizeAddress(raw.tokenAddress),
+	};
+}
+
+/**
  * Transform ContractInfo from API to normalized format
  */
 export function toContractInfo(
 	raw: MetadataGen.ContractInfo,
 ): NormalizedTypes.ContractInfo {
 	return spreadWith(raw, {
+		address: normalizeAddress(raw.address),
 		chainId: normalizeChainId(raw.chainId),
 		extensions: spreadWith(raw.extensions, {
 			originChainId: transformOptional(
 				raw.extensions.originChainId,
 				normalizeChainId,
 			),
+			originAddress: transformOptional(
+				raw.extensions.originAddress,
+				normalizeAddress,
+			),
+			bridgeInfo: raw.extensions.bridgeInfo
+				? transformRecord(raw.extensions.bridgeInfo, toBridgeInfo)
+				: undefined,
 		}),
 	});
 }
@@ -59,6 +79,7 @@ export function toTokenMetadata(
 ): NormalizedTypes.TokenMetadata {
 	return spreadWith(raw, {
 		chainId: transformOptional(raw.chainId, normalizeChainId),
+		contractAddress: transformOptional(raw.contractAddress, normalizeAddress),
 		tokenId: normalizeTokenId(raw.tokenId),
 		assets: transformOptionalArray(raw.assets, toAsset),
 	});

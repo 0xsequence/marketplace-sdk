@@ -31,7 +31,8 @@ const mockCollection = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -44,11 +45,11 @@ const mockCollection = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456',
+	salesContractAddress: '0x456' as `0x${string}`,
 	items: [{ tokenId: 1n, quantity: 1n }],
 	salePrice: {
 		amount: 1000000000000000000n,
-		currencyAddress: '0x0',
+		currencyAddress: '0x0' as `0x${string}`,
 	},
 };
 
