@@ -21,6 +21,7 @@ export * as MarketplaceMocks from './__mocks__/marketplace.msw';
 export * as MetadataMocks from './__mocks__/metadata.msw';
 
 export type {
+	CollectionFilterSettings,
 	LookupMarketplaceReturn,
 	MarketCollection,
 	MarketPage,
@@ -28,6 +29,7 @@ export type {
 	MarketplaceCollection,
 	MarketplaceSettings,
 	MarketplaceWallet,
+	MetadataFilterRule,
 	OpenIdProvider,
 	ShopCollection,
 	ShopPage,

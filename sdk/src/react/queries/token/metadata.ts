@@ -2,13 +2,14 @@ import type { GetTokenMetadataArgs } from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	getMetadataClient,
-	type QueryKeyArgs,
 	type SdkQueryParams,
 	type WithRequired,
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchListTokenMetadataParams extends GetTokenMetadataArgs {
+export interface FetchListTokenMetadataParams {
+	chainId: number;
+	contractAddress: string;
 	tokenIds: bigint[];
 }
 
@@ -24,9 +25,16 @@ export async function fetchListTokenMetadata(
 		'chainId' | 'contractAddress' | 'tokenIds' | 'config'
 	>,
 ) {
-	const { config, ...apiParams } = params;
+	const { config, contractAddress, chainId, tokenIds } = params;
 	const metadataClient = getMetadataClient(config);
-	const response = await metadataClient.getTokenMetadata(apiParams);
+
+	const apiArgs: GetTokenMetadataArgs = {
+		chainId,
+		tokenIds,
+		contractAddress,
+	};
+
+	const response = await metadataClient.getTokenMetadata(apiArgs);
 	return response.tokenMetadata;
 }
 
@@ -37,7 +45,7 @@ export function getListTokenMetadataQueryKey(
 		chainId: params.chainId,
 		contractAddress: params.contractAddress,
 		tokenIds: params.tokenIds,
-	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
+	};
 
 	return createTokenQueryKey('metadata', apiArgs);
 }

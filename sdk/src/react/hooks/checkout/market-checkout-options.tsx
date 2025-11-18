@@ -10,12 +10,13 @@ import type {
 } from '../../_internal';
 import {
 	type FetchMarketCheckoutOptionsParams,
+	type MarketCheckoutOptionsQueryOptions,
 	marketCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/market-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UseMarketCheckoutOptionsParams = Optional<
-	WithOptionalParams<FetchMarketCheckoutOptionsParams>,
+	WithOptionalParams<MarketCheckoutOptionsQueryOptions>,
 	'config' | 'walletAddress'
 >;
 
@@ -66,10 +67,10 @@ export function useMarketCheckoutOptions(
 	const { address } = useAccount();
 	const defaultConfig = useConfig();
 
-	const { config = defaultConfig, ...rest } = params;
+	const { config, ...rest } = params;
 
 	const queryOptions = marketCheckoutOptionsQueryOptions({
-		config,
+		config: config ?? defaultConfig,
 		walletAddress: address as Address,
 		...rest,
 	});

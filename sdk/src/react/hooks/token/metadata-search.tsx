@@ -102,7 +102,7 @@ export function useTokenMetadataSearch(params: UseTokenMetadataSearchParams) {
 	} = useInfiniteQuery(
 		tokenSuppliesQueryOptions({
 			chainId: params.chainId,
-			collectionAddress: params.collectionAddress,
+			collectionAddress: params.collectionAddress as `0x${string}`,
 			config,
 			includeMetadata: true,
 			query: {

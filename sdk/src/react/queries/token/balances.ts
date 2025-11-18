@@ -28,7 +28,9 @@ export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
 /**
  * @deprecated Use ListBalancesQueryOptions instead
  */
-export type UseListBalancesArgs = ListBalancesQueryOptions;
+export type UseListBalancesArgs = Omit<ListBalancesQueryOptions, 'config'> & {
+	config?: ListBalancesQueryOptions['config'];
+};
 
 export async function fetchBalances(
 	params: WithRequired<

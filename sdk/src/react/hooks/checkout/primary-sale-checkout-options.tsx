@@ -11,12 +11,13 @@ import type {
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
 	type fetchPrimarySaleCheckoutOptions,
+	type PrimarySaleCheckoutOptionsQueryOptions,
 	primarySaleCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/primary-sale-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	WithOptionalParams<FetchPrimarySaleCheckoutOptionsParams>,
+	WithOptionalParams<PrimarySaleCheckoutOptionsQueryOptions>,
 	'config' | 'walletAddress'
 >;
 
@@ -80,9 +81,9 @@ export function usePrimarySaleCheckoutOptions(
 					query: { enabled: false },
 				}
 			: {
-					config: defaultConfig,
-					walletAddress: address as Address,
 					...params,
+					config: params.config ?? defaultConfig,
+					walletAddress: address as Address,
 				},
 	);
 

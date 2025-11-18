@@ -10,7 +10,8 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchCollectibleParams extends GetTokenMetadataArgs {
+export interface FetchCollectibleParams {
+	chainId: number;
 	collectionAddress: Address;
 	tokenId: bigint;
 }

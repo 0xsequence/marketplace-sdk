@@ -90,7 +90,7 @@ export function CollectiblePageController({
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
 		chainId,
-		tokenId: tokenId.toString(),
+		tokenId,
 		userAddress: accountAddress,
 	});
 

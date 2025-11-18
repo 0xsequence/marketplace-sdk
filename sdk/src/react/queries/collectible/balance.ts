@@ -8,10 +8,10 @@ import {
 import { createCollectibleQueryKey } from './queryKeys';
 
 export interface FetchBalanceOfCollectibleParams {
-	collectionAddress: Address;
-	tokenId: bigint;
-	userAddress: Address;
-	chainId: number;
+	collectionAddress?: Address;
+	tokenId?: bigint;
+	userAddress?: Address;
+	chainId?: number;
 	includeMetadata?: boolean;
 }
 

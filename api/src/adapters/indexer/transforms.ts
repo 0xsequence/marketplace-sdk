@@ -224,19 +224,28 @@ export function toGetTokenBalancesArgs(
 }
 
 /**
- * Transform normalized GetTokenSuppliesRequest to API request (pass-through)
+ * Transform normalized GetTokenSuppliesRequest to API request
+ * Maps collectionAddress → contractAddress for API compatibility
  */
 export function toGetTokenSuppliesArgs(
 	req: Normalized.GetTokenSuppliesRequest,
 ): IndexerGen.GetTokenSuppliesArgs {
-	return req;
+	const contractAddress = req.contractAddress || req.collectionAddress;
+	return {
+		...req,
+		contractAddress,
+	};
 }
 
 /**
- * Transform normalized GetTokenIDRangesRequest to API request (pass-through)
+ * Transform normalized GetTokenIDRangesRequest to API request
+ * Maps collectionAddress → contractAddress for API compatibility
  */
 export function toGetTokenIDRangesArgs(
 	req: Normalized.GetTokenIDRangesRequest,
 ): IndexerGen.GetTokenIDRangesArgs {
-	return req;
+	const contractAddress = req.contractAddress || req.collectionAddress;
+	return {
+		contractAddress,
+	};
 }

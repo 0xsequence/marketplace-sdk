@@ -6,12 +6,12 @@
  */
 
 import type { Filter, PropertyFilter } from '@0xsequence/metadata';
-import type { ChainId, TokenId } from '../../types/primitives';
+import type { Address, ChainId, TokenId } from '../../types/primitives';
 export type { Filter, PropertyFilter };
 
 export interface ContractInfo {
 	chainId: ChainId;
-	address: string;
+	address: Address;
 	source: string;
 	name: string;
 	type: string;
@@ -36,7 +36,7 @@ export interface ContractInfoExtensions {
 	ogImage?: string;
 	ogName?: string;
 	originChainId?: ChainId;
-	originAddress?: string;
+	originAddress?: Address;
 	blacklist?: boolean;
 	verified?: boolean;
 	verifiedBy?: string;
@@ -45,12 +45,12 @@ export interface ContractInfoExtensions {
 }
 
 export interface ContractInfoExtensionBridgeInfo {
-	tokenAddress: string;
+	tokenAddress: Address;
 }
 
 export interface TokenMetadata {
 	chainId?: ChainId;
-	contractAddress?: string;
+	contractAddress?: Address;
 	tokenId: TokenId;
 	source: string;
 	name: string;

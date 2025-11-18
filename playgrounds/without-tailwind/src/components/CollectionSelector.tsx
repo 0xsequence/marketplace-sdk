@@ -18,7 +18,7 @@ export function CollectionSelector({
 
 		if (collections) {
 			const selectedCollectionData = collections.find(
-				(collection: Collection) => collection.address === address,
+				(collection) => collection.address === address,
 			);
 			if (selectedCollectionData) {
 				onCollectionChange(selectedCollectionData);

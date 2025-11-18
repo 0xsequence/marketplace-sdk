@@ -22,7 +22,7 @@ export type UseCollectibleMetadataParams = Optional<
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
- * @param params.collectionAddress - The collection contract address
+ * @param params.contractAddress - The collection contract address
  * @param params.tokenId - The token ID of the collectible
  * @param params.query - Optional React Query configuration
  *
@@ -33,7 +33,7 @@ export type UseCollectibleMetadataParams = Optional<
  * ```typescript
  * const { data: collectible, isLoading } = useCollectibleMetadata({
  *   chainId: 137,
- *   collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+ *   contractAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
  *   tokenId: '12345'
  * })
  * ```
@@ -43,10 +43,10 @@ export type UseCollectibleMetadataParams = Optional<
  * ```typescript
  * const { data } = useCollectibleMetadata({
  *   chainId: 137,
- *   collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+ *   contractAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
  *   tokenId: '12345',
  *   query: {
- *     enabled: Boolean(collectionAddress && tokenId),
+ *     enabled: Boolean(contractAddress && tokenId),
  *     staleTime: 30_000
  *   }
  * })

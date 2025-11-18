@@ -109,7 +109,9 @@ export type InventoryQueryOptions = SdkQueryParams<
 /**
  * @deprecated Use InventoryQueryOptions instead
  */
-export type UseInventoryArgs = InventoryQueryOptions;
+export type UseInventoryArgs = Omit<InventoryQueryOptions, 'config'> & {
+	config?: InventoryQueryOptions['config'];
+};
 
 export async function fetchInventory(
 	params: WithRequired<

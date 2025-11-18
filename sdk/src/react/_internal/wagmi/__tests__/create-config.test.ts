@@ -50,6 +50,8 @@ describe('createWagmiConfig', () => {
 				private: false,
 				collections: [
 					{
+						id: 1,
+						projectId: 12345,
 						marketplaceCollectionType: 'market',
 						contractType: ContractType.ERC721,
 						chainId: polygon.id,

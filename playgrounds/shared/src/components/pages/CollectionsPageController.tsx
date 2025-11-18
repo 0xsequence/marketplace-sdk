@@ -25,7 +25,7 @@ export function CollectionsPageController({
 		isLoading: collectionsLoading,
 		error: collectionsError,
 	} = useListCollections({
-		cardType: showMarketTypeToggle
+		collectionType: showMarketTypeToggle
 			? cardType === 'market'
 				? 'market'
 				: 'shop'
