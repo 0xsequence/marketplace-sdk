@@ -1,4 +1,4 @@
-import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
+import type { Order } from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	type GetLowestPriceListingForCollectibleRequest,
@@ -18,12 +18,12 @@ export async function fetchLowestListing(
 		LowestListingQueryOptions,
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
-): Promise<MarketplaceAPI.GetCollectibleLowestListingResponse['order'] | null> {
+): Promise<Order | undefined> {
 	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const result =
 		await marketplaceClient.getLowestPriceListingForCollectible(apiParams);
-	return result.order || null;
+	return result.order;
 }
 
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
@@ -39,7 +39,18 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 	] as const;
 }
 
-export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
+export function lowestListingQueryOptions(
+	params: LowestListingQueryOptions,
+): ReturnType<
+	typeof buildQueryOptions<
+		WithRequired<
+			LowestListingQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>,
+		Order | undefined,
+		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
+	>
+> {
 	return buildQueryOptions(
 		{
 			getQueryKey: getLowestListingQueryKey,

@@ -1,3 +1,4 @@
+import type { Order } from '@0xsequence/marketplace-api';
 import {
 	buildQueryOptions,
 	type GetHighestPriceOfferForCollectibleRequest,
@@ -17,12 +18,12 @@ export async function fetchHighestOffer(
 		HighestOfferQueryOptions,
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
-) {
+): Promise<Order | undefined> {
 	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const result =
 		await marketplaceClient.getHighestPriceOfferForCollectible(apiParams);
-	return result.order ?? null;
+	return result.order;
 }
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
@@ -38,7 +39,18 @@ export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 	] as const;
 }
 
-export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
+export function highestOfferQueryOptions(
+	params: HighestOfferQueryOptions,
+): ReturnType<
+	typeof buildQueryOptions<
+		WithRequired<
+			HighestOfferQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>,
+		Order | undefined,
+		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
+	>
+> {
 	return buildQueryOptions(
 		{
 			getQueryKey: getHighestOfferQueryKey,
