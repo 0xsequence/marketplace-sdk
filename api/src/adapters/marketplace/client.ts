@@ -11,12 +11,21 @@ import type { Address, ChainId, TokenId } from '../../types/primitives';
 import {
 	chainIdToString,
 	passthrough,
+	wrapBothTransform,
 	wrapChainId,
 	wrapCollectionAddress,
 	wrapWithTransform,
 } from '../../utils/client-proxy';
 import * as Gen from './marketplace.gen';
-import type { Step } from './types';
+import {
+	toCollectibleOrder,
+	toCollectibleOrders,
+	toCurrencies,
+	toOrder,
+	toOrders,
+	toSteps,
+} from './transforms';
+import type { CollectibleOrder, Currency, Order, Step } from './types';
 
 /**
  * SDK-facing CheckoutOptionsItem type with bigint tokenId
@@ -135,6 +144,66 @@ export type GenerateBuyTransactionResponse = Omit<
 	'steps'
 > & {
 	steps: Step[];
+};
+
+/**
+ * Response types with normalized Order types (Address instead of string for priceCurrencyAddress)
+ *
+ * These are fully redefined (not using Omit) to ensure TypeScript's .d.ts generator
+ * can create portable type definitions without references to generated types.
+ */
+export interface GetCollectibleLowestListingResponse {
+	order?: Order;
+}
+
+export interface GetCollectibleHighestOfferResponse {
+	order?: Order;
+}
+
+export type GetFloorOrderResponse = Omit<
+	Gen.GetFloorOrderResponse,
+	'collectible'
+> & {
+	collectible: CollectibleOrder;
+};
+
+export type GetOrdersResponse = Omit<Gen.GetOrdersResponse, 'orders'> & {
+	orders: Order[];
+};
+
+export type ListCollectibleListingsResponse = Omit<
+	Gen.ListListingsForCollectibleResponse,
+	'listings'
+> & {
+	listings: Order[];
+};
+
+export type ListCollectibleOffersResponse = Omit<
+	Gen.ListOffersForCollectibleResponse,
+	'offers'
+> & {
+	offers: Order[];
+};
+
+export type ListOrdersWithCollectiblesResponse = Omit<
+	Gen.ListOrdersWithCollectiblesResponse,
+	'collectibles'
+> & {
+	collectibles: CollectibleOrder[];
+};
+
+export type ListCollectiblesResponse = Omit<
+	Gen.ListCollectiblesResponse,
+	'collectibles'
+> & {
+	collectibles: CollectibleOrder[];
+};
+
+export type ListCurrenciesResponse = Omit<
+	Gen.ListCurrenciesResponse,
+	'currencies'
+> & {
+	currencies: Currency[];
 };
 
 /**
@@ -411,7 +480,7 @@ export class MarketplaceClient {
 	) => Promise<Gen.GetCollectionDetailResponse>;
 	public readonly listCurrencies: (
 		req: ListCurrenciesRequest,
-	) => Promise<Gen.ListCurrenciesResponse>;
+	) => Promise<ListCurrenciesResponse>;
 
 	// Collectible methods (chainId + optional tokenId)
 	public readonly getCollectible: (
@@ -419,32 +488,32 @@ export class MarketplaceClient {
 	) => Promise<Gen.GetCollectibleResponse>;
 	public readonly getLowestPriceListingForCollectible: (
 		req: GetLowestPriceListingForCollectibleRequest,
-	) => Promise<Gen.GetCollectibleLowestListingResponse>;
+	) => Promise<GetCollectibleLowestListingResponse>;
 	public readonly getHighestPriceOfferForCollectible: (
 		req: GetHighestPriceOfferForCollectibleRequest,
-	) => Promise<Gen.GetCollectibleHighestOfferResponse>;
+	) => Promise<GetCollectibleHighestOfferResponse>;
 	public readonly listListingsForCollectible: (
 		req: ListListingsForCollectibleRequest,
-	) => Promise<Gen.ListCollectibleListingsResponse>;
+	) => Promise<ListCollectibleListingsResponse>;
 	public readonly listOffersForCollectible: (
 		req: ListOffersForCollectibleRequest,
-	) => Promise<Gen.ListCollectibleOffersResponse>;
+	) => Promise<ListCollectibleOffersResponse>;
 
 	// Order methods (chainId only)
 	public readonly listOrdersWithCollectibles: (
 		req: ListOrdersWithCollectiblesRequest,
-	) => Promise<Gen.ListOrdersWithCollectiblesResponse>;
+	) => Promise<ListOrdersWithCollectiblesResponse>;
 	public readonly getFloorOrder: (
 		req: GetFloorOrderRequest,
-	) => Promise<Gen.GetFloorOrderResponse>;
+	) => Promise<GetFloorOrderResponse>;
 	public readonly getOrders: (
 		req: GetOrdersRequest,
-	) => Promise<Gen.GetOrdersResponse>;
+	) => Promise<GetOrdersResponse>;
 
 	// List methods (chainId only)
 	public readonly listCollectibles: (
 		req: ListCollectiblesRequest,
-	) => Promise<Gen.ListCollectiblesResponse>;
+	) => Promise<ListCollectiblesResponse>;
 	public readonly listCollectibleActivities: (
 		req: ListCollectibleActivitiesRequest,
 	) => Promise<Gen.ListCollectibleActivitiesResponse>;
@@ -496,7 +565,7 @@ export class MarketplaceClient {
 		this.queryKey = this.client.queryKey;
 
 		// Transaction generation methods (require custom transformations)
-		this.generateListingTransaction = wrapWithTransform(
+		this.generateListingTransaction = wrapBothTransform(
 			(req) => this.client.generateListingTransaction(req),
 			(req: GenerateListingTransactionRequest) => ({
 				...req,
@@ -504,11 +573,10 @@ export class MarketplaceClient {
 				contractType: req.contractType as Gen.ContractType,
 				listing: transformCreateReq(req.listing),
 			}),
-		) as (
-			req: GenerateListingTransactionRequest,
-		) => Promise<GenerateListingTransactionResponse>;
+			(res) => ({ ...res, steps: toSteps(res.steps) }),
+		);
 
-		this.generateOfferTransaction = wrapWithTransform(
+		this.generateOfferTransaction = wrapBothTransform(
 			(req) => this.client.generateOfferTransaction(req),
 			(req: GenerateOfferTransactionRequest) => ({
 				...req,
@@ -516,73 +584,156 @@ export class MarketplaceClient {
 				contractType: req.contractType as Gen.ContractType,
 				offer: transformCreateReq(req.offer),
 			}),
-		) as (
-			req: GenerateOfferTransactionRequest,
-		) => Promise<GenerateOfferTransactionResponse>;
+			(res) => ({ ...res, steps: toSteps(res.steps) }),
+		);
 
-		this.generateSellTransaction = wrapWithTransform(
+		this.generateSellTransaction = wrapBothTransform(
 			(req) => this.client.generateSellTransaction(req),
 			(req: GenerateSellTransactionRequest) => ({
 				...req,
 				chainId: chainIdToString(req.chainId),
 				ordersData: req.ordersData.map(transformOrderData),
 			}),
-		) as (
-			req: GenerateSellTransactionRequest,
-		) => Promise<GenerateSellTransactionResponse>;
+			(res) => ({ ...res, steps: toSteps(res.steps) }),
+		);
 
-		this.generateCancelTransaction = wrapChainId((req) =>
-			this.client.generateCancelTransaction(req),
-		) as (
-			req: GenerateCancelTransactionRequest,
-		) => Promise<GenerateCancelTransactionResponse>;
+		this.generateCancelTransaction = wrapBothTransform(
+			(req) => this.client.generateCancelTransaction(req),
+			(req: GenerateCancelTransactionRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+			}),
+			(res) => ({ ...res, steps: toSteps(res.steps) }),
+		);
 
-		this.generateBuyTransaction = wrapWithTransform(
+		this.generateBuyTransaction = wrapBothTransform(
 			(req) => this.client.generateBuyTransaction(req),
 			(req: GenerateBuyTransactionRequest) => ({
 				...req,
 				chainId: chainIdToString(req.chainId),
 				ordersData: req.ordersData.map(transformOrderData),
 			}),
-		) as (
-			req: GenerateBuyTransactionRequest,
-		) => Promise<GenerateBuyTransactionResponse>;
+			(res) => ({ ...res, steps: toSteps(res.steps) }),
+		);
 
 		// Collection and currency methods (chainId only)
 		this.getCollectionDetail = wrapCollectionAddress((req) =>
 			this.client.getCollectionDetail(req),
 		);
-		this.listCurrencies = wrapChainId((req) => this.client.listCurrencies(req));
+		this.listCurrencies = wrapBothTransform(
+			(req) => this.client.listCurrencies(req),
+			(req: ListCurrenciesRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+			}),
+			(res: Gen.ListCurrenciesResponse) => ({
+				...res,
+				currencies: toCurrencies(res.currencies),
+			}),
+		);
 
 		// Collectible methods (chainId + contractAddress + tokenId passthrough since already bigint)
 		this.getCollectible = wrapCollectionAddress((req) =>
 			this.client.getCollectible(req),
 		);
-		this.getLowestPriceListingForCollectible = wrapCollectionAddress((req) =>
-			this.client.getLowestPriceListingForCollectible(req),
+		this.getLowestPriceListingForCollectible = wrapBothTransform(
+			(req) => this.client.getLowestPriceListingForCollectible(req),
+			(req: GetLowestPriceListingForCollectibleRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				order: res.order ? toOrder(res.order) : undefined,
+			}),
 		);
-		this.getHighestPriceOfferForCollectible = wrapCollectionAddress((req) =>
-			this.client.getHighestPriceOfferForCollectible(req),
+		this.getHighestPriceOfferForCollectible = wrapBothTransform(
+			(req) => this.client.getHighestPriceOfferForCollectible(req),
+			(req: GetHighestPriceOfferForCollectibleRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				order: res.order ? toOrder(res.order) : undefined,
+			}),
 		);
-		this.listListingsForCollectible = wrapCollectionAddress((req) =>
-			this.client.listListingsForCollectible(req),
+		this.listListingsForCollectible = wrapBothTransform(
+			(req) => this.client.listListingsForCollectible(req),
+			(req: ListListingsForCollectibleRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				listings: toOrders(res.listings),
+			}),
 		);
-		this.listOffersForCollectible = wrapCollectionAddress((req) =>
-			this.client.listOffersForCollectible(req),
+		this.listOffersForCollectible = wrapBothTransform(
+			(req) => this.client.listOffersForCollectible(req),
+			(req: ListOffersForCollectibleRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				offers: toOrders(res.offers),
+			}),
 		);
 
 		// Order methods (chainId + contractAddress)
-		this.listOrdersWithCollectibles = wrapCollectionAddress((req) =>
-			this.client.listOrdersWithCollectibles(req),
+		this.listOrdersWithCollectibles = wrapBothTransform(
+			(req) => this.client.listOrdersWithCollectibles(req),
+			(req: ListOrdersWithCollectiblesRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				collectibles: toCollectibleOrders(res.collectibles),
+			}),
 		);
-		this.getFloorOrder = wrapCollectionAddress((req) =>
-			this.client.getFloorOrder(req),
+		this.getFloorOrder = wrapBothTransform(
+			(req) => this.client.getFloorOrder(req),
+			(req: GetFloorOrderRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				collectible: toCollectibleOrder(res.collectible),
+			}),
 		);
-		this.getOrders = wrapChainId((req) => this.client.getOrders(req));
+		this.getOrders = wrapBothTransform(
+			(req) => this.client.getOrders(req),
+			(req: GetOrdersRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+			}),
+			(res) => ({
+				...res,
+				orders: toOrders(res.orders),
+			}),
+		);
 
 		// List methods (chainId + contractAddress)
-		this.listCollectibles = wrapCollectionAddress((req) =>
-			this.client.listCollectibles(req),
+		this.listCollectibles = wrapBothTransform(
+			(req) => this.client.listCollectibles(req),
+			(req: ListCollectiblesRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+				contractAddress: req.collectionAddress,
+			}),
+			(res) => ({
+				...res,
+				collectibles: toCollectibleOrders(res.collectibles),
+			}),
 		);
 		this.listCollectibleActivities = wrapCollectionAddress((req) =>
 			this.client.listCollectibleActivities(req),

@@ -9,6 +9,7 @@
 
 import type * as IndexerGen from '@0xsequence/indexer';
 import type { Address } from '../../types/primitives';
+import { normalizeAddress } from '../../utils/address';
 import { normalizeChainId } from '../../utils/chain';
 import { normalizeTokenId } from '../../utils/token';
 import {
@@ -27,11 +28,13 @@ export function toContractInfo(
 ): Normalized.ContractInfo {
 	return spreadWith(raw, {
 		chainId: normalizeChainId(raw.chainId),
-		address: raw.address as Address,
+		address: normalizeAddress(raw.address),
 		extensions: transformOptional(raw.extensions, (ext) => ({
 			...ext,
 			originChainId: transformOptional(ext.originChainId, normalizeChainId),
-			originAddress: ext.originAddress as Address | undefined,
+			originAddress: ext.originAddress
+				? normalizeAddress(ext.originAddress)
+				: undefined,
 		})),
 	});
 }
@@ -56,7 +59,7 @@ export function toNativeTokenBalance(
 	raw: IndexerGen.NativeTokenBalance,
 ): Normalized.NativeTokenBalance {
 	return {
-		accountAddress: raw.accountAddress as Address,
+		accountAddress: normalizeAddress(raw.accountAddress),
 		chainId: normalizeChainId(raw.chainId),
 		balance: BigInt(raw.balance),
 		errorReason: raw.errorReason,
@@ -72,8 +75,8 @@ export function toTokenBalance(
 	// biome-ignore lint/correctness/noUnusedVariables: Destructuring to exclude raw tokenID field
 	const { tokenID, ...rest } = raw;
 	return spreadWith(rest, {
-		contractAddress: raw.contractAddress as Address,
-		accountAddress: raw.accountAddress as Address,
+		contractAddress: normalizeAddress(raw.contractAddress),
+		accountAddress: normalizeAddress(raw.accountAddress),
 		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n, // Note: uppercase "ID" in API
 		balance: BigInt(raw.balance),
 		chainId: normalizeChainId(raw.chainId),
@@ -110,11 +113,11 @@ export function toTransactionReceipt(
 ): Normalized.TransactionReceipt {
 	return spreadWith(raw, {
 		chainId: undefined, // Not in raw API
-		from: raw.from as Address | undefined,
-		to: raw.to as Address | undefined,
+		from: raw.from ? normalizeAddress(raw.from) : undefined,
+		to: raw.to ? normalizeAddress(raw.to) : undefined,
 		effectiveGasPrice: transformOptional(raw.effectiveGasPrice, BigInt),
 		logs: transformOptionalArray(raw.logs, (log) => ({
-			address: log.contractAddress as Address, // Raw API uses 'contractAddress' not 'address'
+			address: normalizeAddress(log.contractAddress), // Raw API uses 'contractAddress' not 'address'
 			topics: log.topics,
 			data: log.data,
 			logIndex: log.index, // Raw API uses 'index' not 'logIndex'

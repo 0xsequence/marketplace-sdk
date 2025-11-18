@@ -7,7 +7,6 @@
 
 import type * as IndexerGen from '@0xsequence/indexer';
 import { SequenceIndexer } from '@0xsequence/indexer';
-import type { Address } from '../../types/primitives';
 import * as transforms from './transforms';
 import type * as Normalized from './types';
 
@@ -42,12 +41,17 @@ export class IndexerClient {
 	async getTokenSupplies(
 		args: Normalized.GetTokenSuppliesRequest,
 	): Promise<Normalized.GetTokenSuppliesResponse> {
+		// Extract contract address from discriminated union
 		const contractAddress =
 			'collectionAddress' in args && args.collectionAddress
 				? args.collectionAddress
-				: 'contractAddress' in args && args.contractAddress
-					? args.contractAddress
-					: ('' as Address);
+				: args.contractAddress;
+
+		if (!contractAddress) {
+			throw new Error(
+				'getTokenSupplies requires either contractAddress or collectionAddress',
+			);
+		}
 
 		const apiArgs: IndexerGen.GetTokenSuppliesArgs = {
 			...args,
@@ -64,12 +68,17 @@ export class IndexerClient {
 	async getTokenIDRanges(
 		args: Normalized.GetTokenIDRangesRequest,
 	): Promise<Normalized.GetTokenIDRangesResponse> {
+		// Extract contract address from discriminated union
 		const contractAddress =
 			'collectionAddress' in args && args.collectionAddress
 				? args.collectionAddress
-				: 'contractAddress' in args && args.contractAddress
-					? args.contractAddress
-					: ('' as Address);
+				: args.contractAddress;
+
+		if (!contractAddress) {
+			throw new Error(
+				'getTokenIDRanges requires either contractAddress or collectionAddress',
+			);
+		}
 
 		const apiArgs: IndexerGen.GetTokenIDRangesArgs = {
 			contractAddress,

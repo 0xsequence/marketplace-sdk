@@ -9,8 +9,11 @@
  * All types extend from generated types to ensure they stay in sync with API changes.
  */
 
-import type { Address, Hash, TypedData, TypedDataDomain } from 'viem';
+import type { Address, Hash, TypedDataDomain } from 'viem';
 import {
+	type CollectibleOrder as GenCollectibleOrder,
+	type Currency as GenCurrency,
+	type Order as GenOrder,
 	type Step as GenStep,
 	type PostRequest,
 	StepType,
@@ -18,12 +21,46 @@ import {
 
 export type {
 	Collectible,
-	CollectibleOrder,
 	Collection,
-	Currency,
-	Order,
 	TokenMetadata,
 } from './marketplace.gen';
+
+// ============================================================================
+// Currency - Normalized with Address type
+// ============================================================================
+
+/**
+ * Currency type with normalized Address (viem branded type instead of string)
+ */
+export interface Currency extends Omit<GenCurrency, 'contractAddress'> {
+	contractAddress: Address;
+}
+
+// ============================================================================
+// Order - Normalized with Address type
+// ============================================================================
+
+/**
+ * Order type with normalized Address for priceCurrencyAddress.
+ *
+ * Uses Omit + intersection to stay type-safe with generated API types.
+ * When the API changes, this type automatically stays in sync.
+ */
+export interface Order extends Omit<GenOrder, 'priceCurrencyAddress'> {
+	priceCurrencyAddress: Address;
+}
+
+/**
+ * CollectibleOrder type with normalized Order (includes typed priceCurrencyAddress).
+ *
+ * Uses Omit + intersection to stay type-safe with generated API types.
+ */
+export interface CollectibleOrder
+	extends Omit<GenCollectibleOrder, 'order' | 'listing' | 'offer'> {
+	order?: Order;
+	listing?: Order;
+	offer?: Order;
+}
 
 // ============================================================================
 // Step Types - Discriminated Unions for Type Safety
@@ -45,25 +82,34 @@ type StepBase = Omit<GenStep, 'to'> & {
 };
 
 /**
+ * Signature type with viem's TypedDataDomain instead of raw Domain
+ */
+export type Signature = Omit<
+	import('./marketplace.gen').Signature,
+	'domain'
+> & {
+	domain: TypedDataDomain;
+};
+
+/**
  * Step representing a signature request (EIP-191 or EIP-712).
  *
  * These steps require user signature and must post the result to step.post endpoint.
  *
- * Extends GenStep with:
- * - Discriminated id field (only signature step types)
- * - Required post field (signatures always need to be submitted to API)
- * - Additional signature-specific fields (domain, types, primaryType)
- *
- * Note: The `data` field for EIP-191 can be plain text or hex string.
+ * For EIP-191: data field contains the message to sign (can be plain text or hex)
+ * For EIP-712: signature field contains domain, types, and value for typed data
  */
-export type SignatureStep = StepBase & {
-	id: StepType.signEIP191 | StepType.signEIP712;
-	post: PostRequest; // Required - signatures always need API submission
-	// Additional fields specific to signature steps
-	domain?: TypedDataDomain;
-	types?: TypedData;
-	primaryType?: string;
-};
+export type SignatureStep =
+	| (Omit<StepBase, 'signature'> & {
+			id: StepType.signEIP191;
+			post: PostRequest;
+			signature?: never;
+	  })
+	| (Omit<StepBase, 'signature'> & {
+			id: StepType.signEIP712;
+			post: PostRequest;
+			signature: Signature; // Required for EIP-712
+	  });
 
 /**
  * Step representing a blockchain transaction.
@@ -72,11 +118,10 @@ export type SignatureStep = StepBase & {
  *
  * Extends GenStep with:
  * - Discriminated id field (only transaction step types)
- * - Additional EIP-1559 gas fields (maxFeePerGas, maxPriorityFeePerGas, gas)
- *
- * Note: The `data` field for transactions is hex-encoded transaction data.
+ * - data field as Hex (transactions always have hex-encoded data)
+ * - Additional EIP-1559 gas fields (maxFeePerGas, maxPriorityFeePerGas, gas) as Hex
  */
-export type TransactionStep = StepBase & {
+export type TransactionStep = Omit<StepBase, 'data'> & {
 	id:
 		| StepType.tokenApproval
 		| StepType.buy
@@ -84,6 +129,7 @@ export type TransactionStep = StepBase & {
 		| StepType.cancel
 		| StepType.createOffer
 		| StepType.createListing;
+	data: Hash; // Override to Hex for transactions
 	// Additional fields specific to transaction steps (not in GenStep)
 	maxFeePerGas?: Hash;
 	maxPriorityFeePerGas?: Hash;

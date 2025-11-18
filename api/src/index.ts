@@ -81,6 +81,7 @@ export type {
 	GenerateSellTransactionRequest,
 	GetCollectibleHighestOfferRequest,
 	GetCollectibleHighestOfferResponse,
+	GetCollectibleLowestListingResponse,
 	GetCollectionDetailRequest,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfAllOrdersRequest,
@@ -161,6 +162,7 @@ export {
 	OrderStatus,
 	PropertyType, // Same enum exists in both marketplace and metadata
 	type SellStep,
+	type Signature,
 	type SignatureStep,
 	SortOrder,
 	StepType,
@@ -173,7 +175,6 @@ export { MarketplaceClient } from './adapters/marketplace/client';
 export type {
 	Asset as MarketplaceAsset,
 	PostRequest,
-	Signature,
 } from './adapters/marketplace/marketplace.gen';
 export * as MarketplaceAPI from './adapters/marketplace/marketplace.gen';
 
