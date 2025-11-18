@@ -4,9 +4,12 @@
  * Bidirectional transformations between raw Builder API types and normalized types.
  */
 
-import { normalizeAddress } from '../../utils/address';
-import { normalizeChainId } from '../../utils/chain';
-import { normalizeTokenId, toApiTokenId } from '../../utils/token';
+import {
+	normalizeAddress,
+	normalizeChainId,
+	normalizeTokenId,
+	toApiTokenId,
+} from '../../utils/normalize';
 import { transformArray } from '../../utils/transform';
 import type * as BuilderGen from './builder.gen';
 import type * as Builder from './types';

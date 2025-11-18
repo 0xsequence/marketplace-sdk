@@ -10,9 +10,13 @@
  */
 
 import type * as MetadataGen from '@0xsequence/metadata';
-import { normalizeAddress } from '../../utils/address';
-import { normalizeChainId, toMetadataChainId } from '../../utils/chain';
-import { normalizeTokenId, toApiTokenId } from '../../utils/token';
+import {
+	normalizeAddress,
+	normalizeChainId,
+	normalizeTokenId,
+	toApiTokenId,
+	toMetadataChainId,
+} from '../../utils/normalize';
 import {
 	spreadWith,
 	transformArray,

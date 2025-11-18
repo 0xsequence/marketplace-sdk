@@ -205,13 +205,8 @@ export * as Metadata from './adapters/metadata';
 export { MetadataClient as SequenceMetadata } from './adapters/metadata';
 
 export * from './types';
-export * from './utils/address';
-export * from './utils/bigint';
-
-export * from './utils/chain';
-export * from './utils/token';
+export * from './utils/normalize';
 export { type BuildPageParams, buildPage } from './utils/transform';
-
 export * from './utils/type-assertions';
 
 /**

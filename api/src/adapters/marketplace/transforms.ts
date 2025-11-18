@@ -5,7 +5,7 @@
  */
 
 import type { TypedDataDomain } from 'viem';
-import { normalizeAddress } from '../../utils/address';
+import { normalizeAddress } from '../../utils/normalize';
 import type * as Gen from './marketplace.gen';
 import { StepType } from './marketplace.gen';
 import type {

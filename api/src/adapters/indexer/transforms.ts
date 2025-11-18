@@ -9,9 +9,11 @@
 
 import type * as IndexerGen from '@0xsequence/indexer';
 import type { Address } from '../../types/primitives';
-import { normalizeAddress } from '../../utils/address';
-import { normalizeChainId } from '../../utils/chain';
-import { normalizeTokenId } from '../../utils/token';
+import {
+	normalizeAddress,
+	normalizeChainId,
+	normalizeTokenId,
+} from '../../utils/normalize';
 import {
 	spreadWith,
 	transformArray,
