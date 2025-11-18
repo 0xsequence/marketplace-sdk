@@ -21,6 +21,39 @@ interface UsePrimarySale721CardDataProps {
 	enabled?: boolean;
 }
 
+/**
+ * Safely normalizes partial token metadata to full TokenMetadata type
+ * Used for minted tokens where metadata might be incomplete
+ */
+function normalizeTokenMetadata(
+	metadata: Partial<TokenMetadata> | undefined,
+	tokenId: bigint,
+): TokenMetadata {
+	return {
+		tokenId,
+		name: metadata?.name ?? '',
+		source: metadata?.source ?? '',
+		attributes: metadata?.attributes ?? [],
+		status: metadata?.status ?? 'active',
+		description: metadata?.description,
+		image: metadata?.image,
+		video: metadata?.video,
+		audio: metadata?.audio,
+		properties: metadata?.properties,
+		image_data: metadata?.image_data,
+		external_url: metadata?.external_url,
+		background_color: metadata?.background_color,
+		animation_url: metadata?.animation_url,
+		decimals: metadata?.decimals,
+		updatedAt: metadata?.updatedAt,
+		assets: metadata?.assets,
+		queuedAt: metadata?.queuedAt,
+		lastFetched: metadata?.lastFetched,
+		chainId: metadata?.chainId,
+		contractAddress: metadata?.contractAddress,
+	};
+}
+
 export function usePrimarySale721CardData({
 	primarySaleItemsWithMetadata,
 	chainId,
@@ -160,20 +193,12 @@ export function usePrimarySale721CardData({
 	);
 
 	const mintedTokensCollectibleCards = allTokenSupplies?.map((item) => {
-		const metadata = item.tokenMetadata || {};
 		return {
 			tokenId: item.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
-			tokenMetadata: {
-				...metadata,
-				tokenId: item.tokenId,
-				name: (metadata as any).name || '',
-				source: (metadata as any).source || '',
-				attributes: (metadata as any).attributes || [],
-				status: (metadata as any).status || 'active',
-			} as unknown as TokenMetadata,
+			tokenMetadata: normalizeTokenMetadata(item.tokenMetadata, item.tokenId),
 			cardLoading: saleDetailsLoading,
 			salesContractAddress,
 			salePrice: {

@@ -82,7 +82,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							{
 								tokenId,
 								quantity: 1n,
-							} as any,
+							},
 						],
 						cardType: 'shop',
 						salePrice: {
@@ -120,7 +120,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						chainId,
 						tokenId,
 						orderId: lowestListing.orderId,
-						marketplace: lowestListing.marketplace as any,
+						marketplace: lowestListing.marketplace,
 						cardType: 'market',
 						hideQuantitySelector,
 					})

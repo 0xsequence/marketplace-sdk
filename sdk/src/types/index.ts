@@ -20,6 +20,7 @@ export {
 	type CreateListingStep,
 	type CreateOfferStep,
 	type Currency,
+	CurrencyStatus,
 	ExecuteType,
 	FilterCondition,
 	findApprovalStep,

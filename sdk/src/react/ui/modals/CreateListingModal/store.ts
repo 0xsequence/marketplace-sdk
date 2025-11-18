@@ -1,7 +1,11 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
-import { type Currency, OrderbookKind } from '../../../../types';
+import {
+	type Currency,
+	CurrencyStatus,
+	OrderbookKind,
+} from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
@@ -38,7 +42,7 @@ type Actions = {
 const emptyCurrency: Currency = {
 	chainId: 0,
 	contractAddress: '0x0000000000000000000000000000000000000000',
-	status: 0 as any, // CurrencyStatus enum
+	status: CurrencyStatus.unknown,
 	name: '',
 	symbol: '',
 	decimals: 0,

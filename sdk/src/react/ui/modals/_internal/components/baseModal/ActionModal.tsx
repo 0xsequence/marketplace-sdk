@@ -98,27 +98,34 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 
 	// If we have errors or not all data is loaded (but not loading), proceed to error handling
 	if (hasErrors || (!hasAllData && !isLoading)) {
-		const data = Object.entries(queries).reduce(
+		// Build partial data object from queries that have loaded
+		// Type assertion is safe here because we're building the object entry by entry
+		// and the final type matches our expected shape
+		const data = Object.entries(queries).reduce<Record<string, unknown>>(
 			(acc, [key, query]) => {
 				if (query.data !== undefined) {
-					(acc as any)[key] = query.data;
+					acc[key] = query.data;
 				}
 				return acc;
 			},
-			{} as { [K in keyof T]: NonNullable<T[K]['data']> },
-		);
+			{},
+		) as { [K in keyof T]: NonNullable<T[K]['data']> };
 
 		return <>{children(data, firstError, refetchFailedQueries)}</>;
 	}
 
 	// Build data object from all queries - now we know all data exists
-	const data = Object.entries(queries).reduce(
+	// Type assertion is safe here because we've verified hasAllData above
+	const data = Object.entries(queries).reduce<Record<string, unknown>>(
 		(acc, [key, query]) => {
-			(acc as any)[key] = query.data!; // Safe to use ! since we checked hasAllData
+			// hasAllData guarantees query.data is defined
+			if (query.data !== undefined) {
+				acc[key] = query.data;
+			}
 			return acc;
 		},
-		{} as { [K in keyof T]: NonNullable<T[K]['data']> },
-	);
+		{},
+	) as { [K in keyof T]: NonNullable<T[K]['data']> };
 
 	return <>{children(data, firstError, refetchFailedQueries)}</>;
 }
