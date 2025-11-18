@@ -298,7 +298,7 @@ describe('useProcessStep', () => {
 					method: '',
 					body: {},
 				},
-			} as SignatureStep;
+			} as unknown as SignatureStep;
 
 			await expect(result.current.processStep(step, 1)).rejects.toThrow(
 				'EIP712 step missing signature data',

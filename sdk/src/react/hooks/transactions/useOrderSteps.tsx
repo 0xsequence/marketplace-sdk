@@ -9,7 +9,6 @@ import {
 	type Hex,
 	hexToBigInt,
 	isHex,
-	type TypedDataDomain,
 	UserRejectedRequestError as ViemUserRejectedRequestError,
 } from 'viem';
 import {
@@ -61,19 +60,19 @@ const useTransactionOperations = () => {
 				return await signMessageAsync({ message });
 			}
 			if (stepItem.id === StepType.signEIP712) {
+				if (!stepItem.signature) {
+					throw new Error('EIP-712 step missing signature data');
+				}
+
 				logger.debug('Signing with EIP-712', {
-					domain: stepItem.domain,
-					types: stepItem.signature?.types,
+					domain: stepItem.signature.domain,
+					types: stepItem.signature.types,
 				});
 				return await signTypedDataAsync({
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					domain: stepItem.signature!.domain as TypedDataDomain,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					types: stepItem.signature!.types,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					primaryType: stepItem.signature!.primaryType,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					message: stepItem.signature!.value,
+					domain: stepItem.signature.domain,
+					types: stepItem.signature.types,
+					primaryType: stepItem.signature.primaryType,
+					message: stepItem.signature.value,
 				});
 			}
 		} catch (e) {
@@ -105,7 +104,7 @@ const useTransactionOperations = () => {
 			return await sendTransactionAsync({
 				chainId,
 				to: stepItem.to,
-				data: stepItem.data as `0x${string}`, // Transaction data is always hex
+				data: stepItem.data,
 				value: stepItem.value || 0n,
 				...(stepItem.maxFeePerGas && {
 					maxFeePerGas: hexToBigInt(stepItem.maxFeePerGas),

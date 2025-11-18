@@ -1,8 +1,7 @@
-import { type Hex, hexToBigInt, isHex, type TypedDataDomain } from 'viem';
+import { type Hex, hexToBigInt, isHex } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
 import {
 	ExecuteType,
-	isSignatureStep,
 	isTransactionStep,
 	type Step,
 	StepType,
@@ -29,49 +28,30 @@ export const useProcessStep = () => {
 		if (isTransactionStep(step)) {
 			const hash = await sendTransactionAsync({
 				chainId,
-				to: step.to as Hex,
-				data: step.data as Hex,
+				to: step.to,
+				data: step.data,
 				value: step.value,
 				...(step.maxFeePerGas && {
-					maxFeePerGas: hexToBigInt(step.maxFeePerGas as Hex),
+					maxFeePerGas: hexToBigInt(step.maxFeePerGas),
 				}),
 				...(step.maxPriorityFeePerGas && {
-					maxPriorityFeePerGas: hexToBigInt(step.maxPriorityFeePerGas as Hex),
+					maxPriorityFeePerGas: hexToBigInt(step.maxPriorityFeePerGas),
 				}),
 				...(step.gas && {
-					gas: hexToBigInt(step.gas as Hex),
+					gas: hexToBigInt(step.gas),
 				}),
 			});
 
 			return { type: 'transaction', hash };
 		}
 
-		// Signature steps - sign and execute API call
-		if (isSignatureStep(step)) {
-			let signature: Hex | undefined;
+		// EIP-191 Signature - plain text or hex message
+		if (step.id === StepType.signEIP191) {
+			const data = step.data;
+			const message = isHex(data) ? ({ raw: data as Hex } as const) : data;
+			const signature = await signMessageAsync({ message });
 
-			if (step.id === StepType.signEIP191) {
-				const message = isHex(step.data)
-					? { raw: step.data as Hex }
-					: step.data;
-				signature = await signMessageAsync({ message });
-			} else if (step.id === StepType.signEIP712) {
-				if (!step.signature) {
-					throw new Error('EIP712 step missing signature data');
-				}
-				signature = await signTypedDataAsync({
-					domain: step.signature.domain as TypedDataDomain,
-					types: step.signature.types,
-					primaryType: step.signature.primaryType,
-					message: step.signature.value,
-				});
-			}
-
-			if (!signature) {
-				throw new Error('Failed to sign message');
-			}
-
-			// Call execute endpoint with signature (post is always required for signatures)
+			// Call execute endpoint with signature
 			const result = await marketplaceClient.execute({
 				params: {
 					chainId: chainId.toString(),
@@ -86,9 +66,38 @@ export const useProcessStep = () => {
 			return { type: 'signature', orderId: result.orderId };
 		}
 
-		// This should never be reached due to discriminated union types
-		const _exhaustive: never = step;
-		throw new Error(`Unsupported step type: ${(_exhaustive as any).id}`);
+		// EIP-712 Typed Data Signature
+		if (step.id === StepType.signEIP712) {
+			// TypeScript can't narrow discriminated unions with complex types
+			// so we manually assert that signature is defined for EIP-712
+			if (!step.signature) {
+				throw new Error('EIP-712 step missing signature data');
+			}
+
+			const signature = await signTypedDataAsync({
+				domain: step.signature.domain,
+				types: step.signature.types,
+				primaryType: step.signature.primaryType,
+				message: step.signature.value,
+			});
+
+			// Call execute endpoint with signature
+			const result = await marketplaceClient.execute({
+				params: {
+					chainId: chainId.toString(),
+					signature,
+					method: step.post.method,
+					endpoint: step.post.endpoint,
+					body: step.post.body,
+					executeType: ExecuteType.order,
+				},
+			});
+
+			return { type: 'signature', orderId: result.orderId };
+		}
+
+		// This should never be reached
+		throw new Error(`Unsupported step type: ${(step as Step).id}`);
 	};
 
 	return { processStep };
