@@ -1,18 +1,18 @@
+import {
+	mockIndexerEndpoint,
+	mockTokenBalance,
+} from '@0xsequence/marketplace-api/mocks/indexer';
+import {
+	mockCollectibleOrder,
+	mockMarketplaceEndpoint,
+} from '@0xsequence/marketplace-api/mocks/marketplace';
+import { PropertyType } from '@0xsequence/metadata';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
 import { renderHook, server, waitFor } from '../../../../../test';
 import * as types from '../../../../types';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../../_internal/api/__mocks__/marketplace.msw';
-import { PropertyType } from '../../../_internal/api/marketplace.gen';
 import { useMarketCardDataPaged } from './market-card-data-paged';
 
 describe('useMarketCardDataPaged', () => {
@@ -166,8 +166,8 @@ describe('useMarketCardDataPaged', () => {
 		});
 
 		// Simulate clicking the collectible
-		result.current.collectibleCards[0].onCollectibleClick?.('1');
-		expect(onCollectibleClick).toHaveBeenCalledWith('1');
+		result.current.collectibleCards[0].onCollectibleClick?.(1n);
+		expect(onCollectibleClick).toHaveBeenCalledWith(1n);
 	});
 
 	it('should handle cannot perform action callback', async () => {
@@ -261,7 +261,7 @@ describe('useMarketCardDataPaged', () => {
 							...mockCollectibleOrder,
 							metadata: {
 								...mockCollectibleOrder.metadata,
-								tokenId: '2',
+								tokenId: 2n,
 							},
 						},
 					],
@@ -281,7 +281,7 @@ describe('useMarketCardDataPaged', () => {
 		});
 
 		expect(result.current.collectibleCards).toHaveLength(1);
-		expect(result.current.collectibleCards[0].tokenId).toBe('2');
+		expect(result.current.collectibleCards[0].tokenId).toBe(2n);
 		expect(result.current.hasMore).toBe(false);
 	});
 
