@@ -1,8 +1,4 @@
-/**
- * Builder API Transformation Functions
- *
- * Bidirectional transformations between raw Builder API types and normalized types.
- */
+// Builder API Transformations
 
 import {
 	normalizeAddress,
@@ -14,7 +10,6 @@ import { transformArray } from '../../utils/transform';
 import type * as BuilderGen from './builder.gen';
 import type * as Builder from './types';
 
-// Normalization Functions (API → Internal)
 export function toLookupMarketplaceReturn(
 	data: BuilderGen.LookupMarketplaceReturn,
 ): Builder.LookupMarketplaceReturn {
@@ -42,19 +37,6 @@ export function toLookupMarketplaceReturn(
 	};
 }
 
-/**
- * Normalize MarketCollection from API to internal format
- *
- * SDK ENHANCEMENT: Adds `marketplaceCollectionType` discriminator field
- * for TypeScript discriminated union support. This field does NOT exist
- * in the raw API response and is intentionally added by the SDK to enable
- * type-safe narrowing between MarketCollection and ShopCollection.
- *
- * @example
- * if (collection.marketplaceCollectionType === 'market') {
- *   // TypeScript knows: collection.contractType exists
- * }
- */
 export function toMarketCollection(
 	data: BuilderGen.MarketCollection,
 ): Builder.MarketCollection {
@@ -69,19 +51,6 @@ export function toMarketCollection(
 	};
 }
 
-/**
- * Normalize ShopCollection from API to internal format
- *
- * SDK ENHANCEMENT: Adds `marketplaceCollectionType` discriminator field
- * for TypeScript discriminated union support. This field does NOT exist
- * in the raw API response and is intentionally added by the SDK to enable
- * type-safe narrowing between MarketCollection and ShopCollection.
- *
- * @example
- * if (collection.marketplaceCollectionType === 'shop') {
- *   // TypeScript knows: collection.tokenIds exists
- * }
- */
 export function toShopCollection(
 	data: BuilderGen.ShopCollection,
 ): Builder.ShopCollection {
@@ -96,7 +65,6 @@ export function toShopCollection(
 	};
 }
 
-// Denormalization Functions (Internal → API)
 export function fromLookupMarketplaceReturn(
 	data: Builder.LookupMarketplaceReturn,
 ): BuilderGen.LookupMarketplaceReturn {

@@ -1,11 +1,5 @@
-/**
- * Indexer API Transformations
- *
- * Converts between raw @0xsequence/indexer types and normalized types.
- * Handles tokenID (string → bigint), and ensures type safety.
- *
- * IMPORTANT: Indexer uses UPPERCASE "ID" in field names (tokenID, not tokenId)
- */
+// Indexer API Transformations
+// Note: Indexer uses UPPERCASE "ID" in field names (tokenID, not tokenId)
 
 import type * as IndexerGen from '@0xsequence/indexer';
 import type { Address } from '../../types/primitives';
@@ -80,9 +74,6 @@ export function toTokenBalance(
 	});
 }
 
-/**
- * @param contractAddress - Not in raw API, must be provided separately
- */
 export function toTokenSupply(
 	raw: IndexerGen.TokenSupply,
 	contractAddress?: Address,
@@ -97,9 +88,6 @@ export function toTokenSupply(
 	};
 }
 
-/**
- * Note: Raw API doesn't have chainId field
- */
 export function toTransactionReceipt(
 	raw: IndexerGen.TransactionReceipt,
 ): Normalized.TransactionReceipt {
@@ -161,9 +149,6 @@ export function toGetTokenBalancesResponse(
 	};
 }
 
-/**
- * Note: Raw API has tokenIDs array containing TokenSupply objects
- */
 export function toGetTokenSuppliesResponse(
 	raw: IndexerGen.GetTokenSuppliesReturn,
 	contractAddress: Address,
@@ -188,8 +173,6 @@ export function toGetTokenIDRangesResponse(
 		ranges: transformOptionalArray(raw.tokenIDRanges, toTokenIDRange) || [],
 	};
 }
-
-// REQUEST TRANSFORMATIONS (Normalized → API)
 
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,

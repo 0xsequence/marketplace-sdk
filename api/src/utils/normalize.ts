@@ -1,16 +1,6 @@
-/**
- * Type normalization utilities
- *
- * Converts between API types and SDK-friendly types:
- * - string → Address (validated 0x-prefixed address)
- * - string/number → ChainId (number)
- * - string/number → TokenId (bigint)
- * - string → bigint (with safe parsing and formatting)
- */
+// Type normalization utilities
 
 import type { Address, ChainId, TokenId } from '../types/primitives';
-
-// Address Normalization
 
 export function normalizeAddress(address: string): Address {
 	if (!address) {
@@ -43,8 +33,6 @@ export function toApiAddress(address: Address): string {
 	return address;
 }
 
-// ChainId Normalization
-
 export function normalizeChainId(chainId: string | number | bigint): ChainId {
 	if (typeof chainId === 'number') return chainId;
 	if (typeof chainId === 'bigint') return Number(chainId);
@@ -55,8 +43,6 @@ export function toMetadataChainId(chainId: ChainId): string {
 	return chainId.toString();
 }
 
-// TokenId Normalization
-
 export function normalizeTokenId(tokenId: string | number | bigint): TokenId {
 	if (typeof tokenId === 'bigint') return tokenId;
 	if (typeof tokenId === 'string') return BigInt(tokenId);
@@ -66,8 +52,6 @@ export function normalizeTokenId(tokenId: string | number | bigint): TokenId {
 export function toApiTokenId(tokenId: TokenId): string {
 	return tokenId.toString();
 }
-
-// BigInt Utilities
 
 export function parseBigInt(value: string | number | bigint): bigint {
 	if (typeof value === 'bigint') return value;

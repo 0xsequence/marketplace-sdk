@@ -1,10 +1,4 @@
-/**
- * Wrapped Marketplace Client
- *
- * Wraps the raw Marketplace client with transformation layer.
- * Provides normalized types (number for chainId, bigint for tokenId) to SDK consumers
- * while handling API type conversion (string for chainId).
- */
+// Wrapped Marketplace Client
 
 import type { ContractType } from '@0xsequence/indexer';
 import type { Address, ChainId, TokenId } from '../../types/primitives';
@@ -34,17 +28,11 @@ import type {
 	Step,
 } from './types';
 
-/**
- * SDK-facing CheckoutOptionsItem type with bigint tokenId
- */
 export interface CheckoutOptionsItem {
 	tokenId: TokenId;
 	quantity: bigint;
 }
 
-/**
- * Transform SDK CheckoutOptionsItem to API Gen.CheckoutOptionsItem
- */
 function transformCheckoutItem(
 	item: CheckoutOptionsItem,
 ): Gen.CheckoutOptionsItem {
@@ -54,9 +42,6 @@ function transformCheckoutItem(
 	};
 }
 
-/**
- * SDK-facing CreateReq type with bigint tokenId and Address type
- */
 export interface CreateReq {
 	tokenId: TokenId;
 	quantity: bigint;
@@ -65,9 +50,6 @@ export interface CreateReq {
 	pricePerToken: bigint;
 }
 
-/**
- * Transform SDK CreateReq to API Gen.CreateReq
- */
 function transformCreateReq(req: CreateReq): Gen.CreateReq {
 	return {
 		...req,
@@ -76,9 +58,6 @@ function transformCreateReq(req: CreateReq): Gen.CreateReq {
 	};
 }
 
-/**
- * Transform SDK OrderData to API Gen.OrderData
- */
 function transformOrderData(data: OrderData): Gen.OrderData {
 	return {
 		orderId: data.orderId,
@@ -87,25 +66,6 @@ function transformOrderData(data: OrderData): Gen.OrderData {
 	};
 }
 
-/**
- * Enhanced response types with discriminated Step unions (SDK-facing)
- *
- * These types override the generated response types to replace the basic
- * `Step` interface with our enhanced discriminated union type from types.ts.
- *
- * Benefits over generated types:
- * - Type-safe discrimination by step.id
- * - Guaranteed post field on signature steps
- * - Separate TransactionStep and SignatureStep types
- * - Better IDE autocomplete and type narrowing
- *
- * @see {@link Step} for the discriminated union implementation
- * @public
- */
-
-/**
- * Response for listing transaction generation with enhanced Step types
- */
 export type GenerateListingTransactionResponse = Omit<
 	Gen.GenerateListingTransactionResponse,
 	'steps'
@@ -113,9 +73,6 @@ export type GenerateListingTransactionResponse = Omit<
 	steps: Step[];
 };
 
-/**
- * Response for offer transaction generation with enhanced Step types
- */
 export type GenerateOfferTransactionResponse = Omit<
 	Gen.GenerateOfferTransactionResponse,
 	'steps'
@@ -123,9 +80,6 @@ export type GenerateOfferTransactionResponse = Omit<
 	steps: Step[];
 };
 
-/**
- * Response for sell transaction generation with enhanced Step types
- */
 export type GenerateSellTransactionResponse = Omit<
 	Gen.GenerateSellTransactionResponse,
 	'steps'
@@ -133,9 +87,6 @@ export type GenerateSellTransactionResponse = Omit<
 	steps: Step[];
 };
 
-/**
- * Response for cancel transaction generation with enhanced Step types
- */
 export type GenerateCancelTransactionResponse = Omit<
 	Gen.GenerateCancelTransactionResponse,
 	'steps'
@@ -143,39 +94,11 @@ export type GenerateCancelTransactionResponse = Omit<
 	steps: Step[];
 };
 
-/**
- * Response for buy transaction generation with enhanced Step types
- */
 export type GenerateBuyTransactionResponse = Omit<
 	Gen.GenerateBuyTransactionResponse,
 	'steps'
 > & {
 	steps: Step[];
-};
-
-/**
- * Response types with normalized Order types (Address instead of string for priceCurrencyAddress)
- *
- * These are fully redefined (not using Omit) to ensure TypeScript's .d.ts generator
- * can create portable type definitions without references to generated types.
- */
-export interface GetCollectibleLowestListingResponse {
-	order?: Order;
-}
-
-export interface GetCollectibleHighestOfferResponse {
-	order?: Order;
-}
-
-export type GetFloorOrderResponse = Omit<
-	Gen.GetFloorOrderResponse,
-	'collectible'
-> & {
-	collectible: CollectibleOrder;
-};
-
-export type GetOrdersResponse = Omit<Gen.GetOrdersResponse, 'orders'> & {
-	orders: Order[];
 };
 
 export type ListCollectibleListingsResponse = Omit<
@@ -185,10 +108,6 @@ export type ListCollectibleListingsResponse = Omit<
 	listings: Order[];
 };
 
-/**
- * Alias for ListCollectibleListingsResponse
- * Both names refer to the same normalized type
- */
 export type ListListingsForCollectibleResponse =
 	ListCollectibleListingsResponse;
 
@@ -233,11 +152,28 @@ export type ListPrimarySaleItemsResponse = Omit<
 	primarySaleItems: Array<CollectiblePrimarySaleItem>;
 };
 
-/**
- * Request types with number chainId (SDK-facing)
- * These types override the raw API types to use number for chainId
- * and accept indexer's ContractType (which includes NATIVE)
- */
+export type GetCollectibleLowestListingResponse = Omit<
+	Gen.GetCollectibleLowestListingResponse,
+	'order'
+> & {
+	order?: Order;
+};
+
+export type GetCollectibleHighestOfferResponse = Omit<
+	Gen.GetCollectibleHighestOfferResponse,
+	'order'
+> & {
+	order?: Order;
+};
+
+export type GetFloorOrderResponse = Omit<Gen.GetFloorOrderResponse, 'order'> & {
+	order?: Order;
+};
+
+export type GetOrdersResponse = Omit<Gen.GetOrdersResponse, 'orders'> & {
+	orders: Order[];
+};
+
 export type GenerateListingTransactionRequest = Omit<
 	Gen.GenerateListingTransactionRequest,
 	'chainId' | 'contractType' | 'listing'

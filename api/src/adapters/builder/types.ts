@@ -1,8 +1,4 @@
-/**
- * Normalized Builder Types
- *
- * These are the normalized versions with bigint primitives.
- */
+// Normalized Builder Types
 
 import type { ContractType } from '@0xsequence/indexer';
 import type {
@@ -30,8 +26,6 @@ export {
 	WebrpcStreamFinishedError,
 	WebrpcStreamLostError,
 } from './builder.gen';
-
-// Normalized types with bigint
 
 export interface LookupMarketplaceArgs {
 	projectId?: ProjectId;
@@ -116,7 +110,6 @@ export interface OpenIdProvider {
 	aud: string[];
 }
 
-// Base interface for shared collection properties
 interface BaseMarketplaceCollection {
 	id: number;
 	projectId: ProjectId;
@@ -157,14 +150,6 @@ export interface ShopCollection extends BaseMarketplaceCollection {
 	customTokenIds: TokenId[];
 }
 
-/**
- * Union type for all marketplace collections
- * Use TypeScript's discriminated union to narrow types:
- * @example
- * if (collection.marketplaceCollectionType === 'shop') {
- *   // TypeScript knows: collection.saleAddress exists
- * }
- */
 export type MarketplaceCollection = MarketCollection | ShopCollection;
 
 export interface MarketplaceService {

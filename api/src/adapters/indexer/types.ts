@@ -1,24 +1,7 @@
-/**
- * NORMALIZED Indexer Types
- *
- * These are the normalized, developer-friendly types used throughout our SDK.
- * All chain IDs are numbers, all token IDs are bigint, all amounts are bigint.
- *
- * KEY NORMALIZATIONS:
- * - chainId: number (API) → ChainId: number (normalized, no change)
- * - tokenID: string (API, uppercase!) → TokenId: bigint (normalized)
- * - balance: string (API) → Amount: bigint (normalized)
- * - Various numeric strings → bigint
- *
- * @packageDocumentation
- */
+// Normalized Indexer Types
 
 import type { Address, Amount, ChainId, TokenId } from '../../types/primitives';
 
-/**
- * NORMALIZED: Contract information
- * Source: IndexerAPI.ContractInfo with normalized types
- */
 export interface ContractInfo {
 	chainId: ChainId;
 	address: Address;
@@ -46,10 +29,6 @@ export interface ContractInfo {
 	updatedAt?: string;
 }
 
-/**
- * NORMALIZED: Token metadata
- * Source: IndexerAPI.TokenMetadata with normalized types
- */
 export interface TokenMetadata {
 	tokenId: TokenId;
 	name?: string;
@@ -70,10 +49,6 @@ export interface TokenMetadata {
 	animation_url?: string;
 }
 
-/**
- * NORMALIZED: Token balance
- * Source: IndexerAPI.TokenBalance with normalized types
- */
 export interface TokenBalance {
 	contractType: string;
 	contractAddress: Address;
@@ -89,10 +64,6 @@ export interface TokenBalance {
 	isSummary?: boolean;
 }
 
-/**
- * NORMALIZED: Token supply
- * Source: IndexerAPI.TokenSupply with normalized types
- */
 export interface TokenSupply {
 	tokenId: TokenId;
 	supply: Amount;
@@ -102,10 +73,6 @@ export interface TokenSupply {
 	tokenMetadata?: TokenMetadata;
 }
 
-/**
- * NORMALIZED: Transaction receipt
- * Source: IndexerAPI.TransactionReceipt with normalized types
- */
 export interface TransactionReceipt {
 	txnHash: string;
 	blockHash: string;
@@ -124,27 +91,17 @@ export interface TransactionReceipt {
 	}>;
 }
 
-/**
- * NORMALIZED: Token ID range
- * Source: IndexerAPI.TokenIDRange with normalized types
- */
 export interface TokenIDRange {
 	startTokenId: TokenId;
 	endTokenId: TokenId;
 }
 
-/**
- * Page information for paginated responses
- */
 export interface Page {
 	page: number;
 	pageSize: number;
 	more: boolean;
 }
 
-/**
- * NORMALIZED: Get token balances request
- */
 export type GetTokenBalancesRequest = {
 	accountAddress: Address;
 	tokenId?: TokenId;
@@ -162,17 +119,11 @@ export type GetTokenBalancesRequest = {
 	| { collectionAddress?: Address; contractAddress?: never }
 );
 
-/**
- * NORMALIZED: Get token balances response
- */
 export interface GetTokenBalancesResponse {
 	balances: TokenBalance[];
 	page?: Page;
 }
 
-/**
- * NORMALIZED: Get token supplies request
- */
 export type GetTokenSuppliesRequest = {
 	includeMetadata?: boolean;
 	metadataOptions?: {
@@ -188,9 +139,6 @@ export type GetTokenSuppliesRequest = {
 	| { collectionAddress: Address; contractAddress?: never }
 );
 
-/**
- * NORMALIZED: Get token supplies response
- */
 export interface GetTokenSuppliesResponse {
 	contractType: string;
 	contractAddress: Address;
@@ -198,25 +146,15 @@ export interface GetTokenSuppliesResponse {
 	page?: Page;
 }
 
-/**
- * NORMALIZED: Get token ID ranges request
- */
 export type GetTokenIDRangesRequest =
 	| { contractAddress: Address; collectionAddress?: never }
 	| { collectionAddress: Address; contractAddress?: never };
 
-/**
- * NORMALIZED: Get token ID ranges response
- */
 export interface GetTokenIDRangesResponse {
 	contractAddress: string;
 	ranges: TokenIDRange[];
 }
 
-/**
- * NORMALIZED: Native token balance (e.g., ETH, MATIC)
- * Source: IndexerAPI.NativeTokenBalance with normalized types
- */
 export interface NativeTokenBalance {
 	accountAddress: Address;
 	chainId: ChainId;

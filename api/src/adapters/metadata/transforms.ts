@@ -1,13 +1,5 @@
-/**
- * Transformation functions between raw metadata API types and normalized types
- *
- * These functions handle the conversion between:
- * - chainID: string → chainId: number (metadata API uses string)
- * - tokenId: string ↔ tokenId: bigint
- * - tokenIDs: string[] ↔ tokenIds: bigint[]
- *
- * REFACTORED: Now uses generic transform utilities for cleaner, more maintainable code
- */
+// Metadata API Transformations
+// Note: Metadata API uses chainID (string) and tokenIDs (string[])
 
 import type * as MetadataGen from '@0xsequence/metadata';
 import {
@@ -25,8 +17,6 @@ import {
 	transformRecord,
 } from '../../utils/transform';
 import type * as NormalizedTypes from './types';
-
-// Response Transformers (API → Normalized)
 
 function toBridgeInfo(
 	raw: MetadataGen.ContractInfoExtensionBridgeInfo,
@@ -133,8 +123,6 @@ export function toSearchTokenMetadataReturn(
 		tokenMetadata: transformArray(raw.tokenMetadata, toTokenMetadata),
 	});
 }
-
-// Request Transformers (Normalized → API)
 
 export function toGetContractInfoArgs(
 	normalized: NormalizedTypes.GetContractInfoArgs,

@@ -1,9 +1,4 @@
-/**
- * Normalized metadata types with standard primitives
- *
- * These types use our standard primitives (ChainId=number, TokenId=bigint, etc.) instead of
- * the raw API types (number, string).
- */
+// Normalized Metadata Types
 
 import type { Filter, PropertyFilter } from '@0xsequence/metadata';
 import type { Address, ChainId, TokenId } from '../../types/primitives';

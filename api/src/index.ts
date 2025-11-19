@@ -1,12 +1,5 @@
-/**
- * @0xsequence/marketplace-api
- *
- * Unified API adapter layer for all Sequence services
- * Normalizes inconsistent API types into a clean, developer-friendly interface
- *
- * IMPORTANT: This package ONLY exports normalized types (bigint, not string/number).
- * RAW API types are kept internal and only available through namespaced exports for testing.
- */
+// @0xsequence/marketplace-api
+// Unified API adapter layer for Sequence services with normalized types
 
 export {
 	ContractType,
@@ -44,7 +37,6 @@ export * as BuilderAPI from './adapters/builder/builder.gen';
 
 export { MarketplaceService } from './adapters/builder/builder.gen';
 
-// (wrapped IndexerClient returns these)
 export type {
 	ContractInfo as IndexerContractInfo,
 	GetTokenBalancesDetailsResponse,
@@ -56,7 +48,6 @@ export type {
 	TokenSupply as IndexerTokenSupply,
 } from './adapters/indexer';
 export * as Indexer from './adapters/indexer';
-// Export wrapped client classes for SDK use
 
 export { IndexerClient as SequenceIndexer } from './adapters/indexer';
 
@@ -153,14 +144,14 @@ export {
 	isSellStep,
 	isSignatureStep,
 	isTransactionStep,
-	MarketplaceContractType, // Marketplace's subset of ContractType (no NATIVE)
+	MarketplaceContractType,
 	MarketplaceKind,
 	MetadataStatus,
 	OfferType,
 	OrderbookKind,
 	OrderSide,
 	OrderStatus,
-	PropertyType, // Same enum exists in both marketplace and metadata
+	PropertyType,
 	type SellStep,
 	type Signature,
 	type SignatureStep,
@@ -208,31 +199,3 @@ export * from './types';
 export * from './utils/normalize';
 export { type BuildPageParams, buildPage } from './utils/transform';
 export * from './utils/type-assertions';
-
-/**
- * Raw API Clients - NOT EXPORTED
- *
- * Previously, we exported SequenceIndexer and SequenceMetadata from this package.
- * This has been removed to prevent accidental use of raw API types.
- *
- * Why removed?
- * - These clients return RAW API types (tokenID: string, chainId: number)
- * - Developers could accidentally use them without adapter transforms
- * - This led to type inconsistencies and required .toString() conversions
- *
- * How to use these clients now:
- * 1. Import directly from their packages (if you REALLY need raw access):
- *    import { SequenceIndexer } from '@0xsequence/indexer';
- *    import { SequenceMetadata } from '@0xsequence/metadata';
- *
- * 2. ALWAYS use with adapter transforms:
- *    import { Indexer, Metadata } from '@0xsequence/marketplace-api';
- *
- *    const client = new SequenceIndexer(url, key);
- *    const args = Indexer.toGetTokenBalancesRequest({ accountAddress: '0x...' });
- *    const raw = await client.getTokenBalances(args);
- *    const normalized = Indexer.toGetTokenBalancesResponse(raw);
- *
- * Recommended: Use the SDK's getIndexerClient() and getMetadataClient() helpers
- * from '@0xsequence/kit' which are internal and should always be paired with adapters.
- */
