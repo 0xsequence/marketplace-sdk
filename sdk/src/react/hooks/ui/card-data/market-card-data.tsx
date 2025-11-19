@@ -32,6 +32,7 @@ interface UseMarketCardDataProps {
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
 	hideQuantitySelector?: boolean;
+	enabled?: boolean;
 }
 
 export function useMarketCardData({
@@ -48,6 +49,7 @@ export function useMarketCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
+	enabled,
 }: UseMarketCardDataProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
@@ -71,7 +73,8 @@ export function useMarketCardData({
 			prices: priceFilters,
 		},
 		query: {
-			enabled: !!collectionAddress && !!chainId,
+			enabled:
+				enabled !== undefined ? enabled : !!collectionAddress && !!chainId,
 		},
 	});
 
@@ -174,7 +177,7 @@ export function useMarketCardData({
 		error: Error | null;
 		hasNextPage: boolean | undefined;
 		isFetchingNextPage: boolean;
-		fetchNextPage: () => void;
+		fetchNextPage: () => Promise<unknown>;
 		allCollectibles: CollectibleOrder[];
 	};
 }
