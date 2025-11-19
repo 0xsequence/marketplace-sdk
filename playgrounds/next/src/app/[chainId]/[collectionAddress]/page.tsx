@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { CollectiblesPageController, createRoute } from 'shared-components';
+import type { Address } from 'viem';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
@@ -22,7 +23,7 @@ export default function CollectiblesPage() {
 	return (
 		<CollectiblesPageController
 			onCollectibleClick={handleCollectibleClick}
-			collectionAddress={collectionAddress as `0x${string}`}
+			collectionAddress={collectionAddress as Address}
 			chainId={Number(chainId)}
 		/>
 	);

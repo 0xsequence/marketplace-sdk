@@ -20,7 +20,7 @@ const defaultArgs = {
 // Mock currency object with all required properties
 const mockCurrency = {
 	chainId: 1,
-	contractAddress: '0x123' as `0x${string}`,
+	contractAddress: '0x123',
 	status: CurrencyStatus.active,
 	name: 'Test Token',
 	symbol: 'TEST',

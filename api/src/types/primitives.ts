@@ -2,7 +2,7 @@
  * Universal type primitives used across all API adapters
  */
 
-import type { Address as ViemAddress } from 'viem';
+import type { Address as ViemAddress, Hash as ViemHash } from 'viem';
 
 /**
  * Universal chain identifier as number
@@ -44,7 +44,7 @@ export type Quantity = bigint;
 /**
  * Universal hash type (transaction, block, etc)
  */
-export type Hash = `0x${string}`;
+export type Hash = ViemHash;
 
 /**
  * Universal project identifier as number

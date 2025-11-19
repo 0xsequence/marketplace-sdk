@@ -23,7 +23,7 @@ describe('BuyModal Store', () => {
 		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
-			collectionAddress: '0x123' as `0x${string}`,
+			collectionAddress: '0x123',
 			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',
@@ -46,7 +46,7 @@ describe('BuyModal Store', () => {
 		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
-			collectionAddress: '0x123' as `0x${string}`,
+			collectionAddress: '0x123',
 			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',
@@ -73,7 +73,7 @@ describe('BuyModal Store', () => {
 		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
-			collectionAddress: '0x123' as `0x${string}`,
+			collectionAddress: '0x123',
 			tokenId: 1n,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			cardType: 'market',

@@ -40,8 +40,7 @@ describe('useCurrency', () => {
 	it('should handle currency not found error', async () => {
 		const argsWithInvalidAddress = {
 			...defaultArgs,
-			currencyAddress:
-				'0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef' as `0x${string}`,
+			currencyAddress: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
 		};
 
 		const { result } = renderHook(() =>

@@ -65,8 +65,7 @@ describe('useTokenRanges', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			collectionAddress: '0x1234567890123456789012345678901234567890',
 		};
 
 		rerender(() => useTokenRanges(newArgs));

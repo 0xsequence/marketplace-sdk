@@ -58,8 +58,7 @@ describe('ERC1155QuantityModal', () => {
 			props: {
 				chainId: 1,
 				orderId: '1',
-				collectionAddress:
-					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				collectionAddress: '0x1234567890123456789012345678901234567890',
 				tokenId: 1n,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 				cardType: 'market',

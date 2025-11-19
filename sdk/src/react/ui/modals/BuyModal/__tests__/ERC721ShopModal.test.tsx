@@ -16,7 +16,7 @@ vi.mock('@0xsequence/checkout', () => ({
 vi.mock('../hooks/useERC721SalePaymentParams');
 
 const mockCollection = {
-	address: '0x123' as `0x${string}`,
+	address: '0x123',
 	chainId: 1,
 	name: 'Test Collection',
 	type: 'ERC721' as const,
@@ -31,8 +31,7 @@ const mockCollection = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress:
-			'0x0000000000000000000000000000000000000000' as `0x${string}`,
+		originAddress: '0x0000000000000000000000000000000000000000',
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -45,11 +44,11 @@ const mockCollection = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456' as `0x${string}`,
+	salesContractAddress: '0x456',
 	items: [{ tokenId: 1n, quantity: 1n }],
 	salePrice: {
 		amount: 1000000000000000000n,
-		currencyAddress: '0x0' as `0x${string}`,
+		currencyAddress: '0x0',
 	},
 };
 
@@ -64,9 +63,9 @@ const mockPaymentParams = {
 	currencyAddress: '0x0',
 	price: '1000000000000000000',
 	targetContractAddress: '0x456',
-	txData: '0x' as `0x${string}`,
+	txData: '0x',
 	collectionAddress: '0x123',
-	recipientAddress: '0xabc' as `0x${string}`,
+	recipientAddress: '0xabc',
 	enableMainCurrencyPayment: true,
 	enableSwapPayments: true,
 	creditCardProviders: [],

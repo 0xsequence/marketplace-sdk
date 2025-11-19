@@ -7,6 +7,7 @@ import type {
 	SdkConfig,
 } from '@0xsequence/marketplace-sdk';
 import { createStore } from '@xstate/store';
+import type { Address } from 'viem';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_MARKETPLACE_TYPE,
@@ -108,10 +109,7 @@ export const marketplaceStore = createStore({
 			activeTab: tab,
 		}),
 
-		setCollectionAddress: (
-			context,
-			{ address }: { address: `0x${string}` },
-		) => ({
+		setCollectionAddress: (context, { address }: { address: Address }) => ({
 			...context,
 			collectionAddress: address,
 		}),

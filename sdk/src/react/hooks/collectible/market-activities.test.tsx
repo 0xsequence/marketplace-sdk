@@ -101,8 +101,7 @@ describe('useCollectibleMarketActivities', () => {
 		currentArgs = {
 			chainId: 1,
 			tokenId: 2n,
-			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			collectionAddress: '0x1234567890123456789012345678901234567890',
 			page: 1,
 			pageSize: 10,
 			query: {

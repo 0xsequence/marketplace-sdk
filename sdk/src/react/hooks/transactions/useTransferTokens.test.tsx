@@ -81,7 +81,7 @@ describe('useTransferTokens', () => {
 		it('should return wagmi hook states correctly', () => {
 			mockUseWriteContract.mockReturnValue({
 				writeContractAsync: mockWriteContractAsync,
-				data: '0xhash123' as `0x${string}`,
+				data: '0xhash123',
 				isPending: true,
 				isError: false,
 				isSuccess: false,
@@ -341,7 +341,7 @@ describe('useTransferTokens', () => {
 		it('should reflect isSuccess state', () => {
 			mockUseWriteContract.mockReturnValue({
 				writeContractAsync: mockWriteContractAsync,
-				data: '0xsuccess123' as `0x${string}`,
+				data: '0xsuccess123',
 				isPending: false,
 				isError: false,
 				isSuccess: true,

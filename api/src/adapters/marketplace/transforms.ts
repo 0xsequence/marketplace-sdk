@@ -56,7 +56,7 @@ export function toStep(raw: Gen.Step): Step {
 		return {
 			...baseStep,
 			id: raw.id,
-			data: raw.data as `0x${string}`,
+			data: raw.data,
 		} as TransactionStep;
 	}
 

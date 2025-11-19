@@ -98,15 +98,14 @@ const MOCK_ORDER = {
 	chainId: 1,
 	originName: 'Mock Origin',
 	slug: 'test-order',
-	collectionContractAddress: MOCK_ADDRESS as `0x${string}`,
+	collectionContractAddress: MOCK_ADDRESS,
 	tokenId: 123n,
-	createdBy: MOCK_ADDRESS as `0x${string}`,
+	createdBy: MOCK_ADDRESS,
 	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
 	priceAmountNet: 950000000000000000n,
 	priceAmountNetFormatted: '0.95',
-	priceCurrencyAddress:
-		'0x0000000000000000000000000000000000000000' as `0x${string}`,
+	priceCurrencyAddress: '0x0000000000000000000000000000000000000000',
 	priceDecimals: 18,
 	priceUSD: 1000,
 	priceUSDFormatted: '$1,000.00',
@@ -244,8 +243,7 @@ export const ShopBuyAction: Story = {
 		salesContractAddress: MOCK_ADDRESS,
 		salePrice: {
 			amount: 1000000000000000000n,
-			currencyAddress:
-				'0x0000000000000000000000000000000000000000' as `0x${string}`,
+			currencyAddress: '0x0000000000000000000000000000000000000000',
 		},
 		quantityDecimals: 0,
 		quantityRemaining: 100n,

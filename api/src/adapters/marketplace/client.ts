@@ -166,8 +166,11 @@ export type GetCollectibleHighestOfferResponse = Omit<
 	order?: Order;
 };
 
-export type GetFloorOrderResponse = Omit<Gen.GetFloorOrderResponse, 'order'> & {
-	order?: Order;
+export type GetFloorOrderResponse = Omit<
+	Gen.GetFloorOrderResponse,
+	'collectible'
+> & {
+	collectible: CollectibleOrder;
 };
 
 export type GetOrdersResponse = Omit<Gen.GetOrdersResponse, 'orders'> & {

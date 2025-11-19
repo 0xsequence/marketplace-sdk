@@ -1,5 +1,6 @@
 import type { Indexer } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import {
 	getIndexerClient,
 	type SdkInfiniteQueryParams,
@@ -13,7 +14,7 @@ export interface FetchTokenSuppliesParams
 		'contractAddress' | 'collectionAddress'
 	> {
 	chainId: number;
-	collectionAddress: `0x${string}`;
+	collectionAddress: Address;
 	page?: Indexer.Page;
 }
 

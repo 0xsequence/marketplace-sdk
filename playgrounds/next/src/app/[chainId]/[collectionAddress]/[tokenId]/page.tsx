@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { CollectiblePageController, createRoute } from 'shared-components';
+import type { Address } from 'viem';
 
 export default function CollectiblePage() {
 	const router = useRouter();
@@ -24,7 +25,7 @@ export default function CollectiblePage() {
 				router.push(route);
 			}}
 			chainId={Number(chainId)}
-			collectionAddress={collectionAddress as `0x${string}`}
+			collectionAddress={collectionAddress as Address}
 			tokenId={BigInt(tokenId)}
 		/>
 	);

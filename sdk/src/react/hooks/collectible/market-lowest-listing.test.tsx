@@ -12,7 +12,7 @@ import { useCollectibleMarketLowestListing } from './market-lowest-listing';
 describe('useCollectibleMarketLowestListing', () => {
 	const defaultArgs = {
 		chainId: 1,
-		collectionAddress: zeroAddress as `0x${string}`,
+		collectionAddress: zeroAddress,
 		tokenId: 1n,
 	};
 
@@ -75,8 +75,7 @@ describe('useCollectibleMarketLowestListing', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			collectionAddress: '0x1234567890123456789012345678901234567890',
 			tokenId: 2n,
 		};
 
