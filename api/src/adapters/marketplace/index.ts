@@ -4,6 +4,7 @@
  * Provides normalized types and transformation functions for the Marketplace API.
  */
 
+// Export normalized response types from client.ts (with Address and proper types)
 export type {
 	CheckoutOptionsItem,
 	CheckoutOptionsMarketplaceRequest,
@@ -29,23 +30,32 @@ export type {
 	GetCountOfOffersForCollectibleRequest,
 	GetCountOfPrimarySaleItemsRequest,
 	GetFloorOrderRequest,
+	GetFloorOrderResponse,
 	GetHighestPriceOfferForCollectibleRequest,
 	GetLowestPriceListingForCollectibleRequest,
 	GetOrdersRequest,
+	GetOrdersResponse,
 	ListCollectibleActivitiesRequest,
+	ListCollectibleListingsResponse,
+	ListCollectibleOffersResponse,
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
 	ListCollectionActivitiesRequest,
 	ListCurrenciesRequest,
+	ListCurrenciesResponse,
 	ListListingsForCollectibleRequest,
+	ListListingsForCollectibleResponse,
 	ListOffersForCollectibleRequest,
+	ListOffersForCollectibleResponse,
 	ListOrdersWithCollectiblesRequest,
+	ListOrdersWithCollectiblesResponse,
 	ListPrimarySaleItemsRequest,
+	ListPrimarySaleItemsResponse,
 	OrderData,
 } from './client';
-
 export { MarketplaceClient } from './client';
 
+// Export request types and other non-response types from marketplace.gen
 export type {
 	AdditionalFee,
 	CheckoutOptions,
@@ -61,13 +71,7 @@ export type {
 	GetCountOfPrimarySaleItemsResponse,
 	ListCollectibleActivitiesResponse,
 	ListCollectibleListingsRequest,
-	ListCollectibleListingsResponse,
-	ListCollectibleOffersResponse,
 	ListCollectionActivitiesResponse,
-	ListListingsForCollectibleResponse,
-	ListOffersForCollectibleResponse,
-	ListOrdersWithCollectiblesResponse,
-	ListPrimarySaleItemsResponse,
 	OrderFilter,
 	OrdersFilter,
 	Page,

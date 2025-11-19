@@ -179,12 +179,25 @@ export type ListCollectibleListingsResponse = Omit<
 	listings: Order[];
 };
 
+/**
+ * Alias for ListCollectibleListingsResponse
+ * Both names refer to the same normalized type
+ */
+export type ListListingsForCollectibleResponse =
+	ListCollectibleListingsResponse;
+
 export type ListCollectibleOffersResponse = Omit<
 	Gen.ListOffersForCollectibleResponse,
 	'offers'
 > & {
 	offers: Order[];
 };
+
+/**
+ * Alias for ListCollectibleOffersResponse
+ * Both names refer to the same normalized type
+ */
+export type ListOffersForCollectibleResponse = ListCollectibleOffersResponse;
 
 export type ListOrdersWithCollectiblesResponse = Omit<
 	Gen.ListOrdersWithCollectiblesResponse,
