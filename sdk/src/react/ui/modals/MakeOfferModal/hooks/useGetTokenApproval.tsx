@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
@@ -16,8 +17,8 @@ import { useConfig, useConnectorMetadata } from '../../../../hooks';
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
 	tokenId: bigint;
-	collectionAddress: string;
-	currencyAddress: string;
+	collectionAddress: Address;
+	currencyAddress: Address;
 	contractType: ContractType;
 	orderbook: OrderbookKind;
 	query?: QueryArg;
