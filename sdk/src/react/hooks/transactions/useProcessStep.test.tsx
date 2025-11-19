@@ -102,36 +102,6 @@ describe('useProcessStep', () => {
 
 			expect(response).toEqual({ type: 'transaction', hash: mockHash });
 		});
-
-		it('should handle gas parameters', async () => {
-			const mockHash = '0x789ghi';
-			mockSendTransactionAsync.mockResolvedValue(mockHash);
-
-			const { result } = renderHook(() => useProcessStep());
-
-			const step = {
-				id: StepType.sell,
-				to: '0x789',
-				data: '0xghi',
-				value: 0n,
-				price: 0n,
-				maxFeePerGas: '0x100',
-				maxPriorityFeePerGas: '0x50',
-				gas: '0x5208',
-			} as TransactionStep;
-
-			await result.current.processStep(step, 1);
-
-			expect(mockSendTransactionAsync).toHaveBeenCalledWith({
-				chainId: 1,
-				to: '0x789',
-				data: '0xghi',
-				value: 0n,
-				maxFeePerGas: 256n,
-				maxPriorityFeePerGas: 80n,
-				gas: 21000n,
-			});
-		});
 	});
 
 	describe('signature steps', () => {

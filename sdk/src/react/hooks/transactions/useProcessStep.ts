@@ -1,4 +1,4 @@
-import { type Hex, hexToBigInt, isHex } from 'viem';
+import { type Hex, isHex } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
 import {
 	ExecuteType,
@@ -31,15 +31,6 @@ export const useProcessStep = () => {
 				to: step.to,
 				data: step.data,
 				value: step.value,
-				...(step.maxFeePerGas && {
-					maxFeePerGas: hexToBigInt(step.maxFeePerGas),
-				}),
-				...(step.maxPriorityFeePerGas && {
-					maxPriorityFeePerGas: hexToBigInt(step.maxPriorityFeePerGas),
-				}),
-				...(step.gas && {
-					gas: hexToBigInt(step.gas),
-				}),
 			});
 
 			return { type: 'transaction', hash };

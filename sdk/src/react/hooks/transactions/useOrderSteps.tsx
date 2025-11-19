@@ -7,7 +7,6 @@ import {
 import {
 	BaseError,
 	type Hex,
-	hexToBigInt,
 	isHex,
 	UserRejectedRequestError as ViemUserRejectedRequestError,
 } from 'viem';
@@ -106,15 +105,6 @@ const useTransactionOperations = () => {
 				to: stepItem.to,
 				data: stepItem.data,
 				value: stepItem.value || 0n,
-				...(stepItem.maxFeePerGas && {
-					maxFeePerGas: hexToBigInt(stepItem.maxFeePerGas),
-				}),
-				...(stepItem.maxPriorityFeePerGas && {
-					maxPriorityFeePerGas: hexToBigInt(stepItem.maxPriorityFeePerGas),
-				}),
-				...(stepItem.gas && {
-					gas: hexToBigInt(stepItem.gas),
-				}),
 			});
 		} catch (e) {
 			const error = e as TransactionExecutionError;
@@ -173,10 +163,9 @@ export const useOrderSteps = () => {
 			case StepType.cancel:
 				result = await sendTransaction(chainId, step);
 				break;
-			default: {
-				const _exhaustiveCheck: never = step;
-				throw new Error(`Unknown step type: ${_exhaustiveCheck}`);
-			}
+			case StepType.unknown:
+			default:
+				throw new Error(`Cannot execute step type: ${step.id}`);
 		}
 
 		return result;

@@ -38,15 +38,7 @@ function toSignature(signature: Gen.Signature): Signature {
 	};
 }
 
-/**
- * Transform raw Step to typed Step
- *
- * Note: The API returns additional fields (maxFeePerGas, maxPriorityFeePerGas, gas)
- * that aren't in the generated Step type, so we cast to any to access them.
- */
 export function toStep(raw: Gen.Step): Step {
-	// biome-ignore lint/suspicious/noExplicitAny: API returns extra fields not in generated types
-	const rawAny = raw as any;
 	const baseStep = {
 		...raw,
 		to: normalizeAddress(raw.to),
@@ -64,12 +56,7 @@ export function toStep(raw: Gen.Step): Step {
 		return {
 			...baseStep,
 			id: raw.id,
-			data: raw.data as `0x${string}`, // Transaction data is always hex
-			maxFeePerGas: rawAny.maxFeePerGas as `0x${string}` | undefined,
-			maxPriorityFeePerGas: rawAny.maxPriorityFeePerGas as
-				| `0x${string}`
-				| undefined,
-			gas: rawAny.gas as `0x${string}` | undefined,
+			data: raw.data as `0x${string}`,
 		} as TransactionStep;
 	}
 
