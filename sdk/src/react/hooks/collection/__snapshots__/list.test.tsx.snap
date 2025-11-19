@@ -17,7 +17,6 @@ exports[`useCollectionList > should fetch collections successfully 1`] = `
     "destinationMarketplace": "sequence_marketplace_v2",
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],
@@ -73,7 +72,6 @@ exports[`useCollectionList > should fetch collections successfully 1`] = `
     "destinationMarketplace": "opensea",
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],
@@ -130,7 +128,6 @@ exports[`useCollectionList > should fetch collections successfully 1`] = `
     "deployed": true,
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],
@@ -175,7 +172,6 @@ exports[`useCollectionList > should fetch collections successfully 1`] = `
     "deployed": true,
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],
@@ -225,7 +221,6 @@ exports[`useCollectionList > should handle empty collections 1`] = `
     "deployed": true,
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],
@@ -270,7 +265,6 @@ exports[`useCollectionList > should handle empty collections 1`] = `
     "deployed": true,
     "extensions": {
       "blacklist": false,
-      "bridgeInfo": undefined,
       "categories": [
         "Mock",
       ],

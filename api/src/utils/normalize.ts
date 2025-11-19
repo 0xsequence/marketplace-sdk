@@ -10,14 +10,8 @@
 
 import type { Address, ChainId, TokenId } from '../types/primitives';
 
-// ============================================================================
 // Address Normalization
-// ============================================================================
 
-/**
- * Normalize an address string to the Address type
- * Performs validation to ensure it's a valid Ethereum address format
- */
 export function normalizeAddress(address: string): Address {
 	if (!address) {
 		throw new Error('Address cannot be empty');
@@ -45,48 +39,36 @@ export function normalizeAddress(address: string): Address {
 	return address as Address;
 }
 
-/** Convert Address back to string (identity function, useful for symmetry) */
 export function toApiAddress(address: Address): string {
 	return address;
 }
 
-// ============================================================================
 // ChainId Normalization
-// ============================================================================
 
-/** Normalize any chain identifier to number */
 export function normalizeChainId(chainId: string | number | bigint): ChainId {
 	if (typeof chainId === 'number') return chainId;
 	if (typeof chainId === 'bigint') return Number(chainId);
 	return Number(chainId);
 }
 
-/** Convert chainId to API format (string) for metadata service */
 export function toMetadataChainId(chainId: ChainId): string {
 	return chainId.toString();
 }
 
-// ============================================================================
 // TokenId Normalization
-// ============================================================================
 
-/** Normalize any token identifier to bigint */
 export function normalizeTokenId(tokenId: string | number | bigint): TokenId {
 	if (typeof tokenId === 'bigint') return tokenId;
 	if (typeof tokenId === 'string') return BigInt(tokenId);
 	return BigInt(tokenId);
 }
 
-/** Convert tokenId to API format (string) */
 export function toApiTokenId(tokenId: TokenId): string {
 	return tokenId.toString();
 }
 
-// ============================================================================
 // BigInt Utilities
-// ============================================================================
 
-/** Safely parse string to bigint */
 export function parseBigInt(value: string | number | bigint): bigint {
 	if (typeof value === 'bigint') return value;
 	if (typeof value === 'number') return BigInt(value);
@@ -97,7 +79,6 @@ export function parseBigInt(value: string | number | bigint): bigint {
 	}
 }
 
-/** Format bigint for display (with decimals) */
 export function formatAmount(amount: bigint, decimals: number): string {
 	const str = amount.toString().padStart(decimals + 1, '0');
 	const intPart = str.slice(0, -decimals) || '0';
@@ -105,7 +86,6 @@ export function formatAmount(amount: bigint, decimals: number): string {
 	return `${intPart}.${decPart}`;
 }
 
-/** Parse formatted amount back to bigint */
 export function parseAmount(value: string, decimals: number): bigint {
 	const [intPart = '0', decPart = ''] = value.split('.');
 	const paddedDec = decPart.padEnd(decimals, '0').slice(0, decimals);

@@ -182,7 +182,6 @@ export interface MarketplaceClient {
   getCountOfPrimarySaleItems(req: GetCountOfPrimarySaleItemsRequest, headers?: object, signal?: AbortSignal): Promise<GetCountOfPrimarySaleItemsResponse>
 }
 
-
 //
 // Schema types
 //
@@ -917,7 +916,6 @@ export interface AddCollectiblesRequest {
 export interface AddCollectiblesResponse {
 }
 
-
 export interface ListCurrenciesRequest {
   chainId: string
 }
@@ -1447,8 +1445,6 @@ export interface GetCountOfPrimarySaleItemsRequest {
 export interface GetCountOfPrimarySaleItemsResponse {
   count: number
 }
-
-
 
 //
 // Client
@@ -2310,10 +2306,6 @@ const buildResponse = (res: Response): Promise<any> => {
 
 export type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>
 
-
-
-
-
 //
 // BigInt helpers
 //
@@ -2466,7 +2458,6 @@ export const JsonDecode = <T = any>(data: string | any, typ: string = ''): T => 
   return decodeType(typ, parsed) as T
 }
 
-
 //
 // Errors
 //
@@ -2491,7 +2482,6 @@ export class WebrpcError extends Error {
     return new this({ message: payload.message, code: payload.code, status: payload.status, cause: payload.cause })
   }
 }
-
 
 export class WebrpcEndpointError extends WebrpcError {
   constructor(error: WebrpcErrorParams = {}) {
@@ -2624,7 +2614,6 @@ export class WebrpcStreamFinishedError extends WebrpcError {
     Object.setPrototypeOf(this, WebrpcStreamFinishedError.prototype)
   }
 }
-
 
 //
 // Schema errors
@@ -2930,7 +2919,6 @@ export class NotImplementedError extends WebrpcError {
   }
 }
 
-
 export enum errors {
   WebrpcEndpoint = 'WebrpcEndpoint',
   WebrpcRequestFailed = 'WebrpcRequestFailed',
@@ -3048,8 +3036,6 @@ export const webrpcErrorByCode: { [code: number]: any } = {
   [9999]: NotImplementedError,
 }
 
-
-
 //
 // Webrpc
 //
@@ -3105,4 +3091,3 @@ function parseWebrpcGenVersions(header: string): WebrpcGenVersions {
     schemaVersion: schemaVersion ?? "",
   };
 }
-

@@ -109,7 +109,7 @@ const Modal = observer(() => {
 		offerInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			offer: {
-				tokenId: tokenId,
+				tokenId,
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
@@ -138,7 +138,7 @@ const Modal = observer(() => {
 	const buyModal = useBuyModal(callbacks);
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
-		tokenId: tokenId,
+		tokenId,
 		chainId,
 		collectionAddress,
 		filter: {

@@ -26,13 +26,8 @@ import {
 } from '../../utils/transform';
 import type * as NormalizedTypes from './types';
 
-// ============================================================================
 // Response Transformers (API → Normalized)
-// ============================================================================
 
-/**
- * Transform ContractInfoExtensionBridgeInfo from API to normalized format
- */
 function toBridgeInfo(
 	raw: MetadataGen.ContractInfoExtensionBridgeInfo,
 ): NormalizedTypes.ContractInfoExtensionBridgeInfo {
@@ -41,43 +36,50 @@ function toBridgeInfo(
 	};
 }
 
-/**
- * Transform ContractInfo from API to normalized format
- */
 export function toContractInfo(
 	raw: MetadataGen.ContractInfo,
 ): NormalizedTypes.ContractInfo {
+	// Build extensions object - copy non-transformed fields and transform others
+	const extensions: NormalizedTypes.ContractInfoExtensions = {
+		link: raw.extensions.link,
+		description: raw.extensions.description,
+		categories: raw.extensions.categories,
+		ogImage: raw.extensions.ogImage,
+		ogName: raw.extensions.ogName,
+		blacklist: raw.extensions.blacklist,
+		verified: raw.extensions.verified,
+		verifiedBy: raw.extensions.verifiedBy,
+		featured: raw.extensions.featured,
+		featureIndex: raw.extensions.featureIndex,
+	};
+
+	// Transform optional fields only if they exist (don't add undefined)
+	if (raw.extensions.originChainId !== undefined) {
+		extensions.originChainId = normalizeChainId(raw.extensions.originChainId);
+	}
+	if (raw.extensions.originAddress !== undefined) {
+		extensions.originAddress = normalizeAddress(raw.extensions.originAddress);
+	}
+	if (raw.extensions.bridgeInfo !== undefined) {
+		extensions.bridgeInfo = transformRecord(
+			raw.extensions.bridgeInfo,
+			toBridgeInfo,
+		);
+	}
+
 	return spreadWith(raw, {
 		address: normalizeAddress(raw.address),
 		chainId: normalizeChainId(raw.chainId),
-		extensions: spreadWith(raw.extensions, {
-			originChainId: transformOptional(
-				raw.extensions.originChainId,
-				normalizeChainId,
-			),
-			originAddress: transformOptional(
-				raw.extensions.originAddress,
-				normalizeAddress,
-			),
-			bridgeInfo: raw.extensions.bridgeInfo
-				? transformRecord(raw.extensions.bridgeInfo, toBridgeInfo)
-				: undefined,
-		}),
+		extensions,
 	});
 }
 
-/**
- * Transform Asset from API to normalized format
- */
 export function toAsset(raw: MetadataGen.Asset): NormalizedTypes.Asset {
 	return spreadWith(raw, {
 		tokenId: transformOptional(raw.tokenId, normalizeTokenId),
 	});
 }
 
-/**
- * Transform TokenMetadata from API to normalized format
- */
 export function toTokenMetadata(
 	raw: MetadataGen.TokenMetadata,
 ): NormalizedTypes.TokenMetadata {
@@ -89,9 +91,6 @@ export function toTokenMetadata(
 	});
 }
 
-/**
- * Transform GetContractInfoReturn from API to normalized format
- */
 export function toGetContractInfoReturn(
 	raw: MetadataGen.GetContractInfoReturn,
 ): NormalizedTypes.GetContractInfoReturn {
@@ -100,9 +99,6 @@ export function toGetContractInfoReturn(
 	});
 }
 
-/**
- * Transform GetContractInfoBatchReturn from API to normalized format
- */
 export function toGetContractInfoBatchReturn(
 	raw: MetadataGen.GetContractInfoBatchReturn,
 ): NormalizedTypes.GetContractInfoBatchReturn {
@@ -111,9 +107,6 @@ export function toGetContractInfoBatchReturn(
 	});
 }
 
-/**
- * Transform GetTokenMetadataReturn from API to normalized format
- */
 export function toGetTokenMetadataReturn(
 	raw: MetadataGen.GetTokenMetadataReturn,
 ): NormalizedTypes.GetTokenMetadataReturn {
@@ -122,9 +115,6 @@ export function toGetTokenMetadataReturn(
 	});
 }
 
-/**
- * Transform GetTokenMetadataBatchReturn from API to normalized format
- */
 export function toGetTokenMetadataBatchReturn(
 	raw: MetadataGen.GetTokenMetadataBatchReturn,
 ): NormalizedTypes.GetTokenMetadataBatchReturn {
@@ -136,9 +126,6 @@ export function toGetTokenMetadataBatchReturn(
 	});
 }
 
-/**
- * Transform SearchTokenMetadataReturn from API to normalized format
- */
 export function toSearchTokenMetadataReturn(
 	raw: MetadataGen.SearchTokenMetadataReturn,
 ): NormalizedTypes.SearchTokenMetadataReturn {
@@ -147,15 +134,8 @@ export function toSearchTokenMetadataReturn(
 	});
 }
 
-// ============================================================================
 // Request Transformers (Normalized → API)
-// ============================================================================
 
-/**
- * Transform GetContractInfoArgs from normalized to API format
- *
- * KEY: chainId (bigint) → chainID (string)
- */
 export function toGetContractInfoArgs(
 	normalized: NormalizedTypes.GetContractInfoArgs,
 ): MetadataGen.GetContractInfoArgs {
@@ -172,9 +152,6 @@ export function toGetContractInfoArgs(
 	};
 }
 
-/**
- * Transform GetContractInfoBatchArgs from normalized to API format
- */
 export function toGetContractInfoBatchArgs(
 	normalized: NormalizedTypes.GetContractInfoBatchArgs,
 ): MetadataGen.GetContractInfoBatchArgs {
@@ -184,11 +161,6 @@ export function toGetContractInfoBatchArgs(
 	};
 }
 
-/**
- * Transform GetTokenMetadataArgs from normalized to API format
- *
- * KEY: chainId (bigint) → chainID (string), tokenIds (bigint[]) → tokenIDs (string[])
- */
 export function toGetTokenMetadataArgs(
 	normalized: NormalizedTypes.GetTokenMetadataArgs,
 ): MetadataGen.GetTokenMetadataArgs {
@@ -206,9 +178,6 @@ export function toGetTokenMetadataArgs(
 	};
 }
 
-/**
- * Transform GetTokenMetadataBatchArgs from normalized to API format
- */
 export function toGetTokenMetadataBatchArgs(
 	normalized: NormalizedTypes.GetTokenMetadataBatchArgs,
 ): MetadataGen.GetTokenMetadataBatchArgs {
@@ -220,9 +189,6 @@ export function toGetTokenMetadataBatchArgs(
 	};
 }
 
-/**
- * Transform RefreshTokenMetadataArgs from normalized to API format
- */
 export function toRefreshTokenMetadataArgs(
 	normalized: NormalizedTypes.RefreshTokenMetadataArgs,
 ): MetadataGen.RefreshTokenMetadataArgs {
@@ -241,9 +207,6 @@ export function toRefreshTokenMetadataArgs(
 	};
 }
 
-/**
- * Transform SearchTokenMetadataArgs from normalized to API format
- */
 export function toSearchTokenMetadataArgs(
 	normalized: NormalizedTypes.SearchTokenMetadataArgs,
 ): MetadataGen.SearchTokenMetadataArgs {
@@ -262,9 +225,6 @@ export function toSearchTokenMetadataArgs(
 	};
 }
 
-/**
- * Transform GetTokenMetadataPropertyFiltersArgs from normalized to API format
- */
 export function toGetTokenMetadataPropertyFiltersArgs(
 	normalized: NormalizedTypes.GetTokenMetadataPropertyFiltersArgs,
 ): MetadataGen.GetTokenMetadataPropertyFiltersArgs {
@@ -282,9 +242,6 @@ export function toGetTokenMetadataPropertyFiltersArgs(
 	};
 }
 
-/**
- * Transform GetTokenMetadataPropertyFiltersReturn (pass-through, no transformation needed)
- */
 export function toGetTokenMetadataPropertyFiltersReturn(
 	raw: MetadataGen.GetTokenMetadataPropertyFiltersReturn,
 ): NormalizedTypes.GetTokenMetadataPropertyFiltersReturn {

@@ -14,9 +14,6 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-/**
- * Combines market and shop collections from marketplace config
- */
 function getAllCollections(marketplaceConfig: MarketplaceConfig) {
 	return [
 		...marketplaceConfig.market.collections,
@@ -24,9 +21,6 @@ function getAllCollections(marketplaceConfig: MarketplaceConfig) {
 	];
 }
 
-/**
- * Filters collections by type if specified
- */
 function filterCollectionsByType(
 	collections: Array<MarketCollection | ShopCollection>,
 	collectionType?: 'market' | 'shop',
@@ -39,9 +33,6 @@ function filterCollectionsByType(
 	);
 }
 
-/**
- * Groups collections by chain ID for batch fetching
- */
 function groupCollectionsByChain(
 	collections: Array<MarketCollection | ShopCollection>,
 ) {

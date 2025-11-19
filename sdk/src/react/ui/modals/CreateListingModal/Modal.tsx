@@ -118,7 +118,7 @@ const Modal = observer(() => {
 		listingInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			listing: {
-				tokenId: tokenId,
+				tokenId,
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,

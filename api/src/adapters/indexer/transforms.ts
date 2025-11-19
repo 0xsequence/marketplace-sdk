@@ -22,28 +22,26 @@ import {
 } from '../../utils/transform';
 import type * as Normalized from './types';
 
-/**
- * Transform raw API ContractInfo to normalized ContractInfo
- */
 export function toContractInfo(
 	raw: IndexerGen.ContractInfo,
 ): Normalized.ContractInfo {
 	return spreadWith(raw, {
 		chainId: normalizeChainId(raw.chainId),
 		address: normalizeAddress(raw.address),
-		extensions: transformOptional(raw.extensions, (ext) => ({
-			...ext,
-			originChainId: transformOptional(ext.originChainId, normalizeChainId),
-			originAddress: ext.originAddress
-				? normalizeAddress(ext.originAddress)
-				: undefined,
-		})),
+		extensions: transformOptional(raw.extensions, (ext) => {
+			// Build extensions object without adding undefined for missing fields
+			const result: any = { ...ext };
+			if (ext.originChainId !== undefined) {
+				result.originChainId = normalizeChainId(ext.originChainId);
+			}
+			if (ext.originAddress !== undefined) {
+				result.originAddress = normalizeAddress(ext.originAddress);
+			}
+			return result;
+		}),
 	});
 }
 
-/**
- * Transform raw API TokenMetadata to normalized TokenMetadata
- */
 export function toTokenMetadata(
 	raw: IndexerGen.TokenMetadata,
 ): Normalized.TokenMetadata {
@@ -54,9 +52,6 @@ export function toTokenMetadata(
 	});
 }
 
-/**
- * Transform raw API NativeTokenBalance to normalized NativeTokenBalance
- */
 export function toNativeTokenBalance(
 	raw: IndexerGen.NativeTokenBalance,
 ): Normalized.NativeTokenBalance {
@@ -68,9 +63,6 @@ export function toNativeTokenBalance(
 	};
 }
 
-/**
- * Transform raw API TokenBalance to normalized TokenBalance
- */
 export function toTokenBalance(
 	raw: IndexerGen.TokenBalance,
 ): Normalized.TokenBalance {
@@ -79,7 +71,7 @@ export function toTokenBalance(
 	return spreadWith(rest, {
 		contractAddress: normalizeAddress(raw.contractAddress),
 		accountAddress: normalizeAddress(raw.accountAddress),
-		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n, // Note: uppercase "ID" in API
+		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n,
 		balance: BigInt(raw.balance),
 		chainId: normalizeChainId(raw.chainId),
 		contractInfo: transformOptional(raw.contractInfo, toContractInfo),
@@ -89,15 +81,14 @@ export function toTokenBalance(
 }
 
 /**
- * Transform raw API TokenSupply to normalized TokenSupply
- * @param contractAddress - The contract address to include in normalized type (not in raw API)
+ * @param contractAddress - Not in raw API, must be provided separately
  */
 export function toTokenSupply(
 	raw: IndexerGen.TokenSupply,
 	contractAddress?: Address,
 ): Normalized.TokenSupply {
 	return {
-		tokenId: normalizeTokenId(raw.tokenID), // Note: uppercase "ID" in API
+		tokenId: normalizeTokenId(raw.tokenID),
 		supply: BigInt(raw.supply),
 		chainId: normalizeChainId(raw.chainId),
 		contractAddress,
@@ -107,41 +98,48 @@ export function toTokenSupply(
 }
 
 /**
- * Transform raw API TransactionReceipt to normalized TransactionReceipt
  * Note: Raw API doesn't have chainId field
  */
 export function toTransactionReceipt(
 	raw: IndexerGen.TransactionReceipt,
 ): Normalized.TransactionReceipt {
-	return spreadWith(raw, {
-		chainId: undefined, // Not in raw API
-		from: raw.from ? normalizeAddress(raw.from) : undefined,
-		to: raw.to ? normalizeAddress(raw.to) : undefined,
+	// Build result without spreading raw (to avoid type conflicts)
+	const result: Normalized.TransactionReceipt = {
+		txnHash: raw.txnHash,
+		blockHash: raw.blockHash,
+		blockNumber: raw.blockNumber,
+		txnIndex: raw.txnIndex,
+		gasUsed: raw.gasUsed,
 		effectiveGasPrice: transformOptional(raw.effectiveGasPrice, BigInt),
 		logs: transformOptionalArray(raw.logs, (log) => ({
-			address: normalizeAddress(log.contractAddress), // Raw API uses 'contractAddress' not 'address'
+			address: normalizeAddress(log.contractAddress),
 			topics: log.topics,
 			data: log.data,
-			logIndex: log.index, // Raw API uses 'index' not 'logIndex'
+			logIndex: log.index,
 		})),
-	});
+	};
+
+	// Only add optional Address fields if they exist (don't add undefined)
+	if (raw.from !== undefined) {
+		result.from = normalizeAddress(raw.from);
+	}
+	if (raw.to !== undefined) {
+		result.to = normalizeAddress(raw.to);
+	}
+	// chainId is not in raw API, so we don't set it (it's optional in our type)
+
+	return result;
 }
 
-/**
- * Transform raw API TokenIDRange to normalized TokenIDRange
- */
 export function toTokenIDRange(
 	raw: IndexerGen.TokenIDRange,
 ): Normalized.TokenIDRange {
 	return {
-		startTokenId: normalizeTokenId(raw.start), // Raw API uses "start" not "startTokenID"
-		endTokenId: normalizeTokenId(raw.end), // Raw API uses "end" not "endTokenID"
+		startTokenId: normalizeTokenId(raw.start),
+		endTokenId: normalizeTokenId(raw.end),
 	};
 }
 
-/**
- * Transform raw API Page to normalized Page
- */
 export function toPage(
 	raw: IndexerGen.Page | undefined,
 ): Normalized.Page | undefined {
@@ -154,9 +152,6 @@ export function toPage(
 	};
 }
 
-/**
- * Transform raw API GetTokenBalancesReturn to normalized GetTokenBalancesResponse
- */
 export function toGetTokenBalancesResponse(
 	raw: IndexerGen.GetTokenBalancesReturn,
 ): Normalized.GetTokenBalancesResponse {
@@ -167,8 +162,7 @@ export function toGetTokenBalancesResponse(
 }
 
 /**
- * Transform raw API GetTokenSuppliesReturn to normalized GetTokenSuppliesResponse
- * Note: Raw API has tokenIDs array containing TokenSupply objects, not separate arrays
+ * Note: Raw API has tokenIDs array containing TokenSupply objects
  */
 export function toGetTokenSuppliesResponse(
 	raw: IndexerGen.GetTokenSuppliesReturn,
@@ -185,9 +179,6 @@ export function toGetTokenSuppliesResponse(
 	};
 }
 
-/**
- * Transform raw API GetTokenIDRangesReturn to normalized GetTokenIDRangesResponse
- */
 export function toGetTokenIDRangesResponse(
 	raw: IndexerGen.GetTokenIDRangesReturn,
 	contractAddress: Address,
@@ -198,15 +189,8 @@ export function toGetTokenIDRangesResponse(
 	};
 }
 
-// ============================================================================
 // REQUEST TRANSFORMATIONS (Normalized → API)
-// Note: These are pass-through transformations - types are identical
-// ============================================================================
 
-/**
- * Transform normalized GetTokenBalancesRequest to API request
- * Converts tokenId (bigint) → tokenID (string)
- */
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
@@ -228,10 +212,6 @@ export function toGetTokenBalancesArgs(
 	};
 }
 
-/**
- * Transform normalized GetTokenSuppliesRequest to API request
- * Maps collectionAddress → contractAddress for API compatibility
- */
 export function toGetTokenSuppliesArgs(
 	req: Normalized.GetTokenSuppliesRequest,
 ): IndexerGen.GetTokenSuppliesArgs {
@@ -242,10 +222,6 @@ export function toGetTokenSuppliesArgs(
 	};
 }
 
-/**
- * Transform normalized GetTokenIDRangesRequest to API request
- * Maps collectionAddress → contractAddress for API compatibility
- */
 export function toGetTokenIDRangesArgs(
 	req: Normalized.GetTokenIDRangesRequest,
 ): IndexerGen.GetTokenIDRangesArgs {

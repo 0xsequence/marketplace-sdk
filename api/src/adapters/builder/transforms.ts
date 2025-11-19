@@ -14,14 +14,7 @@ import { transformArray } from '../../utils/transform';
 import type * as BuilderGen from './builder.gen';
 import type * as Builder from './types';
 
-// ============================================================================
 // Normalization Functions (API → Internal)
-// ============================================================================
-
-/**
- * Normalize LookupMarketplaceReturn from API to internal format
- * Nests collections within their respective market/shop pages
- */
 export function toLookupMarketplaceReturn(
 	data: BuilderGen.LookupMarketplaceReturn,
 ): Builder.LookupMarketplaceReturn {
@@ -51,14 +44,23 @@ export function toLookupMarketplaceReturn(
 
 /**
  * Normalize MarketCollection from API to internal format
- * Adds marketplaceCollectionType discriminator for type narrowing
+ *
+ * SDK ENHANCEMENT: Adds `marketplaceCollectionType` discriminator field
+ * for TypeScript discriminated union support. This field does NOT exist
+ * in the raw API response and is intentionally added by the SDK to enable
+ * type-safe narrowing between MarketCollection and ShopCollection.
+ *
+ * @example
+ * if (collection.marketplaceCollectionType === 'market') {
+ *   // TypeScript knows: collection.contractType exists
+ * }
  */
 export function toMarketCollection(
 	data: BuilderGen.MarketCollection,
 ): Builder.MarketCollection {
 	return {
 		...data,
-		marketplaceCollectionType: 'market' as const,
+		marketplaceCollectionType: 'market' as const, // Intentional SDK addition
 		chainId: normalizeChainId(data.chainId),
 		itemsAddress: normalizeAddress(data.itemsAddress),
 		contractType: data.contractType as Builder.MarketCollection['contractType'],
@@ -69,14 +71,23 @@ export function toMarketCollection(
 
 /**
  * Normalize ShopCollection from API to internal format
- * Adds marketplaceCollectionType discriminator for type narrowing
+ *
+ * SDK ENHANCEMENT: Adds `marketplaceCollectionType` discriminator field
+ * for TypeScript discriminated union support. This field does NOT exist
+ * in the raw API response and is intentionally added by the SDK to enable
+ * type-safe narrowing between MarketCollection and ShopCollection.
+ *
+ * @example
+ * if (collection.marketplaceCollectionType === 'shop') {
+ *   // TypeScript knows: collection.tokenIds exists
+ * }
  */
 export function toShopCollection(
 	data: BuilderGen.ShopCollection,
 ): Builder.ShopCollection {
 	return {
 		...data,
-		marketplaceCollectionType: 'shop' as const,
+		marketplaceCollectionType: 'shop' as const, // Intentional SDK addition
 		chainId: normalizeChainId(data.chainId),
 		itemsAddress: normalizeAddress(data.itemsAddress),
 		saleAddress: normalizeAddress(data.saleAddress),
@@ -85,14 +96,7 @@ export function toShopCollection(
 	};
 }
 
-// ============================================================================
 // Denormalization Functions (Internal → API)
-// ============================================================================
-
-/**
- * Convert LookupMarketplaceReturn from internal to API format
- * Extracts nested collections back to flat arrays
- */
 export function fromLookupMarketplaceReturn(
 	data: Builder.LookupMarketplaceReturn,
 ): BuilderGen.LookupMarketplaceReturn {
@@ -126,28 +130,18 @@ export function fromLookupMarketplaceReturn(
 	};
 }
 
-/**
- * Convert MarketCollection from internal to API format
- * Removes marketplaceCollectionType discriminator (API doesn't have it)
- * Note: Address types (0x${string}) are compatible with string, no conversion needed
- */
 export function fromMarketCollection(
 	data: Builder.MarketCollection,
 ): BuilderGen.MarketCollection {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// biome-ignore lint/correctness/noUnusedVariables: Destructuring to remove discriminator field
 	const { marketplaceCollectionType, ...rest } = data;
 	return rest;
 }
 
-/**
- * Convert ShopCollection from internal to API format
- * Removes marketplaceCollectionType discriminator (API doesn't have it)
- * Note: Address types (0x${string}) are compatible with string, no conversion needed
- */
 export function fromShopCollection(
 	data: Builder.ShopCollection,
 ): BuilderGen.ShopCollection {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// biome-ignore lint/correctness/noUnusedVariables: Destructuring to remove discriminator field
 	const { marketplaceCollectionType, ...rest } = data;
 	return {
 		...rest,

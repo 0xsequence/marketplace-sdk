@@ -11,14 +11,6 @@
  * - Reusable across all adapters
  */
 
-/**
- * Transform an optional field (undefined-safe)
- *
- * @example
- * const result = transformOptional(maybeString, normalizeChainId);
- * // If maybeString is undefined, returns undefined
- * // Otherwise, returns normalized value
- */
 export function transformOptional<T, R>(
 	value: T | undefined,
 	transformer: (value: T) => R,
@@ -26,16 +18,6 @@ export function transformOptional<T, R>(
 	return value !== undefined ? transformer(value) : undefined;
 }
 
-/**
- * Transform an array of items
- *
- * @example
- * const result = transformArray(
- *   ["1", "2", "3"],
- *   normalizeTokenId
- * );
- * // result: [1n, 2n, 3n]
- */
 export function transformArray<T, R>(
 	items: T[],
 	transformer: (item: T) => R,
@@ -43,15 +25,6 @@ export function transformArray<T, R>(
 	return items.map(transformer);
 }
 
-/**
- * Transform an optional array (undefined-safe)
- *
- * @example
- * const result = transformOptionalArray(
- *   maybeArray,
- *   normalizeTokenId
- * );
- */
 export function transformOptionalArray<T, R>(
 	items: T[] | undefined,
 	transformer: (item: T) => R,
@@ -59,15 +32,6 @@ export function transformOptionalArray<T, R>(
 	return items !== undefined ? items.map(transformer) : undefined;
 }
 
-/**
- * Transform a record/map object by transforming its values
- *
- * @example
- * const result = transformRecord(
- *   { "0x123": ["1", "2"], "0x456": ["3"] },
- *   (tokenIds) => tokenIds.map(normalizeTokenId)
- * );
- */
 export function transformRecord<K extends string, V, R>(
 	record: Record<K, V>,
 	transformer: (value: V, key: K) => R,
@@ -81,14 +45,41 @@ export function transformRecord<K extends string, V, R>(
 }
 
 /**
- * Spread operator with transformation - useful for object spreading with field transforms
+ * Transform an optional field only if it exists (doesn't add undefined)
+ *
+ * This helper conditionally includes a field in an object spread only when the source
+ * value is defined. Unlike `transformOptional`, this returns an empty object when
+ * the value is undefined, preventing `undefined` from appearing in the result.
+ *
+ * @param key - The field name to include in the result
+ * @param value - The optional value to transform
+ * @param transformer - Function to transform the value if it exists
+ * @returns An object with the field if value exists, or empty object if undefined
  *
  * @example
- * return spreadWith(raw, {
- *   chainId: normalizeChainId(raw.chainId),
- *   tokenIds: raw.tokenIds.map(normalizeTokenId)
- * });
+ * // Without transformOptionalField (BAD - adds undefined to result)
+ * return {
+ *   ...obj,
+ *   bridgeInfo: raw.bridgeInfo ? transform(raw.bridgeInfo) : undefined
+ * };
+ *
+ * @example
+ * // With transformOptionalField (GOOD - only adds field if it exists)
+ * return {
+ *   ...obj,
+ *   ...transformOptionalField('bridgeInfo', raw.bridgeInfo, transform)
+ * };
  */
+export function transformOptionalField<K extends string, T, R>(
+	key: K,
+	value: T | undefined,
+	transformer: (value: T) => R,
+): Record<K, R> | Record<string, never> {
+	return value !== undefined
+		? ({ [key]: transformer(value) } as Record<K, R>)
+		: {};
+}
+
 export function spreadWith<TObj, TOverrides>(
 	obj: TObj,
 	overrides: TOverrides,
@@ -99,9 +90,6 @@ export function spreadWith<TObj, TOverrides>(
 	} as Omit<TObj, keyof TOverrides> & TOverrides;
 }
 
-/**
- * Page parameter type for pagination (matches generated API types)
- */
 export interface Page {
 	page: number;
 	pageSize: number;
@@ -109,17 +97,11 @@ export interface Page {
 	sort?: Array<SortBy>;
 }
 
-/**
- * Sort parameter type for pagination
- */
 export interface SortBy {
 	column: string;
 	order: 'ASC' | 'DESC';
 }
 
-/**
- * Input parameters for building a page object
- */
 export interface BuildPageParams {
 	page?: number;
 	pageSize?: number;

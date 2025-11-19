@@ -18,9 +18,6 @@ import type {
 	TransactionStep,
 } from './types';
 
-/**
- * Transform raw Domain to TypedDataDomain
- */
 function toDomain(domain: Gen.Domain): TypedDataDomain {
 	return {
 		name: domain.name,
@@ -30,9 +27,6 @@ function toDomain(domain: Gen.Domain): TypedDataDomain {
 	};
 }
 
-/**
- * Transform raw Signature to typed Signature
- */
 function toSignature(signature: Gen.Signature): Signature {
 	return {
 		domain: toDomain(signature.domain),
@@ -49,6 +43,7 @@ function toSignature(signature: Gen.Signature): Signature {
  * that aren't in the generated Step type, so we cast to any to access them.
  */
 export function toStep(raw: Gen.Step): Step {
+	// biome-ignore lint/suspicious/noExplicitAny: API returns extra fields not in generated types
 	const rawAny = raw as any;
 	const baseStep = {
 		...raw,
@@ -81,6 +76,7 @@ export function toStep(raw: Gen.Step): Step {
 		return {
 			...baseStep,
 			id: raw.id,
+			// biome-ignore lint/style/noNonNullAssertion: post is required for signature steps
 			post: raw.post!,
 		} as SignatureStep;
 	}
@@ -92,6 +88,7 @@ export function toStep(raw: Gen.Step): Step {
 		return {
 			...baseStep,
 			id: raw.id,
+			// biome-ignore lint/style/noNonNullAssertion: post is required for signature steps
 			post: raw.post!,
 			signature: toSignature(raw.signature),
 		} as SignatureStep;
@@ -100,16 +97,10 @@ export function toStep(raw: Gen.Step): Step {
 	throw new Error(`Unknown step type: ${raw.id}`);
 }
 
-/**
- * Transform array of raw Steps to typed Steps
- */
 export function toSteps(raw: Gen.Step[]): Step[] {
 	return raw.map(toStep);
 }
 
-/**
- * Transform raw Currency to typed Currency with Address
- */
 export function toCurrency(raw: Gen.Currency): Currency {
 	return {
 		...raw,
@@ -117,16 +108,10 @@ export function toCurrency(raw: Gen.Currency): Currency {
 	};
 }
 
-/**
- * Transform array of raw Currencies to typed Currencies
- */
 export function toCurrencies(raw: Gen.Currency[]): Currency[] {
 	return raw.map(toCurrency);
 }
 
-/**
- * Transform raw Order to typed Order with Address for priceCurrencyAddress
- */
 export function toOrder(raw: Gen.Order): import('./types').Order {
 	return {
 		...raw,
@@ -134,16 +119,10 @@ export function toOrder(raw: Gen.Order): import('./types').Order {
 	};
 }
 
-/**
- * Transform array of raw Orders to typed Orders
- */
 export function toOrders(raw: Gen.Order[]): import('./types').Order[] {
 	return raw.map(toOrder);
 }
 
-/**
- * Transform raw CollectibleOrder to typed CollectibleOrder with normalized Order types
- */
 export function toCollectibleOrder(
 	raw: Gen.CollectibleOrder,
 ): import('./types').CollectibleOrder {
@@ -162,18 +141,12 @@ export function toCollectibleOrder(
 	};
 }
 
-/**
- * Transform array of raw CollectibleOrders to typed CollectibleOrders
- */
 export function toCollectibleOrders(
 	raw: Gen.CollectibleOrder[],
 ): import('./types').CollectibleOrder[] {
 	return raw.map(toCollectibleOrder);
 }
 
-/**
- * Transform raw PrimarySaleItem to typed PrimarySaleItem with Address for currencyAddress
- */
 export function toPrimarySaleItem(raw: Gen.PrimarySaleItem): PrimarySaleItem {
 	return {
 		...raw,
@@ -182,18 +155,12 @@ export function toPrimarySaleItem(raw: Gen.PrimarySaleItem): PrimarySaleItem {
 	};
 }
 
-/**
- * Transform array of raw PrimarySaleItems to typed PrimarySaleItems
- */
 export function toPrimarySaleItems(
 	raw: Gen.PrimarySaleItem[],
 ): PrimarySaleItem[] {
 	return raw.map(toPrimarySaleItem);
 }
 
-/**
- * Transform raw CollectiblePrimarySaleItem to typed CollectiblePrimarySaleItem with normalized PrimarySaleItem
- */
 export function toCollectiblePrimarySaleItem(
 	raw: Gen.CollectiblePrimarySaleItem,
 ): CollectiblePrimarySaleItem {
@@ -203,9 +170,6 @@ export function toCollectiblePrimarySaleItem(
 	};
 }
 
-/**
- * Transform array of raw CollectiblePrimarySaleItems to typed CollectiblePrimarySaleItems
- */
 export function toCollectiblePrimarySaleItems(
 	raw: Gen.CollectiblePrimarySaleItem[],
 ): CollectiblePrimarySaleItem[] {

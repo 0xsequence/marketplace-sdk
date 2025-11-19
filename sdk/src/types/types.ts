@@ -20,9 +20,7 @@ export type {
 	ShopPage,
 };
 
-// ============================================================================
 // Marketplace Configuration
-// ============================================================================
 
 export interface MarketplaceConfig {
 	projectId: number;
@@ -51,9 +49,7 @@ export function isMarketCollection(
 	return collection.marketplaceCollectionType === 'market';
 }
 
-// ============================================================================
 // Wallet Configuration
-// ============================================================================
 
 export interface EcosystemWalletSettings {
 	walletUrl: string;
@@ -77,9 +73,7 @@ export interface MarketplaceWalletWaasSettings {
 	providers: Array<OpenIdProvider>;
 }
 
-// ============================================================================
 // Filtering & Metadata
-// ============================================================================
 
 export interface MetadataFilterRule {
 	key: string;
@@ -92,9 +86,7 @@ export interface CollectionFilterSettings {
 	exclusions: Array<MetadataFilterRule>;
 }
 
-// ============================================================================
 // UI Types
-// ============================================================================
 
 export type Price = {
 	amountRaw: bigint;

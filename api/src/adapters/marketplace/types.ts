@@ -27,9 +27,7 @@ export type {
 	TokenMetadata,
 } from './marketplace.gen';
 
-// ============================================================================
 // Currency - Normalized with Address type
-// ============================================================================
 
 /**
  * Currency type with normalized Address (viem branded type instead of string)
@@ -38,9 +36,7 @@ export interface Currency extends Omit<GenCurrency, 'contractAddress'> {
 	contractAddress: Address;
 }
 
-// ============================================================================
 // PrimarySaleItem - Normalized with Address type
-// ============================================================================
 
 /**
  * PrimarySaleItem type with normalized Address for currencyAddress.
@@ -61,9 +57,7 @@ export interface CollectiblePrimarySaleItem
 	primarySaleItem: PrimarySaleItem;
 }
 
-// ============================================================================
 // Order - Normalized with Address type
-// ============================================================================
 
 /**
  * Order type with normalized Address for priceCurrencyAddress.
@@ -87,9 +81,7 @@ export interface CollectibleOrder
 	offer?: Order;
 }
 
-// ============================================================================
 // Step Types - Discriminated Unions for Type Safety
-// ============================================================================
 
 /**
  * Base step type that extends Gen.Step with viem Address type.
@@ -244,11 +236,9 @@ export type Step = SignatureStep | TransactionStep;
 // They are compatible at runtime, but TypeScript sees them as different types.
 // The discriminated union here provides better type safety and auto-completion.
 
-// ============================================================================
 // Step Type Guards
-// ============================================================================
+
 // Step Type Guards
-// ============================================================================
 
 /**
  * Type guard to check if a step is a signature step (EIP-191 or EIP-712).
@@ -338,9 +328,7 @@ export function isCancelStep(step: Step): step is CancelStep {
 	return step.id === StepType.cancel;
 }
 
-// ============================================================================
 // Step Utility Functions
-// ============================================================================
 
 /**
  * Find a step by its type in an array of steps.
