@@ -14,7 +14,7 @@ expect.extend(matchers);
 // Test component to verify context value
 function TestComponent() {
 	const config = useContext(MarketplaceSdkContext);
-	return <div data-testid="config-value">{config.projectAccessKey}</div>;
+	return <div data-testid="config-value">{config?.projectAccessKey}</div>;
 }
 
 describe('MarketplaceProvider', () => {
