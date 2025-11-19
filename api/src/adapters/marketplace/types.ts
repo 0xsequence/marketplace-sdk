@@ -16,6 +16,7 @@ import {
 	type Currency as GenCurrency,
 	type Order as GenOrder,
 	type PrimarySaleItem as GenPrimarySaleItem,
+	type Signature as GenSignature,
 	type Step as GenStep,
 	type PostRequest,
 	StepType,
@@ -101,10 +102,7 @@ type StepBase = Omit<GenStep, 'to'> & {
 /**
  * Signature type with viem's TypedDataDomain instead of raw Domain
  */
-export type Signature = Omit<
-	import('./marketplace.gen').Signature,
-	'domain'
-> & {
+export type Signature = Omit<GenSignature, 'domain'> & {
 	domain: TypedDataDomain;
 };
 

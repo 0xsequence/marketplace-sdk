@@ -26,7 +26,13 @@ import {
 	toOrders,
 	toSteps,
 } from './transforms';
-import type { CollectibleOrder, Currency, Order, Step } from './types';
+import type {
+	CollectibleOrder,
+	CollectiblePrimarySaleItem,
+	Currency,
+	Order,
+	Step,
+} from './types';
 
 /**
  * SDK-facing CheckoutOptionsItem type with bigint tokenId
@@ -224,7 +230,7 @@ export type ListPrimarySaleItemsResponse = Omit<
 	Gen.ListPrimarySaleItemsResponse,
 	'primarySaleItems'
 > & {
-	primarySaleItems: Array<import('./types').CollectiblePrimarySaleItem>;
+	primarySaleItems: Array<CollectiblePrimarySaleItem>;
 };
 
 /**

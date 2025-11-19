@@ -9,6 +9,7 @@ import type {
 } from '../../_internal';
 import {
 	type FetchMarketCheckoutOptionsParams,
+	type fetchMarketCheckoutOptions,
 	type MarketCheckoutOptionsQueryOptions,
 	marketCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/market-checkout-options';
@@ -101,7 +102,5 @@ export type UseMarketCheckoutOptionsArgs = {
 };
 
 export type UseMarketCheckoutOptionsReturn = Awaited<
-	ReturnType<
-		typeof import('../../queries/checkout/market-checkout-options').fetchMarketCheckoutOptions
-	>
+	ReturnType<typeof fetchMarketCheckoutOptions>
 >;

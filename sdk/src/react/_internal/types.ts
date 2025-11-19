@@ -3,6 +3,11 @@ import type {
 	CreateReq,
 	MarketplaceKind,
 } from '@0xsequence/marketplace-api';
+import type { SdkConfig } from '../../types';
+import type {
+	StandardInfiniteQueryOptions,
+	StandardQueryOptions,
+} from '../types/query';
 
 export interface QueryArg {
 	enabled?: boolean;
@@ -90,13 +95,10 @@ export type ApiArgs<T> = ValuesOptional<Omit<T, 'config' | 'query'>>;
  * - Makes all fields optional except config
  * - Works with standard queries
  */
-export type SdkQueryParams<
-	TApiRequest,
-	TQuery = import('../types/query').StandardQueryOptions,
-> = {
+export type SdkQueryParams<TApiRequest, TQuery = StandardQueryOptions> = {
 	[K in keyof TApiRequest]?: TApiRequest[K];
 } & {
-	config: import('../../types').SdkConfig;
+	config: SdkConfig;
 	query?: TQuery;
 };
 
@@ -107,7 +109,7 @@ export type SdkQueryParams<
  */
 export type SdkInfiniteQueryParams<TApiRequest> = SdkQueryParams<
 	TApiRequest,
-	import('../types/query').StandardInfiniteQueryOptions
+	StandardInfiniteQueryOptions
 >;
 
 /**

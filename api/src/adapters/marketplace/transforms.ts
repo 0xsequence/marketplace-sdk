@@ -9,8 +9,10 @@ import { normalizeAddress } from '../../utils/normalize';
 import type * as Gen from './marketplace.gen';
 import { StepType } from './marketplace.gen';
 import type {
+	CollectibleOrder,
 	CollectiblePrimarySaleItem,
 	Currency,
+	Order,
 	PrimarySaleItem,
 	Signature,
 	SignatureStep,
@@ -112,20 +114,20 @@ export function toCurrencies(raw: Gen.Currency[]): Currency[] {
 	return raw.map(toCurrency);
 }
 
-export function toOrder(raw: Gen.Order): import('./types').Order {
+export function toOrder(raw: Gen.Order): Order {
 	return {
 		...raw,
 		priceCurrencyAddress: normalizeAddress(raw.priceCurrencyAddress),
 	};
 }
 
-export function toOrders(raw: Gen.Order[]): import('./types').Order[] {
+export function toOrders(raw: Gen.Order[]): Order[] {
 	return raw.map(toOrder);
 }
 
 export function toCollectibleOrder(
 	raw: Gen.CollectibleOrder,
-): import('./types').CollectibleOrder {
+): CollectibleOrder {
 	return {
 		...raw,
 		metadata: {
@@ -143,7 +145,7 @@ export function toCollectibleOrder(
 
 export function toCollectibleOrders(
 	raw: Gen.CollectibleOrder[],
-): import('./types').CollectibleOrder[] {
+): CollectibleOrder[] {
 	return raw.map(toCollectibleOrder);
 }
 

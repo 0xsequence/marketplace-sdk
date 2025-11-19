@@ -5,6 +5,7 @@ import type { Address } from 'viem';
 import type { Optional } from '../../_internal';
 import {
 	type FetchGetTokenRangesParams,
+	type fetchGetTokenRanges,
 	type GetTokenRangesQueryOptions,
 	getTokenRangesQueryOptions,
 } from '../../queries/token/ranges';
@@ -88,5 +89,5 @@ export type UseGetTokenRangesProps = {
 };
 
 export type UseGetTokenRangesReturn = Awaited<
-	ReturnType<typeof import('../../queries/token/ranges').fetchGetTokenRanges>
+	ReturnType<typeof fetchGetTokenRanges>
 >;
