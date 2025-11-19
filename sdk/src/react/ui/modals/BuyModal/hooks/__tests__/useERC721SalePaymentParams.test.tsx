@@ -36,10 +36,13 @@ vi.mock('../../store', () => ({
 	})),
 }));
 
-const mockSalesContractAddress = '0x1234567890123456789012345678901234567890';
-const mockCollectionAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+const mockSalesContractAddress =
+	'0x1234567890123456789012345678901234567890' as Address;
+const mockCollectionAddress =
+	'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as Address;
 const mockPrice = 1000000000000000000n; // 1 ETH in wei
-const mockCurrencyAddress = '0x0000000000000000000000000000000000000000'; // ETH
+const mockCurrencyAddress =
+	'0x0000000000000000000000000000000000000000' as Address; // ETH
 
 describe('getERC721SalePaymentParams', () => {
 	it('should generate correct payment parameters', async () => {
