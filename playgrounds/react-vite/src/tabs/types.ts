@@ -1,5 +1,5 @@
 import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
-import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react/ui/components/marketplace-collectible-card';
+import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 
 export interface ViewProps {
