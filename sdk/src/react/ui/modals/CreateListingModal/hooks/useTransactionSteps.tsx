@@ -1,3 +1,4 @@
+import type { Marketplace } from '@0xsequence/marketplace-api';
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
@@ -46,7 +47,8 @@ export const useTransactionSteps = ({
 		chainId,
 	});
 	const currency = currencies?.find(
-		(c) => c.contractAddress === listingInput.listing.currencyAddress,
+		(c: Marketplace.Currency) =>
+			c.contractAddress === listingInput.listing.currencyAddress,
 	);
 	const analytics = useAnalytics();
 	const { processStep } = useProcessStep();
@@ -184,7 +186,8 @@ export const useTransactionSteps = ({
 			if (hash || orderId) {
 				const currencyDecimal =
 					currencies?.find(
-						(c) => c.contractAddress === listingInput.listing.currencyAddress,
+						(c: Marketplace.Currency) =>
+							c.contractAddress === listingInput.listing.currencyAddress,
 					)?.decimals || 0;
 
 				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
