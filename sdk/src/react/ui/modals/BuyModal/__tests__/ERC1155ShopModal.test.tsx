@@ -34,7 +34,7 @@ const mockCollection = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456',
+	salesContractAddress: '0x4560000000000000000000000000000000000000' as Address,
 	items: [
 		{ tokenId: 1n, quantity: 2n },
 		{ tokenId: 2n, quantity: 1n },
