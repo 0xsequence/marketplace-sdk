@@ -5,9 +5,14 @@ import { useMarketplaceConfig } from '../../../../../hooks';
 import { useMarketPlatformFee } from '../useMarketPlatformFee';
 
 // Mock dependencies
-vi.mock('../../../../../hooks', () => ({
-	useMarketplaceConfig: vi.fn(),
-}));
+vi.mock('../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../hooks');
+	return {
+		...actual,
+		useMarketplaceConfig: vi.fn(),
+	};
+});
 
 describe('useMarketPlatformFee', () => {
 	const defaultProps = {

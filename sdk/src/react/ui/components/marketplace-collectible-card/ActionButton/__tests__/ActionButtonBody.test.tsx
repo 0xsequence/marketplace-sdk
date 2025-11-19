@@ -14,9 +14,14 @@ vi.mock('../store', () => ({
 	})),
 }));
 
-vi.mock('../../../../../hooks', () => ({
-	useOpenConnectModal: vi.fn(),
-}));
+vi.mock('../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../hooks');
+	return {
+		...actual,
+		useOpenConnectModal: vi.fn(),
+	};
+});
 
 vi.mock('wagmi', async () => {
 	const actual = await vi.importActual('wagmi');

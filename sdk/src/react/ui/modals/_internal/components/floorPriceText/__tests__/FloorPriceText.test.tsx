@@ -8,10 +8,15 @@ import {
 } from '../../../../../../hooks';
 import FloorPriceText from '../index';
 
-vi.mock('../../../../../../hooks', () => ({
-	useCollectibleMarketLowestListing: vi.fn(),
-	useCurrencyComparePrices: vi.fn(),
-}));
+vi.mock('../../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../../hooks');
+	return {
+		...actual,
+		useCollectibleMarketLowestListing: vi.fn(),
+		useCurrencyComparePrices: vi.fn(),
+	};
+});
 
 describe('FloorPriceText', () => {
 	const mockCurrency: Currency = {
