@@ -22,7 +22,7 @@ export interface CreateListingInput {
 		tokenId: bigint;
 		quantity: bigint;
 		expiry: string;
-		currencyAddress: string;
+		currencyAddress: Address;
 		pricePerToken: bigint;
 	};
 }
@@ -49,8 +49,8 @@ export const useCreateListing = ({
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find((c) =>
-		compareAddress(c.itemsAddress, collectionAddress),
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c: MarketCollection) => compareAddress(c.itemsAddress, collectionAddress),
 	) as MarketCollection;
 
 	orderbookKind =
