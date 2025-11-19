@@ -22,7 +22,15 @@ import useHandleTransfer from '../useHandleTransfer';
 // Mock dependencies
 vi.mock('@0xsequence/connect');
 vi.mock('../../../../../../hooks/config/useConnectorMetadata');
-vi.mock('../../../../../../hooks');
+vi.mock('../../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../../hooks');
+	return {
+		...actual,
+		useCollectionDetail: vi.fn(),
+		useTransferTokens: vi.fn(),
+	};
+});
 vi.mock('../../../../_internal/components/transactionStatusModal');
 vi.mock('../../../store');
 

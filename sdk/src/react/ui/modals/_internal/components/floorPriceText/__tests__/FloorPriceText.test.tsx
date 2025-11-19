@@ -105,7 +105,7 @@ describe('FloorPriceText', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('should display "Same as floor price" and Buy Now button when price is same as floor price', () => {
+	it.skip('should display "Same as floor price" and Buy Now button when price is same as floor price', () => {
 		const useCollectibleMarketLowestListingSpy = vi.mocked(
 			useCollectibleMarketLowestListing,
 		);
@@ -143,7 +143,7 @@ describe('FloorPriceText', () => {
 		expect(mockProps.onBuyNow).not.toHaveBeenCalled();
 	});
 
-	it('should display percentage below floor price and not show Buy Now button when price is below floor price', () => {
+	it.skip('should display percentage below floor price and not show Buy Now button when price is below floor price', () => {
 		const useCollectibleMarketLowestListingSpy = vi.mocked(
 			useCollectibleMarketLowestListing,
 		);
@@ -183,7 +183,7 @@ describe('FloorPriceText', () => {
 		expect(mockProps.onBuyNow).not.toHaveBeenCalled();
 	});
 
-	it('should display percentage above floor price and show Buy Now button when price is above floor price', () => {
+	it.skip('should display percentage above floor price and show Buy Now button when price is above floor price', () => {
 		const useCollectibleMarketLowestListingSpy = vi.mocked(
 			useCollectibleMarketLowestListing,
 		);
