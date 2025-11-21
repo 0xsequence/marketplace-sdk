@@ -18,7 +18,7 @@ import {
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
-	collectibleId: string;
+	tokenId: bigint;
 	chainId: number;
 	collectionType?: CollectionType;
 	callbacks?: ModalCallbacks;

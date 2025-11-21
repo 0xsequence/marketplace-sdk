@@ -39,7 +39,7 @@ const Modal = observer(() => {
 		offerPrice,
 		offerPriceChanged,
 		invalidQuantity,
-		collectibleId,
+		tokenId,
 		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
@@ -57,7 +57,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	//const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 
@@ -74,7 +74,7 @@ const Modal = observer(() => {
 	const royaltyQuery = useRoyalty({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 
 	const modalLoading =
@@ -93,11 +93,11 @@ const Modal = observer(() => {
 		offerInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			offer: {
-				tokenId: collectibleId,
+				tokenId,
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
-				).toString(),
+				),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress: offerPrice.currency.contractAddress,
 				pricePerToken: offerPrice.amountRaw,
@@ -108,7 +108,7 @@ const Modal = observer(() => {
 		callbacks,
 		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
-		steps$: steps$,
+		steps$,
 	});
 
 	const erc20NotConfiguredError =
@@ -122,7 +122,7 @@ const Modal = observer(() => {
 	const buyModal = useBuyModal(callbacks);
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
-		tokenId: collectibleId,
+		tokenId,
 		chainId,
 		collectionAddress,
 		filter: {
@@ -164,7 +164,7 @@ const Modal = observer(() => {
 		disabled:
 			steps$.approval.exist.get() ||
 			tokenApprovalIsLoading ||
-			offerPrice.amountRaw === '0' ||
+			offerPrice.amountRaw === 0n ||
 			invalidQuantity ||
 			insufficientBalance ||
 			(orderbookKind === OrderbookKind.opensea &&
@@ -182,7 +182,7 @@ const Modal = observer(() => {
 		variant: 'secondary' as const,
 		disabled:
 			invalidQuantity ||
-			offerPrice.amountRaw === '0' ||
+			offerPrice.amountRaw === 0n ||
 			steps$?.approval.isExecuting.get() ||
 			tokenApprovalIsLoading ||
 			isLoading,
@@ -224,7 +224,7 @@ const Modal = observer(() => {
 					<TokenPreview
 						collectionName={collection?.name}
 						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
+						tokenId={tokenId}
 						chainId={chainId}
 					/>
 
@@ -269,11 +269,11 @@ const Modal = observer(() => {
 						/>
 					)}
 
-					{offerPrice.amountRaw !== '0' &&
+					{offerPrice.amountRaw !== 0n &&
 						offerPriceChanged &&
 						!insufficientBalance && (
 							<FloorPriceText
-								tokenId={collectibleId}
+								tokenId={tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
 								price={offerPrice}
@@ -284,7 +284,7 @@ const Modal = observer(() => {
 										buyModal.show({
 											chainId,
 											collectionAddress,
-											collectibleId,
+											tokenId,
 											orderId: lowestListing.orderId,
 											marketplace: lowestListing.marketplace,
 										});

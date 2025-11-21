@@ -1,16 +1,14 @@
-import { PropertyType } from '@0xsequence/metadata';
+import { IndexerMocks, MetadataMocks } from '@0xsequence/api-client';
+
+const { mockIndexerEndpoint, mockTokenSupply } = IndexerMocks;
+const { mockMetadataEndpoint, mockTokenMetadata, mockTokenMetadataNormalized } =
+	MetadataMocks;
+
+import { PropertyType } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenSupply,
-} from '../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockMetadataEndpoint,
-	mockTokenMetadata,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import type { UseTokenMetadataSearchParams } from './metadata-search';
 import { useTokenMetadataSearch } from './metadata-search';
 
@@ -55,9 +53,11 @@ describe('useTokenMetadataSearch', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
+		// Verify the data matches our mock (normalized with BigInt)
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+		expect(result.current.data?.tokenMetadata).toEqual([
+			mockTokenMetadataNormalized,
+		]);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -75,9 +75,11 @@ describe('useTokenMetadataSearch', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
+		// Verify the data matches our mock (normalized with BigInt)
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+		expect(result.current.data?.tokenMetadata).toEqual([
+			mockTokenMetadataNormalized,
+		]);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -130,7 +132,9 @@ describe('useTokenMetadataSearch', () => {
 			});
 
 			expect(result.current.data).toBeDefined();
-			expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+			expect(result.current.data?.tokenMetadata).toEqual([
+				mockTokenMetadataNormalized,
+			]);
 		});
 
 		it('should filter out unminted tokens when onlyMinted is true', async () => {
@@ -161,6 +165,7 @@ describe('useTokenMetadataSearch', () => {
 			});
 
 			expect(result.current.data).toBeDefined();
+			// Should be empty array since all tokens have supply 0
 			expect(result.current.data?.tokenMetadata).toEqual([]);
 		});
 
@@ -193,7 +198,9 @@ describe('useTokenMetadataSearch', () => {
 			});
 
 			expect(result.current.data).toBeDefined();
-			expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+			expect(result.current.data?.tokenMetadata).toEqual([
+				mockTokenMetadataNormalized,
+			]);
 		});
 
 		it('should handle errors from token supplies endpoint when onlyMinted is true', async () => {

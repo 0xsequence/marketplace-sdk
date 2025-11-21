@@ -1,9 +1,12 @@
-import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
-import { queryOptions } from '@tanstack/react-query';
+import type { Indexer } from '@0xsequence/api-client';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import { getIndexerClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createCollectionQueryKey } from './queryKeys';
 
 export interface CollectionBalanceFilter {
 	accountAddresses: Array<Address>;
@@ -14,15 +17,20 @@ export interface CollectionBalanceFilter {
 export interface FetchCollectionBalanceDetailsParams {
 	chainId: number;
 	filter: CollectionBalanceFilter;
-	config: SdkConfig;
 }
+
+export type CollectionBalanceDetailsQueryOptions =
+	SdkQueryParams<FetchCollectionBalanceDetailsParams>;
 
 /**
  * Fetches detailed balance information for multiple accounts from the Indexer API
  */
 export async function fetchCollectionBalanceDetails(
-	params: FetchCollectionBalanceDetailsParams,
-): Promise<GetTokenBalancesDetailsReturn> {
+	params: WithRequired<
+		CollectionBalanceDetailsQueryOptions,
+		'chainId' | 'filter' | 'config'
+	>,
+): Promise<Indexer.GetTokenBalancesDetailsResponse> {
 	const { chainId, filter, config } = params;
 
 	const indexerClient = getIndexerClient(chainId, config);
@@ -38,20 +46,25 @@ export async function fetchCollectionBalanceDetails(
 	);
 
 	const responses = await Promise.all(promises);
-	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
-		(acc, curr) => {
-			if (!curr) return acc;
-			return {
-				page: curr.page,
-				nativeBalances: [
-					...(acc.nativeBalances || []),
-					...(curr.nativeBalances || []),
-				],
-				balances: [...(acc.balances || []), ...(curr.balances || [])],
-			};
-		},
-		{ page: {}, nativeBalances: [], balances: [] },
-	);
+	const mergedResponse =
+		responses.reduce<Indexer.GetTokenBalancesDetailsResponse>(
+			(acc, curr) => {
+				if (!curr) return acc;
+				return {
+					page: curr.page,
+					nativeBalances: [
+						...(acc.nativeBalances || []),
+						...(curr.nativeBalances || []),
+					],
+					balances: [...(acc.balances || []), ...(curr.balances || [])],
+				};
+			},
+			{
+				page: { page: 0, pageSize: 0, more: false },
+				nativeBalances: [],
+				balances: [],
+			},
+		);
 
 	if (!mergedResponse) {
 		throw new Error('Failed to fetch collection balance details');
@@ -60,44 +73,25 @@ export async function fetchCollectionBalanceDetails(
 	return mergedResponse;
 }
 
-export type CollectionBalanceDetailsQueryOptions =
-	ValuesOptional<FetchCollectionBalanceDetailsParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getCollectionBalanceDetailsQueryKey(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: params.chainId!,
-		filter: params.filter!,
-	};
+	const { chainId, filter } = params;
 
-	return ['collection', 'balance-details', apiArgs] as const;
+	return createCollectionQueryKey('balance-details', { chainId, filter });
 }
 
 export function collectionBalanceDetailsQueryOptions(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.filter?.accountAddresses?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionBalanceDetailsQueryKey,
+			requiredParams: ['chainId', 'filter', 'config'] as const,
+			fetcher: fetchCollectionBalanceDetails,
+			customValidation: (p) =>
+				!!p.filter?.accountAddresses && p.filter.accountAddresses.length > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionBalanceDetailsQueryKey(params),
-		queryFn: () =>
-			fetchCollectionBalanceDetails({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				filter: params.filter!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

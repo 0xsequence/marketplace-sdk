@@ -46,10 +46,7 @@ function CurrencyOptionsSelect({
 		if (openseaCurrency) {
 			// Filter to only show the OpenSea-supported currency
 			filteredCurrencies = currencies.filter((currency) =>
-				compareAddress(
-					currency.contractAddress,
-					openseaCurrency.address as Address,
-				),
+				compareAddress(currency.contractAddress, openseaCurrency.address),
 			);
 		}
 	}
@@ -64,9 +61,9 @@ function CurrencyOptionsSelect({
 			// We dont support native currency listings for any marketplace other than Sequence Marketplace v2
 			// So we need to set the set another currency as the default
 			if (secondCurrencyAsDefault && filteredCurrencies.length > 1) {
-				onCurrencyChange(filteredCurrencies[1]);
+				onCurrencyChange(filteredCurrencies[1] as Currency);
 			} else {
-				onCurrencyChange(filteredCurrencies[0]);
+				onCurrencyChange(filteredCurrencies[0] as Currency);
 			}
 		}
 	}, [
@@ -94,7 +91,7 @@ function CurrencyOptionsSelect({
 			(currency) => currency.contractAddress === value,
 		);
 		if (selectedCurrency) {
-			onCurrencyChange(selectedCurrency);
+			onCurrencyChange(selectedCurrency as Currency);
 		}
 	};
 

@@ -1,11 +1,11 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockCurrencies, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockCurrencies,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseCurrencyConvertToUSDParams } from './convert-to-usd';
 import { useCurrencyConvertToUSD } from './convert-to-usd';
 
@@ -76,7 +76,7 @@ describe('useCurrencyConvertToUSD', () => {
 		const { result } = renderHook(() =>
 			useCurrencyConvertToUSD({
 				...defaultArgs,
-				currencyAddress: usdcAddress as `0x${string}`,
+				currencyAddress: usdcAddress,
 				amountRaw: '1000000', // 1 USDC (6 decimals)
 			}),
 		);
@@ -131,10 +131,11 @@ describe('useCurrencyConvertToUSD', () => {
 		}
 
 		// Change args and rerender
-		const usdcAddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+		const usdcAddress =
+			'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as `0x${string}`;
 		const newArgs = {
 			...defaultArgs,
-			currencyAddress: usdcAddress as `0x${string}`,
+			currencyAddress: usdcAddress,
 			amountRaw: '1000000', // 1 USDC (6 decimals)
 		};
 

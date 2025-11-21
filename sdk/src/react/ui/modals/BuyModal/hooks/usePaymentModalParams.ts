@@ -1,5 +1,5 @@
+import type { TokenMetadata } from '@0xsequence/api-client';
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
-import type { TokenMetadata } from '@0xsequence/metadata';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address, Hash, Hex } from 'viem';
 import type { CheckoutOptions, SdkConfig } from '../../../../../types';
@@ -32,7 +32,7 @@ interface GetBuyCollectableParams {
 	config: SdkConfig;
 	address: Address;
 	collectionAddress: string;
-	collectibleId: string;
+	tokenId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 	quantity: number;
@@ -51,7 +51,7 @@ interface GetBuyCollectableParams {
 export const getBuyCollectableParams = async ({
 	chainId,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 	callbacks,
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
@@ -70,15 +70,15 @@ export const getBuyCollectableParams = async ({
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
-		chainId: String(chainId),
+		chainId,
 		collectionAddress,
 		buyer: address,
-		marketplace: marketplace,
+		marketplace,
 		ordersData: [
 			{
-				orderId: orderId,
-				quantity: quantity.toString(),
-				tokenId: collectibleId,
+				orderId,
+				quantity: BigInt(quantity),
+				tokenId: BigInt(tokenId),
 			},
 		],
 		additionalFees: [fee],
@@ -121,13 +121,15 @@ export const getBuyCollectableParams = async ({
 		chain: chainId,
 		collectibles: [
 			{
-				tokenId: collectibleId,
+				// Checkout library expects string for tokenId
+				tokenId: tokenId.toString(),
+				// Checkout library expects string for quantity display
 				quantity: quantity.toString(),
 				decimals: collectable.decimals,
 			},
 		],
 		currencyAddress: priceCurrencyAddress,
-		price: buyStep.price,
+		price: buyStep.price.toString(),
 		targetContractAddress: buyStep.to,
 		approvedSpenderAddress,
 		txData: buyStep.data as Hex,
@@ -202,9 +204,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
-	const collectibleId = isMarketProps(buyModalProps)
-		? buyModalProps.collectibleId
-		: '';
+	const tokenId = isMarketProps(buyModalProps) ? buyModalProps.tokenId : 0n;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
@@ -241,7 +241,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						config,
 						address,
 						collectionAddress,
-						collectibleId,
+						tokenId,
 						marketplace,
 						orderId,
 						quantity,
@@ -250,8 +250,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						fee,
 						priceCurrencyAddress,
 						callbacks: {
-							onSuccess: onSuccess,
-							onError: onError,
+							onSuccess,
+							onError,
 							successActionButtons: buyModalProps.successActionButtons,
 						},
 						customCreditCardProviderCallback,

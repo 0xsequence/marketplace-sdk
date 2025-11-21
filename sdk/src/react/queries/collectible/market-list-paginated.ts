@@ -1,32 +1,33 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
-	QueryKeyArgs,
-	ValuesOptional,
 } from '../../_internal';
-import { getMarketplaceClient } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
 export interface FetchListCollectiblesPaginatedParams
-	extends Omit<
-		ListCollectiblesRequest,
-		'chainId' | 'contractAddress' | 'page'
-	> {
-	chainId: number;
+	extends Omit<ListCollectiblesRequest, 'page'> {
 	collectionAddress: Address;
 	page?: number;
 	pageSize?: number;
-	config: SdkConfig;
 }
+
+export type ListCollectiblesPaginatedQueryOptions =
+	SdkQueryParams<FetchListCollectiblesPaginatedParams>;
 
 /**
  * Fetches a list of collectibles with pagination support from the Marketplace API
  */
 export async function fetchListCollectiblesPaginated(
-	params: FetchListCollectiblesPaginatedParams,
+	params: WithRequired<
+		ListCollectiblesPaginatedQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
 ): Promise<ListCollectiblesResponse> {
 	const {
 		collectionAddress,
@@ -38,25 +39,16 @@ export async function fetchListCollectiblesPaginated(
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const pageParams: Page = {
-		page,
-		pageSize,
-	};
-
-	const apiArgs: ListCollectiblesRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		page: pageParams,
+	return await marketplaceClient.listCollectibles({
+		collectionAddress,
+		chainId,
+		page: {
+			page,
+			pageSize,
+		},
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectibles(apiArgs);
+	});
 }
-
-export type ListCollectiblesPaginatedQueryOptions =
-	ValuesOptional<FetchListCollectiblesPaginatedParams> & {
-		query?: StandardQueryOptions;
-	};
 
 /**
  * Query key structure: [resource, operation, params]
@@ -65,47 +57,34 @@ export type ListCollectiblesPaginatedQueryOptions =
 export function getListCollectiblesPaginatedQueryKey(
 	params: ListCollectiblesPaginatedQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		side: params.side,
-		filter: params.filter,
-		page: params.page
-			? { page: params.page, pageSize: params.pageSize ?? 30 }
-			: undefined,
-	} satisfies QueryKeyArgs<ListCollectiblesRequest>;
-
-	return ['collectible', 'market-list-paginated', apiArgs] as const;
+	return [
+		'collectible',
+		'market-list-paginated',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+			side: params.side,
+			filter: params.filter,
+			page: params.page,
+			pageSize: params.pageSize,
+		},
+	] as const;
 }
 
 export function listCollectiblesPaginatedQueryOptions(
 	params: ListCollectiblesPaginatedQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.side &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectiblesPaginatedQueryKey,
+			requiredParams: [
+				'collectionAddress',
+				'chainId',
+				'side',
+				'config',
+			] as const,
+			fetcher: fetchListCollectiblesPaginated,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectiblesPaginatedQueryKey(params),
-		queryFn: () =>
-			fetchListCollectiblesPaginated({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				side: params.side!,
-				filter: params.filter,
-				page: params.page,
-				pageSize: params.pageSize,
-			}),
-		...params.query,
-		enabled,
-	});
 }

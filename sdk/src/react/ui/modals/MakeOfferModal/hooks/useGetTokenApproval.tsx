@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
@@ -15,9 +16,9 @@ import { useConfig, useConnectorMetadata } from '../../../../hooks';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
-	tokenId: string;
-	collectionAddress: string;
-	currencyAddress: string;
+	tokenId: bigint;
+	collectionAddress: Address;
+	currencyAddress: Address;
 	contractType: ContractType;
 	orderbook: OrderbookKind;
 	query?: QueryArg;
@@ -35,9 +36,9 @@ export const useGetTokenApprovalData = (
 
 	const offer = {
 		tokenId: params.tokenId,
-		quantity: '1',
+		quantity: 1n,
 		currencyAddress: params.currencyAddress,
-		pricePerToken: '1',
+		pricePerToken: 1n,
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
@@ -48,7 +49,7 @@ export const useGetTokenApprovalData = (
 		queryFn: isEnabled
 			? async () => {
 					const args = {
-						chainId: String(params.chainId),
+						chainId: params.chainId,
 						collectionAddress: params.collectionAddress,
 						maker: address,
 						walletType: walletKind,

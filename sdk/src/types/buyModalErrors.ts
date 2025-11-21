@@ -63,7 +63,7 @@ export interface NetworkError {
 
 export interface ContractError {
 	type: 'CONTRACT_ERROR';
-	contractAddress: string;
+	contractAddress: `0x${string}`;
 	message: string;
 	method?: string;
 	chainId?: number;
@@ -190,7 +190,7 @@ export class BuyModalErrorFactory {
 	}
 
 	static contractError(
-		contractAddress: string,
+		contractAddress: `0x${string}`,
 		message: string,
 		method?: string,
 		chainId?: number,
@@ -356,7 +356,8 @@ export class BuyModalErrorFormatter {
 				// Extract contract address from error message if available
 				const addressMatch = error.message.match(/0x[a-fA-F0-9]{40}/);
 				return BuyModalErrorFactory.contractError(
-					addressMatch?.[0] || 'unknown',
+					(addressMatch?.[0] as `0x${string}`) ||
+						'0x0000000000000000000000000000000000000000',
 					error.message,
 				);
 			}

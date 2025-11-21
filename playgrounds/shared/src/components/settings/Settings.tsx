@@ -179,15 +179,13 @@ export function Settings({ collectionAddress }: SettingsProps) {
 							</Text>
 							<div className="flex items-center gap-2">
 								<Switch
-									checked={paginationMode === 'paginated'}
+									checked={paginationMode === 'paged'}
 									onCheckedChange={(checked) =>
-										setPaginationMode(checked ? 'paginated' : 'infinite')
+										setPaginationMode(checked ? 'paged' : 'infinite')
 									}
 								/>
 								<Text variant="small" color="text80">
-									{paginationMode === 'paginated'
-										? 'Paginated'
-										: 'Infinite Scroll'}
+									{paginationMode === 'paged' ? 'Paginated' : 'Infinite Scroll'}
 								</Text>
 							</div>
 						</div>

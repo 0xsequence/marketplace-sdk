@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchListOffersForCollectibleParams,
 	type ListOffersForCollectibleQueryOptions,
 	listOffersForCollectibleQueryOptions,
 } from '../../queries/collectible/market-offers';
@@ -22,7 +21,7 @@ export type UseCollectibleMarketOffersParams = Optional<
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
- * @param params.collectibleId - The specific collectible ID to fetch offers for
+ * @param params.tokenId - The specific token ID to fetch offers for
  * @param params.filter - Optional filtering parameters
  * @param params.page - Optional pagination parameters
  * @param params.query - Optional React Query configuration
@@ -35,7 +34,7 @@ export type UseCollectibleMarketOffersParams = Optional<
  * const { data, isLoading } = useCollectibleMarketOffers({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '1'
+ *   tokenId: 1n
  * })
  * ```
  *
@@ -45,7 +44,7 @@ export type UseCollectibleMarketOffersParams = Optional<
  * const { data } = useCollectibleMarketOffers({
  *   chainId: 1,
  *   collectionAddress: '0x...',
- *   collectibleId: '1',
+ *   tokenId: 1n,
  *   filter: {
  *     marketplace: [MarketplaceKind.sequence_marketplace_v2]
  *   }
@@ -71,10 +70,7 @@ export function useCollectibleMarketOffers(
 
 export { listOffersForCollectibleQueryOptions };
 
-export type {
-	FetchListOffersForCollectibleParams,
-	ListOffersForCollectibleQueryOptions,
-};
+export type { ListOffersForCollectibleQueryOptions };
 
 // Legacy export for backward compatibility during migration
 export type UseListOffersForCollectibleRequest =

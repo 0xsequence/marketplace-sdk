@@ -25,7 +25,7 @@ export interface CollectiblesPageControllerProps {
 		tokenIds: string[];
 		isLoading: boolean;
 		salePrice?: {
-			amount?: string;
+			amount?: bigint;
 			currencyAddress?: Address;
 		};
 	}) => React.ReactNode;
@@ -91,8 +91,7 @@ export function CollectiblesPageController({
 					{showMarketTypeToggle ? (isShop ? 'Shop' : 'Market') : 'Collectibles'}
 				</Text>
 				<Text variant="small" color="text80">
-					Mode:{' '}
-					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}
+					Mode: {paginationMode === 'paged' ? 'Paginated' : 'Infinite Scroll'}
 				</Text>
 			</div>
 

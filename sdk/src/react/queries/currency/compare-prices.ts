@@ -1,8 +1,9 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import type { ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 import { fetchConvertPriceToUSD } from './convert-to-usd';
 
 export interface FetchComparePricesParams {
@@ -13,7 +14,6 @@ export interface FetchComparePricesParams {
 	// Second price details (to compare against)
 	compareToPriceAmountRaw: string;
 	compareToPriceCurrencyAddress: Address;
-	config: SdkConfig;
 }
 
 export type ComparePricesReturn = {
@@ -22,11 +22,22 @@ export type ComparePricesReturn = {
 	status: 'above' | 'same' | 'below';
 };
 
+export type ComparePricesQueryOptions =
+	SdkQueryParams<FetchComparePricesParams>;
+
 /**
  * Compares prices between different currencies by converting both to USD
  */
 export async function fetchComparePrices(
-	params: FetchComparePricesParams,
+	params: WithRequired<
+		ComparePricesQueryOptions,
+		| 'chainId'
+		| 'priceAmountRaw'
+		| 'priceCurrencyAddress'
+		| 'compareToPriceAmountRaw'
+		| 'compareToPriceCurrencyAddress'
+		| 'config'
+	>,
 ): Promise<ComparePricesReturn> {
 	const {
 		chainId,
@@ -69,52 +80,32 @@ export async function fetchComparePrices(
 	};
 }
 
-export type ComparePricesQueryOptions =
-	ValuesOptional<FetchComparePricesParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getComparePricesQueryKey(params: ComparePricesQueryOptions) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		priceAmountRaw: params.priceAmountRaw!,
-		priceCurrencyAddress: params.priceCurrencyAddress!,
-		compareToPriceAmountRaw: params.compareToPriceAmountRaw!,
-		compareToPriceCurrencyAddress: params.compareToPriceCurrencyAddress!,
+		chainId: params.chainId,
+		priceAmountRaw: params.priceAmountRaw,
+		priceCurrencyAddress: params.priceCurrencyAddress,
+		compareToPriceAmountRaw: params.compareToPriceAmountRaw,
+		compareToPriceCurrencyAddress: params.compareToPriceCurrencyAddress,
 	};
 
 	return ['currency', 'compare-prices', apiArgs] as const;
 }
 
 export function comparePricesQueryOptions(params: ComparePricesQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.priceAmountRaw &&
-			params.priceCurrencyAddress &&
-			params.compareToPriceAmountRaw &&
-			params.compareToPriceCurrencyAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getComparePricesQueryKey,
+			requiredParams: [
+				'chainId',
+				'priceAmountRaw',
+				'priceCurrencyAddress',
+				'compareToPriceAmountRaw',
+				'compareToPriceCurrencyAddress',
+				'config',
+			] as const,
+			fetcher: fetchComparePrices,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getComparePricesQueryKey(params),
-		queryFn: () =>
-			fetchComparePrices({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				priceAmountRaw: params.priceAmountRaw!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				priceCurrencyAddress: params.priceCurrencyAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				compareToPriceAmountRaw: params.compareToPriceAmountRaw!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				compareToPriceCurrencyAddress: params.compareToPriceCurrencyAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

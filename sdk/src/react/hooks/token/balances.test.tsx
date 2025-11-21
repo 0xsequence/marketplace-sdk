@@ -1,8 +1,11 @@
+import { IndexerMocks } from '@0xsequence/api-client';
 import { renderHook } from '@test';
 import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
+
+const { mockTokenBalanceNormalized } = IndexerMocks;
+
 import { useTokenBalances } from './balances';
 
 describe('useTokenBalances', () => {
@@ -18,7 +21,9 @@ describe('useTokenBalances', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data?.pages[0].balances).toEqual([mockTokenBalance]);
+		expect(result.current.data?.pages[0].balances).toEqual([
+			mockTokenBalanceNormalized,
+		]);
 	});
 
 	it('should handle pagination correctly', async () => {
@@ -27,7 +32,9 @@ describe('useTokenBalances', () => {
 				chainId: 1,
 				accountAddress: zeroAddress,
 				page: {
+					page: 1,
 					pageSize: 10,
+					more: false,
 				},
 			}),
 		);
@@ -49,7 +56,7 @@ describe('useTokenBalances', () => {
 				chainId: 1,
 				accountAddress: zeroAddress,
 				contractAddress: zeroAddress,
-				tokenId: '1',
+				tokenId: 1n,
 				includeMetadata: true,
 				includeCollectionTokens: true,
 			}),
@@ -95,6 +102,6 @@ describe('useTokenBalances', () => {
 		});
 
 		const balance = result.current.data?.pages[0].balances[0];
-		expect(balance?.contractInfo?.extensions.verified).toBe(true);
+		expect(balance?.contractInfo?.extensions?.verified).toBe(true);
 	});
 });

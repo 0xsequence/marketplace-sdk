@@ -1,10 +1,10 @@
 'use client';
 
+import type { ContractInfo, TokenMetadata } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
-import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
@@ -42,8 +42,8 @@ export const ERC1155BuyModal = ({
 	const quantityDecimals = isShop
 		? modalProps.quantityDecimals
 		: collectable.decimals || 0;
-	const quantityRemaining = isShop
-		? modalProps.quantityRemaining?.toString()
+	const quantityRemaining: bigint | undefined = isShop
+		? modalProps.quantityRemaining
 		: order?.quantityRemaining;
 	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
 
@@ -74,7 +74,7 @@ export const ERC1155BuyModal = ({
 				order={order}
 				cardType={cardType}
 				quantityDecimals={quantityDecimals}
-				quantityRemaining={quantityRemaining}
+				quantityRemaining={quantityRemaining || 0n}
 				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
 			/>

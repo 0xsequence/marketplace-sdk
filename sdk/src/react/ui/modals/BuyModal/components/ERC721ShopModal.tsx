@@ -1,10 +1,10 @@
 'use client';
 
+import type { ContractInfo } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { useERC721SalePaymentParams } from '../hooks/useERC721SalePaymentParams';
@@ -31,7 +31,7 @@ export const ERC721ShopModal = ({
 	} = useERC721SalePaymentParams({
 		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress: collection.address,
-		price: shopData.salePrice?.amount || '0',
+		price: shopData.salePrice?.amount || 0n,
 		currencyAddress: shopData.salePrice?.currencyAddress || '',
 		enabled: true,
 		chainId,

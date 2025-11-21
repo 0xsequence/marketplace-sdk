@@ -445,6 +445,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .order-456 {
     order: 456;
   }
+  .order-789 {
+    order: 789;
+  }
   .order-first {
     order: -9999;
   }
@@ -2664,12 +2667,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .focus\:outline-none {
-    &:focus {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-  }
   .focus-visible\:border-border-focus {
     &:focus-visible {
       border-color: var(--color-border-focus);
@@ -3262,27 +3259,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     & svg:not([class*="size-"]) {
       width: calc(var(--spacing) * 5);
       height: calc(var(--spacing) * 5);
-    }
-  }
-  .\[\&\:focus\]\:rounded-\[10px\] {
-    &:focus {
-      border-radius: 10px;
-    }
-  }
-  .\[\&\:focus\]\:outline-\[3px\] {
-    &:focus {
-      outline-style: var(--tw-outline-style);
-      outline-width: 3px;
-    }
-  }
-  .\[\&\:focus\]\:outline-offset-\[-3px\] {
-    &:focus {
-      outline-offset: -3px;
-    }
-  }
-  .\[\&\:focus\]\:outline-black {
-    &:focus {
-      outline-color: var(--color-black);
     }
   }
   .\[\&\:has\(\:disabled\)\]\:cursor-default {

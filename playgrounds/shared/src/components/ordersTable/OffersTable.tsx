@@ -13,13 +13,13 @@ import OrdersTable from './OrdersTable';
 type OffersTableProps = {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	tokenId: bigint;
 };
 
 const OffersTable = ({
 	chainId,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 }: OffersTableProps) => {
 	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
@@ -28,14 +28,14 @@ const OffersTable = ({
 	const { data: collectible } = useCollectible({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 
 	const { data: offers, isLoading: offersLoading } =
 		useListOffersForCollectible({
-			chainId: chainId,
+			chainId,
 			collectionAddress,
-			collectibleId,
+			tokenId,
 			page: {
 				page,
 				pageSize,
@@ -46,7 +46,7 @@ const OffersTable = ({
 		useCountOffersForCollectible({
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		});
 
 	const totalOffers =
@@ -108,7 +108,7 @@ const OffersTable = ({
 				onPageSizeChange={handlePageSizeChange}
 				isLoading={offersLoading}
 				chainId={chainId}
-				tokenId={collectibleId}
+				tokenId={tokenId}
 				decimals={collectible?.decimals || 0}
 			/>
 		</div>

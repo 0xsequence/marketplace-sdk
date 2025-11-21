@@ -1,6 +1,6 @@
 'use client';
 
-import type { PropertyFilter } from '@0xsequence/metadata';
+import type { PropertyFilter } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {

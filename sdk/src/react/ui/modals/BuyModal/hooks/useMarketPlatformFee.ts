@@ -20,7 +20,7 @@ export const useMarketPlatformFee = (params: FeesParams | typeof skipToken) => {
 	// Early return if skipToken is passed
 	if (params === skipToken) {
 		return {
-			amount: '0',
+			amount: 0n,
 			receiver: defaultPlatformFeeRecipient,
 		} satisfies AdditionalFee;
 	}
@@ -47,7 +47,7 @@ export const useMarketPlatformFee = (params: FeesParams | typeof skipToken) => {
 	const feePercentage = marketCollection?.feePercentage ?? defaultFee;
 
 	return {
-		amount: percentageToBPS(feePercentage).toString(),
+		amount: BigInt(Math.round(percentageToBPS(feePercentage))),
 		receiver,
 	} satisfies AdditionalFee;
 };
