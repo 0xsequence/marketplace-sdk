@@ -1,4 +1,4 @@
-import { OrderStatus } from '@0xsequence/marketplace-api';
+import { OrderStatus } from '@0xsequence/api-client';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { defaultHandlers } from '../../../../../../test/handlers';

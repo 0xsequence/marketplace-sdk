@@ -1,10 +1,10 @@
-import { IndexerMocks, MetadataMocks } from '@0xsequence/marketplace-api';
+import { IndexerMocks, MetadataMocks } from '@0xsequence/api-client';
 
 const { mockIndexerEndpoint, mockTokenSupply } = IndexerMocks;
 const { mockMetadataEndpoint, mockTokenMetadata, mockTokenMetadataNormalized } =
 	MetadataMocks;
 
-import { PropertyType } from '@0xsequence/marketplace-api';
+import { PropertyType } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';

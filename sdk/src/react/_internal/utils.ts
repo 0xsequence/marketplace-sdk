@@ -4,7 +4,7 @@ export {
 	isTransactionStep,
 	type SignatureStep,
 	type TransactionStep,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 
 export const clamp = (val: number, min: number, max: number) =>
 	Math.max(min, Math.min(max, val));

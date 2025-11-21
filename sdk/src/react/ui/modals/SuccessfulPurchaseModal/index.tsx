@@ -1,5 +1,6 @@
 'use client';
 
+import type { Metadata } from '@0xsequence/api-client';
 import {
 	Button,
 	ExternalLinkIcon,
@@ -7,7 +8,6 @@ import {
 	Modal,
 	Text,
 } from '@0xsequence/design-system';
-import type { Metadata } from '@0xsequence/marketplace-api';
 
 type TokenMetadata = Metadata.TokenMetadata;
 

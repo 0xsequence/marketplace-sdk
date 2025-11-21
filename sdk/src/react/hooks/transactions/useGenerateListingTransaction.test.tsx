@@ -1,4 +1,4 @@
-import { MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
-import { ContractType, OrderbookKind } from '@0xsequence/marketplace-api';
+import { ContractType, OrderbookKind } from '@0xsequence/api-client';
 import type { CreateReqWithDateExpiry } from './useGenerateListingTransaction';
 import { useGenerateListingTransaction } from './useGenerateListingTransaction';
 

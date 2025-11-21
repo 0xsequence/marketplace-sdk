@@ -2,7 +2,7 @@ import type {
 	ContractType,
 	CreateReq,
 	MarketplaceKind,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import type { SdkConfig } from '../../types';
 import type {
 	StandardInfiniteQueryOptions,

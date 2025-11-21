@@ -1,4 +1,4 @@
-// @0xsequence/marketplace-api
+// @0xsequence/api-client
 // Unified API adapter layer for Sequence services with normalized types
 
 export {

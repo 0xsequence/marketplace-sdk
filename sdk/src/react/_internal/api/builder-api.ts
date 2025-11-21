@@ -1,4 +1,4 @@
-import { Builder, MarketplaceService } from '@0xsequence/marketplace-api';
+import { Builder, MarketplaceService } from '@0xsequence/api-client';
 
 /**
  * BuilderAPI wraps the generated MarketplaceService to apply type transformations

@@ -1,4 +1,4 @@
-import { WalletKind } from '@0xsequence/marketplace-api';
+import { WalletKind } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
 
 export const useConnectorMetadata = () => {

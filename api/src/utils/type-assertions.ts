@@ -6,7 +6,7 @@
  *
  * ## Why This Matters
  *
- * The marketplace-api package receives types from multiple @0xsequence packages:
+ * The api-client package receives types from multiple @0xsequence packages:
  * - @0xsequence/indexer
  * - @0xsequence/metadata
  * - @0xsequence/marketplace (internal gen)

@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/marketplace-api';
+import { ResourceStatus } from '@0xsequence/api-client';
 import { render, waitFor } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ERC721ShopModal } from '../components/ERC721ShopModal';

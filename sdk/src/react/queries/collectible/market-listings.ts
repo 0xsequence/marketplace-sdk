@@ -1,7 +1,7 @@
 import type {
 	ListCollectibleListingsResponse,
 	ListListingsForCollectibleRequest,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ContractInfo } from '@0xsequence/marketplace-api';
+import type { ContractInfo } from '@0xsequence/api-client';
 import { useEffect } from 'react';
 import { zeroAddress } from 'viem';
 import type {

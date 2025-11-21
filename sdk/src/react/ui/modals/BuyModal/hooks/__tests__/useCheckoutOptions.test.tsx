@@ -1,4 +1,4 @@
-import { MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
@@ -7,7 +7,7 @@ import { MarketplaceKind } from '../../../../../_internal';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
-import { TransactionCrypto } from '@0xsequence/marketplace-api';
+import { TransactionCrypto } from '@0xsequence/api-client';
 import { useCheckoutOptions } from '../useCheckoutOptions';
 import { useMarketPlatformFee } from '../useMarketPlatformFee';
 

@@ -1,4 +1,4 @@
-import type { Marketplace } from '@0xsequence/marketplace-api';
+import type { Marketplace } from '@0xsequence/api-client';
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';

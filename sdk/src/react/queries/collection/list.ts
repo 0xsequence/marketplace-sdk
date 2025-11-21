@@ -1,4 +1,4 @@
-import type { ContractInfo } from '@0xsequence/marketplace-api';
+import type { ContractInfo } from '@0xsequence/api-client';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type {
 	MarketCollection,

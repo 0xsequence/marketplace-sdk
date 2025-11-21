@@ -4,7 +4,7 @@ import {
 	OfferType,
 	OrderbookKind,
 	StepType,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 
 const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
 

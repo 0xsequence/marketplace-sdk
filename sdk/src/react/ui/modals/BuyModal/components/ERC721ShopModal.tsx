@@ -1,10 +1,10 @@
 'use client';
 
+import type { ContractInfo } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
-import type { ContractInfo } from '@0xsequence/marketplace-api';
 import { useEffect } from 'react';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { useERC721SalePaymentParams } from '../hooks/useERC721SalePaymentParams';

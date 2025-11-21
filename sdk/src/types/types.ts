@@ -9,7 +9,7 @@ import type {
 	OpenIdProvider,
 	ShopCollection,
 	ShopPage,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 
 // Re-export collection types from API - these are the source of truth
 export type {

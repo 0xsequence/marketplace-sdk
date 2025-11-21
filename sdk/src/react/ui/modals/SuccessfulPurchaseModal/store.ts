@@ -1,5 +1,5 @@
+import type { Metadata } from '@0xsequence/api-client';
 import type { IconProps } from '@0xsequence/design-system';
-import type { Metadata } from '@0xsequence/marketplace-api';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { ComponentType } from 'react';

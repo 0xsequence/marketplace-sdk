@@ -1,11 +1,11 @@
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '@0xsequence/marketplace-api/mocks/indexer';
+} from '@0xsequence/api-client/mocks/indexer';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '@0xsequence/marketplace-api/mocks/marketplace';
+} from '@0xsequence/api-client/mocks/marketplace';
 import { PropertyType } from '@0xsequence/metadata';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';

@@ -60,7 +60,7 @@
 		}
 	},
 	"dependencies": {
-		"@0xsequence/marketplace-api": "workspace:*",
+		"@0xsequence/api-client": "workspace:*",
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
 		"@tailwindcss/cli": "^4.1.13",

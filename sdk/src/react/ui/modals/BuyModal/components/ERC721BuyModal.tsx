@@ -1,10 +1,10 @@
 'use client';
 
+import type { ContractInfo, TokenMetadata } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
-import type { ContractInfo, TokenMetadata } from '@0xsequence/marketplace-api';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';

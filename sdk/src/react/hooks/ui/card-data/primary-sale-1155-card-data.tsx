@@ -1,4 +1,4 @@
-import type { CollectiblePrimarySaleItem } from '@0xsequence/marketplace-api';
+import type { CollectiblePrimarySaleItem } from '@0xsequence/api-client';
 import { type Address, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ContractType } from '../../../_internal';

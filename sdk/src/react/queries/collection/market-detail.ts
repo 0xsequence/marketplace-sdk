@@ -1,4 +1,4 @@
-import type { GetCollectionDetailRequest } from '@0xsequence/marketplace-api';
+import type { GetCollectionDetailRequest } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,

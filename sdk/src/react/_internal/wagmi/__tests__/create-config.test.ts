@@ -1,4 +1,4 @@
-import { MarketplaceWalletType } from '@0xsequence/marketplace-api';
+import { MarketplaceWalletType } from '@0xsequence/api-client';
 import { allNetworks } from '@0xsequence/network';
 import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';

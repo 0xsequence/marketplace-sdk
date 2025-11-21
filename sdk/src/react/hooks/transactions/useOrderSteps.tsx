@@ -3,7 +3,7 @@ import {
 	type Step,
 	StepType,
 	type TransactionStep,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import {
 	BaseError,
 	type Hex,

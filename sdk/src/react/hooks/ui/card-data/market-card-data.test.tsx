@@ -2,7 +2,7 @@ import {
 	IndexerMocks,
 	MarketplaceMocks,
 	PropertyType,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 
 const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
 const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;

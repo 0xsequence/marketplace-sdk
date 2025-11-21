@@ -2,7 +2,7 @@ import type {
 	Filter,
 	Page,
 	SearchTokenMetadataReturn,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import {

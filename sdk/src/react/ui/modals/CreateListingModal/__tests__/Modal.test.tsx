@@ -1,8 +1,4 @@
-import {
-	MarketplaceMocks,
-	type Step,
-	StepType,
-} from '@0xsequence/marketplace-api';
+import { MarketplaceMocks, type Step, StepType } from '@0xsequence/api-client';
 import { cleanup, render, renderHook, screen, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

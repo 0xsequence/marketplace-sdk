@@ -1,7 +1,4 @@
-import type {
-	Address,
-	GetTokenMetadataArgs,
-} from '@0xsequence/marketplace-api';
+import type { Address, GetTokenMetadataArgs } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMetadataClient,

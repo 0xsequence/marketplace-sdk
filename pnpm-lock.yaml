@@ -642,6 +642,9 @@ importers:
       '@0xsequence/api':
         specifier: 'catalog:'
         version: 2.3.32
+      '@0xsequence/api-client':
+        specifier: workspace:*
+        version: link:../api
       '@0xsequence/checkout':
         specifier: 'catalog:'
         version: 5.3.26(ee77d717a138a8f0ea0f0c77eba1ac17)
@@ -651,9 +654,6 @@ importers:
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 3.0.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@0xsequence/marketplace-api':
-        specifier: workspace:*
-        version: link:../api
       '@0xsequence/metadata':
         specifier: 'catalog:'
         version: 2.3.32

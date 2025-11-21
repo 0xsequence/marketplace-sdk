@@ -3042,7 +3042,7 @@ export const webrpcErrorByCode: { [code: number]: any } = {
 
 export const WebrpcHeader = "Webrpc"
 
-export const WebrpcHeaderValue = "webrpc@v0.31.1;gen-typescript@v0.23.1;marketplace-api@v0-25.11.10+051e186"
+export const WebrpcHeaderValue = "webrpc@v0.31.1;gen-typescript@v0.23.1;api-client@v0-25.11.10+051e186"
 
 type WebrpcGenVersions = {
   WebrpcGenVersion: string;

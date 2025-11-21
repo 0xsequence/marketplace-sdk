@@ -1,4 +1,4 @@
-import { MarketplaceClient } from '@0xsequence/marketplace-api';
+import { MarketplaceClient } from '@0xsequence/api-client';
 import { serializeBigInts } from '../utils';
 
 export class SequenceMarketplace extends MarketplaceClient {

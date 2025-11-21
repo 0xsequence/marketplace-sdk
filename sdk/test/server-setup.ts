@@ -3,7 +3,7 @@ import {
 	IndexerMocks,
 	MarketplaceMocks,
 	MetadataMocks,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
 

@@ -1,4 +1,4 @@
-import { MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
-import { OrderSide } from '@0xsequence/marketplace-api';
+import { OrderSide } from '@0xsequence/api-client';
 import type { UseCollectibleMarketCountParams } from './market-count';
 import { useCollectibleMarketCount } from './market-count';
 

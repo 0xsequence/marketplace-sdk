@@ -1,4 +1,4 @@
-import { IndexerMocks } from '@0xsequence/marketplace-api';
+import { IndexerMocks } from '@0xsequence/api-client';
 import { renderHook } from '@test';
 import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';

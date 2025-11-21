@@ -1,6 +1,6 @@
 'use client';
 
-import { MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { render, screen } from '@test';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

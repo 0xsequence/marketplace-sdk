@@ -1,4 +1,4 @@
-import { IndexerMocks, MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { IndexerMocks, MarketplaceMocks } from '@0xsequence/api-client';
 
 const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
 const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;

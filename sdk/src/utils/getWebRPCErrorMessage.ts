@@ -1,4 +1,4 @@
-import type { WebrpcError } from '@0xsequence/marketplace-api';
+import type { WebrpcError } from '@0xsequence/api-client';
 
 export const getWebRPCErrorMessage = (error: WebrpcError): string => {
 	switch (error.code) {

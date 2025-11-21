@@ -1,3 +1,4 @@
+import { MarketplaceWalletType } from '@0xsequence/api-client';
 import {
 	apple,
 	appleWaas,
@@ -15,7 +16,6 @@ import {
 	type Wallet,
 	walletConnect,
 } from '@0xsequence/connect';
-import { MarketplaceWalletType } from '@0xsequence/marketplace-api';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';

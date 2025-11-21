@@ -10,7 +10,7 @@ export type {
 	PropertyFilter,
 	Step,
 	TokenMetadata,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 // Export step types and utilities
 export {
 	type ApprovalStep,
@@ -45,7 +45,7 @@ export {
 	StepType,
 	type TransactionStep,
 	WalletKind,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 export type * from '../react/queries/marketplace/config';
 export * from './sdk-config';
 export * from './types';

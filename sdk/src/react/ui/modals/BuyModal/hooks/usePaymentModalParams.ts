@@ -1,5 +1,5 @@
+import type { TokenMetadata } from '@0xsequence/api-client';
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
-import type { TokenMetadata } from '@0xsequence/marketplace-api';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address, Hash, Hex } from 'viem';
 import type { CheckoutOptions, SdkConfig } from '../../../../../types';

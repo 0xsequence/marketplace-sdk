@@ -1,7 +1,4 @@
-import {
-	CollectionStatus,
-	MarketplaceMocks,
-} from '@0xsequence/marketplace-api';
+import { CollectionStatus, MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 
 const { mockCollection, mockMarketplaceEndpoint } = MarketplaceMocks;

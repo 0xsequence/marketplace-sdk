@@ -1,6 +1,6 @@
 'use client';
 
-import type { Order } from '@0xsequence/marketplace-api';
+import type { Order } from '@0xsequence/api-client';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {

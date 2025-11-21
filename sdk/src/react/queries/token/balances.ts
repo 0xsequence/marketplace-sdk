@@ -1,4 +1,4 @@
-import type { Indexer } from '@0xsequence/marketplace-api';
+import type { Indexer } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import {

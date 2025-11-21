@@ -1,4 +1,4 @@
-import { BuilderMocks } from '@0xsequence/marketplace-api';
+import { BuilderMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 

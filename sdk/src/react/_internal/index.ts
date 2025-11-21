@@ -51,7 +51,7 @@ export type {
 	Signature,
 	SortBy,
 	Step,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 export {
 	CollectionStatus,
 	ContractType,
@@ -69,7 +69,7 @@ export {
 	TransactionCrypto,
 	TransactionOnRampProvider,
 	WalletKind,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 export * from './api';
 export * from './consts';
 export * from './get-provider';

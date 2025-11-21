@@ -1,4 +1,4 @@
-import type { Builder } from '@0xsequence/marketplace-api';
+import type { Builder } from '@0xsequence/api-client';
 import { queryOptions } from '@tanstack/react-query';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { getBuilderClient } from '../../_internal';

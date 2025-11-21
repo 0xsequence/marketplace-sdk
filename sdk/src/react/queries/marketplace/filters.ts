@@ -1,4 +1,4 @@
-import type { PropertyFilter } from '@0xsequence/marketplace-api';
+import type { PropertyFilter } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';

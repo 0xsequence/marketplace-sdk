@@ -1,4 +1,4 @@
-import { MetadataMocks } from '@0xsequence/marketplace-api';
+import { MetadataMocks } from '@0xsequence/api-client';
 
 const { mockEthCollection, mockMetadataEndpoint } = MetadataMocks;
 

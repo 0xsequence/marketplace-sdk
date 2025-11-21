@@ -1,4 +1,4 @@
-import { BuilderMocks, MarketplaceMocks } from '@0xsequence/marketplace-api';
+import { BuilderMocks, MarketplaceMocks } from '@0xsequence/api-client';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';

@@ -1,4 +1,4 @@
-import type { Indexer } from '@0xsequence/marketplace-api';
+import type { Indexer } from '@0xsequence/api-client';
 import { type Hex, TransactionReceiptNotFoundError } from 'viem';
 import type { SdkConfig } from '../../types';
 import { getIndexerClient } from '../_internal/api';

@@ -3,7 +3,7 @@ import type {
 	ListPrimarySaleItemsResponse,
 	Page,
 	PrimarySaleItemsFilter,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import {
 	getMarketplaceClient,

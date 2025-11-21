@@ -14,7 +14,7 @@
  * ## Usage
  *
  * ```typescript
- * import { Indexer } from '@0xsequence/marketplace-api';
+ * import { Indexer } from '@0xsequence/api-client';
  * import type * as IndexerGen from '@0xsequence/indexer';
  *
  * const rawBalance: IndexerGen.TokenBalance = await indexer.getTokenBalance(...);

@@ -1,7 +1,7 @@
 import type {
 	CollectiblePrimarySaleItem,
 	TokenMetadata,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';

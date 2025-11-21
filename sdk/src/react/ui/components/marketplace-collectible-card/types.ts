@@ -1,4 +1,4 @@
-import type { Metadata } from '@0xsequence/marketplace-api';
+import type { Metadata } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import type { CardType, CollectibleCardAction } from '../../../../types';
 import type {

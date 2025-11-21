@@ -1,4 +1,4 @@
-import { MetadataStatus } from '@0xsequence/marketplace-api';
+import { MetadataStatus } from '@0xsequence/api-client';
 import { cleanup, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ModalCallbacks } from '../../_internal/types';

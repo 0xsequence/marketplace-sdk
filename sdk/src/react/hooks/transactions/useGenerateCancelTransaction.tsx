@@ -1,4 +1,4 @@
-import type { Step } from '@0xsequence/marketplace-api';
+import type { Step } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import type * as types from '../../../types';
 import {

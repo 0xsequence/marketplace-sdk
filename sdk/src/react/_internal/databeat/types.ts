@@ -1,7 +1,4 @@
-import type {
-	MarketplaceKind,
-	OrderbookKind,
-} from '@0xsequence/marketplace-api';
+import type { MarketplaceKind, OrderbookKind } from '@0xsequence/api-client';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 
 export enum EventType {

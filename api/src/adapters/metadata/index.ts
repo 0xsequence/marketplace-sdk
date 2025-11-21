@@ -14,7 +14,7 @@
  * ## Usage
  *
  * ```typescript
- * import { Metadata } from '@0xsequence/marketplace-api';
+ * import { Metadata } from '@0xsequence/api-client';
  * import type * as MetadataGen from '@0xsequence/metadata';
  *
  * const rawInfo: MetadataGen.ContractInfo = await metadata.getContractInfo(...);

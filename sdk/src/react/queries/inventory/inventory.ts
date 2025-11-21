@@ -1,7 +1,7 @@
 import type {
 	IndexerContractInfo as ContractInfo,
 	IndexerTokenBalance as TokenBalance,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';

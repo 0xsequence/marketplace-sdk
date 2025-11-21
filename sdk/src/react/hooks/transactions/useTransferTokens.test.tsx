@@ -1,4 +1,4 @@
-import { ContractType } from '@0xsequence/marketplace-api';
+import { ContractType } from '@0xsequence/api-client';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

@@ -1,4 +1,4 @@
-import { MetadataMocks } from '@0xsequence/marketplace-api';
+import { MetadataMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';

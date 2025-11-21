@@ -1,4 +1,4 @@
-import type { GetTokenMetadataArgs } from '@0xsequence/marketplace-api';
+import type { GetTokenMetadataArgs } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import {
 	buildQueryOptions,

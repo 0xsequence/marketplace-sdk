@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/marketplace-api';
+import { ResourceStatus } from '@0xsequence/api-client';
 import { render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {

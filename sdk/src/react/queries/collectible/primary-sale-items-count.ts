@@ -2,7 +2,7 @@ import type {
 	GetCountOfPrimarySaleItemsRequest,
 	GetCountOfPrimarySaleItemsResponse,
 	PrimarySaleItemsFilter,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,

@@ -1,4 +1,4 @@
-import type { WebrpcError } from '@0xsequence/marketplace-api';
+import type { WebrpcError } from '@0xsequence/api-client';
 import { isMarketplaceError } from './errors';
 import { getWagmiErrorMessage, isWagmiError } from './getWagmiErrorMessage';
 import { getWebRPCErrorMessage } from './getWebRPCErrorMessage';

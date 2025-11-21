@@ -1,4 +1,4 @@
-import type { Order } from '@0xsequence/marketplace-api';
+import type { Order } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type GetLowestPriceListingForCollectibleRequest,

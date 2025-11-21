@@ -1,7 +1,7 @@
 import type {
 	GetCountOfListingsForCollectibleRequest,
 	OrderFilter,
-} from '@0xsequence/marketplace-api';
+} from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,

@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/marketplace-api';
+import { ResourceStatus } from '@0xsequence/api-client';
 import { render, screen, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import type { Address } from 'viem';
