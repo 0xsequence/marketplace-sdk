@@ -102,7 +102,8 @@ export function useMarketCardData({
 	const collectibleCards = useMemo(() => {
 		return allCollectibles.map((collectible) => {
 			const balanceObj = collectionBalance?.balances.find(
-				(b) => b.tokenId === BigInt(collectible.metadata.tokenId),
+				(b: { tokenId: bigint }) =>
+					b.tokenId === BigInt(collectible.metadata.tokenId),
 			);
 			const balance = balanceObj?.balance?.toString();
 

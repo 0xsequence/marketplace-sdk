@@ -75,8 +75,10 @@ export function usePrimarySaleCheckoutOptions(
 					walletAddress:
 						address ?? '0x0000000000000000000000000000000000000000',
 					chainId: 0,
-					contractAddress: '',
-					collectionAddress: '',
+					contractAddress:
+						'0x0000000000000000000000000000000000000000' as `0x${string}`,
+					collectionAddress:
+						'0x0000000000000000000000000000000000000000' as `0x${string}`,
 					items: [],
 					query: { enabled: false },
 				}

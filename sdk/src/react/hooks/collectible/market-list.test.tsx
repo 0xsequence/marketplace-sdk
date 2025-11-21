@@ -188,7 +188,8 @@ describe('useCollectibleMarketList', () => {
 		// Change args and rerender
 		currentArgs = {
 			...defaultArgs,
-			collectionAddress: '0x1234567890123456789012345678901234567890',
+			collectionAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		};
 
 		rerender();

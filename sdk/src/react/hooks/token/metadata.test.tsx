@@ -92,7 +92,7 @@ describe('useTokenMetadata', () => {
 	it('should handle missing required parameters', () => {
 		const invalidParams = {
 			chainId: defaultArgs.chainId,
-			contractAddress: '',
+			contractAddress: '' as `0x${string}`,
 			tokenIds: defaultArgs.tokenIds,
 		};
 
@@ -119,7 +119,8 @@ describe('useTokenMetadata', () => {
 
 		const customParams = {
 			chainId: 137,
-			contractAddress: '0x1234567890123456789012345678901234567890',
+			contractAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 			tokenIds: [10n, 20n, 30n],
 		};
 

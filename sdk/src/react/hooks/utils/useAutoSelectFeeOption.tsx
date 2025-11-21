@@ -134,18 +134,25 @@ export function useAutoSelectFeeOption({
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
-		...balanceDetails.nativeBalances.map((b) => ({
+		...balanceDetails.nativeBalances.map((b: { balance: string }) => ({
 			chainId: pendingFeeOptionConfirmation.chainId,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
 		})),
-		...balanceDetails.balances.map((b) => ({
-			chainId: b.chainId,
-			balance: b.balance,
-			symbol: b.contractInfo?.symbol,
-			contractAddress: b.contractAddress,
-		})),
+		...balanceDetails.balances.map(
+			(b: {
+				chainId: number;
+				balance: string;
+				contractInfo?: { symbol?: string };
+				contractAddress: Address;
+			}) => ({
+				chainId: b.chainId,
+				balance: b.balance,
+				symbol: b.contractInfo?.symbol,
+				contractAddress: b.contractAddress,
+			}),
+		),
 	];
 
 	useEffect(() => {
@@ -186,7 +193,7 @@ export function useAutoSelectFeeOption({
 					option.token.contractAddress,
 				);
 				const tokenBalance = combinedBalances.find(
-					(balance) =>
+					(balance: { contractAddress: Address }) =>
 						balance.contractAddress.toLowerCase() ===
 						normalizedAddress.toLowerCase(),
 				);

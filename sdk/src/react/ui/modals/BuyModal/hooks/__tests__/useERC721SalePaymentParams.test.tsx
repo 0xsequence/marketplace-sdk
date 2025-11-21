@@ -23,15 +23,18 @@ vi.mock('../../store', () => ({
 	useOnError: vi.fn(() => vi.fn()),
 	useBuyModalProps: vi.fn(() => ({
 		chainId: 1,
-		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		collectionAddress:
+			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
 		marketplaceType: 'shop',
-		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		salesContractAddress:
+			'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		items: [],
 		quantityDecimals: 0,
 		quantityRemaining: 100,
 		salePrice: {
 			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
+			currencyAddress:
+				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},
 	})),
 }));

@@ -79,7 +79,9 @@ describe('useCollectionBalanceDetails', () => {
 			...defaultArgs,
 			filter: {
 				...defaultArgs.filter,
-				accountAddresses: ['0x1234567890123456789012345678901234567890'],
+				accountAddresses: [
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				],
 			},
 		};
 
@@ -100,7 +102,7 @@ describe('useCollectionBalanceDetails', () => {
 				...defaultArgs.filter,
 				accountAddresses: [
 					zeroAddress,
-					'0x1234567890123456789012345678901234567890',
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
 				],
 			},
 		};

@@ -14,8 +14,8 @@ import {
 export interface FetchPrimarySaleCheckoutOptionsParams {
 	chainId: number;
 	walletAddress: Address;
-	contractAddress: string;
-	collectionAddress: string;
+	contractAddress: Address;
+	collectionAddress: Address;
 	items: CheckoutOptionsItem[];
 }
 

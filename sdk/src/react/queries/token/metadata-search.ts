@@ -4,6 +4,7 @@ import type {
 	SearchTokenMetadataReturn,
 } from '@0xsequence/marketplace-api';
 import { infiniteQueryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import {
 	getMetadataClient,
 	type SdkInfiniteQueryParams,
@@ -13,7 +14,7 @@ import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchSearchTokenMetadataParams {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	filter?: Filter;
 	page?: Page;
 }

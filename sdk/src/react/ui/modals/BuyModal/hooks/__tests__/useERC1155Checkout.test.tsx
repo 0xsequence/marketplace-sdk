@@ -35,15 +35,18 @@ vi.mock('../../store', () => ({
 	useBuyAnalyticsId: vi.fn(() => '123'),
 	useBuyModalProps: vi.fn(() => ({
 		chainId: 1,
-		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		collectionAddress:
+			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
 		marketplaceType: 'shop',
-		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		salesContractAddress:
+			'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		items: [],
 		quantityDecimals: 0,
 		quantityRemaining: 100,
 		salePrice: {
 			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
+			currencyAddress:
+				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},
 	})),
 	buyModalStore: {
@@ -90,8 +93,8 @@ describe('useERC1155Checkout', () => {
 		const { result } = renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				checkoutOptions: mockCheckoutOptions,
 				enabled: true,
@@ -183,10 +186,10 @@ describe('useERC1155Checkout', () => {
 		const { result } = renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
-				enabled: false,
+				enabled: true,
 			}),
 		);
 
@@ -205,8 +208,8 @@ describe('useERC1155Checkout', () => {
 		renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				customProviderCallback: customCallback,
 				enabled: true,
@@ -267,8 +270,8 @@ describe('useERC1155Checkout', () => {
 		renderHook(() =>
 			useERC1155Checkout({
 				chainId: 137, // Polygon
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				enabled: true,
 			}),
@@ -292,8 +295,8 @@ describe('useERC1155Checkout', () => {
 		renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				enabled: true,
 			}),
@@ -340,8 +343,8 @@ describe('useERC1155Checkout', () => {
 		renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				enabled: true,
 			}),
@@ -379,8 +382,8 @@ describe('useERC1155Checkout', () => {
 		renderHook(() =>
 			useERC1155Checkout({
 				chainId: 1,
-				salesContractAddress: '0x456',
-				collectionAddress: '0x123',
+				salesContractAddress: '0x456' as `0x${string}`,
+				collectionAddress: '0x123' as `0x${string}`,
 				items: mockItems,
 				enabled: true,
 			}),

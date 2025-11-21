@@ -45,7 +45,9 @@ describe('useCurrencyList', () => {
 		});
 
 		expect(result.current.data).toEqual(
-			mockCurrencies.filter((currency) => !currency.nativeCurrency),
+			mockCurrencies.filter(
+				(currency: { nativeCurrency?: boolean }) => !currency.nativeCurrency,
+			),
 		);
 	});
 
@@ -173,7 +175,8 @@ describe('useCurrencyList', () => {
 		const args = {
 			...defaultArgs,
 			includeNativeCurrency: false,
-			collectionAddress: '0x1234567890123456789012345678901234567890',
+			collectionAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		} satisfies Parameters<typeof useCurrencyList>[0];
 
 		const { result } = renderHook(() => useCurrencyList(args));

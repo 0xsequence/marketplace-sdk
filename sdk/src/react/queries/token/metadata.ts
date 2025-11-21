@@ -1,4 +1,5 @@
 import type { GetTokenMetadataArgs } from '@0xsequence/marketplace-api';
+import type { Address } from 'viem';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -9,7 +10,7 @@ import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchListTokenMetadataParams {
 	chainId: number;
-	contractAddress: string;
+	contractAddress: Address;
 	tokenIds: bigint[];
 }
 

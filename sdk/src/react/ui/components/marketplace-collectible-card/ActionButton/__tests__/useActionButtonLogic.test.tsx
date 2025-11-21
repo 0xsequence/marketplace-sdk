@@ -30,8 +30,10 @@ describe('useActionButtonLogic', () => {
 
 		// Default to connected state
 		vi.mocked(wagmi.useAccount).mockReturnValue({
-			address: '0x1234567890123456789012345678901234567890',
-			addresses: ['0x1234567890123456789012345678901234567890'],
+			address: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+			addresses: [
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			],
 			chain: undefined,
 			chainId: 1,
 			connector: {} as any,

@@ -1,4 +1,5 @@
 import type { PropertyFilter } from '@0xsequence/marketplace-api';
+import type { Address } from 'viem';
 import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
@@ -13,7 +14,7 @@ import { createMarketplaceQueryKey } from './queryKeys';
 
 export interface FetchFiltersParams {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	showAllFilters?: boolean;
 	excludePropertyValues?: boolean;
 }

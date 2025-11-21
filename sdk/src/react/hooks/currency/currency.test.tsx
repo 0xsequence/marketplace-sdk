@@ -29,7 +29,7 @@ describe('useCurrency', () => {
 		// Verify the data matches our mock
 		expect(result.current.data).toEqual(
 			mockCurrencies.find(
-				(currency) =>
+				(currency: { contractAddress: string }) =>
 					currency.contractAddress.toLowerCase() ===
 					defaultArgs.currencyAddress.toLowerCase(),
 			),
@@ -40,7 +40,8 @@ describe('useCurrency', () => {
 	it('should handle currency not found error', async () => {
 		const argsWithInvalidAddress = {
 			...defaultArgs,
-			currencyAddress: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+			currencyAddress:
+				'0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef' as `0x${string}`,
 		};
 
 		const { result } = renderHook(() =>

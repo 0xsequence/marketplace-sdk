@@ -12,7 +12,7 @@ import { useCollectibleTokenBalances } from './token-balances';
 describe('useCollectibleTokenBalances', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
-		userAddress: '0x1234567890123456789012345678901234567890',
+		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
 
@@ -85,7 +85,7 @@ describe('useCollectibleTokenBalances', () => {
 
 		const invalidArgs = {
 			...defaultArgs,
-			collectionAddress: '0xinvalid', // Invalid address format
+			collectionAddress: '0xinvalid' as `0x${string}`, // Invalid address format
 		};
 
 		const { result } = renderHook(() =>
@@ -99,8 +99,10 @@ describe('useCollectibleTokenBalances', () => {
 
 	it('should return all token balances for a collection', async () => {
 		const specificCollection = {
-			collectionAddress: '0x1234567890123456789012345678901234567890',
-			userAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
+			collectionAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			userAddress:
+				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
 		};
 

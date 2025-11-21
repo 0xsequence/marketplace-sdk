@@ -13,7 +13,7 @@ describe('useCollectibleBalance', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
 		tokenId: 1n,
-		userAddress: '0x1234567890123456789012345678901234567890',
+		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
 
@@ -81,7 +81,7 @@ describe('useCollectibleBalance', () => {
 
 		const invalidArgs = {
 			...defaultArgs,
-			collectionAddress: '0xinvalid', // Invalid address format
+			collectionAddress: '0xinvalid' as `0x${string}`, // Invalid address format
 		};
 
 		const { result } = renderHook(() => useCollectibleBalance(invalidArgs));
@@ -93,9 +93,11 @@ describe('useCollectibleBalance', () => {
 
 	it('should return correct balance for specific collectible', async () => {
 		const specificCollectible = {
-			collectionAddress: '0x1234567890123456789012345678901234567890',
+			collectionAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 			tokenId: 42n,
-			userAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
+			userAddress:
+				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
 		};
 

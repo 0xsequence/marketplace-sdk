@@ -13,7 +13,7 @@ export interface FetchMarketCheckoutOptionsParams {
 	chainId: number;
 	walletAddress: Address;
 	orders: Array<{
-		collectionAddress: string;
+		collectionAddress: Address;
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}>;

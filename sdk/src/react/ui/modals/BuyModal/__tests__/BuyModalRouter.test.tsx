@@ -47,7 +47,7 @@ vi.mock('../components/ERC1155ShopModal', () => ({
 const mockCollection721 = {
 	type: 'ERC721' as const,
 	name: 'Test Collection',
-	address: '0x123',
+	address: '0x123' as `0x${string}`,
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
@@ -60,7 +60,8 @@ const mockCollection721 = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -75,7 +76,7 @@ const mockCollection721 = {
 const mockCollection1155 = {
 	type: 'ERC1155' as const,
 	name: 'Test Collection',
-	address: '0x123',
+	address: '0x123' as `0x${string}`,
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
@@ -88,7 +89,8 @@ const mockCollection1155 = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -116,14 +118,14 @@ const mockOrder = {
 	chainId: 1,
 	originName: 'Test',
 	slug: 'test-order',
-	collectionContractAddress: '0x123',
+	collectionContractAddress: '0x123' as `0x${string}`,
 	tokenId: 1n,
-	createdBy: '0xabc',
+	createdBy: '0xabc' as `0x${string}`,
 	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1.0',
 	priceAmountNet: 1000000000000000000n,
 	priceAmountNetFormatted: '1.0',
-	priceCurrencyAddress: '0x0',
+	priceCurrencyAddress: '0x0' as `0x${string}`,
 	priceDecimals: 18,
 	priceUSD: 3000,
 	priceUSDFormatted: '$3,000.00',
@@ -153,7 +155,8 @@ const mockCheckoutOptions = {
 
 const mockCurrency = {
 	chainId: 1,
-	contractAddress: '0x0000000000000000000000000000000000000000',
+	contractAddress:
+		'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	status: CurrencyStatus.active,
 	name: 'Ethereum',
 	symbol: 'ETH',
@@ -169,11 +172,12 @@ const mockCurrency = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456',
+	salesContractAddress: '0x456' as `0x${string}`,
 	items: [{ tokenId: 1n, quantity: 1n } as any],
 	salePrice: {
 		amount: 1000000000000000000n,
-		currencyAddress: '0x0000000000000000000000000000000000000000',
+		currencyAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	},
 	checkoutOptions: undefined,
 };

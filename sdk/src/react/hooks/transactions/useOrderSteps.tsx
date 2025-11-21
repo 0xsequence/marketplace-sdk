@@ -163,7 +163,6 @@ export const useOrderSteps = () => {
 			case StepType.cancel:
 				result = await sendTransaction(chainId, step);
 				break;
-			case StepType.unknown:
 			default:
 				throw new Error(`Cannot execute step type: ${step.id}`);
 		}
