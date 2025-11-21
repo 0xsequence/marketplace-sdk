@@ -1,5 +1,6 @@
 'use client';
 
+import type { Indexer } from '@0xsequence/api-client';
 import { useChain } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
@@ -134,13 +135,13 @@ export function useAutoSelectFeeOption({
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
-		...balanceDetails.nativeBalances.map((b) => ({
+		...balanceDetails.nativeBalances.map((b: Indexer.NativeTokenBalance) => ({
 			chainId: pendingFeeOptionConfirmation.chainId,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
 		})),
-		...balanceDetails.balances.map((b) => ({
+		...balanceDetails.balances.map((b: Indexer.TokenBalance) => ({
 			chainId: b.chainId,
 			balance: b.balance,
 			symbol: b.contractInfo?.symbol,
