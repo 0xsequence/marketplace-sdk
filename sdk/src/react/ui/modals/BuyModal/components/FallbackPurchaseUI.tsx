@@ -9,7 +9,7 @@ import {
 	Tooltip,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
-import type { Address, Hex } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
@@ -164,7 +164,7 @@ export const FallbackPurchaseUI = ({
 						})
 					: await executeTransaction(buyStep);
 
-			onSuccess(hash);
+			onSuccess(hash as Hash);
 		} catch (error) {
 			console.error('Buy transaction failed:', error);
 		} finally {

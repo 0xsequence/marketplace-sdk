@@ -6,7 +6,7 @@ import {
 	type CollectibleQueryOptions,
 	collectibleQueryOptions,
 	type FetchCollectibleParams,
-} from '../../../queries/collectible';
+} from '../../../queries/collectibles/collectible';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCollectibleParams = Optional<CollectibleQueryOptions, 'config'>;

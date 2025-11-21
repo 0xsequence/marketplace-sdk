@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { ContractType } from '../../../_internal';
 import {
 	balanceOfCollectibleOptions,
 	type UseBalanceOfCollectibleArgs,
-} from '../../../queries/balanceOfCollectible';
+} from '../../../queries/collectibles/balanceOfCollectible';
 import { useConfig } from '../../config/useConfig';
-import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 
 /**
  * Hook to fetch the balance of a specific collectible for a user
@@ -29,18 +27,11 @@ import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
  */
 export function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs) {
 	const config = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-
-	const collection = marketplaceConfig?.market.collections.find(
-		(collection) => collection.itemsAddress === args.collectionAddress,
-	);
-	const isLaos721 = collection?.contractType === ContractType.LAOS_ERC_721;
 
 	return useQuery(
 		balanceOfCollectibleOptions(
 			{
 				...args,
-				isLaos721,
 			},
 			config,
 		),

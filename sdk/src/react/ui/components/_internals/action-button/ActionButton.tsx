@@ -30,6 +30,7 @@ type ActionButtonProps = {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 };
 
 export function ActionButton({
@@ -49,6 +50,7 @@ export function ActionButton({
 	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
+	hideQuantitySelector,
 }: ActionButtonProps) {
 	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
@@ -87,6 +89,7 @@ export function ActionButton({
 					quantityDecimals,
 					quantityRemaining,
 					unlimitedSupply,
+					hideQuantitySelector,
 				}
 			: {
 					cardType: 'market' as const,
@@ -98,6 +101,7 @@ export function ActionButton({
 					chainId,
 					quantityDecimals,
 					quantityRemaining,
+					hideQuantitySelector,
 				};
 
 	return <NonOwnerActions {...nonOwnerProps} />;

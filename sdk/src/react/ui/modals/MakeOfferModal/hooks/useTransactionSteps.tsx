@@ -79,7 +79,7 @@ export const useTransactionSteps = ({
 					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
 				},
 				additionalFees: [],
-				offerType: OfferType.collection,
+				offerType: OfferType.item,
 			});
 
 			return steps;

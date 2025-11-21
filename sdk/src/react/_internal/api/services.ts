@@ -33,7 +33,7 @@ const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
 
-const marketplaceApiURL = (env: Env = 'production') => {
+export const marketplaceApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.marketplaceApi, { prefix });
 };

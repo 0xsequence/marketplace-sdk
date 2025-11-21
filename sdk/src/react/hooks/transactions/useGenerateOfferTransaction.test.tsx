@@ -34,7 +34,7 @@ describe('useGenerateOfferTransaction', () => {
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		offer: mockOffer,
 		additionalFees: [],
-		offerType: OfferType.collection,
+		offerType: OfferType.item,
 	};
 
 	const defaultArgs = {

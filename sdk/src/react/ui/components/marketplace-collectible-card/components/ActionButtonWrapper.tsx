@@ -28,6 +28,7 @@ interface ActionButtonWrapperProps {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 }
 
 export function ActionButtonWrapper({
@@ -48,6 +49,7 @@ export function ActionButtonWrapper({
 	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
+	hideQuantitySelector,
 }: ActionButtonWrapperProps) {
 	if (!show) return null;
 
@@ -70,6 +72,7 @@ export function ActionButtonWrapper({
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
+				hideQuantitySelector={hideQuantitySelector}
 			/>
 		</div>
 	);

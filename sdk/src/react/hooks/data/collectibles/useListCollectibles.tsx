@@ -6,7 +6,7 @@ import {
 	type FetchListCollectiblesParams,
 	type ListCollectiblesQueryOptions,
 	listCollectiblesQueryOptions,
-} from '../../../queries/listCollectibles';
+} from '../../../queries/collectibles/listCollectibles';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListCollectiblesParams = Optional<
@@ -18,14 +18,13 @@ export type UseListCollectiblesParams = Optional<
  * Hook to fetch a list of collectibles with infinite pagination support
  *
  * Fetches collectibles from the marketplace with support for filtering, pagination,
- * and special handling for shop marketplace types and LAOS721 contracts.
+ * and special handling for shop marketplace types.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
  * @param params.side - Order side (listing or bid)
  * @param params.filter - Optional filtering parameters
- * @param params.isLaos721 - Whether the collection is a LAOS721 contract
  * @param params.marketplaceType - Type of marketplace (shop, etc.)
  * @param params.query - Optional React Query configuration
  *
@@ -52,20 +51,6 @@ export type UseListCollectiblesParams = Optional<
  *     searchText: 'dragon',
  *     includeEmpty: false,
  *     marketplaces: [MarketplaceKind.sequence_marketplace_v2]
- *   }
- * })
- * ```
- *
- * @example
- * For LAOS721 collections:
- * ```typescript
- * const { data } = useListCollectibles({
- *   chainId: 137,
- *   collectionAddress: '0x...',
- *   side: OrderSide.listing,
- *   isLaos721: true,
- *   filter: {
- *     inAccounts: ['0x...']
  *   }
  * })
  * ```
