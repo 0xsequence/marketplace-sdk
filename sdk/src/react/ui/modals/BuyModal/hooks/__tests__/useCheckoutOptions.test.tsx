@@ -1,10 +1,13 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind } from '../../../../../_internal';
-import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
-import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
+import { TransactionCrypto } from '@0xsequence/api-client';
 import { useCheckoutOptions } from '../useCheckoutOptions';
 import { useMarketPlatformFee } from '../useMarketPlatformFee';
 
@@ -33,15 +36,15 @@ describe('useCheckoutOptions', () => {
 
 		// Set up default fees mock
 		vi.mocked(useMarketPlatformFee).mockReturnValue({
-			amount: '100000000000000000',
+			amount: 100000000000000000n,
 			receiver: zeroAddress,
 		});
 	});
 
 	it('should include fees in the API request', async () => {
-		const mockFeeAmount = '200000000000000000';
+		const mockFeeAmount = 200000000000000000n;
 		vi.mocked(useMarketPlatformFee).mockReturnValue({
-			amount: mockFeeAmount,
+			amount: BigInt(mockFeeAmount),
 			receiver: zeroAddress,
 		});
 

@@ -10,7 +10,7 @@ import { ActionButtonBody } from './ActionButtonBody';
 
 type OwnerActionsProps = {
 	action: CollectibleCardAction;
-	tokenId: string;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	orderbookKind?: OrderbookKind;
@@ -44,9 +44,9 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showCreateListingModal({
-						collectionAddress: collectionAddress as Address,
+						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderbookKind,
 					})
 				}
@@ -80,9 +80,9 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showTransferModal({
-						collectionAddress: collectionAddress as Address,
+						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 					})
 				}
 				className={className}

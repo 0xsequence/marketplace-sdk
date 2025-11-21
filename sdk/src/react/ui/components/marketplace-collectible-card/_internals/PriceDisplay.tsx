@@ -11,7 +11,7 @@ import type { Currency } from '../../../../_internal';
 import { formatPriceData } from '../utils';
 
 interface PriceDisplayProps {
-	amount: string;
+	amount: bigint;
 	currency: Currency;
 	showCurrencyIcon?: boolean;
 	className?: string;
@@ -22,7 +22,7 @@ interface PriceDisplayProps {
  * Uses formatPriceData for data transformation.
  */
 export const formatPrice = (
-	amount: string,
+	amount: bigint,
 	currency: Currency,
 	className?: string,
 ): React.ReactNode => {

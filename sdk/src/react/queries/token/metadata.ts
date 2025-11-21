@@ -1,80 +1,71 @@
-import type { GetTokenMetadataArgs } from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { GetTokenMetadataArgs } from '@0xsequence/api-client';
+import type { Address } from 'viem';
 import {
+	buildQueryOptions,
 	getMetadataClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchListTokenMetadataParams {
 	chainId: number;
-	contractAddress: string;
-	tokenIds: string[];
-	config: SdkConfig;
+	contractAddress: Address;
+	tokenIds: bigint[];
 }
+
+export type ListTokenMetadataQueryOptions =
+	SdkQueryParams<FetchListTokenMetadataParams>;
 
 /**
  * Fetches token metadata from the metadata API
  */
 export async function fetchListTokenMetadata(
-	params: FetchListTokenMetadataParams,
+	params: WithRequired<
+		ListTokenMetadataQueryOptions,
+		'chainId' | 'contractAddress' | 'tokenIds' | 'config'
+	>,
 ) {
-	const { chainId, contractAddress, tokenIds, config } = params;
+	const { config, contractAddress, chainId, tokenIds } = params;
 	const metadataClient = getMetadataClient(config);
 
-	const response = await metadataClient.getTokenMetadata({
-		chainID: chainId.toString(),
-		contractAddress: contractAddress,
-		tokenIDs: tokenIds,
-	});
+	const apiArgs: GetTokenMetadataArgs = {
+		chainId,
+		tokenIds,
+		contractAddress,
+	};
 
+	const response = await metadataClient.getTokenMetadata(apiArgs);
 	return response.tokenMetadata;
 }
-
-export type ListTokenMetadataQueryOptions =
-	ValuesOptional<FetchListTokenMetadataParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getListTokenMetadataQueryKey(
 	params: ListTokenMetadataQueryOptions,
 ) {
 	const apiArgs = {
-		chainID: String(params.chainId),
+		chainId: params.chainId,
 		contractAddress: params.contractAddress,
-		tokenIDs: params.tokenIds,
-	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
+		tokenIds: params.tokenIds,
+	};
 
-	return ['token', 'metadata', apiArgs] as const;
+	return createTokenQueryKey('metadata', apiArgs);
 }
 
 export function listTokenMetadataQueryOptions(
 	params: ListTokenMetadataQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.contractAddress &&
-			params.tokenIds?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListTokenMetadataQueryKey,
+			requiredParams: [
+				'chainId',
+				'contractAddress',
+				'tokenIds',
+				'config',
+			] as const,
+			fetcher: fetchListTokenMetadata,
+			customValidation: (p) => !!p.tokenIds && p.tokenIds.length > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListTokenMetadataQueryKey(params),
-		queryFn: () =>
-			fetchListTokenMetadata({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				contractAddress: params.contractAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenIds: params.tokenIds!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

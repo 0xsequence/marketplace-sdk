@@ -6,7 +6,7 @@ import type { ContractType } from '../../../../_internal';
 import { getSupplyStatusText } from '../utils';
 
 export interface CardSaleDetailsProps {
-	quantityRemaining?: string;
+	quantityRemaining?: bigint;
 	type: ContractType;
 	unlimitedSupply?: boolean;
 	className?: string;

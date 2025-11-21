@@ -1,12 +1,12 @@
 'use client';
 
 import { CloseIcon, Text } from '@0xsequence/design-system';
+import type { PriceFilter } from '@0xsequence/marketplace-sdk';
 import {
 	useFilterState,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
-import type { Address } from 'viem';
-import type { PriceFilter } from '../../../../../../sdk/src/react/_internal';
+import { type Address, formatUnits } from 'viem';
 
 type PriceBadgeProps = {
 	priceFilter: PriceFilter;
@@ -26,16 +26,17 @@ export const PriceBadge = ({
 	});
 
 	const currency = currencies?.find(
-		(c) => c.contractAddress === priceFilter.contractAddress,
+		(c: { contractAddress: string; decimals: number }) =>
+			c.contractAddress === priceFilter.contractAddress,
 	);
 	const decimals = currency?.decimals || 0;
 
-	// Convert token amounts back to user-friendly decimal values
+	// Convert token amounts back to user-friendly decimal values using formatUnits
 	const minDecimal = priceFilter.min
-		? (Number.parseFloat(priceFilter.min) / 10 ** decimals).toString()
+		? formatUnits(BigInt(priceFilter.min), decimals)
 		: undefined;
 	const maxDecimal = priceFilter.max
-		? (Number.parseFloat(priceFilter.max) / 10 ** decimals).toString()
+		? formatUnits(BigInt(priceFilter.max), decimals)
 		: undefined;
 
 	const formatPriceRange = () => {

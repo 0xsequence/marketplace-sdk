@@ -59,7 +59,7 @@ export const useTransactionSteps = ({
 		});
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: offerInput.offer.currencyAddress as Address,
+		currencyAddress: offerInput.offer.currencyAddress,
 	});
 
 	const getOfferSteps = async () => {
@@ -146,9 +146,9 @@ export const useTransactionSteps = ({
 
 			showTransactionStatusModal({
 				type: TransactionType.OFFER,
-				collectionAddress: collectionAddress as Address,
+				collectionAddress,
 				chainId,
-				collectibleId: offerInput.offer.tokenId,
+				tokenId: offerInput.offer.tokenId,
 				hash,
 				orderId,
 				callbacks,
@@ -159,7 +159,7 @@ export const useTransactionSteps = ({
 					['token', 'balances'],
 				],
 				price: {
-					amountRaw: offerInput.offer.pricePerToken,
+					amountRaw: BigInt(offerInput.offer.pricePerToken),
 					currency,
 				} as Price,
 			});

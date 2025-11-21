@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchFloorOrderParams,
 	type FloorOrderQueryOptions,
 	floorOrderQueryOptions,
 } from '../../queries/collection/market-floor';
@@ -72,4 +71,4 @@ export function useCollectionMarketFloor(
 
 export { floorOrderQueryOptions };
 
-export type { FetchFloorOrderParams, FloorOrderQueryOptions };
+export type { FloorOrderQueryOptions };

@@ -1,9 +1,12 @@
 'use client';
 
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type { CheckoutOptionsItem, Optional } from '../../_internal';
+import type {
+	CheckoutOptionsItem,
+	Optional,
+	WithOptionalParams,
+} from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
 	type fetchPrimarySaleCheckoutOptions,
@@ -13,7 +16,7 @@ import {
 import { useConfig } from '../config/useConfig';
 
 export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	PrimarySaleCheckoutOptionsQueryOptions,
+	WithOptionalParams<PrimarySaleCheckoutOptionsQueryOptions>,
 	'config' | 'walletAddress'
 >;
 
@@ -66,20 +69,23 @@ export function usePrimarySaleCheckoutOptions(
 	const defaultConfig = useConfig();
 
 	const queryOptions = primarySaleCheckoutOptionsQueryOptions(
-		params === skipToken
+		params === skipToken || !address
 			? {
 					config: defaultConfig,
-					walletAddress: address as Address,
+					walletAddress:
+						address ?? '0x0000000000000000000000000000000000000000',
 					chainId: 0,
-					contractAddress: '',
-					collectionAddress: '',
+					contractAddress:
+						'0x0000000000000000000000000000000000000000' as `0x${string}`,
+					collectionAddress:
+						'0x0000000000000000000000000000000000000000' as `0x${string}`,
 					items: [],
 					query: { enabled: false },
 				}
 			: {
-					config: defaultConfig,
-					walletAddress: address as Address,
 					...params,
+					config: params.config ?? defaultConfig,
+					walletAddress: address,
 				},
 	);
 
@@ -90,10 +96,7 @@ export function usePrimarySaleCheckoutOptions(
 
 export { primarySaleCheckoutOptionsQueryOptions };
 
-export type {
-	FetchPrimarySaleCheckoutOptionsParams,
-	PrimarySaleCheckoutOptionsQueryOptions,
-};
+export type { FetchPrimarySaleCheckoutOptionsParams };
 
 // Legacy exports for backward compatibility
 export type UsePrimarySaleCheckoutOptionsArgs = {

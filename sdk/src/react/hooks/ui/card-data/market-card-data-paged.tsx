@@ -1,3 +1,4 @@
+import type { Indexer } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import {
@@ -37,7 +38,7 @@ export interface UseMarketCardDataPagedProps {
 	/** Optional price filters to apply to the collectible search */
 	priceFilters?: PriceFilter[];
 	/** Optional callback function called when a collectible card is clicked */
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	/** Optional callback function called when an action cannot be performed on a collectible */
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	/** Whether to prioritize owner actions in the card UI */
@@ -221,8 +222,8 @@ export function useMarketCardDataPaged({
 
 	const collectibleCards = currentPageCollectibles.map(
 		(collectible: CollectibleOrder) => {
-			const balance = collectionBalance?.balances.find(
-				(balance) => balance.tokenID === collectible.metadata.tokenId,
+			const balanceAmount = collectionBalance?.balances.find(
+				(b: Indexer.TokenBalance) => b.tokenId === collectible.metadata.tokenId,
 			)?.balance;
 
 			const cardProps: MarketCollectibleCardProps = {
@@ -235,7 +236,7 @@ export function useMarketCardDataPaged({
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
-				balance,
+				balance: balanceAmount?.toString(),
 				balanceIsLoading: balanceLoading,
 				onCannotPerformAction,
 				prioritizeOwnerActions,
@@ -244,7 +245,7 @@ export function useMarketCardDataPaged({
 				onOfferClick: ({ order }) => {
 					if (!accountAddress) return;
 
-					if (balance) {
+					if (balanceAmount) {
 						showSellModal({
 							chainId,
 							collectionAddress,

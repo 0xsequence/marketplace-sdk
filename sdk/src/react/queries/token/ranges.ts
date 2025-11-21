@@ -1,29 +1,33 @@
-import type { GetTokenIDRangesReturn } from '@0xsequence/indexer';
-import { queryOptions } from '@tanstack/react-query';
+import type { Indexer } from '@0xsequence/api-client';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import { getIndexerClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchGetTokenRangesParams {
 	chainId: number;
 	collectionAddress: Address;
-	config: SdkConfig;
 }
+
+export type GetTokenRangesQueryOptions =
+	SdkQueryParams<FetchGetTokenRangesParams>;
 
 /**
  * Fetches token ID ranges for a collection from the Indexer API
  */
 export async function fetchGetTokenRanges(
-	params: FetchGetTokenRangesParams,
-): Promise<GetTokenIDRangesReturn> {
+	params: WithRequired<
+		GetTokenRangesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+): Promise<Indexer.GetTokenIDRangesResponse> {
 	const { chainId, collectionAddress, config } = params;
-
 	const indexerClient = getIndexerClient(chainId, config);
-
-	const response = await indexerClient.getTokenIDRanges({
-		contractAddress: collectionAddress,
-	});
+	const response = await indexerClient.getTokenIDRanges({ collectionAddress });
 
 	if (!response) {
 		throw new Error('Failed to fetch token ranges');
@@ -32,40 +36,22 @@ export async function fetchGetTokenRanges(
 	return response;
 }
 
-export type GetTokenRangesQueryOptions =
-	ValuesOptional<FetchGetTokenRangesParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		contractAddress: params.collectionAddress!,
+		chainId: params.chainId,
+		collectionAddress: params.collectionAddress,
 	};
 
-	return ['token', 'ranges', apiArgs] as const;
+	return createTokenQueryKey('ranges', apiArgs);
 }
 
 export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.collectionAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getTokenRangesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchGetTokenRanges,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getTokenRangesQueryKey(params),
-		queryFn: () =>
-			fetchGetTokenRanges({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

@@ -1,11 +1,11 @@
+import { MetadataMocks } from '@0xsequence/api-client';
+
+const { mockEthCollection, mockMetadataEndpoint } = MetadataMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockEthCollection,
-	mockMetadataEndpoint,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import {
 	type UseCollectionMetadataParams as UseCollectionDetailParams,
 	useCollectionMetadata as useCollectionDetail,
@@ -14,7 +14,7 @@ import {
 describe('useCollectionDetail', () => {
 	const defaultArgs: UseCollectionDetailParams = {
 		chainId: mockEthCollection.chainId,
-		collectionAddress: mockEthCollection.address,
+		collectionAddress: mockEthCollection.address as `0x${string}`,
 	};
 
 	it('should fetch collection data successfully', async () => {

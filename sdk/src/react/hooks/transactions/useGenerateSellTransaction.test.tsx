@@ -1,13 +1,12 @@
-import { ContractType } from '@0xsequence/indexer';
+import { ContractType, MarketplaceMocks } from '@0xsequence/api-client';
+
+const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind, OrderbookKind, StepType } from '../../_internal';
-import {
-	createMockSteps,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useGenerateSellTransaction } from './useGenerateSellTransaction';
 
 describe('useGenerateSellTransaction', () => {
@@ -15,7 +14,7 @@ describe('useGenerateSellTransaction', () => {
 
 	const mockOrderData = {
 		orderId: '1',
-		quantity: '1',
+		quantity: 1n,
 	};
 
 	const mockTransactionProps = {
@@ -49,17 +48,23 @@ describe('useGenerateSellTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
+			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "price": "0",
+			      "maxFeePerGas": undefined,
+			      "maxPriorityFeePerGas": undefined,
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
+			      "gas": undefined,
 			      "id": "sell",
-			      "price": "0",
+			      "maxFeePerGas": undefined,
+			      "maxPriorityFeePerGas": undefined,
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			  ],
 			  {
@@ -71,7 +76,7 @@ describe('useGenerateSellTransaction', () => {
 			    "ordersData": [
 			      {
 			        "orderId": "1",
-			        "quantity": "1",
+			        "quantity": 1n,
 			      },
 			    ],
 			    "seller": "0x0000000000000000000000000000000000000000",
@@ -125,7 +130,7 @@ describe('useGenerateSellTransaction', () => {
 	it('should handle invalid sell data', async () => {
 		const invalidOrderData = {
 			orderId: '1',
-			quantity: 'invalid-quantity',
+			quantity: 'invalid-quantity' as any,
 		};
 
 		server.use(

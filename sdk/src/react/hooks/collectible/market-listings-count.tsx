@@ -23,7 +23,7 @@ export type UseCollectibleMarketListingsCountParams = Optional<
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
- * @param params.collectibleId - The specific collectible/token ID
+ * @param params.tokenId - The specific collectible/token ID
  * @param params.filter - Optional filter criteria for listings
  * @param params.query - Optional React Query configuration
  *
@@ -35,7 +35,7 @@ export type UseCollectibleMarketListingsCountParams = Optional<
  * const { data: listingCount, isLoading } = useCollectibleMarketListingsCount({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '123'
+ *   tokenId: '123'
  * })
  * ```
  *
@@ -45,7 +45,7 @@ export type UseCollectibleMarketListingsCountParams = Optional<
  * const { data: filteredCount } = useCollectibleMarketListingsCount({
  *   chainId: 137,
  *   collectionAddress: '0x...',
- *   collectibleId: '123',
+ *   tokenId: '123',
  *   filter: { priceRange: { min: '1000000000000000000' } }
  * })
  * ```

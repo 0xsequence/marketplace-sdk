@@ -1,17 +1,18 @@
+import { IndexerMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
+
+const { mockIndexerEndpoint, mockTokenBalance, mockTokenBalanceNormalized } =
+	IndexerMocks;
+
 import { useCollectibleBalance } from './balance';
 
 describe('useCollectibleBalance', () => {
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
-		collectableId: '1',
+		tokenId: 1n,
 		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
 		chainId: 1,
 	};
@@ -37,8 +38,8 @@ describe('useCollectibleBalance', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Check the returned data matches mock
-		expect(result.current.data).toEqual(mockTokenBalance);
+		// Check the returned data matches mock (normalized with BigInt)
+		expect(result.current.data).toEqual(mockTokenBalanceNormalized);
 	});
 
 	it('should return null when userAddress is undefined', () => {
@@ -94,25 +95,35 @@ describe('useCollectibleBalance', () => {
 		const specificCollectible = {
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			collectableId: '42',
+			tokenId: 42n,
 			userAddress:
 				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
 			chainId: 1,
 		};
 
-		const specificBalance = {
+		// MSW returns RAW format (strings), which gets transformed to normalized format by the client
+		const specificBalanceRaw = {
 			...mockTokenBalance,
 			contractAddress: specificCollectible.collectionAddress,
 			accountAddress: specificCollectible.userAddress,
-			tokenID: specificCollectible.collectableId,
-			balance: '2', // User owns 2 of this collectible
+			tokenID: '42', // API expects string in response
+			balance: '2', // Raw format uses strings
+		};
+
+		// Expected normalized format (BigInt)
+		const specificBalanceNormalized = {
+			...mockTokenBalanceNormalized,
+			contractAddress: specificCollectible.collectionAddress,
+			accountAddress: specificCollectible.userAddress,
+			tokenId: 42n,
+			balance: 2n,
 		};
 
 		server.use(
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
-					balances: [specificBalance],
+					balances: [specificBalanceRaw],
 				});
 			}),
 		);
@@ -125,14 +136,14 @@ describe('useCollectibleBalance', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Verify the specific collectible balance
-		expect(result.current.data).toEqual(specificBalance);
-		expect(result.current.data?.balance).toBe('2');
+		// Verify the specific collectible balance (normalized format with BigInt)
+		expect(result.current.data).toEqual(specificBalanceNormalized);
+		expect(result.current.data?.balance).toBe(2n);
 		expect(result.current.data?.contractAddress).toBe(
 			specificCollectible.collectionAddress,
 		);
-		expect(result.current.data?.tokenID).toBe(
-			specificCollectible.collectableId,
+		expect(result.current.data?.tokenId).toBe(
+			BigInt(specificCollectible.tokenId),
 		);
 		expect(result.current.data?.accountAddress).toBe(
 			specificCollectible.userAddress,

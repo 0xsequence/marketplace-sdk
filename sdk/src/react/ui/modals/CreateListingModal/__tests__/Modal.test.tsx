@@ -1,9 +1,9 @@
+import { MarketplaceMocks, type Step, StepType } from '@0xsequence/api-client';
 import { cleanup, render, renderHook, screen, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { StepType } from '../../../../_internal';
-import { createMockStep } from '../../../../_internal/api/__mocks__/marketplace.msw';
+
+const { createMockStep } = MarketplaceMocks;
 
 import { useCreateListingModal } from '..';
 import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
@@ -12,7 +12,7 @@ import { CreateListingModal } from '../Modal';
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 describe('MakeOfferModal', () => {
@@ -62,7 +62,7 @@ describe('MakeOfferModal', () => {
 			'useGetTokenApprovalData',
 		).mockReturnValue({
 			data: {
-				step: createMockStep(StepType.tokenApproval),
+				step: createMockStep(StepType.tokenApproval) as Step,
 			},
 			isLoading: false,
 			isSuccess: true,

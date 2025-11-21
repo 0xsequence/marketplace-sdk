@@ -1,58 +1,58 @@
+import type {
+	ListPrimarySaleItemsRequest,
+	ListPrimarySaleItemsResponse,
+	Page,
+	PrimarySaleItemsFilter,
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	getMarketplaceClient,
-	type ListPrimarySaleItemsRequest,
-	type ListPrimarySaleItemsResponse,
-	type Page,
-	type PrimarySaleItemsFilter,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchPrimarySaleItemsParams {
-	chainId: number;
-	primarySaleContractAddress: Address;
+export interface FetchPrimarySaleItemsParams
+	extends Omit<ListPrimarySaleItemsRequest, 'page'> {
 	filter?: PrimarySaleItemsFilter;
 	page?: Page;
-	config: SdkConfig;
 }
+
+export type ListPrimarySaleItemsQueryOptions =
+	SdkInfiniteQueryParams<FetchPrimarySaleItemsParams>;
 
 /**
  * Fetches primary sale items from the marketplace API
  */
 export async function fetchPrimarySaleItems(
-	params: FetchPrimarySaleItemsParams,
+	params: WithRequired<
+		ListPrimarySaleItemsQueryOptions,
+		'chainId' | 'primarySaleContractAddress' | 'config'
+	>,
 ): Promise<ListPrimarySaleItemsResponse> {
 	const { chainId, primarySaleContractAddress, filter, page, config } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
 	return marketplaceClient.listPrimarySaleItems({
-		chainId: String(chainId),
+		chainId,
 		primarySaleContractAddress,
 		filter,
 		page,
 	});
 }
 
-export type ListPrimarySaleItemsQueryOptions =
-	ValuesOptional<FetchPrimarySaleItemsParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getPrimarySaleItemsQueryKey(
 	params: ListPrimarySaleItemsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		primarySaleContractAddress: params.primarySaleContractAddress,
-		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsRequest, 'page'>>;
-
-	return ['collectible', 'primary-sale-items', apiArgs] as const;
+	return [
+		'collectible',
+		'primary-sale-items',
+		{
+			chainId: params.chainId ?? 0,
+			primarySaleContractAddress: params.primarySaleContractAddress ?? '',
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export const primarySaleItemsQueryOptions = (
@@ -68,20 +68,23 @@ export const primarySaleItemsQueryOptions = (
 	type PageParam = { page: number; pageSize: number };
 	const initialPage: PageParam = params.page || { page: 1, pageSize: 30 };
 
+	const queryFn = async ({ pageParam }: { pageParam: PageParam }) => {
+		const requiredParams = params as WithRequired<
+			ListPrimarySaleItemsQueryOptions,
+			'chainId' | 'primarySaleContractAddress' | 'config'
+		>;
+		return fetchPrimarySaleItems({
+			chainId: requiredParams.chainId,
+			primarySaleContractAddress: requiredParams.primarySaleContractAddress,
+			filter: params.filter,
+			page: pageParam,
+			config: requiredParams.config,
+		});
+	};
+
 	return infiniteQueryOptions({
 		queryKey: getPrimarySaleItemsQueryKey(params),
-		queryFn: async ({ pageParam }) => {
-			return fetchPrimarySaleItems({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				primarySaleContractAddress: params.primarySaleContractAddress!,
-				filter: params.filter,
-				page: pageParam,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			});
-		},
+		queryFn,
 		initialPageParam: initialPage,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,

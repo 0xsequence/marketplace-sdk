@@ -1,7 +1,7 @@
 import type { TokenBalance } from '@0xsequence/indexer';
+import type { Order } from '@0xsequence/marketplace-sdk';
+import { compareAddress } from '@0xsequence/marketplace-sdk';
 import type { Address } from 'viem';
-import type { Order } from '../../../sdk/src';
-import { compareAddress } from '../../../sdk/src/utils/address';
 
 function handleOfferClick({
 	balances,
@@ -20,7 +20,7 @@ function handleOfferClick({
 	showSellModal: (args: {
 		chainId: number;
 		collectionAddress: Address;
-		tokenId: string;
+		tokenId: bigint;
 		order?: Order;
 	}) => void;
 	e: React.MouseEvent<HTMLButtonElement>;
@@ -44,7 +44,7 @@ function handleOfferClick({
 	showSellModal({
 		chainId,
 		collectionAddress,
-		tokenId: order.tokenId || '',
+		tokenId: order.tokenId || 0n,
 		order,
 	});
 }

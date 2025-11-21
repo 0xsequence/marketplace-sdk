@@ -1,11 +1,11 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockMarketplaceEndpoint, mockOrder } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockMarketplaceEndpoint,
-	mockOrder,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseCollectibleMarketHighestOfferParams } from './market-highest-offer';
 import { useCollectibleMarketHighestOffer } from './market-highest-offer';
 
@@ -13,7 +13,7 @@ describe('useCollectibleMarketHighestOffer', () => {
 	const defaultArgs: UseCollectibleMarketHighestOfferParams = {
 		chainId: mockOrder.chainId,
 		collectionAddress: zeroAddress,
-		tokenId: mockOrder.tokenId ?? '1',
+		tokenId: mockOrder.tokenId ?? 1n,
 	};
 
 	it('should fetch highest offer data successfully', async () => {
@@ -74,7 +74,7 @@ describe('useCollectibleMarketHighestOffer', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			tokenId: '2',
+			tokenId: 2n,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		};
@@ -95,7 +95,7 @@ describe('useCollectibleMarketHighestOffer', () => {
 		const argsWithoutQuery: UseCollectibleMarketHighestOfferParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
-			tokenId: '1',
+			tokenId: 1n,
 		};
 
 		const { result } = renderHook(() =>

@@ -1,78 +1,64 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
+import type {
+	GetCountOfPrimarySaleItemsRequest,
+	GetCountOfPrimarySaleItemsResponse,
+	PrimarySaleItemsFilter,
+} from '@0xsequence/api-client';
 import {
-	type GetCountOfPrimarySaleItemsRequest,
-	type GetCountOfPrimarySaleItemsResponse,
+	buildQueryOptions,
 	getMarketplaceClient,
-	type PrimarySaleItemsFilter,
-	type QueryKeyArgs,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchPrimarySaleItemsCountParams {
-	chainId: number;
-	primarySaleContractAddress: Address;
+export interface FetchPrimarySaleItemsCountParams
+	extends GetCountOfPrimarySaleItemsRequest {
 	filter?: PrimarySaleItemsFilter;
-	config: SdkConfig;
 }
+
+export type PrimarySaleItemsCountQueryOptions =
+	SdkQueryParams<FetchPrimarySaleItemsCountParams>;
 
 /**
  * Fetches the count of primary sale items from the marketplace API
  */
 export async function fetchPrimarySaleItemsCount(
-	params: FetchPrimarySaleItemsCountParams,
+	params: WithRequired<
+		PrimarySaleItemsCountQueryOptions,
+		'chainId' | 'primarySaleContractAddress' | 'config'
+	>,
 ): Promise<GetCountOfPrimarySaleItemsResponse> {
-	const { chainId, primarySaleContractAddress, filter, config } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-	return marketplaceClient.getCountOfPrimarySaleItems({
-		chainId: String(chainId),
-		primarySaleContractAddress,
-		filter,
-	});
+	return marketplaceClient.getCountOfPrimarySaleItems(apiParams);
 }
 
-export type PrimarySaleItemsCountQueryOptions =
-	Partial<FetchPrimarySaleItemsCountParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getPrimarySaleItemsCountQueryKey(
-	args: PrimarySaleItemsCountQueryOptions,
+	params: PrimarySaleItemsCountQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(args.chainId),
-		primarySaleContractAddress: args.primarySaleContractAddress,
-		filter: args.filter,
-	} satisfies QueryKeyArgs<GetCountOfPrimarySaleItemsRequest>;
-
-	return ['collectible', 'primary-sale-items-count', apiArgs] as const;
+	return [
+		'collectible',
+		'primary-sale-items-count',
+		{
+			chainId: params.chainId ?? 0,
+			primarySaleContractAddress: params.primarySaleContractAddress ?? '',
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export const primarySaleItemsCountQueryOptions = (
-	args: PrimarySaleItemsCountQueryOptions,
+	params: PrimarySaleItemsCountQueryOptions,
 ) => {
-	const enabled = Boolean(
-		args.primarySaleContractAddress &&
-			args.chainId &&
-			args.config &&
-			(args.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getPrimarySaleItemsCountQueryKey,
+			requiredParams: [
+				'primarySaleContractAddress',
+				'chainId',
+				'config',
+			] as const,
+			fetcher: fetchPrimarySaleItemsCount,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getPrimarySaleItemsCountQueryKey(args),
-		queryFn: () =>
-			fetchPrimarySaleItemsCount({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: args.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				primarySaleContractAddress: args.primarySaleContractAddress!,
-				filter: args.filter,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: args.config!,
-			}),
-		...args.query,
-		enabled,
-	});
 };

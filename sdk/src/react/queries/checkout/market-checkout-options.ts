@@ -1,46 +1,41 @@
-import { queryOptions } from '@tanstack/react-query';
+import type { CheckoutOptionsMarketplaceResponse } from '@0xsequence/api-client';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import type { MarketplaceKind } from '../../_internal';
 import {
+	buildQueryOptions,
+	type CheckoutOptionsMarketplaceRequest,
 	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type MarketplaceKind,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type {
-	CheckoutOptionsMarketplaceRequest,
-	CheckoutOptionsMarketplaceResponse,
-} from '../../_internal/api/marketplace.gen';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchMarketCheckoutOptionsParams
-	extends Omit<
-		CheckoutOptionsMarketplaceRequest,
-		'chainId' | 'wallet' | 'orders'
-	> {
+export interface FetchMarketCheckoutOptionsParams {
 	chainId: number;
 	walletAddress: Address;
 	orders: Array<{
-		collectionAddress: string;
+		collectionAddress: Address;
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}>;
-	config: SdkConfig;
+	additionalFee?: number;
 }
 
 /**
  * Fetches checkout options from the Marketplace API
  */
 export async function fetchMarketCheckoutOptions(
-	params: FetchMarketCheckoutOptionsParams,
+	params: WithRequired<
+		MarketCheckoutOptionsQueryOptions,
+		'chainId' | 'walletAddress' | 'orders' | 'config'
+	>,
 ): Promise<CheckoutOptionsMarketplaceResponse> {
 	const { chainId, walletAddress, orders, config, additionalFee } = params;
 
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsMarketplaceRequest = {
-		chainId: String(chainId),
-		wallet: walletAddress,
+		chainId,
+		walletAddress,
 		orders: orders.map((order) => ({
 			contractAddress: order.collectionAddress,
 			orderId: order.orderId,
@@ -54,53 +49,33 @@ export async function fetchMarketCheckoutOptions(
 }
 
 export type MarketCheckoutOptionsQueryOptions =
-	ValuesOptional<FetchMarketCheckoutOptionsParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<FetchMarketCheckoutOptionsParams>;
 
 export function getMarketCheckoutOptionsQueryKey(
 	params: MarketCheckoutOptionsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		wallet: params.walletAddress,
-		orders: params.orders?.map((order) => ({
-			contractAddress: order.collectionAddress,
-			orderId: order.orderId,
-			marketplace: order.marketplace,
-		})),
-		additionalFee: params.additionalFee,
-	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceRequest>;
-
-	return ['checkout', 'market-checkout-options', apiArgs] as const;
+	return [
+		'checkout',
+		'market',
+		{
+			chainId: params.chainId ?? 0,
+			walletAddress: params.walletAddress ?? '0x',
+			orders: params.orders ?? [],
+			additionalFee: params.additionalFee ?? 0,
+		},
+	] as const;
 }
 
 export function marketCheckoutOptionsQueryOptions(
 	params: MarketCheckoutOptionsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.walletAddress &&
-			params.orders?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getMarketCheckoutOptionsQueryKey,
+			requiredParams: ['chainId', 'walletAddress', 'orders', 'config'] as const,
+			fetcher: fetchMarketCheckoutOptions,
+			customValidation: (params) => (params.orders?.length ?? 0) > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getMarketCheckoutOptionsQueryKey(params),
-		queryFn: () =>
-			fetchMarketCheckoutOptions({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				walletAddress: params.walletAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				orders: params.orders!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				additionalFee: params.additionalFee ?? 0,
-			}),
-		...params.query,
-		enabled,
-	});
 }

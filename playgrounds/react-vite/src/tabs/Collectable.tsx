@@ -4,7 +4,7 @@ import type { Address } from 'viem';
 
 export function Collectible() {
 	const navigate = useNavigate();
-	const { collectionAddress, chainId, collectibleId } = useParams();
+	const { collectionAddress, chainId, tokenId } = useParams();
 	const route = createRoute.collectibles(
 		Number(chainId),
 		collectionAddress as string,
@@ -18,7 +18,7 @@ export function Collectible() {
 			showFullLayout={true}
 			chainId={Number(chainId)}
 			collectionAddress={collectionAddress as Address}
-			collectibleId={collectibleId as string}
+			tokenId={BigInt(tokenId as string)}
 		/>
 	);
 }

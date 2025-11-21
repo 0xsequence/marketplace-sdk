@@ -1,5 +1,6 @@
 'use client';
 
+import type { Metadata } from '@0xsequence/api-client';
 import {
 	Button,
 	ExternalLinkIcon,
@@ -7,7 +8,9 @@ import {
 	Modal,
 	Text,
 } from '@0xsequence/design-system';
-import type { TokenMetadata } from '../../../_internal';
+
+type TokenMetadata = Metadata.TokenMetadata;
+
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,

@@ -2,8 +2,8 @@ import type { Address } from 'viem';
 import { ContractType } from '../../../../_internal';
 
 export interface ShopCardStateParams {
-	quantityRemaining?: string;
-	quantityInitial?: string;
+	quantityRemaining?: bigint;
+	quantityInitial?: bigint;
 	unlimitedSupply?: boolean;
 	collectionType?: ContractType;
 	salesContractAddress?: Address;
@@ -51,7 +51,7 @@ export function getShopCardState(params: ShopCardStateParams): ShopCardState {
 	// Check if item is out of stock
 	const isOutOfStock =
 		!unlimitedSupply &&
-		(quantityRemaining === '0' || quantityRemaining === undefined);
+		(quantityRemaining === 0n || quantityRemaining === undefined);
 
 	// Check if stock information is missing
 	const isMissingStockInfo =
@@ -65,7 +65,7 @@ export function getShopCardState(params: ShopCardStateParams): ShopCardState {
 		!!salesContractAddress &&
 		collectionType === ContractType.ERC1155 &&
 		(unlimitedSupply ||
-			(quantityRemaining !== undefined && Number(quantityRemaining) > 0));
+			(quantityRemaining !== undefined && quantityRemaining > 0n));
 
 	// Styling for out of stock items
 	const mediaClassName = isOutOfStock ? 'opacity-50' : 'opacity-100';

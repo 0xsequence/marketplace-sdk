@@ -87,7 +87,7 @@ export default function QuantityInput({
 	function handleChangeQuantity(value: string) {
 		if (!value || Number.isNaN(Number(value)) || value.endsWith('.')) {
 			setQuantity({
-				value: value,
+				value,
 				isValid: false,
 			});
 			return;
@@ -98,7 +98,7 @@ export default function QuantityInput({
 
 		if (isLessThanMin) {
 			setQuantity({
-				value: value, // Trying to enter fraction starting with 0
+				value, // Trying to enter fraction starting with 0
 				isValid: false,
 			});
 			return;

@@ -6,7 +6,7 @@ import type { CollectibleCardAction } from '../../../../../types';
 
 type PendingAction = {
 	type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
-	collectibleId: string;
+	tokenId: bigint;
 	callback: () => void;
 	timestamp: number;
 };
@@ -25,7 +25,7 @@ export const actionButtonStore = createStore({
 			event: {
 				action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
 				onPendingActionExecuted: () => void;
-				tokenId: string;
+				tokenId: bigint;
 			},
 		) => ({
 			...context,
@@ -33,7 +33,7 @@ export const actionButtonStore = createStore({
 				type: event.action,
 				callback: event.onPendingActionExecuted,
 				timestamp: Date.now(),
-				collectibleId: event.tokenId,
+				tokenId: event.tokenId,
 			},
 		}),
 		clearPendingAction: (context) => ({
@@ -54,7 +54,7 @@ export const useActionButtonStore = () => {
 		setPendingAction: (
 			action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 			onPendingActionExecuted: () => void,
-			tokenId: string,
+			tokenId: bigint,
 		) => {
 			actionButtonStore.send({
 				type: 'setPendingAction',

@@ -7,7 +7,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 export type OpenSellModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string;
+	tokenId: bigint;
 	order: Order;
 	callbacks?: ModalCallbacks;
 };
@@ -19,9 +19,9 @@ type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
 
 const initialContext: SellModalState = {
 	isOpen: false,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
-	tokenId: '',
+	tokenId: 0n,
 	order: null,
 	callbacks: undefined,
 };
@@ -55,7 +55,7 @@ export const useSellModalState = () => {
 		useSelector(sellModalStore, (state) => state.context);
 
 	const closeModal = () => sellModalStore.send({ type: 'close' });
-	const currencyAddress = order?.priceCurrencyAddress as Address | undefined;
+	const currencyAddress = order?.priceCurrencyAddress;
 
 	return {
 		isOpen,

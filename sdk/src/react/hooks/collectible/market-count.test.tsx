@@ -1,9 +1,13 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
+import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import { OrderSide } from '../../_internal/api/marketplace.gen';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
+import { OrderSide } from '@0xsequence/api-client';
 import type { UseCollectibleMarketCountParams } from './market-count';
 import { useCollectibleMarketCount } from './market-count';
 
@@ -89,11 +93,12 @@ describe('useCollectibleMarketCount', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
+		const testAddress: Address = '0x1234567890123456789012345678901234567890';
+
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			collectionAddress: testAddress,
 		};
 
 		rerender(() => useCollectibleMarketCount(newArgs));

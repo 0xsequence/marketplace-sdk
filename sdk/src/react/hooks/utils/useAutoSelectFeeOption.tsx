@@ -1,5 +1,6 @@
 'use client';
 
+import type { Indexer } from '@0xsequence/api-client';
 import { useChain } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
@@ -87,18 +88,31 @@ type UseAutoSelectFeeOptionArgs = {
  * }
  * ```
  */
+/**
+ * Normalizes WaaS fee option token address to viem Address type
+ * - null represents native token (converted to zeroAddress)
+ * - string addresses from WaaS are validated and guaranteed to be hex addresses
+ */
+function normalizeWaasFeeTokenAddress(contractAddress: string | null): Address {
+	if (contractAddress === null) {
+		return zeroAddress;
+	}
+	// WaaS returns validated hex addresses, but TypeScript doesn't know they're `0x${string}`
+	// We validate to be safe and satisfy the type system
+	if (!contractAddress.startsWith('0x')) {
+		throw new Error(`Invalid address from WaaS: ${contractAddress}`);
+	}
+	return contractAddress as Address;
+}
+
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
 	enabled,
 }: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
 
-	// one token that has null contract address is native token, so we need to replace it with zero address
 	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
-		(option) =>
-			option.token.contractAddress === null
-				? zeroAddress
-				: (option.token.contractAddress as Address),
+		(option) => normalizeWaasFeeTokenAddress(option.token.contractAddress),
 	);
 
 	const {
@@ -121,13 +135,13 @@ export function useAutoSelectFeeOption({
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
-		...balanceDetails.nativeBalances.map((b) => ({
+		...balanceDetails.nativeBalances.map((b: Indexer.NativeTokenBalance) => ({
 			chainId: pendingFeeOptionConfirmation.chainId,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
 		})),
-		...balanceDetails.balances.map((b) => ({
+		...balanceDetails.balances.map((b: Indexer.TokenBalance) => ({
 			chainId: b.chainId,
 			balance: b.balance,
 			symbol: b.contractInfo?.symbol,
@@ -169,13 +183,13 @@ export function useAutoSelectFeeOption({
 
 		const selectedOption = pendingFeeOptionConfirmation.options.find(
 			(option) => {
+				const normalizedAddress = normalizeWaasFeeTokenAddress(
+					option.token.contractAddress,
+				);
 				const tokenBalance = combinedBalances.find(
-					(balance) =>
+					(balance: { contractAddress: Address }) =>
 						balance.contractAddress.toLowerCase() ===
-						(option.token.contractAddress === null
-							? zeroAddress
-							: option.token.contractAddress
-						).toLowerCase(),
+						normalizedAddress.toLowerCase(),
 				);
 
 				if (!tokenBalance) return false;

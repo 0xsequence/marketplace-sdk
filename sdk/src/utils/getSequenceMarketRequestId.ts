@@ -13,7 +13,7 @@ export const getSequenceMarketplaceRequestId = async (
 ) => {
 	try {
 		const receipt = await publicClient.getTransactionReceipt({
-			hash: hash,
+			hash,
 		});
 
 		const logs = parseEventLogs({

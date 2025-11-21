@@ -16,7 +16,7 @@ type ActionButtonBodyProps = {
 		| 'Create listing'
 		| 'Transfer'
 		| string;
-	tokenId: string;
+	tokenId: bigint;
 	onClick: () => void;
 	icon?: JSX.Element;
 	action?: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;

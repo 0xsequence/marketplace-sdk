@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/api-client';
 import { render, waitFor } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ERC721ShopModal } from '../components/ERC721ShopModal';
@@ -31,7 +31,8 @@ const mockCollection = {
 		link: 'https://example.com',
 		ogImage: 'https://example.com/image.png',
 		ogName: 'Test Collection',
-		originAddress: '0x0000000000000000000000000000000000000000',
+		originAddress:
+			'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		originChainId: 1,
 		verified: true,
 		categories: ['Test'],
@@ -44,11 +45,11 @@ const mockCollection = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456',
-	items: [{ tokenId: '1', quantity: '1' }],
+	salesContractAddress: '0x456' as `0x${string}`,
+	items: [{ tokenId: 1n, quantity: 1n }],
 	salePrice: {
-		amount: '1000000000000000000',
-		currencyAddress: '0x0',
+		amount: 1000000000000000000n,
+		currencyAddress: '0x0' as `0x${string}`,
 	},
 };
 
@@ -56,15 +57,15 @@ const mockPaymentParams = {
 	chain: 1,
 	collectibles: [
 		{
-			quantity: '1',
+			quantity: 1n,
 			decimals: 0,
 		},
 	],
-	currencyAddress: '0x0',
+	currencyAddress: '0x0' as `0x${string}`,
 	price: '1000000000000000000',
-	targetContractAddress: '0x456',
+	targetContractAddress: '0x456' as `0x${string}`,
 	txData: '0x' as `0x${string}`,
-	collectionAddress: '0x123',
+	collectionAddress: '0x123' as `0x${string}`,
 	recipientAddress: '0xabc' as `0x${string}`,
 	enableMainCurrencyPayment: true,
 	enableSwapPayments: true,
@@ -160,7 +161,7 @@ describe('ERC721ShopModal', () => {
 	it('should use default quantity of 1 when not specified', async () => {
 		const shopDataWithoutQuantity = {
 			...mockShopData,
-			items: [{ tokenId: '1' }], // No quantity specified
+			items: [{ tokenId: 1n }], // No quantity specified
 		};
 
 		const mockUseERC721SalePaymentParams = vi.spyOn(
@@ -223,7 +224,7 @@ describe('ERC721ShopModal', () => {
 		expect(mockUseERC721SalePaymentParams).toHaveBeenCalledWith({
 			salesContractAddress: mockShopData.salesContractAddress,
 			collectionAddress: mockCollection.address,
-			price: '0',
+			price: 0n,
 			currencyAddress: '',
 			enabled: true,
 			chainId: 1,

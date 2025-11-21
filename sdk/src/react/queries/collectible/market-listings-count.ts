@@ -1,89 +1,66 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	GetCountOfListingsForCollectibleRequest,
 	OrderFilter,
-} from '../../_internal/api/marketplace.gen';
-import type { StandardQueryOptions } from '../../types/query';
+} from '@0xsequence/api-client';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchCountListingsForCollectibleParams {
-	chainId: number;
-	collectionAddress: string;
-	collectibleId: string;
-	config: SdkConfig;
+export interface FetchCountListingsForCollectibleParams
+	extends GetCountOfListingsForCollectibleRequest {
 	filter?: OrderFilter;
 }
+
+export type CountListingsForCollectibleQueryOptions =
+	SdkQueryParams<FetchCountListingsForCollectibleParams>;
 
 /**
  * Fetches count of listings for a collectible from the marketplace API
  */
 export async function fetchCountListingsForCollectible(
-	params: FetchCountListingsForCollectibleParams,
+	params: WithRequired<
+		CountListingsForCollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
 ) {
-	const { collectionAddress, chainId, collectibleId, config, filter } = params;
-
+	const { config, ...apiParams } = params;
 	const client = getMarketplaceClient(config);
-
-	const apiArgs: GetCountOfListingsForCollectibleRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		tokenId: collectibleId,
-		filter,
-	};
-
-	const result = await client.getCountOfListingsForCollectible(apiArgs);
+	const result = await client.getCountOfListingsForCollectible(apiParams);
 	return result.count;
 }
-
-export type CountListingsForCollectibleQueryOptions =
-	ValuesOptional<FetchCountListingsForCollectibleParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getCountListingsForCollectibleQueryKey(
 	params: CountListingsForCollectibleQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.collectibleId,
-		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCountOfListingsForCollectibleRequest>;
-
-	return ['order', 'listings-count', apiArgs] as const;
+	return [
+		'collectible',
+		'market-listings-count',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function countListingsForCollectibleQueryOptions(
 	params: CountListingsForCollectibleQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.collectibleId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCountListingsForCollectibleQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchCountListingsForCollectible,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCountListingsForCollectibleQueryKey(params),
-		queryFn: () =>
-			fetchCountListingsForCollectible({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectibleId: params.collectibleId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				filter: params.filter,
-			}),
-		...params.query,
-		enabled,
-	});
 }

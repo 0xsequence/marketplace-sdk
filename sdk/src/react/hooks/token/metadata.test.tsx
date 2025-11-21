@@ -1,19 +1,23 @@
-import { renderHook, server, waitFor } from '@test';
-import { HttpResponse, http } from 'msw';
-import { describe, expect, it } from 'vitest';
-import {
+import { MetadataMocks } from '@0xsequence/api-client';
+
+const {
 	mockEthCollection,
 	mockMetadataEndpoint,
 	mockTokenMetadata,
-} from '../../_internal/api/__mocks__/metadata.msw';
+	mockTokenMetadataNormalized,
+} = MetadataMocks;
+
+import { renderHook, server, waitFor } from '@test';
+import { HttpResponse, http } from 'msw';
+import { describe, expect, it } from 'vitest';
 import type { UseTokenMetadataParams } from './metadata';
 import { useTokenMetadata } from './metadata';
 
 describe('useTokenMetadata', () => {
 	const defaultArgs: UseTokenMetadataParams = {
 		chainId: mockEthCollection.chainId,
-		contractAddress: mockEthCollection.address,
-		tokenIds: ['1', '2', '3'],
+		contractAddress: mockEthCollection.address as `0x${string}`,
+		tokenIds: [1n, 2n, 3n],
 	};
 
 	it('should fetch token metadata successfully', async () => {
@@ -28,8 +32,8 @@ describe('useTokenMetadata', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toEqual([mockTokenMetadata]);
+		// Verify the data matches our mock (normalized with BigInt)
+		expect(result.current.data).toEqual([mockTokenMetadataNormalized]);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -88,7 +92,7 @@ describe('useTokenMetadata', () => {
 	it('should handle missing required parameters', () => {
 		const invalidParams = {
 			chainId: defaultArgs.chainId,
-			contractAddress: '',
+			contractAddress: '' as `0x${string}`,
 			tokenIds: defaultArgs.tokenIds,
 		};
 
@@ -115,8 +119,9 @@ describe('useTokenMetadata', () => {
 
 		const customParams = {
 			chainId: 137,
-			contractAddress: '0x1234567890123456789012345678901234567890',
-			tokenIds: ['10', '20', '30'],
+			contractAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			tokenIds: [10n, 20n, 30n],
 		};
 
 		const { result } = renderHook(() => useTokenMetadata(customParams));

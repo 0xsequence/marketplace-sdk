@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchListCollectibleActivitiesParams,
 	type fetchListCollectibleActivities,
 	type ListCollectibleActivitiesQueryOptions,
 	listCollectibleActivitiesQueryOptions,
@@ -85,10 +84,7 @@ export function useCollectibleMarketActivities(
 
 export { listCollectibleActivitiesQueryOptions };
 
-export type {
-	FetchListCollectibleActivitiesParams,
-	ListCollectibleActivitiesQueryOptions,
-};
+export type { ListCollectibleActivitiesQueryOptions };
 
 // Legacy exports for backward compatibility during migration
 export type UseListCollectibleActivitiesRequest =

@@ -55,7 +55,7 @@ interface GetERC721SalePaymentParams {
 	salesContractAddress: string;
 	collectionAddress: string;
 	price: bigint;
-	currencyAddress: string;
+	currencyAddress: Address;
 	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
@@ -86,8 +86,8 @@ export const getERC721SalePaymentParams = async ({
 		const purchaseTransactionData = encodeERC721MintData({
 			to: address,
 			amount: BigInt(quantity),
-			paymentToken: currencyAddress as Address,
-			price: price,
+			paymentToken: currencyAddress,
+			price,
 			proof: DEFAULT_PROOF,
 		});
 
@@ -101,11 +101,13 @@ export const getERC721SalePaymentParams = async ({
 			chain: chainId,
 			collectibles: [
 				{
+					// Checkout library expects string for quantity display
 					quantity: quantity.toString(),
 					decimals: 0,
 				},
 			],
 			currencyAddress,
+			// Checkout library expects string for price display
 			price: price.toString(),
 			targetContractAddress: salesContractAddress,
 			txData: purchaseTransactionData,
@@ -132,6 +134,7 @@ export const getERC721SalePaymentParams = async ({
 			nativeTokenAddress,
 			...(customCreditCardProviderCallback && {
 				customProviderCallback: () => {
+					// Callback expects string for display
 					customCreditCardProviderCallback(price.toString());
 					buyModalStore.send({ type: 'close' });
 				},
@@ -141,6 +144,7 @@ export const getERC721SalePaymentParams = async ({
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
+		// Error messages need strings for display
 		throw BuyModalErrorFactory.priceCalculation(
 			'ERC721 payment params calculation',
 			[price.toString(), quantity.toString()],
@@ -152,7 +156,7 @@ export const getERC721SalePaymentParams = async ({
 interface UseERC721SalePaymentParams {
 	salesContractAddress: string | undefined;
 	collectionAddress: string | undefined;
-	price: string | undefined;
+	price: bigint | undefined;
 	currencyAddress: string | undefined;
 	enabled: boolean;
 	checkoutProvider?: string;
@@ -196,8 +200,9 @@ export const useERC721SalePaymentParams = (
 						address,
 						salesContractAddress,
 						collectionAddress,
-						price: BigInt(price),
-						currencyAddress,
+						price,
+						// currencyAddress is validated to exist by queryEnabled check above
+						currencyAddress: currencyAddress as Address,
 						callbacks: {
 							onSuccess,
 							onError,

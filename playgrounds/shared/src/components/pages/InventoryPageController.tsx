@@ -1,11 +1,9 @@
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
-	type CollectibleOrder,
 	getNetwork,
 	type Order,
 	OrderbookKind,
-	type TokenMetadata,
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
@@ -34,16 +32,11 @@ function NetworkPill({ chainId }: NetworkPillProps) {
 	);
 }
 
-interface InventoryCollectible extends Omit<CollectibleOrder, 'metadata'> {
-	metadata: TokenMetadata;
-	balance: string;
-}
-
 interface UseListInventoryCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
 	orderbookKind: OrderbookKind;
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	assetSrcPrefixUrl?: string;
 }
@@ -83,7 +76,7 @@ function useListInventoryCardData({
 	}, [inventoryData?.collectibles]);
 
 	const collectibleCards = useMemo(() => {
-		return allCollectibles.map((collectible: InventoryCollectible) => {
+		return allCollectibles.map((collectible) => {
 			const cardProps = {
 				tokenId: collectible.metadata.tokenId,
 				chainId,
@@ -92,7 +85,7 @@ function useListInventoryCardData({
 				cardLoading: inventoryIsLoading,
 				cardType: 'market',
 				orderbookKind,
-				collectible,
+				collectible: collectible as any, // Type assertion needed due to metadata API vs marketplace API type differences
 				onCollectibleClick,
 				balance: collectible.balance,
 				balanceIsLoading: false,
@@ -171,7 +164,7 @@ export function InventoryPageController({
 	const handleCollectibleClick = (
 		chainId: number,
 		collectionAddress: Address,
-		tokenId: string,
+		tokenId: bigint,
 	) => {
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 
@@ -236,7 +229,7 @@ interface CollectionInventoryProps {
 	onCollectibleClick: (
 		chainId: number,
 		collectionAddress: Hex,
-		tokenId: string,
+		tokenId: bigint,
 	) => void;
 }
 
@@ -254,7 +247,7 @@ function CollectionInventory({
 		chainId,
 		collectionAddress,
 		orderbookKind: OrderbookKind.sequence_marketplace_v2,
-		onCollectibleClick: (tokenId: string) =>
+		onCollectibleClick: (tokenId: bigint) =>
 			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
 

@@ -110,11 +110,14 @@ export const getWagmiErrorMessage = (error: Error): string => {
 		// Network & RPC Errors
 		case WAGMI_ERROR.HTTP_REQUEST: {
 			// Use error context if available
-			const httpError = error as any;
+			interface HttpError extends Error {
+				status?: number;
+			}
+			const httpError = error as HttpError;
 			if (httpError.status === 429) {
 				return 'Rate limit exceeded. Please wait a moment before trying again.';
 			}
-			if (httpError.status >= 500) {
+			if (httpError.status && httpError.status >= 500) {
 				return 'Server error. Please try again in a few moments.';
 			}
 			return 'Network connection issue. Please check your connection and try again.';

@@ -1,11 +1,11 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseCollectionMarketFloorParams } from './market-floor';
 import { useCollectionMarketFloor } from './market-floor';
 

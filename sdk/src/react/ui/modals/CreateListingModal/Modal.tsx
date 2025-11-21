@@ -45,11 +45,12 @@ const Modal = observer(() => {
 		collectionAddress,
 		chainId,
 		listingPrice,
-		collectibleId,
+		tokenId,
 		orderbookKind: orderbookKindProp,
 		callbacks,
 		listingIsBeingProcessed,
 	} = state;
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
@@ -75,7 +76,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
@@ -89,7 +90,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId,
+		tokenId,
 		userAddress: address ?? undefined,
 	});
 
@@ -117,11 +118,11 @@ const Modal = observer(() => {
 		listingInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			listing: {
-				tokenId: collectibleId,
+				tokenId,
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
-				).toString(),
+				),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
 				pricePerToken: listingPrice.amountRaw,
@@ -132,7 +133,7 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => createListingModal$.close(),
-		steps$: steps$,
+		steps$,
 	});
 
 	const erc20NotConfiguredError =
@@ -183,7 +184,7 @@ const Modal = observer(() => {
 		disabled:
 			steps$.approval.exist.get() ||
 			tokenApprovalIsLoading ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			createListingModal$.invalidQuantity.get() ||
 			isLoading ||
 			listingIsBeingProcessed,
@@ -198,7 +199,7 @@ const Modal = observer(() => {
 		variant: 'secondary' as const,
 		disabled:
 			createListingModal$.invalidQuantity.get() ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			steps$?.approval.isExecuting.get() ||
 			tokenApprovalIsLoading ||
 			isLoading,
@@ -231,7 +232,7 @@ const Modal = observer(() => {
 					<TokenPreview
 						collectionName={collection?.name}
 						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
+						tokenId={tokenId}
 						chainId={chainId}
 					/>
 					<div className="flex w-full flex-col gap-1">
@@ -250,9 +251,9 @@ const Modal = observer(() => {
 							modalType="listing"
 						/>
 
-						{listingPrice.amountRaw !== '0' && (
+						{listingPrice.amountRaw !== 0n && (
 							<FloorPriceText
-								tokenId={collectibleId}
+								tokenId={tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
 								price={listingPrice}
@@ -280,7 +281,7 @@ const Modal = observer(() => {
 						disabled={shouldHideListButton}
 					/>
 					<TransactionDetails
-						collectibleId={collectibleId}
+						tokenId={tokenId}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 						price={createListingModal$.listingPrice.get()}
