@@ -115,7 +115,7 @@ export const CollectibleDetails = ({
 								{lowestListing?.priceAmountFormatted || '—'}{' '}
 								<span className="text-text-80">
 									{currencies?.find(
-										(c) =>
+										(c: { contractAddress: string }) =>
 											c.contractAddress === lowestListing?.priceCurrencyAddress,
 									)?.symbol || ''}
 								</span>
@@ -129,7 +129,7 @@ export const CollectibleDetails = ({
 								{highestOffer?.priceAmountFormatted || '—'}{' '}
 								<span className="text-text-80">
 									{currencies?.find(
-										(c) =>
+										(c: { contractAddress: string }) =>
 											c.contractAddress === highestOffer?.priceCurrencyAddress,
 									)?.symbol || ''}
 								</span>

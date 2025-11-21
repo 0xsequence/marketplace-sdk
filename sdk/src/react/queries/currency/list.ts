@@ -1,3 +1,4 @@
+import type { Currency } from '@0xsequence/api-client';
 import { type Address, zeroAddress } from 'viem';
 import { compareAddress } from '../../../utils';
 import {
@@ -23,7 +24,7 @@ export type MarketCurrenciesQueryOptions =
  */
 export async function fetchMarketCurrencies(
 	params: WithRequired<MarketCurrenciesQueryOptions, 'chainId' | 'config'>,
-) {
+): Promise<Currency[]> {
 	const { chainId, includeNativeCurrency, collectionAddress, config } = params;
 	const includeNativeCurrencyOption = includeNativeCurrency ?? true;
 	const marketplaceClient = getMarketplaceClient(config);

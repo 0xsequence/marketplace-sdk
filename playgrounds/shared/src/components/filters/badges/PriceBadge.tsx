@@ -26,7 +26,8 @@ export const PriceBadge = ({
 	});
 
 	const currency = currencies?.find(
-		(c) => c.contractAddress === priceFilter.contractAddress,
+		(c: { contractAddress: string; decimals: number }) =>
+			c.contractAddress === priceFilter.contractAddress,
 	);
 	const decimals = currency?.decimals || 0;
 
