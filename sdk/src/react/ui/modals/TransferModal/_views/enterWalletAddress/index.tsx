@@ -57,7 +57,7 @@ const EnterWalletAddressView = () => {
 		query: { enabled: !!connectedAddress },
 	});
 
-	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
+	const balanceAmount = tokenBalance?.pages[0]?.balances[0]?.balance;
 
 	let insufficientBalance = true;
 	if (balanceAmount !== undefined && quantity) {

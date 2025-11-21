@@ -1,12 +1,13 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { formatUnits, type Hex } from 'viem';
+import { type Chain, formatUnits, type Hash } from 'viem';
 import { useSupportedChains } from 'xtrails';
 import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
@@ -16,6 +17,7 @@ import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
+	const config = useConfig();
 	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
@@ -30,12 +32,15 @@ export const BuyModalContent = () => {
 		order,
 		collectionAddress,
 		salePrice,
+		marketPriceAmount,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 	} = useBuyModalData();
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(modalProps.chainId, config);
 
 	const isChainSupported = supportedChains.some(
-		(chain) => chain.id === modalProps.chainId,
+		(chain: Chain) => chain.id === modalProps.chainId,
 	);
 
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
@@ -45,25 +50,23 @@ export const BuyModalContent = () => {
 	const useTrailsModal = isChainSupported && buyStep && !isLoading;
 	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
 
-	const config = useConfig();
-
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
 		: '0';
 
-	const handleTransactionSuccess = (hash: Hex) => {
+	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
 		if (isMarket && !order) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
 
 		close();
-		onSuccess({ hash });
+		onSuccess({ hash: hash as Hash });
 
 		transactionStatusModal.show({
-			hash,
+			hash: hash as Hash,
 			orderId: isMarket ? order?.orderId : undefined,
 			price: {
-				amountRaw: (isMarket ? order?.orderId : salePrice?.amount) ?? '0',
+				amountRaw: (isMarket ? marketPriceAmount : salePrice?.amount) ?? '0',
 				currency,
 			},
 			collectionAddress,
@@ -78,19 +81,32 @@ export const BuyModalContent = () => {
 		chainId: number;
 		sessionId: string;
 	}) => {
-		handleTransactionSuccess(data.txHash as Hex);
+		handleTransactionSuccess(data.txHash as Hash);
+	};
+
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			console.log(
+				'rejecting pending fee option',
+				pendingFeeOptionConfirmation?.id,
+			);
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
+		close();
 	};
 
 	return (
 		<Modal
 			isDismissible
-			onClose={close}
+			onClose={handleClose}
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={{
 				style: {
 					width: '450px',
 					height: 'auto',
 				},
+				className: 'overflow-y-auto',
 			}}
 		>
 			<div className="relative flex grow flex-col items-center gap-4 p-6">
@@ -110,7 +126,7 @@ export const BuyModalContent = () => {
 				{useTrailsModal && (
 					<div className="w-full">
 						<TrailsWidget
-							appId={config.projectAccessKey}
+							apiKey={config.projectAccessKey}
 							toChainId={modalProps.chainId}
 							toAddress={buyStep.to}
 							toToken={currencyAddress}
@@ -118,8 +134,10 @@ export const BuyModalContent = () => {
 							toAmount={formattedAmount}
 							renderInline={true}
 							theme="dark"
+							mode="pay"
 							customCss={TRAILS_CUSTOM_CSS}
 							onDestinationConfirmation={handleTrailsSuccess}
+							payMessage='{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}'
 						/>
 					</div>
 				)}

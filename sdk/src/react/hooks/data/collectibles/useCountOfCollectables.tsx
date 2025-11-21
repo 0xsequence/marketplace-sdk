@@ -6,7 +6,7 @@ import {
 	type CountOfCollectablesQueryOptions,
 	countOfCollectablesQueryOptions,
 	type FetchCountOfCollectablesParams,
-} from '../../../queries/countOfCollectables';
+} from '../../../queries/collectibles/countOfCollectables';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCountOfCollectablesParams = Optional<

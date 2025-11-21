@@ -1,3 +1,4 @@
+import type { Hex } from 'viem';
 import type { ContractType, CreateReq } from '../../types';
 import type { MarketplaceKind } from './api';
 
@@ -8,6 +9,12 @@ export interface QueryArg {
 export type CollectableId = string | number;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
+
+export interface Transaction {
+	to: Hex;
+	data?: Hex;
+	value?: bigint;
+}
 
 type TransactionStep = {
 	exist: boolean;
@@ -61,4 +68,18 @@ export type ValuesOptional<T> = {
 	[K in keyof T]: T[K] | undefined;
 };
 
+export type RequiredKeys<T> = {
+	[K in keyof T]-?: T[K];
+};
+
+export type QueryKeyArgs<T> = {
+	[K in keyof Required<T>]: T[K] | undefined;
+};
+
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
+/**
+ * Extracts only API-relevant fields from query params, excluding SDK config and query options
+ * Converts optional properties (prop?: T) to explicit union types (prop: T | undefined)
+ */
+export type ApiArgs<T> = ValuesOptional<Omit<T, 'config' | 'query'>>;

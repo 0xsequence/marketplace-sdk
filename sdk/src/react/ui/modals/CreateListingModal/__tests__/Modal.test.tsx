@@ -34,6 +34,8 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 
 		// Render the modal
@@ -64,6 +66,8 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 
 		// Render the modal

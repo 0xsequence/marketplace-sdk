@@ -4,27 +4,30 @@ import {
 	Button,
 	ChevronLeftIcon,
 	NetworkImage,
+	Spinner,
 	Text,
 	Tooltip,
-	useToast,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
-import type { Address, Hex } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
+import { useConnectorMetadata } from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
+import { useExecuteBundledTransactions } from './hook/useExecuteBundledTransactions';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex) => void;
+	onSuccess: (hash: Hex | string) => void;
 }
 
 export const FallbackPurchaseUI = ({
@@ -35,6 +38,12 @@ export const FallbackPurchaseUI = ({
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
 	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+	const [error, setError] = useState<{
+		title: string;
+		message: string;
+		details?: Error;
+	} | null>(null);
+	const { isSequence: isSequenceConnector } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
@@ -46,11 +55,11 @@ export const FallbackPurchaseUI = ({
 		order,
 		salePrice,
 		isMarket,
+		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
 	const sdkConfig = useConfig();
-	const toast = useToast();
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
@@ -62,6 +71,8 @@ export const FallbackPurchaseUI = ({
 	const priceCurrencyAddress = isMarket
 		? currencyAddress
 		: (salePrice?.currencyAddress as Address);
+	const isAnyTransactionPending =
+		isApproving || isExecuting || isSwitchingChain;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -76,23 +87,34 @@ export const FallbackPurchaseUI = ({
 		steps.find((step) => step.id === StepType.tokenApproval),
 	);
 
+	const {
+		executeBundledTransactions,
+		isExecuting: isExecutingBundledTransactions,
+	} = useExecuteBundledTransactions({
+		chainId,
+		approvalStep,
+		priceAmount: priceAmount as string,
+	});
+
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
 		const to = step.to as Address;
 		const value = BigInt(step.value);
 
-		if (!data || !to || !value) {
-			toast({
-				title: 'Invalid step',
-				variant: 'error',
-				description: 'data, to and value are required',
-			});
-			throw new Error(`Invalid step. data, to and value are required:
+		if (!data || !to) {
+			const errorDetails =
+				new Error(`Invalid step: 'data' and 'to' are required:
 				data: ${data}
 				to: ${to}
-				value: ${value}
 
 				${JSON.stringify(step)}`);
+
+			setError({
+				title: 'Invalid step',
+				message: '`data` and `to` are required',
+				details: errorDetails,
+			});
+			throw errorDetails;
 		}
 
 		await ensureCorrectChainAsync(chainId);
@@ -115,6 +137,7 @@ export const FallbackPurchaseUI = ({
 	const executeApproval = async () => {
 		if (!approvalStep) throw new Error('Approval step not found');
 
+		setError(null); // Clear any previous errors
 		setIsApproving(true);
 		try {
 			await executeTransaction(approvalStep);
@@ -127,11 +150,21 @@ export const FallbackPurchaseUI = ({
 	};
 
 	const executeBuy = async () => {
+		setError(null); // Clear any previous errors
 		setIsExecuting(true);
 		try {
-			const hash = await executeTransaction(buyStep);
+			// if it's market, bundling occurs on the backend. We add the approval step to the bundled transactions for shop purchases
+			const hash =
+				isShop && approvalStep
+					? await executeBundledTransactions({
+							step: buyStep,
+							onBalanceInsufficientForFeeOption:
+								handleBalanceInsufficientForWaasFeeOption,
+							onTransactionFailed: handleTransactionFailed,
+						})
+					: await executeTransaction(buyStep);
 
-			onSuccess(hash);
+			onSuccess(hash as Hash);
 		} catch (error) {
 			console.error('Buy transaction failed:', error);
 		} finally {
@@ -150,6 +183,26 @@ export const FallbackPurchaseUI = ({
 		}
 	};
 
+	const handleBalanceInsufficientForWaasFeeOption = (error: Error) => {
+		setError({
+			title: 'Insufficient balance for fee option',
+			message: 'You do not have enough balance to purchase this item.',
+			details: error,
+		});
+
+		console.error('Balance insufficient for fee option:', error);
+	};
+
+	const handleTransactionFailed = (error: Error) => {
+		setError({
+			title: 'Transaction failed',
+			message: error.message,
+			details: error,
+		});
+
+		console.error('Transaction failed:', error);
+	};
+
 	const renderPriceUSD = () => {
 		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
 		if (!priceUSD) return '';
@@ -165,7 +218,7 @@ export const FallbackPurchaseUI = ({
 			);
 		}
 
-		return `$${priceUSD}`;
+		return `~$${priceUSD}`;
 	};
 
 	const formattedPrice = formatPrice(
@@ -190,8 +243,6 @@ export const FallbackPurchaseUI = ({
 		return `${formattedPrice} ${currency?.symbol}`;
 	};
 
-	const isAnyTransactionPending =
-		isApproving || isExecuting || isSwitchingChain;
 	const canApprove =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
@@ -201,8 +252,24 @@ export const FallbackPurchaseUI = ({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		!approvalStep &&
-		isOnCorrectChain;
+		isOnCorrectChain &&
+		(isSequenceConnector ? true : !approvalStep);
+
+	const approvalButtonLabel = isApproving ? (
+		<div className="flex items-center gap-2">
+			<Spinner size="sm" /> Approving Token...
+		</div>
+	) : (
+		'Approve Token'
+	);
+	const buyButtonLabel =
+		isExecuting || isExecutingBundledTransactions ? (
+			<div className="flex items-center gap-2">
+				<Spinner size="sm" /> Confirming Purchase...
+			</div>
+		) : (
+			'Buy now'
+		);
 
 	if (isLoadingBuyModalData || isLoadingBalance) {
 		return (
@@ -219,7 +286,7 @@ export const FallbackPurchaseUI = ({
 					<Media
 						assets={[collectible?.image]}
 						name={collectible?.name}
-						containerClassName="h-16 w-16 rounded-lg object-cover"
+						containerClassName="h-[84px] w-[84px] rounded-lg object-cover"
 					/>
 					<div className="flex flex-col">
 						<div className="flex items-center gap-2">
@@ -241,7 +308,16 @@ export const FallbackPurchaseUI = ({
 								side="right"
 							>
 								<div className="flex items-center gap-1">
-									<NetworkImage chainId={chainId} size="xs" />
+									{currency?.imageUrl ? (
+										<img
+											src={currency.imageUrl}
+											alt={currency.symbol}
+											className="h-5 w-5 rounded-full"
+										/>
+									) : (
+										<NetworkImage chainId={chainId} size="sm" />
+									)}
+
 									<Text className="font-bold text-md">
 										{renderCurrencyPrice()}
 									</Text>
@@ -269,8 +345,8 @@ export const FallbackPurchaseUI = ({
 					)}
 
 				{!isOnCorrectChain && currentChainId && (
-					<div className="rounded-lg border border-orange-400 bg-orange-950 p-3">
-						<Text className="text-orange-400 text-sm">
+					<div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+						<Text className="text-amber-300 text-xs">
 							Wrong network detected. You&apos;re currently on{' '}
 							<Text className="font-bold">{currentChainName}</Text>, but this
 							transaction requires{' '}
@@ -295,27 +371,41 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				{approvalStep && (
+				{approvalStep && !isSequenceConnector && (
 					<Button
 						onClick={executeApproval}
 						pending={isApproving}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={isApproving ? 'Confirming Approval...' : 'Approve Token'}
+						label={approvalButtonLabel}
 						className="w-full"
 					/>
 				)}
 
-				<Button
-					onClick={executeBuy}
-					pending={isExecuting}
-					disabled={!canBuy || isAnyTransactionPending}
-					variant="primary"
-					size="lg"
-					label={isExecuting ? 'Confirming Purchase...' : 'Buy Now'}
-					className="w-full"
-				/>
+				{canBuy && (
+					<Button
+						onClick={() => {
+							setError(null); // Clear any previous errors
+							return executeBuy();
+						}}
+						pending={isExecuting || isExecutingBundledTransactions}
+						disabled={!canBuy || isAnyTransactionPending}
+						variant="primary"
+						size="lg"
+						label={buyButtonLabel}
+						className="w-full"
+					/>
+				)}
+
+				{error && (
+					<ErrorLogBox
+						title={error.title}
+						message={error.message}
+						error={error.details}
+						onDismiss={() => setError(null)}
+					/>
+				)}
 			</div>
 		</div>
 	);

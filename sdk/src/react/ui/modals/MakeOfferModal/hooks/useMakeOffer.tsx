@@ -4,10 +4,8 @@ import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import { OrderbookKind } from '../../../../../types';
-import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import type { TransactionSteps } from '../../../../_internal';
 import type { OfferInput } from '../../../../_internal/types';
-import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
@@ -31,30 +29,19 @@ export const useMakeOffer = ({
 	closeMainModal,
 	steps$,
 }: UseMakeOfferArgs) => {
-	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
-		useMarketplaceConfig();
-
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	) as MarketCollection;
-
-	orderbookKind =
-		orderbookKind ??
-		collectionConfig?.destinationMarketplace ??
-		OrderbookKind.sequence_marketplace_v2;
-
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			tokenId: offerInput.offer.tokenId,
-			collectionAddress,
-			currencyAddress: offerInput.offer.currencyAddress,
-			contractType: offerInput.contractType,
-			orderbook: orderbookKind,
-			query: {
-				enabled: !marketplaceIsLoading,
-			},
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		tokenId: offerInput.offer.tokenId,
+		collectionAddress,
+		currencyAddress: offerInput.offer.currencyAddress,
+		contractType: offerInput.contractType,
+		orderbook: orderbookKind || OrderbookKind.sequence_marketplace_v2,
+	});
 
 	useEffect(() => {
 		if (!tokenApprovalIsLoading) {
@@ -78,5 +65,7 @@ export const useMakeOffer = ({
 		makeOffer,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

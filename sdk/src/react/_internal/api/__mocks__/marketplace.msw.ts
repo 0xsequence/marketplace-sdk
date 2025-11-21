@@ -38,6 +38,8 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1800.0,
 		defaultChainCurrency: false,
 		nativeCurrency: true,
+		openseaListing: true,
+		openseaOffer: true,
 		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 	},
@@ -51,6 +53,8 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1.0,
 		defaultChainCurrency: true,
 		nativeCurrency: false,
+		openseaListing: true,
+		openseaOffer: true,
 		status: CurrencyStatus.active,
 		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
@@ -98,6 +102,7 @@ export const mockOrder: Order = {
 	blockNumber: 1234567,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
+	slug: 'test-order',
 };
 
 export const mockCollectibleOrder: CollectibleOrder = {
@@ -280,6 +285,14 @@ export const handlers = [
 
 	mockMarketplaceHandler('GetCollectionDetail', {
 		collection: mockCollection,
+	}),
+
+	mockMarketplaceHandler('GetCollectionActiveListingsCurrencies', {
+		currencies: mockCurrencies,
+	}),
+
+	mockMarketplaceHandler('GetCollectionActiveOffersCurrencies', {
+		currencies: mockCurrencies,
 	}),
 
 	mockMarketplaceHandler('GetCollectibleLowestOffer', {

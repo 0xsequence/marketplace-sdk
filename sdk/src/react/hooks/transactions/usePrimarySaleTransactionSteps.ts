@@ -55,7 +55,7 @@ export function usePrimarySaleTransactionSteps({
 	});
 
 	// Check allowance if using ERC20
-	const { data: allowance } = useReadContract({
+	const { data: allowance, isLoading: allowanceLoading } = useReadContract({
 		address: paymentToken,
 		abi: ERC20_ABI,
 		functionName: 'allowance',
@@ -138,7 +138,7 @@ export function usePrimarySaleTransactionSteps({
 
 			return steps;
 		},
-		enabled: enabled && !!buyer && !!abi && !abiLoading,
+		enabled: enabled && !!buyer && !!abi && !abiLoading && !allowanceLoading,
 	});
 }
 

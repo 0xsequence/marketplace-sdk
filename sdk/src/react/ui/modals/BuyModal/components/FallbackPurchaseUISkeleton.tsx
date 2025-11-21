@@ -10,7 +10,7 @@ export const FallbackPurchaseUISkeleton = ({
 			<div className="flex flex-col gap-4 p-4">
 				<div className="flex items-start gap-4">
 					{/* Media skeleton */}
-					<Skeleton className="h-16 w-16 rounded-lg" />
+					<Skeleton className="h-[84px] w-[84px] rounded-lg" />
 
 					<div className="flex flex-1 flex-col">
 						{/* Collectible name and token ID */}

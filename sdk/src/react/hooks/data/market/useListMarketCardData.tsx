@@ -31,6 +31,7 @@ interface UseListMarketCardDataProps {
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
+	hideQuantitySelector?: boolean;
 }
 
 export function useListMarketCardData({
@@ -46,6 +47,7 @@ export function useListMarketCardData({
 	onCannotPerformAction,
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
+	hideQuantitySelector,
 }: UseListMarketCardDataProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
@@ -115,6 +117,7 @@ export function useListMarketCardData({
 				onCannotPerformAction,
 				prioritizeOwnerActions,
 				assetSrcPrefixUrl,
+				hideQuantitySelector,
 				onOfferClick: ({ order }) => {
 					if (!accountAddress) return;
 

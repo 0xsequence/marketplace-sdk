@@ -64,7 +64,7 @@ export function useMarketTransactionSteps({
 					},
 				],
 				additionalFees,
-				walletType: WalletKind.sequence,
+				walletType: WalletKind.unknown,
 			});
 
 			return response.steps;
