@@ -14,7 +14,7 @@ import {
 describe('useCollectionDetail', () => {
 	const defaultArgs: UseCollectionDetailParams = {
 		chainId: mockEthCollection.chainId,
-		collectionAddress: mockEthCollection.address,
+		collectionAddress: mockEthCollection.address as `0x${string}`,
 	};
 
 	it('should fetch collection data successfully', async () => {

@@ -16,7 +16,7 @@ import { useTokenMetadata } from './metadata';
 describe('useTokenMetadata', () => {
 	const defaultArgs: UseTokenMetadataParams = {
 		chainId: mockEthCollection.chainId,
-		contractAddress: mockEthCollection.address,
+		contractAddress: mockEthCollection.address as `0x${string}`,
 		tokenIds: [1n, 2n, 3n],
 	};
 
