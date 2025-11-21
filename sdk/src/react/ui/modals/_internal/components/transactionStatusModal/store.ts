@@ -25,7 +25,7 @@ interface TransactionStatusModalContext {
 	price: Price | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: bigint;
+	collectibleId: string;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 }
@@ -37,9 +37,9 @@ const initialContext: TransactionStatusModalContext = {
 	status: 'PENDING',
 	transactionType: undefined,
 	price: undefined,
-	collectionAddress: '0x0000000000000000000000000000000000000000',
+	collectionAddress: '' as Address,
 	chainId: 0,
-	tokenId: 0n,
+	collectibleId: '',
 	callbacks: undefined,
 	queriesToInvalidate: [],
 };
@@ -60,7 +60,7 @@ export const transactionStatusModalStore = createStore({
 			price: event.price,
 			collectionAddress: event.collectionAddress,
 			chainId: event.chainId,
-			tokenId: event.tokenId,
+			collectibleId: event.collectibleId,
 			transactionType: event.transactionType,
 			callbacks: event.callbacks,
 			queriesToInvalidate: event.queriesToInvalidate,
@@ -106,7 +106,7 @@ export const useTransactionDetails = () =>
 export const useCollectibleInfo = () =>
 	useSelector(transactionStatusModalStore, (state) => ({
 		collectionAddress: state.context.collectionAddress,
-		tokenId: state.context.tokenId,
+		collectibleId: state.context.collectibleId,
 		chainId: state.context.chainId,
 		price: state.context.price,
 	}));
