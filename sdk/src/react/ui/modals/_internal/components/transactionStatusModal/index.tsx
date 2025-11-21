@@ -2,7 +2,6 @@
 
 import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
-import type { QueryKey } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
@@ -31,10 +30,10 @@ export type ShowTransactionStatusModalArgs = {
 	collectibleId: string;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
-	queriesToInvalidate?: QueryKey[];
+	queriesToInvalidate?: string[];
 };
 
-const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
+const invalidateQueries = async (queriesToInvalidate?: string[]) => {
 	const queryClient = getQueryClient();
 	if (!queriesToInvalidate) {
 		// Invalidate everything by default

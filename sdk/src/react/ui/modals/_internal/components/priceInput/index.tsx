@@ -31,6 +31,7 @@ type PriceInputProps = {
 	secondCurrencyAsDefault?: boolean;
 	price: Price | undefined;
 	includeNativeCurrency?: boolean;
+	availableCurrencies?: Currency[]; // NEW: Currencies passed from context
 	onPriceChange?: (price: Price) => void;
 	onCurrencyChange?: (currency: Currency) => void;
 	checkBalance?: {
@@ -56,6 +57,7 @@ export default function PriceInput({
 	checkBalance,
 	secondCurrencyAsDefault,
 	includeNativeCurrency,
+	availableCurrencies, // NEW
 	disabled,
 	orderbookKind,
 	setOpenseaLowestPriceCriteriaMet,
@@ -261,16 +263,20 @@ export default function PriceInput({
 					name="price-input"
 					decimals={currencyDecimals}
 					controls={
-						<CurrencyOptionsSelect
-							selectedCurrency={currency}
-							onCurrencyChange={handleCurrencyChange}
-							collectionAddress={collectionAddress}
-							chainId={chainId}
-							secondCurrencyAsDefault={secondCurrencyAsDefault}
-							includeNativeCurrency={includeNativeCurrency}
-							orderbookKind={orderbookKind}
-							modalType={modalType}
-						/>
+						availableCurrencies ? (
+							<CurrencyOptionsSelect
+								currencies={availableCurrencies}
+								selectedCurrency={currency}
+								onCurrencyChange={handleCurrencyChange}
+							/>
+						) : (
+							// Fallback for components not yet using context (will be removed)
+							<CurrencyOptionsSelect
+								currencies={[]} // Empty until context provides it
+								selectedCurrency={currency}
+								onCurrencyChange={handleCurrencyChange}
+							/>
+						)
 					}
 					value={value}
 					onChange={handleChange}

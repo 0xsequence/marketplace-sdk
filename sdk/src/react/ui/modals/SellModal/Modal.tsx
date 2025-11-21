@@ -1,110 +1,104 @@
 'use client';
 
-import { ActionModal } from '../_internal/components/baseModal/ActionModal';
+import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { type SellStep, useSellModalContext } from './internal/context';
+import { useSellModalContext } from './internal/context';
 
 export function SellModal() {
-	const {
-		tokenId,
-		collectionAddress,
-		chainId,
-		offer,
-		flow,
-		feeSelection,
-		error,
-		close,
-		isOpen,
-		queries,
-	} = useSellModalContext();
+	const ctx = useSellModalContext();
 
-	if (!isOpen) {
-		return null;
-	}
+	const showApprovalButton =
+		ctx.steps.approve && ctx.steps.approve.status === 'idle';
 
-	const approvalStep = flow.steps.find((s) => s.id === 'approve');
-	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
-	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
-
-	const approvalAction = showApprovalButton
-		? {
-				label: approvalStep.label,
-				actionName: approvalStep.label,
-				onClick: approvalStep.run,
-				loading: approvalStep.isPending,
-				disabled: !flow.nextStep || !!error || flow.isPending,
-				variant: 'secondary' as const,
-				testid: 'sell-modal-approve-button',
-			}
-		: undefined;
-
-	const sellAction = {
-		label: sellStep.label,
-		actionName: sellStep.label,
-		onClick: sellStep.run,
-		loading: sellStep.isPending && !showApprovalButton,
-		disabled:
-			!flow.nextStep || !!error || (showApprovalButton && flow.isPending),
-		testid: 'sell-modal-accept-button',
-	};
+	const ctas = [
+		...(showApprovalButton
+			? [
+					{
+						label: 'Approve Token',
+						onClick: ctx.steps.approve?.execute,
+						pending: ctx.steps.approve?.isPending,
+						disabled:
+							!ctx.steps.approve?.canExecute || !!ctx.error || ctx.isPending,
+						variant: 'glass' as const,
+						testid: 'sell-modal-approve-button',
+					},
+				]
+			: []),
+		{
+			label: 'Accept Offer',
+			onClick: ctx.steps.sell.execute,
+			pending: ctx.steps.sell.isPending && !showApprovalButton,
+			disabled:
+				!ctx.steps.sell.canExecute ||
+				!!ctx.error ||
+				(showApprovalButton && ctx.isPending),
+			testid: 'sell-modal-accept-button',
+		},
+	];
 
 	return (
 		<ActionModal
-			chainId={chainId}
-			onClose={() => {
-				close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-			}}
-			title="You have an offer"
-			type="sell"
-			primaryAction={sellAction}
-			secondaryAction={approvalAction}
-			queries={queries}
-			externalError={error}
+			isOpen={ctx.isOpen}
+			chainId={ctx.item.chainId}
+			onClose={ctx.close}
+			title={'You have an offer'}
+			ctas={ctas}
+			modalLoading={false}
 		>
-			{({ collection, currency }) => (
-				<>
-					<TransactionHeader
-						title="Offer received"
-						currencyImageUrl={currency?.imageUrl}
-						date={offer.order ? new Date(offer.order.createdAt) : undefined}
-					/>
+			<TransactionHeader
+				title="Offer received"
+				currencyImageUrl={ctx.offer.currency?.imageUrl}
+				date={ctx.offer.order && new Date(ctx.offer.order.createdAt)}
+			/>
 
-					<TokenPreview
-						collectionName={collection.name}
-						collectionAddress={collectionAddress}
-						collectibleId={tokenId}
-						chainId={chainId}
-					/>
+			<TokenPreview
+				collectionName={ctx.item.collection?.name}
+				collectionAddress={ctx.item.collectionAddress}
+				collectibleId={ctx.item.tokenId}
+				chainId={ctx.item.chainId}
+			/>
 
-					<TransactionDetails
-						collectibleId={tokenId}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						includeMarketplaceFee={true}
-						price={
-							offer.priceAmount
-								? {
-										amountRaw: offer.priceAmount,
-										currency: currency,
-									}
-								: undefined
-						}
-						currencyImageUrl={currency.imageUrl}
-					/>
+			<TransactionDetails
+				collectibleId={ctx.item.tokenId}
+				collectionAddress={ctx.item.collectionAddress}
+				chainId={ctx.item.chainId}
+				includeMarketplaceFee={true}
+				price={
+					ctx.offer.currency
+						? {
+								amountRaw: ctx.offer.priceAmount,
+								currency: ctx.offer.currency,
+							}
+						: undefined
+				}
+				currencyImageUrl={ctx.offer.currency?.imageUrl}
+			/>
 
-					{feeSelection?.isSelecting && (
-						<SelectWaasFeeOptions
-							chainId={chainId}
-							onCancel={feeSelection.cancel}
-							titleOnConfirm="Accepting offer..."
-						/>
-					)}
-				</>
+			{ctx.feeSelection?.isSelecting && (
+				<SelectWaasFeeOptions
+					chainId={ctx.item.chainId}
+					onCancel={ctx.feeSelection.cancel}
+					titleOnConfirm="Accepting offer..."
+				/>
+			)}
+
+			{ctx.isPending && !ctx.feeSelection?.isSelecting && (
+				<div className="flex items-center justify-center gap-2 rounded-lg bg-gray-50 px-4 py-3 text-gray-600 text-sm dark:bg-gray-800 dark:text-gray-300">
+					<div className="h-4 w-4 animate-pulse rounded-full bg-blue-500" />
+					{ctx.nextStep === 'approve' &&
+						'Confirm the token approval in your wallet'}
+					{ctx.nextStep === 'sell' &&
+						'Confirm the offer acceptance in your wallet'}
+				</div>
+			)}
+
+			{ctx.error && (
+				<div className="rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+					<p className="text-sm">{ctx.error.message}</p>
+				</div>
 			)}
 		</ActionModal>
 	);
