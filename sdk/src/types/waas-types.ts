@@ -36,3 +36,14 @@ export type WaasFeeOptionConfirmation = {
 	/** Chain ID where the transaction will be executed */
 	chainId: number;
 };
+
+/**
+ * WaaS fee confirmation state with callbacks
+ */
+export type WaasFeeConfirmationState = {
+	feeOptionConfirmation: WaasFeeOptionConfirmation | undefined;
+	selectedOption: FeeOptionExtended | undefined;
+	optionConfirmed: boolean;
+	confirmFeeOption: (id: string, tokenAddress: string | null) => void;
+	setOptionConfirmed: (confirmed: boolean) => void;
+};

@@ -1,5 +1,6 @@
 import { type Hex, hexToBigInt, isHex, type TypedDataDomain } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
+import type { WaasFeeConfirmationState } from '../../../types/waas-types';
 import {
 	ExecuteType,
 	getMarketplaceClient,
@@ -13,6 +14,12 @@ type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
+type ProcessStepParams = {
+	step: Step;
+	chainId: number;
+	waasFeeConfirmation?: WaasFeeConfirmationState;
+};
+
 export const useProcessStep = () => {
 	const { sendTransactionAsync } = useSendTransaction();
 	const { signMessageAsync } = useSignMessage();
@@ -20,12 +27,49 @@ export const useProcessStep = () => {
 	const config = useConfig();
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const processStep = async (
-		step: Step,
-		chainId: number,
-	): Promise<ProcessStepResult> => {
+	const processStep = async ({
+		step,
+		chainId,
+		waasFeeConfirmation,
+	}: ProcessStepParams): Promise<ProcessStepResult> => {
 		// Transaction steps - return transaction hash
 		if (isTransactionStep(step)) {
+			// Wait for WaaS fee confirmation if needed
+			if (
+				waasFeeConfirmation?.feeOptionConfirmation &&
+				!waasFeeConfirmation.optionConfirmed
+			) {
+				await new Promise<void>((resolve) => {
+					const checkConfirmation = () => {
+						if (
+							waasFeeConfirmation?.selectedOption &&
+							waasFeeConfirmation.optionConfirmed
+						) {
+							// Confirm the fee option
+							const confirmationId =
+								waasFeeConfirmation.feeOptionConfirmation?.id;
+							const currencyAddress =
+								waasFeeConfirmation.selectedOption.token.contractAddress ||
+								null;
+
+							if (!confirmationId) {
+								throw new Error('Fee confirmation ID is missing');
+							}
+
+							waasFeeConfirmation.confirmFeeOption(
+								confirmationId,
+								currencyAddress,
+							);
+							resolve();
+						} else {
+							// Check again in next tick
+							setTimeout(checkConfirmation, 1000);
+						}
+					};
+					checkConfirmation();
+				});
+			}
+
 			const hash = await sendTransactionAsync({
 				chainId,
 				to: step.to as Hex,

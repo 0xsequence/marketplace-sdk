@@ -732,14 +732,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[1px\] {
     height: 1px;
   }
-  .h-\[20px\] {
-    height: 20px;
+  .h-\[16px\] {
+    height: 16px;
   }
   .h-\[22px\] {
     height: 22px;
-  }
-  .h-\[52px\] {
-    height: 52px;
   }
   .h-\[60px\] {
     height: 60px;

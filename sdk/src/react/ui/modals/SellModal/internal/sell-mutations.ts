@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { WaasFeeConfirmationState } from '../../../../../types/waas-types';
 import { type Order, type Step, TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
@@ -13,10 +14,11 @@ import type { useGenerateSellTransaction } from './use-generate-sell-transaction
 type UseSellMutationsParams = {
 	tx: ReturnType<typeof useGenerateSellTransaction>['data'];
 	onSuccess?: OnSuccessCallback;
+	waasFeeConfirmation?: WaasFeeConfirmationState;
 };
 
 export const useSellMutations = (params: UseSellMutationsParams) => {
-	const { tx, onSuccess } = params;
+	const { tx, onSuccess, waasFeeConfirmation } = params;
 	const sdkConfig = useConfig();
 	const { show: showTxModal } = useTransactionStatusModal();
 	const analytics = useAnalytics();
@@ -28,8 +30,15 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 		currencyAddress: state.currencyAddress,
 	});
 
-	async function executeStepAndWait(step: Step) {
-		const res = await processStep(step, state.chainId);
+	async function executeStepAndWait(
+		step: Step,
+		waasFeeConfirmation?: WaasFeeConfirmationState,
+	) {
+		const res = await processStep({
+			step,
+			chainId: state.chainId,
+			waasFeeConfirmation,
+		});
 		if (res.type === 'transaction' && res.hash) {
 			await waitForTransactionReceipt({
 				txHash: res.hash,
@@ -43,7 +52,7 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 	const approve = useMutation({
 		mutationFn: async () => {
 			if (!tx?.approveStep) throw new Error('No approval step available');
-			return await executeStepAndWait(tx.approveStep);
+			return await executeStepAndWait(tx.approveStep, waasFeeConfirmation);
 		},
 		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
@@ -51,7 +60,7 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 	const sell = useMutation({
 		mutationFn: async () => {
 			if (!tx?.sellStep) throw new Error('No sell step available');
-			const res = await executeStepAndWait(tx.sellStep);
+			const res = await executeStepAndWait(tx.sellStep, waasFeeConfirmation);
 
 			if (currency && state.order?.priceAmount) {
 				const dec = currency.decimals ?? 0;
