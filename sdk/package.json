@@ -70,7 +70,7 @@
 		"dnum": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.4.0",
-		"xtrails": "npm:0xtrails@^0.1.13"
+		"xtrails": "npm:0xtrails@^0.6.6"
 	},
 	"peerDependencies": {
 		"0xsequence": "catalog:",
@@ -128,7 +128,7 @@
 		"tailwindcss": "catalog:",
 		"tsdown": "^0.14.2",
 		"typescript": "catalog:",
-		"typescript-eslint": "^8.46.4",
+		"typescript-eslint": "^8.47.0",
 		"vite-tsconfig-paths": "catalog:",
 		"vitest": "4.0.0-beta.12"
 	},

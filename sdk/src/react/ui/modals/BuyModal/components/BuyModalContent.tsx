@@ -137,6 +137,7 @@ export const BuyModalContent = () => {
 							mode="pay"
 							customCss={TRAILS_CUSTOM_CSS}
 							onDestinationConfirmation={handleTrailsSuccess}
+							payMessage='{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}'
 						/>
 					</div>
 				)}
