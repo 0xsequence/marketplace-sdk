@@ -11,8 +11,8 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchListItemsOrdersForCollectionParams
-	extends ListOrdersWithCollectiblesRequest {}
+export type FetchListItemsOrdersForCollectionParams =
+	ListOrdersWithCollectiblesRequest;
 
 export type ListItemsOrdersForCollectionQueryOptions =
 	SdkInfiniteQueryParams<FetchListItemsOrdersForCollectionParams>;
