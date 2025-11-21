@@ -7,7 +7,7 @@ import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
-import { useCollectibleDetail } from '../../../../../hooks';
+import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
@@ -28,13 +28,13 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: bigint;
+	collectibleId: string;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
-	queriesToInvalidate?: QueryKey[];
+	queriesToInvalidate?: string[];
 };
 
-const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
+const invalidateQueries = async (queriesToInvalidate?: string[]) => {
 	const queryClient = getQueryClient();
 	if (!queriesToInvalidate) {
 		// Invalidate everything by default
@@ -77,17 +77,16 @@ function TransactionStatusModalContent() {
 		price,
 		collectionAddress,
 		chainId,
-		tokenId,
+		collectibleId,
 		callbacks,
 		queriesToInvalidate,
 	} = useTransactionModalState();
 
-	const { data: collectible, isLoading: collectibleLoading } =
-		useCollectibleDetail({
-			collectionAddress,
-			chainId,
-			tokenId,
-		});
+	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
+		collectionAddress,
+		chainId,
+		collectibleId,
+	});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 

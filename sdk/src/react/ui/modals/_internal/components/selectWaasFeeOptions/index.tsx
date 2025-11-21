@@ -1,6 +1,6 @@
 'use client';
 
-import { Separator, Skeleton, Text } from '@0xsequence/design-system';
+import { Divider, Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
@@ -54,7 +54,7 @@ const SelectWaasFeeOptions = ({
 				className,
 			)}
 		>
-			<Separator className="mt-0 mb-4" />
+			<Divider className="mt-0 mb-4" />
 
 			<Text className="mb-2 font-body font-bold text-large text-text-100">
 				{feeOptionsConfirmed ? titleOnConfirm : 'Select a fee option'}
