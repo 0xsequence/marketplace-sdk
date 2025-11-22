@@ -2,20 +2,13 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
 import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
-import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { transferModalStore, useIsOpen, useModalState, useView } from './store';
+import { transferModalStore, useIsOpen, useView } from './store';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
@@ -65,14 +58,6 @@ const TransactionModalView = () => {
 
 const TransferModal = () => {
 	const isOpen = useIsOpen();
-	const modalState = useModalState();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
-		isProcessing: modalState.transferIsProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
 
 	if (!isOpen) return null;
 
@@ -81,7 +66,6 @@ const TransferModal = () => {
 			isDismissible={true}
 			onClose={() => {
 				transferModalStore.send({ type: 'close' });
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
 			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -95,20 +79,6 @@ const TransferModal = () => {
 			<div className="flex w-full flex-col p-7">
 				<TransactionModalView />
 			</div>
-
-			{waasFeeOptionsShown && (
-				<SelectWaasFeeOptions
-					chainId={Number(modalState.chainId)}
-					onCancel={() => {
-						transferModalStore.send({
-							type: 'failTransfer',
-							error: new Error('Transfer cancelled'),
-						});
-					}}
-					titleOnConfirm="Processing transfer..."
-					className="p-7 pt-0"
-				/>
-			)}
 		</Modal>
 	);
 };

@@ -1,34 +1,30 @@
 'use client';
 
-import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
-import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
-import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
 import {
 	useCollectibleDetail,
 	useCollectibleMarketLowestListing,
 	useCollectionDetail,
+	useConnectorMetadata,
 	useMarketCurrencies,
 	useMarketplaceConfig,
+	useWaasFeeStep,
 } from '../../../hooks';
-import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
-import { ActionModal } from '../_internal/components/baseModal/ActionModal';
+import {
+	ActionModal,
+	type CtaAction,
+} from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
@@ -49,6 +45,13 @@ const Modal = observer(() => {
 		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
+	const { isWaaS } = useConnectorMetadata();
+
+	// WaaS fee management
+	const waasFeeStep = useWaasFeeStep({
+		enabled: isWaaS && makeOfferModal$.isOpen.get(),
+	});
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -64,20 +67,7 @@ const Modal = observer(() => {
 		collectionAddress,
 		tokenId,
 	});
-	const { isWaaS } = useConnectorMetadata();
-	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-
-	const {
-		shouldHideActionButton: shouldHideOfferButton,
-		waasFeeOptionsShown,
-		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
+	//const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 
 	const collectionQuery = useCollectionDetail({
 		chainId,
@@ -102,8 +92,10 @@ const Modal = observer(() => {
 		royaltyQuery.isLoading;
 
 	const {
+		isLoading,
 		executeApproval,
 		makeOffer,
+		tokenApprovalIsLoading,
 		error: makeOfferError,
 	} = useMakeOffer({
 		offerInput: {
@@ -125,6 +117,16 @@ const Modal = observer(() => {
 		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$,
+		waasFeeConfirmation:
+			isWaaS && waasFeeStep
+				? {
+						feeOptionConfirmation: waasFeeStep.waasFee.feeOptionConfirmation,
+						selectedOption: waasFeeStep.waasFee.selectedOption,
+						optionConfirmed: waasFeeStep.waasFee.optionConfirmed,
+						confirmFeeOption: waasFeeStep.waasFee.confirmFeeOption,
+						setOptionConfirmed: waasFeeStep.waasFee.setOptionConfirmed,
+					}
+				: undefined,
 	});
 
 	const erc20NotConfiguredError =
@@ -150,16 +152,11 @@ const Modal = observer(() => {
 		makeOfferModal$.offerIsBeingProcessed.set(true);
 
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
 			await makeOffer({
-				isTransactionExecuting: isWaaS
-					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
-					: false,
+				isTransactionExecuting: !!isWaaS,
 			});
 		} catch (error) {
+			console.error('Make offer failed:', error);
 			throw error as Error;
 		} finally {
 			makeOfferModal$.offerIsBeingProcessed.set(false);
@@ -174,24 +171,25 @@ const Modal = observer(() => {
 		});
 	};
 
-	const offerCtaLabel = getActionLabel('Make offer');
-
 	const primaryAction = {
-		label: offerCtaLabel,
+		label: 'Make offer',
 		actionName: 'offer',
-		onClick: () => handleMakeOffer(),
+		onClick: handleMakeOffer,
 		loading:
 			steps$?.transaction.isExecuting.get() ||
 			makeOfferModal$.offerIsBeingProcessed.get(),
+		testid: 'make-offer-submit-button',
 		disabled:
-			steps$.approval.isExecuting.get() ||
 			steps$.approval.exist.get() ||
+			tokenApprovalIsLoading ||
 			offerPrice.amountRaw === 0n ||
 			invalidQuantity ||
 			insufficientBalance ||
 			(orderbookKind === OrderbookKind.opensea &&
 				!openseaLowestPriceCriteriaMet) ||
-			makeOfferModal$.offerIsBeingProcessed.get(),
+			isLoading ||
+			makeOfferModal$.offerIsBeingProcessed.get() ||
+			!!(isWaaS && waasFeeStep && !waasFeeStep.waasFee.optionConfirmed),
 	};
 
 	const secondaryAction = {
@@ -199,9 +197,14 @@ const Modal = observer(() => {
 		actionName: 'currency spending approval',
 		onClick: handleApproveToken,
 		hidden: !steps$.approval.exist.get(),
-		loading: steps$.approval.isExecuting.get(),
+		loading: steps$?.approval.isExecuting.get(),
 		variant: 'secondary' as const,
-		disabled: makeOfferModal$.offerIsBeingProcessed.get(),
+		disabled:
+			invalidQuantity ||
+			offerPrice.amountRaw === '0' ||
+			steps$?.approval.isExecuting.get() ||
+			tokenApprovalIsLoading ||
+			isLoading,
 	};
 
 	const queries = {
@@ -214,116 +217,135 @@ const Modal = observer(() => {
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
+			type="offer"
 			onClose={() => {
 				makeOfferModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-				steps$.transaction.isExecuting.set(false);
 			}}
-			type="offer"
 			title="Make an offer"
 			primaryAction={primaryAction}
-			secondaryAction={secondaryAction}
-			queries={queries}
+			secondaryAction={secondaryAction as CtaAction}
 			onErrorDismiss={() => {
 				makeOfferModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-				steps$.transaction.isExecuting.set(false);
 			}}
+			queries={queries}
 			externalError={makeOfferError || erc20NotConfiguredError}
+			//transactionIsBeingProcessed={isProcessing}
+			//setTransactionIsBeingProcessed={(isBeingProcessed) => {
+			//	makeOfferModal$.offerIsBeingProcessed.set(isBeingProcessed);
+			//}}
+			/*onWaasFeeSelectionCancel={() => {
+		//	makeOfferModal$.offerIsBeingProcessed.set(false);
+		//	steps$.transaction.isExecuting.set(false);
+		//}}*/
 		>
-			{({ collection, collectible, royalty, lowestListing }) => (
-				<>
-					<TokenPreview
-						collectionName={collection?.name}
-						collectionAddress={collectionAddress}
-						tokenId={tokenId}
-						chainId={chainId}
-					/>
-
-					<PriceInput
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						price={offerPrice}
-						onPriceChange={(newPrice) => {
-							makeOfferModal$.offerPrice.set(newPrice);
-							makeOfferModal$.offerPriceChanged.set(true);
-						}}
-						onCurrencyChange={(newCurrency) => {
-							makeOfferModal$.offerPrice.currency.set(newCurrency);
-						}}
-						includeNativeCurrency={false}
-						checkBalance={{
-							enabled: true,
-							callback: (state) => setInsufficientBalance(state),
-						}}
-						setOpenseaLowestPriceCriteriaMet={(state) =>
-							setOpenseaLowestPriceCriteriaMet(state)
-						}
-						orderbookKind={orderbookKind}
-						modalType="offer"
-						disabled={shouldHideOfferButton}
-						feeData={{
-							royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
-						}}
-					/>
-
-					{collection?.type === ContractType.ERC1155 && (
-						<QuantityInput
-							quantity={use$(makeOfferModal$.quantity)}
-							invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-							onQuantityChange={(quantity) =>
-								makeOfferModal$.quantity.set(quantity)
-							}
-							onInvalidQuantityChange={(invalid) =>
-								makeOfferModal$.invalidQuantity.set(invalid)
-							}
-							decimals={collectible?.decimals || 0}
-							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
-							disabled={shouldHideOfferButton}
+			{({ collection, collectible, royalty, lowestListing }) => {
+				// Show fee selection UI if manual confirmation needed
+				if (
+					waasFeeStep &&
+					waasFeeStep.waasFee.feeOptionConfirmation &&
+					!waasFeeStep.waasFee.optionConfirmed &&
+					waasFeeStep.waasFee.selectedOption
+				) {
+					return (
+						<SelectWaasFeeOptions
+							chainId={chainId}
+							feeOptionConfirmation={waasFeeStep.waasFee.feeOptionConfirmation}
+							selectedOption={waasFeeStep.waasFee.selectedOption}
+							onSelectedOptionChange={waasFeeStep.waasFee.setSelectedFeeOption}
+							onConfirm={() => {
+								waasFeeStep.waasFee.confirmFeeOption(
+									waasFeeStep.waasFee.feeOptionConfirmation.id,
+									waasFeeStep.waasFee.selectedOption?.token.contractAddress as
+										| string
+										| null,
+								);
+								waasFeeStep.waasFee.setOptionConfirmed(true);
+							}}
+							optionConfirmed={waasFeeStep.waasFee.optionConfirmed}
 						/>
-					)}
+					);
+				}
 
-					{offerPrice.amountRaw !== 0n &&
-						offerPriceChanged &&
-						!insufficientBalance && (
-							<FloorPriceText
-								tokenId={tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								price={offerPrice}
-								onBuyNow={() => {
-									makeOfferModal$.close();
+				return (
+					<>
+						<TokenPreview
+							collectionName={collection?.name}
+							collectionAddress={collectionAddress}
+							tokenId={tokenId}
+							chainId={chainId}
+						/>
 
-									if (lowestListing) {
-										buyModal.show({
-											chainId,
-											collectionAddress,
-											tokenId,
-											orderId: lowestListing.orderId,
-											marketplace: lowestListing.marketplace,
-										});
-									}
-								}}
+						<PriceInput
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={offerPrice}
+							onPriceChange={(newPrice) => {
+								makeOfferModal$.offerPrice.set(newPrice);
+								makeOfferModal$.offerPriceChanged.set(true);
+							}}
+							onCurrencyChange={(newCurrency) => {
+								makeOfferModal$.offerPrice.currency.set(newCurrency);
+							}}
+							includeNativeCurrency={false}
+							checkBalance={{
+								enabled: true,
+								callback: (state) => setInsufficientBalance(state),
+							}}
+							setOpenseaLowestPriceCriteriaMet={(state) =>
+								setOpenseaLowestPriceCriteriaMet(state)
+							}
+							orderbookKind={orderbookKind}
+							modalType="offer"
+							feeData={{
+								royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
+							}}
+						/>
+
+						{collection?.type === ContractType.ERC1155 && (
+							<QuantityInput
+								quantity={use$(makeOfferModal$.quantity)}
+								invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+								onQuantityChange={(quantity) =>
+									makeOfferModal$.quantity.set(quantity)
+								}
+								onInvalidQuantityChange={(invalid) =>
+									makeOfferModal$.invalidQuantity.set(invalid)
+								}
+								decimals={collectible?.decimals || 0}
+								maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 							/>
 						)}
-					<ExpirationDateSelect
-						date={makeOfferModal$.expiry.get()}
-						onDateChange={(date) => makeOfferModal$.expiry.set(date)}
-						disabled={shouldHideOfferButton}
-					/>
 
-					{waasFeeOptionsShown && (
-						<SelectWaasFeeOptions
-							chainId={Number(chainId)}
-							onCancel={() => {
-								makeOfferModal$.offerIsBeingProcessed.set(false);
-								steps$.transaction.isExecuting.set(false);
-							}}
-							titleOnConfirm="Processing offer..."
+						{offerPrice.amountRaw !== 0n &&
+							offerPriceChanged &&
+							!insufficientBalance && (
+								<FloorPriceText
+									tokenId={tokenId}
+									chainId={chainId}
+									collectionAddress={collectionAddress}
+									price={offerPrice}
+									onBuyNow={() => {
+										makeOfferModal$.close();
+
+										if (lowestListing) {
+											buyModal.show({
+												chainId,
+												collectionAddress,
+												tokenId,
+												orderId: lowestListing.orderId,
+												marketplace: lowestListing.marketplace,
+											});
+										}
+									}}
+								/>
+							)}
+						<ExpirationDateSelect
+							date={makeOfferModal$.expiry.get()}
+							onDateChange={(date) => makeOfferModal$.expiry.set(date)}
 						/>
-					)}
-				</>
-			)}
+					</>
+				);
+			}}
 		</ActionModal>
 	);
 });

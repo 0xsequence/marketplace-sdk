@@ -4,7 +4,11 @@ import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { useEnsureCorrectChain } from '../../../../../hooks';
+import { UserRejectedError } from '../../../../../../utils/errors';
+import {
+	useConnectorMetadata,
+	useEnsureCorrectChain,
+} from '../../../../../hooks';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
@@ -143,6 +147,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 		refetchFailedQueries?: () => Promise<void>,
 	) => React.ReactNode;
 	externalError?: Error | null;
+	actionError?: Error | null;
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
@@ -199,6 +204,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	additionalActions = [],
 	queries,
 	externalError,
+	actionError: externalActionError,
 	onErrorDismiss,
 	onErrorAction,
 	errorComponent,
@@ -209,9 +215,11 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 		...(secondaryAction ? [secondaryAction] : []),
 		...additionalActions,
 	].filter((cta) => !cta.hidden);
-	const [actionError, setActionError] = useState<Error | undefined>(
-		undefined as Error | undefined,
-	);
+	const [internalActionError, setInternalActionError] = useState<
+		Error | undefined
+	>(undefined as Error | undefined);
+
+	const actionError = externalActionError || internalActionError;
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
@@ -219,13 +227,19 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 				<MultiQueryWrapper queries={queries} type={type}>
 					{(data, error, refetchFailedQueries) => {
 						const modalInitializationError = externalError || error;
+						const modalInitializationErrorExcludingUserRejected =
+							modalInitializationError &&
+							(modalInitializationError as Error) instanceof UserRejectedError
+								? undefined
+								: modalInitializationError;
 
 						return (
 							<>
-								{!modalInitializationError &&
+								{!modalInitializationErrorExcludingUserRejected &&
 									children(data, error, refetchFailedQueries)}
 
-								{(modalInitializationError || actionError) &&
+								{(modalInitializationErrorExcludingUserRejected ||
+									actionError) &&
 									(() => {
 										const error = modalInitializationError ?? actionError;
 										if (!error) return null;
@@ -235,11 +249,15 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 											<SmartErrorHandler
 												error={error}
 												onHide={() => {
-													setActionError(undefined);
+													if (externalActionError) {
+														onErrorDismiss?.();
+													} else {
+														setInternalActionError(undefined);
+													}
 												}}
 												onAction={onErrorAction}
 												customComponent={
-													modalInitializationError
+													modalInitializationErrorExcludingUserRejected
 														? (error: Error) => (
 																<ModalInitializationError
 																	error={error}
@@ -255,13 +273,14 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 										);
 									})()}
 
-								{!modalInitializationError && ctas.length > 0 && (
-									<CtaActions
-										ctas={ctas}
-										chainId={chainId}
-										onActionError={setActionError}
-									/>
-								)}
+								{!modalInitializationErrorExcludingUserRejected &&
+									ctas.length > 0 && (
+										<CtaActions
+											ctas={ctas}
+											chainId={chainId}
+											onActionError={setInternalActionError}
+										/>
+									)}
 							</>
 						);
 					}}
@@ -283,6 +302,7 @@ function CtaActions({
 	const { ensureCorrectChain } = useEnsureCorrectChain();
 	const ctasInProgress = ctas.filter((cta) => cta.loading);
 	const ctaInProgress = ctasInProgress[0];
+	const { isWaaS } = useConnectorMetadata();
 
 	return (
 		<div className="flex w-full flex-col gap-2">
@@ -324,7 +344,7 @@ function CtaActions({
 				</Button>
 			))}
 
-			{ctaInProgress?.actionName && (
+			{ctaInProgress?.actionName && !isWaaS && (
 				<div className="flex w-full items-center justify-center">
 					<Text className="text-sm text-text-50">
 						Complete the {ctaInProgress?.actionName} in your wallet

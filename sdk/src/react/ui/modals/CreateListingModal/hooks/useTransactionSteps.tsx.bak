@@ -1,35 +1,29 @@
+import type { WaasFeeConfirmationState } from ../../../../../types/waas-types;
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
-import type { WaasFeeConfirmationState } from '../../../../../types/waas-types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
-import {
-	OfferType,
-	StepType,
-	type TransactionSteps,
-} from '../../../../_internal';
+import { StepType, type TransactionSteps } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import type { OfferInput } from '../../../../_internal/types';
+import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
-
 import {
 	useConfig,
 	useConnectorMetadata,
-	useGenerateOfferTransaction,
+	useCurrencyList,
+	useGenerateListingTransaction,
 	useProcessStep,
 } from '../../../../hooks';
-import { useCurrency } from '../../../../hooks/currency/currency';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-export type ExecutionState = 'approval' | 'offer' | null;
 
 interface UseTransactionStepsArgs {
-	offerInput: OfferInput;
+	listingInput: ListingInput;
 	chainId: number;
 	collectionAddress: Address;
-	orderbookKind?: OrderbookKind;
+	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -37,49 +31,49 @@ interface UseTransactionStepsArgs {
 }
 
 export const useTransactionSteps = ({
-	offerInput,
+	listingInput,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	orderbookKind,
 	callbacks,
 	closeMainModal,
 	steps$,
-	waasFeeConfirmation,
 }: UseTransactionStepsArgs) => {
 	const { address } = useAccount();
-	const publicClient = usePublicClient({ chainId });
+	const publicClient = usePublicClient();
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
+	const { data: currencies } = useCurrencyList({
+		chainId,
+	});
+	const currency = currencies?.find(
+		(c) => c.contractAddress === listingInput.listing.currencyAddress,
+	);
 	const analytics = useAnalytics();
 	const { processStep } = useProcessStep();
-	const { generateOfferTransactionAsync, isPending: generatingSteps } =
-		useGenerateOfferTransaction({
+	const { generateListingTransactionAsync, isPending: generatingSteps } =
+		useGenerateListingTransaction({
 			chainId,
 			onSuccess: (steps) => {
 				if (!steps) return;
 			},
 		});
-	const { data: currency } = useCurrency({
-		chainId,
-		currencyAddress: offerInput.offer.currencyAddress,
-	});
 
-	const getOfferSteps = async () => {
+	const getListingSteps = async () => {
 		if (!address) return;
 
 		try {
-			const steps = await generateOfferTransactionAsync({
+			const steps = await generateListingTransactionAsync({
 				collectionAddress,
-				maker: address,
+				owner: address,
 				walletType: walletKind,
-				contractType: offerInput.contractType,
+				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
-				offer: {
-					...offerInput.offer,
-					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
+				listing: {
+					...listingInput.listing,
+					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
-				offerType: OfferType.item,
 				additionalFees: [],
 			});
 
@@ -94,9 +88,11 @@ export const useTransactionSteps = ({
 	};
 
 	const executeApproval = async () => {
+		if (!address) return;
+
 		try {
 			steps$.approval.isExecuting.set(true);
-			const approvalStep = await getOfferSteps().then((steps) =>
+			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
 
@@ -104,11 +100,7 @@ export const useTransactionSteps = ({
 				throw new Error('No approval step found');
 			}
 
-			const result = await processStep({
-				step: approvalStep,
-				chainId,
-				waasFeeConfirmation,
-			});
+			const result = await processStep(approvalStep, chainId);
 
 			if (result.type === 'transaction') {
 				await waitForTransactionReceipt({
@@ -124,31 +116,28 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const makeOffer = async ({
+	const createListing = async ({
 		isTransactionExecuting,
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
+		if (!address) return;
+
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getOfferSteps();
-
-			if (!steps) {
-				throw new Error('No transaction or signature step found');
-			}
+			const steps = await getListingSteps();
+			if (!steps) throw new Error('No steps found');
 
 			let hash: Hex | undefined;
 			let orderId: string | undefined;
 
 			if (steps) {
 				for (const step of steps) {
-					const result = await processStep({
-						step,
-						chainId,
-						waasFeeConfirmation,
-					});
+					const result = await processStep(step, chainId);
 					if (result.type === 'transaction') {
 						hash = result.hash;
+					} else if (result.type === 'signature') {
+						orderId = result.orderId;
 					}
 				}
 			}
@@ -156,23 +145,23 @@ export const useTransactionSteps = ({
 			closeMainModal();
 
 			showTransactionStatusModal({
-				type: TransactionType.OFFER,
-				collectionAddress,
+				type: TransactionType.LISTING,
+				collectionAddress: collectionAddress as Address,
 				chainId,
-				tokenId: offerInput.offer.tokenId,
+				collectibleId: listingInput.listing.tokenId,
 				hash,
 				orderId,
 				callbacks,
-				queriesToInvalidate: [
-					['collectible', 'market-highest-offer'],
-					['collectible', 'market-list-offers'],
-					['collectible', 'market-count-offers'],
-					['token', 'balances'],
-				],
 				price: {
-					amountRaw: BigInt(offerInput.offer.pricePerToken),
+					amountRaw: listingInput.listing.pricePerToken,
 					currency,
 				} as Price,
+				queriesToInvalidate: [
+					['collectible', 'market-lowest-listing'],
+					['collectible', 'market-list-listings'],
+					['collectible', 'market-count-listings'],
+					['token', 'balances'],
+				],
 			});
 
 			if (hash) {
@@ -187,14 +176,17 @@ export const useTransactionSteps = ({
 			}
 
 			if (orderId) {
-				// no need to wait for receipt, because the order is already created
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
 			}
 
 			if (hash || orderId) {
-				const currencyDecimal = currency?.decimals || 0;
-				const currencyValueRaw = Number(offerInput.offer.pricePerToken);
+				const currencyDecimal =
+					currencies?.find(
+						(c) => c.contractAddress === listingInput.listing.currencyAddress,
+					)?.decimals || 0;
+
+				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
 				const currencyValueDecimal = Number(
 					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
 				);
@@ -203,26 +195,25 @@ export const useTransactionSteps = ({
 
 				if (
 					hash &&
-					publicClient &&
-					address &&
 					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
 						orderbookKind === OrderbookKind.sequence_marketplace_v2)
 				) {
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
-						publicClient,
+						publicClient!,
 						address,
 					);
 				}
 
-				analytics.trackCreateOffer({
+				analytics.trackCreateListing({
 					props: {
 						orderbookKind,
 						collectionAddress,
-						currencyAddress: offerInput.offer.currencyAddress,
+						currencyAddress: listingInput.listing.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						chainId: chainId.toString(),
+						tokenId: listingInput.listing.tokenId,
 						requestId: requestId || '',
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {
@@ -244,6 +235,6 @@ export const useTransactionSteps = ({
 	return {
 		generatingSteps,
 		executeApproval,
-		makeOffer,
+		createListing,
 	};
 };

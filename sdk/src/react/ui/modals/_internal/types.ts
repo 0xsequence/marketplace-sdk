@@ -17,3 +17,5 @@ export type BaseModalState = {
 	collectionAddress: Address;
 	callbacks?: ModalCallbacks;
 };
+
+export type WaasFeeOptionSelectionType = 'automatic' | 'manual';

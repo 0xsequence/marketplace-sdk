@@ -4,6 +4,7 @@ import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import { OrderbookKind } from '../../../../../types';
+import type { WaasFeeConfirmationState } from '../../../../../types/waas-types';
 import type { TransactionSteps } from '../../../../_internal';
 import type { OfferInput } from '../../../../_internal/types';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -18,6 +19,7 @@ interface UseMakeOfferArgs {
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
+	waasFeeConfirmation?: WaasFeeConfirmationState;
 }
 
 export const useMakeOffer = ({
@@ -28,6 +30,7 @@ export const useMakeOffer = ({
 	callbacks,
 	closeMainModal,
 	steps$,
+	waasFeeConfirmation,
 }: UseMakeOfferArgs) => {
 	const {
 		data: tokenApproval,
@@ -57,6 +60,7 @@ export const useMakeOffer = ({
 		callbacks,
 		closeMainModal,
 		steps$,
+		waasFeeConfirmation,
 	});
 
 	return {
