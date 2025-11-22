@@ -31,6 +31,14 @@ type ActionButtonProps = {
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	labelOverride?: {
+		listing?: string;
+		offer?: string;
+		buy?: string;
+		sell?: string;
+		transfer?: string;
+	};
+	className?: string;
 };
 
 export function ActionButton({
@@ -51,6 +59,8 @@ export function ActionButton({
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
+	labelOverride,
+	className,
 }: ActionButtonProps) {
 	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
@@ -72,6 +82,8 @@ export function ActionButton({
 				chainId={chainId}
 				orderbookKind={orderbookKind}
 				highestOffer={highestOffer}
+				labelOverride={labelOverride}
+				className={className}
 			/>
 		);
 	}
@@ -90,6 +102,7 @@ export function ActionButton({
 					quantityRemaining,
 					unlimitedSupply,
 					hideQuantitySelector,
+					labelOverride,
 				}
 			: {
 					cardType: 'market' as const,
@@ -102,7 +115,8 @@ export function ActionButton({
 					quantityDecimals,
 					quantityRemaining,
 					hideQuantitySelector,
+					labelOverride,
 				};
 
-	return <NonOwnerActions {...nonOwnerProps} />;
+	return <NonOwnerActions {...nonOwnerProps} className={className} />;
 }

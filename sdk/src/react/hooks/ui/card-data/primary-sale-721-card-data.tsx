@@ -134,7 +134,7 @@ export function usePrimarySale721CardData({
 			const saleEndsAt = primarySaleItem.endDate.toString();
 
 			return {
-				collectibleId: metadata.tokenId,
+				tokenId: metadata.tokenId,
 				chainId,
 				collectionAddress: contractAddress,
 				collectionType: ContractType.ERC721,
@@ -154,7 +154,7 @@ export function usePrimarySale721CardData({
 
 	const mintedTokensCollectibleCards = allTokenSupplies?.map((item) => {
 		return {
-			collectibleId: item.tokenID,
+			tokenId: item.tokenID,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,

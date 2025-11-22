@@ -4,15 +4,23 @@ import { Button } from '@0xsequence/design-system';
 import type { JSX } from 'react';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../../../types';
+import { cn } from '../../../../../../utils';
 import { useOpenConnectModal } from '../../../../../hooks';
 import { useActionButtonStore } from '../store';
 
 type ActionButtonBodyProps = {
-	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
+	label:
+		| 'Buy now'
+		| 'Sell'
+		| 'Make an offer'
+		| 'Create listing'
+		| 'Transfer'
+		| string;
 	tokenId: string;
 	onClick: () => void;
 	icon?: JSX.Element;
 	action?: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
+	className?: string;
 };
 
 export function ActionButtonBody({
@@ -21,6 +29,7 @@ export function ActionButtonBody({
 	onClick,
 	icon,
 	action,
+	className,
 }: ActionButtonBodyProps) {
 	const { openConnectModal } = useOpenConnectModal();
 	const { setPendingAction } = useActionButtonStore();
@@ -40,7 +49,7 @@ export function ActionButtonBody({
 
 	return (
 		<Button
-			className="flex w-full items-center justify-center"
+			className={cn('flex w-full items-center justify-center', className ?? '')}
 			variant="primary"
 			onClick={handleClick}
 			size="xs"

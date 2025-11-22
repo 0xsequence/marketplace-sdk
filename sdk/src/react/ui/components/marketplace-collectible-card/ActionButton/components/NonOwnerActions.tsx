@@ -17,6 +17,11 @@ type NonOwnerActionsBaseProps = {
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
+	labelOverride?: {
+		offer?: string;
+		buy?: string;
+	};
+	className?: string;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
@@ -53,6 +58,8 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		unlimitedSupply,
 		cardType,
 		hideQuantitySelector,
+		labelOverride,
+		className,
 	} = props;
 
 	const { show: showBuyModal } = useBuyModal();
@@ -65,7 +72,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.BUY}
 				tokenId={tokenId}
-				label="Buy now"
+				label={labelOverride?.buy ?? 'Buy now'}
 				onClick={() =>
 					showBuyModal({
 						chainId,
@@ -89,6 +96,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					})
 				}
 				icon={<CartIcon />}
+				className={className}
 			/>
 		);
 	}
@@ -105,7 +113,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.BUY}
 				tokenId={tokenId}
-				label="Buy now"
+				label={labelOverride?.buy ?? 'Buy now'}
 				onClick={() =>
 					showBuyModal({
 						collectionAddress,
@@ -118,6 +126,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					})
 				}
 				icon={<CartIcon />}
+				className={className}
 			/>
 		);
 	}
@@ -128,7 +137,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 			<ActionButtonBody
 				action={CollectibleCardAction.OFFER}
 				tokenId={tokenId}
-				label="Make an offer"
+				label={labelOverride?.offer ?? 'Make an offer'}
 				onClick={() =>
 					showMakeOfferModal({
 						collectionAddress,
@@ -137,6 +146,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						orderbookKind,
 					})
 				}
+				className={className}
 			/>
 		);
 	}

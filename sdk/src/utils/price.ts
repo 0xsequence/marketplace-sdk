@@ -1,5 +1,6 @@
 import * as dn from 'dnum';
 import { formatUnits } from 'viem';
+import { applyFeeMultiplier, calculateFeeAmount } from './dnum-utils';
 
 type CalculatePriceDifferencePercentageArgs = {
 	inputPriceRaw: bigint;
@@ -73,13 +74,11 @@ export const calculateEarningsAfterFees = (
 	fees: number[],
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		let earnings = dn.from(decimalAmount.toString(), decimals);
+		let earnings = dn.from([amount, decimals]);
 
 		for (const fee of fees) {
 			if (fee > 0) {
-				const feeMultiplier = dn.from((1 - fee / 100).toString(), decimals);
-				earnings = dn.multiply(earnings, feeMultiplier);
+				earnings = applyFeeMultiplier(earnings, fee, 'subtract');
 			}
 		}
 
@@ -111,13 +110,8 @@ export const formatPriceWithFee = (
 	feePercentage: number,
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		const price = dn.from(decimalAmount.toString(), decimals);
-		const feeMultiplier = dn.from(
-			(1 + feePercentage / 100).toString(),
-			decimals,
-		);
-		const totalPrice = dn.multiply(price, feeMultiplier);
+		const price = dn.from([amount, decimals]);
+		const totalPrice = applyFeeMultiplier(price, feePercentage, 'add');
 
 		return dn.format(totalPrice, {
 			digits: decimals,
@@ -140,10 +134,7 @@ export const calculateTotalOfferCost = (
 		let totalCost = dn.from(dnumAmount);
 
 		if (royaltyPercentage > 0) {
-			const royaltyFee = dn.multiply(
-				totalCost,
-				dn.from((royaltyPercentage / 100).toString(), decimals),
-			);
+			const royaltyFee = calculateFeeAmount(totalCost, royaltyPercentage);
 			totalCost = dn.add(totalCost, royaltyFee);
 		}
 
