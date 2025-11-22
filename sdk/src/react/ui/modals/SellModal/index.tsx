@@ -1,4 +1,11 @@
-export type { SellModalContext } from './internal/context';
+export type {
+	SellModalContext,
+	SellStep,
+	SellStepId,
+	SellSteps,
+	Step,
+	WaasFeeSelectionStep,
+} from './internal/context';
 export { useSellModalContext } from './internal/context';
 export type { OpenSellModalArgs } from './internal/store';
 export { useSellModal } from './internal/store';

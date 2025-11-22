@@ -16,6 +16,12 @@ export type SdkConfig = {
 	walletConnectProjectId?: string;
 	shadowDom?: boolean;
 	experimentalShadowDomCssOverride?: string;
+	/**
+	 * Controls how WaaS transaction fee options are selected:
+	 * - 'automatic': Automatically selects first option with sufficient balance and confirms immediately (headless mode)
+	 * - 'manual': Shows UI for user to review and manually confirm fee option selection (default)
+	 * @default 'manual'
+	 */
 	waasFeeOptionSelectionType?: 'automatic' | 'manual';
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
