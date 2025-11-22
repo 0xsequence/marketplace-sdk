@@ -1,12 +1,11 @@
+import { CollectionStatus, MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
+
+const { mockCollection, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	mockCollection,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { CollectionStatus } from '../../_internal/api/marketplace.gen';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCollectionMarketDetailPolling as useCollectionDetailPolling } from './market-detail-polling';
 
 describe('useCollectionDetailPolling', () => {
@@ -17,6 +16,11 @@ describe('useCollectionDetailPolling', () => {
 
 	beforeEach(() => {
 		vi.useFakeTimers({ shouldAdvanceTime: true });
+	});
+
+	afterEach(() => {
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
 	});
 
 	it('should poll collection details until terminal state is reached', async () => {
@@ -92,7 +96,7 @@ describe('useCollectionDetailPolling', () => {
 			}),
 		);
 
-		renderHook(() =>
+		const { unmount } = renderHook(() =>
 			useCollectionDetailPolling({
 				...defaultArgs,
 			}),
@@ -109,6 +113,9 @@ describe('useCollectionDetailPolling', () => {
 		await vi.runOnlyPendingTimersAsync();
 		expect(requestCount).toBe(finalCount); // Should not increase after max attempts
 		expect(requestCount).toBeLessThanOrEqual(30); // Should not exceed MAX_ATTEMPTS
+
+		// Cleanup
+		unmount();
 	}, 10000);
 
 	it('should handle error states', async () => {

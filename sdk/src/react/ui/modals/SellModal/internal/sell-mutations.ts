@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { type Address, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { WaasFeeConfirmationState } from '../../../../../types/waas-types';
 import { type Order, type Step, TransactionType } from '../../../../_internal';
@@ -54,7 +54,7 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 			if (!tx?.approveStep) throw new Error('No approval step available');
 			return await executeStepAndWait(tx.approveStep, waasFeeConfirmation);
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
+		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	const sell = useMutation({
@@ -72,11 +72,11 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 						marketplaceKind: state.order.marketplace,
 						userId: address || '',
 						collectionAddress: state.collectionAddress,
-						currencyAddress: currency.contractAddress as Address,
+						currencyAddress: currency.contractAddress, // Currency now has Address type
 						currencySymbol: currency.symbol || '',
 						requestId: state.order.orderId,
-						tokenId: state.tokenId,
-						chainId: String(state.chainId),
+						tokenId: state.tokenId.toString(),
+						chainId: state.chainId.toString(),
 						txnHash: res.type === 'transaction' ? res.hash : '',
 					},
 					nums: {
@@ -91,6 +91,7 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 		onSuccess: (res) => {
 			// TODO: this should be solved in a headless way
 			state.closeModal();
+
 			state.callbacks?.onSuccess?.({
 				hash: res?.type === 'transaction' ? res.hash : undefined,
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
@@ -129,11 +130,11 @@ export const useSellMutations = (params: UseSellMutationsParams) => {
 					orderId: res?.type === 'signature' ? res.orderId : undefined,
 					callbacks: state.callbacks,
 					collectionAddress: state.collectionAddress,
-					collectibleId: state.tokenId,
+					tokenId: state.tokenId,
 				});
 			}
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
+		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	return {

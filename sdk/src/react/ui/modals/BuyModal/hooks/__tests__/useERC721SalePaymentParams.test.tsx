@@ -23,23 +23,29 @@ vi.mock('../../store', () => ({
 	useOnError: vi.fn(() => vi.fn()),
 	useBuyModalProps: vi.fn(() => ({
 		chainId: 1,
-		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		collectionAddress:
+			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
 		marketplaceType: 'shop',
-		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		salesContractAddress:
+			'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		items: [],
 		quantityDecimals: 0,
 		quantityRemaining: 100,
 		salePrice: {
 			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
+			currencyAddress:
+				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},
 	})),
 }));
 
-const mockSalesContractAddress = '0x1234567890123456789012345678901234567890';
-const mockCollectionAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-const mockPrice = '1000000000000000000'; // 1 ETH in wei
-const mockCurrencyAddress = '0x0000000000000000000000000000000000000000'; // ETH
+const mockSalesContractAddress =
+	'0x1234567890123456789012345678901234567890' as Address;
+const mockCollectionAddress =
+	'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as Address;
+const mockPrice = 1000000000000000000n; // 1 ETH in wei
+const mockCurrencyAddress =
+	'0x0000000000000000000000000000000000000000' as Address; // ETH
 
 describe('getERC721SalePaymentParams', () => {
 	it('should generate correct payment parameters', async () => {
@@ -73,7 +79,7 @@ describe('getERC721SalePaymentParams', () => {
 				},
 			],
 			currencyAddress: mockCurrencyAddress,
-			price: mockPrice,
+			price: mockPrice.toString(),
 			targetContractAddress: mockSalesContractAddress,
 			collectionAddress: mockCollectionAddress,
 			recipientAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
+	type TokenBalancesQueryOptions,
 	tokenBalancesOptions,
-	type UseTokenBalancesArgs,
 } from '../../queries/collectible/token-balances';
 import { useConfig } from '../config/useConfig';
 
@@ -24,15 +24,15 @@ import { useConfig } from '../config/useConfig';
  * });
  * ```
  */
-export function useCollectibleTokenBalances(args: UseTokenBalancesArgs) {
+export function useCollectibleTokenBalances(
+	args: Omit<TokenBalancesQueryOptions, 'config'>,
+) {
 	const config = useConfig();
 
 	return useQuery(
-		tokenBalancesOptions(
-			{
-				...args,
-			},
+		tokenBalancesOptions({
+			...args,
 			config,
-		),
+		}),
 	);
 }

@@ -2,24 +2,26 @@
  * OpenSea supported chains and their currency configurations
  */
 
+import type { Address } from 'viem';
+
 export interface ChainCurrency {
 	chainId: number | null;
 	openseaId: string;
 	name: string;
 	nativeCurrency: {
 		symbol: string;
-		address: string;
+		address: Address;
 	};
 	wrappedNativeCurrency: {
-		address: string;
+		address: Address;
 	};
 	offerCurrency: {
 		symbol: string;
-		address: string;
+		address: Address;
 	};
 	listingCurrency: {
 		symbol: string;
-		address: string;
+		address: Address;
 	};
 }
 
@@ -469,7 +471,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 export function getOpenseaCurrencyForChain(
 	chainId: number,
 	modalType: 'listing' | 'offer',
-): { symbol: string; address: string } | undefined {
+): { symbol: string; address: Address } | undefined {
 	const config = OPENSEA_CHAIN_CURRENCIES[chainId.toString()];
 	if (!config) {
 		return undefined;

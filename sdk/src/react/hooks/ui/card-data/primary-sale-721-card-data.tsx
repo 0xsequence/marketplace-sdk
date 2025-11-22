@@ -1,11 +1,13 @@
-import type { TokenMetadata } from '@0xsequence/metadata';
+import type {
+	CollectiblePrimarySaleItem,
+	TokenMetadata,
+} from '@0xsequence/api-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { useFilterState } from '../../..';
 import { ContractType } from '../../../_internal';
-import type { CollectiblePrimarySaleItem } from '../../../_internal/api/marketplace.gen';
 import { tokenSuppliesQueryOptions } from '../../../queries/token/supplies';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useConfig } from '../../config';
@@ -17,6 +19,39 @@ interface UsePrimarySale721CardDataProps {
 	contractAddress: Address;
 	salesContractAddress: Address;
 	enabled?: boolean;
+}
+
+/**
+ * Safely normalizes partial token metadata to full TokenMetadata type
+ * Used for minted tokens where metadata might be incomplete
+ */
+function normalizeTokenMetadata(
+	metadata: Partial<TokenMetadata> | undefined,
+	tokenId: bigint,
+): TokenMetadata {
+	return {
+		tokenId,
+		name: metadata?.name ?? '',
+		source: metadata?.source ?? '',
+		attributes: metadata?.attributes ?? [],
+		status: metadata?.status ?? 'active',
+		description: metadata?.description,
+		image: metadata?.image,
+		video: metadata?.video,
+		audio: metadata?.audio,
+		properties: metadata?.properties,
+		image_data: metadata?.image_data,
+		external_url: metadata?.external_url,
+		background_color: metadata?.background_color,
+		animation_url: metadata?.animation_url,
+		decimals: metadata?.decimals,
+		updatedAt: metadata?.updatedAt,
+		assets: metadata?.assets,
+		queuedAt: metadata?.queuedAt,
+		lastFetched: metadata?.lastFetched,
+		chainId: metadata?.chainId,
+		contractAddress: metadata?.contractAddress,
+	};
 }
 
 export function usePrimarySale721CardData({
@@ -85,11 +120,12 @@ export function usePrimarySale721CardData({
 	]);
 
 	const allTokenSupplies = tokenSuppliesData?.pages.flatMap(
-		(page) => page.tokenIDs,
+		(page) => page.supplies,
 	);
-	const matchingTokenSupplies = allTokenSupplies?.filter((item) =>
+	const matchingTokenSupplies = allTokenSupplies?.filter((supply) =>
 		primarySaleItemsWithMetadata.some(
-			(primarySaleItem) => primarySaleItem.metadata.tokenId === item.tokenID,
+			(primarySaleItem) =>
+				BigInt(primarySaleItem.metadata.tokenId) === supply.tokenId,
 		),
 	);
 
@@ -112,7 +148,7 @@ export function usePrimarySale721CardData({
 	const unmintedPrimarySaleItems = primarySaleItemsWithMetadata.filter(
 		(item) =>
 			!matchingTokenSupplies?.some(
-				(supply) => supply.tokenID === item.metadata.tokenId,
+				(supply) => supply.tokenId === BigInt(item.metadata.tokenId),
 			),
 	);
 
@@ -121,26 +157,30 @@ export function usePrimarySale721CardData({
 			const { metadata, primarySaleItem } = item;
 
 			const salePrice = {
-				amount: primarySaleItem.priceAmount?.toString(),
-				currencyAddress: primarySaleItem.currencyAddress as Address,
+				amount: primarySaleItem.priceAmount || 0n,
+				currencyAddress: primarySaleItem.currencyAddress,
 			};
 
-			const quantityInitial = primarySaleItem.supply?.toString();
+			const quantityInitial = primarySaleItem.supply;
 
-			const quantityRemaining = '1';
+			const quantityRemaining = 1n;
 
 			const saleStartsAt = primarySaleItem.startDate.toString();
 
 			const saleEndsAt = primarySaleItem.endDate.toString();
 
 			return {
-				tokenId: metadata.tokenId,
+				tokenId: BigInt(metadata.tokenId),
 				chainId,
 				collectionAddress: contractAddress,
 				collectionType: ContractType.ERC721,
-				tokenMetadata: metadata,
+				tokenMetadata: {
+					...metadata,
+					tokenId: BigInt(metadata.tokenId),
+					source: '',
+				},
 				cardLoading: saleDetailsLoading,
-				salesContractAddress: salesContractAddress,
+				salesContractAddress,
 				salePrice,
 				quantityInitial,
 				quantityRemaining,
@@ -154,15 +194,15 @@ export function usePrimarySale721CardData({
 
 	const mintedTokensCollectibleCards = allTokenSupplies?.map((item) => {
 		return {
-			tokenId: item.tokenID,
+			tokenId: item.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
-			tokenMetadata: item.tokenMetadata as TokenMetadata,
+			tokenMetadata: normalizeTokenMetadata(item.tokenMetadata, item.tokenId),
 			cardLoading: saleDetailsLoading,
-			salesContractAddress: salesContractAddress,
+			salesContractAddress,
 			salePrice: {
-				amount: '0',
+				amount: 0n,
 				currencyAddress: '0x0000000000000000000000000000000000000000',
 			},
 			quantityInitial: undefined,

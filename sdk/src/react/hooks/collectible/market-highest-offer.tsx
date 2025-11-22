@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import type { Order } from '@0xsequence/api-client';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchHighestOfferParams,
 	type HighestOfferQueryOptions,
 	highestOfferQueryOptions,
 } from '../../queries/collectible/market-highest-offer';
@@ -54,7 +54,7 @@ export type UseCollectibleMarketHighestOfferParams = Optional<
  */
 export function useCollectibleMarketHighestOffer(
 	params: UseCollectibleMarketHighestOfferParams,
-) {
+): UseQueryResult<Order | undefined, Error> {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
@@ -71,4 +71,4 @@ export function useCollectibleMarketHighestOffer(
 
 export { highestOfferQueryOptions };
 
-export type { FetchHighestOfferParams, HighestOfferQueryOptions };
+export type { HighestOfferQueryOptions };

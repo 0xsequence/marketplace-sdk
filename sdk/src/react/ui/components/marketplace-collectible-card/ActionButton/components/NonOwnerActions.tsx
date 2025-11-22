@@ -10,11 +10,11 @@ import { ActionButtonBody } from './ActionButtonBody';
 
 type NonOwnerActionsBaseProps = {
 	action: CollectibleCardAction;
-	tokenId: string;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	quantityDecimals?: number;
-	quantityRemaining?: number;
+	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
 	labelOverride?: {
@@ -28,7 +28,7 @@ type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 	cardType: 'shop';
 	salesContractAddress: Address;
 	salePrice: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	lowestListing?: never;
@@ -81,7 +81,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						items: [
 							{
 								tokenId,
-								quantity: '1',
+								quantity: 1n,
 							},
 						],
 						cardType: 'shop',
@@ -90,7 +90,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							currencyAddress: salePrice.currencyAddress,
 						},
 						quantityDecimals: quantityDecimals ?? 0,
-						quantityRemaining: quantityRemaining ?? 0,
+						quantityRemaining: quantityRemaining ?? 0n,
 						unlimitedSupply,
 						hideQuantitySelector,
 					})
@@ -118,7 +118,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					showBuyModal({
 						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
 						cardType: 'market',
@@ -142,7 +142,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 					showMakeOfferModal({
 						collectionAddress,
 						chainId,
-						collectibleId: tokenId,
+						tokenId,
 						orderbookKind,
 					})
 				}

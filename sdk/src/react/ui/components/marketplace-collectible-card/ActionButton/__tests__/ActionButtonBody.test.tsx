@@ -14,9 +14,14 @@ vi.mock('../store', () => ({
 	})),
 }));
 
-vi.mock('../../../../../hooks', () => ({
-	useOpenConnectModal: vi.fn(),
-}));
+vi.mock('../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../hooks');
+	return {
+		...actual,
+		useOpenConnectModal: vi.fn(),
+	};
+});
 
 vi.mock('wagmi', async () => {
 	const actual = await vi.importActual('wagmi');
@@ -32,7 +37,7 @@ describe('ActionButtonBody', () => {
 	const mockSetPendingAction = vi.fn();
 	const defaultProps = {
 		label: 'Buy now' as const,
-		tokenId: '123',
+		tokenId: 123n,
 		onClick: mockOnClick,
 		action: CollectibleCardAction.BUY as CollectibleCardAction.BUY,
 	};
@@ -42,8 +47,10 @@ describe('ActionButtonBody', () => {
 
 		// Default to connected state
 		vi.mocked(wagmi.useAccount).mockReturnValue({
-			address: '0x1234567890123456789012345678901234567890',
-			addresses: ['0x1234567890123456789012345678901234567890'],
+			address: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+			addresses: [
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			],
 			chain: undefined,
 			chainId: 1,
 			connector: {} as any,

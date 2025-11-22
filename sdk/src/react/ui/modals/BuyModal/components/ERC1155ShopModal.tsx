@@ -1,9 +1,12 @@
 'use client';
 
-import type { ContractInfo } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/api-client';
 import { useEffect } from 'react';
-import { type Address, zeroAddress } from 'viem';
-import type { CheckoutOptions } from '../../../../_internal';
+import { zeroAddress } from 'viem';
+import type {
+	CheckoutOptions,
+	CheckoutOptionsItem,
+} from '../../../../_internal';
 import { LoadingModal } from '../../_internal/components/baseModal';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
@@ -33,10 +36,8 @@ export const ERC1155ShopModal = ({
 	const isShop = isShopProps(modalProps);
 	const quantityDecimals =
 		isShop && modalProps.quantityDecimals ? modalProps.quantityDecimals : 0;
-	const quantityRemaining =
-		isShop && modalProps.quantityRemaining
-			? modalProps.quantityRemaining.toString()
-			: '0';
+	const quantityRemaining: bigint =
+		isShop && modalProps.quantityRemaining ? modalProps.quantityRemaining : 0n;
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
 
@@ -44,9 +45,8 @@ export const ERC1155ShopModal = ({
 		return (
 			<ERC1155QuantityModal
 				salePrice={{
-					amount: shopData.salePrice?.amount ?? '0',
-					currencyAddress:
-						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
+					amount: shopData.salePrice?.amount ?? 0n,
+					currencyAddress: shopData.salePrice?.currencyAddress ?? zeroAddress,
 				}}
 				cardType="shop"
 				quantityDecimals={quantityDecimals}
@@ -60,13 +60,15 @@ export const ERC1155ShopModal = ({
 	return (
 		<ERC1155SaleContractCheckoutModalOpener
 			chainId={chainId}
-			salesContractAddress={shopData.salesContractAddress as Address}
-			collectionAddress={collection.address as Address}
-			items={shopData.items.map((item) => ({
-				...item,
-				tokenId: item.tokenId ?? '0',
-				quantity: quantity.toString() ?? '1',
-			}))}
+			salesContractAddress={shopData.salesContractAddress}
+			collectionAddress={collection.address}
+			items={shopData.items.map(
+				(item) =>
+					({
+						tokenId: item.tokenId ?? 0n,
+						quantity: item.quantity ?? BigInt(quantity ?? 1),
+					}) as CheckoutOptionsItem,
+			)}
 			checkoutOptions={shopData.checkoutOptions}
 			enabled={!!shopData.salesContractAddress && !!shopData.items}
 		/>

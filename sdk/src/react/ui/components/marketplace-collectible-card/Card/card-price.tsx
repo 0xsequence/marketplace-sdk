@@ -6,7 +6,7 @@ import type { Currency } from '../../../../_internal';
 import { PriceDisplay as BasePriceDisplay } from '../_internals/PriceDisplay';
 
 export interface CardPriceProps extends React.HTMLAttributes<HTMLDivElement> {
-	amount?: string;
+	amount?: bigint;
 	currency?: Currency;
 	showCurrencyIcon?: boolean;
 }

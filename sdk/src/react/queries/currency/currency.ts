@@ -1,38 +1,40 @@
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
 import {
 	type Currency,
 	getMarketplaceClient,
 	getQueryClient,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCurrencyParams {
 	chainId: number;
 	currencyAddress: Address;
-	config: SdkConfig;
 }
 
 /**
  * Fetches currency details from the marketplace API
  */
 export async function fetchCurrency(
-	params: FetchCurrencyParams,
+	params: WithRequired<
+		CurrencyQueryOptions,
+		'chainId' | 'currencyAddress' | 'config'
+	>,
 ): Promise<Currency | undefined> {
 	const { chainId, currencyAddress, config } = params;
 	const queryClient = getQueryClient();
 
-	let currencies = queryClient.getQueryData(['currency', 'list', chainId]) as
-		| Currency[]
-		| undefined;
+	let currencies = queryClient.getQueryData<Currency[]>([
+		'currency',
+		'list',
+		chainId,
+	]);
 
 	if (!currencies) {
 		const marketplaceClient = getMarketplaceClient(config);
-		currencies = await marketplaceClient
-			.listCurrencies({ chainId: String(chainId) })
-			.then((resp) => resp.currencies);
+		const response = await marketplaceClient.listCurrencies({ chainId });
+		currencies = response.currencies;
 	}
 
 	if (!currencies?.length) {
@@ -50,14 +52,12 @@ export async function fetchCurrency(
 	return currency;
 }
 
-export type CurrencyQueryOptions = ValuesOptional<FetchCurrencyParams> & {
-	query?: StandardQueryOptions;
-};
+export type CurrencyQueryOptions = SdkQueryParams<FetchCurrencyParams>;
 
 export function getCurrencyQueryKey(params: CurrencyQueryOptions) {
 	const apiArgs = {
-		chainId: String(params.chainId!),
-		currencyAddress: params.currencyAddress!,
+		chainId: String(params.chainId ?? 0),
+		currencyAddress: params.currencyAddress ?? '',
 	};
 
 	return ['currency', 'currency', apiArgs] as const;
@@ -71,20 +71,24 @@ export function currencyQueryOptions(params: CurrencyQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
+	const queryFn =
+		params.chainId && params.currencyAddress && params.config
+			? () => {
+					const requiredParams = params as WithRequired<
+						CurrencyQueryOptions,
+						'chainId' | 'currencyAddress' | 'config'
+					>;
+					return fetchCurrency({
+						chainId: requiredParams.chainId,
+						currencyAddress: requiredParams.currencyAddress,
+						config: requiredParams.config,
+					});
+				}
+			: skipToken;
+
 	return queryOptions({
 		queryKey: getCurrencyQueryKey(params),
-		queryFn:
-			params.chainId && params.currencyAddress
-				? () =>
-						fetchCurrency({
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							chainId: params.chainId!,
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							currencyAddress: params.currencyAddress!,
-							// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-							config: params.config!,
-						})
-				: skipToken,
+		queryFn,
 		...params.query,
 		enabled,
 	});

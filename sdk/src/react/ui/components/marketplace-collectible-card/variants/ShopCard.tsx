@@ -95,9 +95,7 @@ export function ShopCard({
 			cardType={cardType as CardType}
 			salesContractAddress={salesContractAddress}
 			quantityDecimals={quantityDecimals}
-			quantityRemaining={
-				quantityRemaining !== undefined ? Number(quantityRemaining) : undefined
-			}
+			quantityRemaining={quantityRemaining}
 			unlimitedSupply={unlimitedSupply}
 			hideQuantitySelector={hideQuantitySelector}
 			classNames={classNames}

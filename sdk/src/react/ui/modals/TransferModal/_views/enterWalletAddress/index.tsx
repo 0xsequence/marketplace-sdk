@@ -19,7 +19,7 @@ const EnterWalletAddressView = () => {
 	const { address: connectedAddress } = useAccount();
 	const {
 		collectionAddress,
-		collectibleId,
+		tokenId,
 		chainId,
 		quantity,
 		receiverAddress,
@@ -40,7 +40,7 @@ const EnterWalletAddressView = () => {
 	const { data: tokenBalance } = useTokenBalances({
 		chainId,
 		contractAddress: collectionAddress,
-		tokenId: collectibleId,
+		tokenId,
 		accountAddress: connectedAddress,
 		query: { enabled: !!connectedAddress },
 	});

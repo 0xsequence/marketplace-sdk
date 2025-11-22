@@ -21,12 +21,12 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string | undefined;
+	tokenId: bigint | undefined;
 	order: Order;
 }) => {
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId ?? '',
+		tokenId,
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
@@ -110,7 +110,7 @@ const OrdersTableAction = ({
 		openBuyModal({
 			collectionAddress,
 			chainId,
-			collectibleId: tokenId,
+			tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
 		});

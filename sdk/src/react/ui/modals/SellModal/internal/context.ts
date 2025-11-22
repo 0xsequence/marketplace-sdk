@@ -223,7 +223,7 @@ export function useSellModalContext({
 					{
 						orderId: state.order.orderId,
 						quantity: state.order.quantityRemaining,
-						tokenId: state.tokenId,
+						tokenId: BigInt(state.tokenId),
 					},
 				]
 			: undefined,

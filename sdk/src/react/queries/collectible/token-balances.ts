@@ -1,89 +1,83 @@
-import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { UseQueryParameters } from 'wagmi/query';
-import type { SdkConfig } from '../../../types';
-import { getIndexerClient } from '../../_internal';
+import {
+	buildQueryOptions,
+	getIndexerClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createCollectibleQueryKey } from './queryKeys';
 
-export type UseTokenBalancesArgs = {
+export interface FetchTokenBalancesParams {
 	collectionAddress: Address;
-	userAddress: Address | undefined;
+	userAddress: Address;
 	chainId: number;
 	includeMetadata?: boolean;
-	query?: UseQueryParameters;
-};
+}
+
+export type TokenBalancesQueryOptions =
+	SdkQueryParams<FetchTokenBalancesParams>;
 
 /**
  * Fetches the token balances for a user
  *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
+ * @param params - Parameters for the API call
  * @returns The balance data
  */
 export async function fetchTokenBalances(
-	args: Omit<UseTokenBalancesArgs, 'userAddress'> & {
-		userAddress: Address;
-	},
-	config: SdkConfig,
+	params: WithRequired<
+		TokenBalancesQueryOptions,
+		'chainId' | 'collectionAddress' | 'userAddress' | 'config'
+	>,
 ) {
-	const indexerClient = getIndexerClient(args.chainId, config);
+	const { chainId, userAddress, collectionAddress, includeMetadata, config } =
+		params;
+	const indexerClient = getIndexerClient(chainId, config);
 	return indexerClient
 		.getTokenBalances({
-			accountAddress: args.userAddress,
-			contractAddress: args.collectionAddress,
-			includeMetadata: args.includeMetadata ?? false,
+			accountAddress: userAddress,
+			contractAddress: collectionAddress,
+			includeMetadata: includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
-				includeContracts: [args.collectionAddress],
 			},
 		})
 		.then((res) => res.balances || []);
 }
 
-export function getTokenBalancesQueryKey(args: UseTokenBalancesArgs) {
+export function getTokenBalancesQueryKey(params: TokenBalancesQueryOptions) {
 	const apiArgs = {
-		chainId: args.chainId,
-		accountAddress: args.userAddress,
-		contractAddress: args.collectionAddress,
-		includeMetadata: args.includeMetadata,
-		metadataOptions: args.userAddress
+		chainId: params.chainId,
+		accountAddress: params.userAddress,
+		contractAddress: params.collectionAddress,
+		includeMetadata: params.includeMetadata,
+		metadataOptions: params.userAddress
 			? {
 					verifiedOnly: true,
-					includeContracts: [args.collectionAddress],
 				}
 			: undefined,
 	};
 
-	return ['collectible', 'token-balances', apiArgs] as const;
+	return createCollectibleQueryKey('token-balances', apiArgs);
 }
 
 /**
  * Creates a tanstack query options object for the token balances query
  *
- * @param args - The query arguments
- * @param config - SDK configuration
+ * @param params - The query parameters
  * @returns Query options configuration
  */
-export function tokenBalancesOptions(
-	args: UseTokenBalancesArgs,
-	config: SdkConfig,
-) {
-	const enabled =
-		!!args.userAddress &&
-		!!args.collectionAddress &&
-		(args.query?.enabled ?? true);
-
-	return queryOptions({
-		queryKey: getTokenBalancesQueryKey(args),
-		queryFn: enabled
-			? () =>
-					fetchTokenBalances(
-						{
-							...args,
-							// biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the userAddress check above
-							userAddress: args.userAddress!,
-						},
-						config,
-					)
-			: skipToken,
-	});
+export function tokenBalancesOptions(params: TokenBalancesQueryOptions) {
+	return buildQueryOptions(
+		{
+			getQueryKey: getTokenBalancesQueryKey,
+			requiredParams: [
+				'userAddress',
+				'collectionAddress',
+				'chainId',
+				'config',
+			] as const,
+			fetcher: fetchTokenBalances,
+		},
+		params,
+	);
 }

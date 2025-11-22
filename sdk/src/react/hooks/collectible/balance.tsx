@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
+	type BalanceOfCollectibleQueryOptions,
 	balanceOfCollectibleOptions,
-	type UseBalanceOfCollectibleArgs,
 } from '../../queries/collectible/balance';
 import { useConfig } from '../config/useConfig';
 
@@ -15,7 +15,7 @@ import { useConfig } from '../config/useConfig';
  * ```tsx
  * const { data, isLoading, error } = useCollectibleBalance({
  *   collectionAddress: '0x123...',
- *   collectableId: '1',
+ *   tokenId: 1n,
  *   userAddress: '0x456...',
  *   chainId: 1,
  *   query: {
@@ -25,15 +25,15 @@ import { useConfig } from '../config/useConfig';
  * });
  * ```
  */
-export function useCollectibleBalance(args: UseBalanceOfCollectibleArgs) {
+export function useCollectibleBalance(
+	args: Omit<BalanceOfCollectibleQueryOptions, 'config'>,
+) {
 	const config = useConfig();
 
 	return useQuery(
-		balanceOfCollectibleOptions(
-			{
-				...args,
-			},
+		balanceOfCollectibleOptions({
+			...args,
 			config,
-		),
+		}),
 	);
 }

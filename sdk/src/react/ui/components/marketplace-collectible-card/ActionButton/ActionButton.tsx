@@ -10,7 +10,7 @@ import { useActionButtonLogic } from './hooks/useActionButtonLogic';
 type ActionButtonProps = {
 	chainId: number;
 	collectionAddress: Address;
-	tokenId: string;
+	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
 	isTransfer?: boolean;
 	action: CollectibleCardAction;
@@ -24,11 +24,11 @@ type ActionButtonProps = {
 	salesContractAddress?: Address;
 	prioritizeOwnerActions?: boolean;
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	quantityDecimals?: number;
-	quantityRemaining?: number;
+	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
 	labelOverride?: {

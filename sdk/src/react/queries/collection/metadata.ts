@@ -1,69 +1,52 @@
-import type { GetContractInfoArgs } from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Address } from '@0xsequence/api-client';
 import {
+	buildQueryOptions,
 	getMetadataClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-
-import type { StandardQueryOptions } from '../../types/query';
+import { createCollectionQueryKey } from './queryKeys';
 
 export interface FetchCollectionParams {
 	chainId: number;
-	collectionAddress: string;
-	config: SdkConfig;
+	collectionAddress: Address;
 }
+
+export type CollectionQueryOptions = SdkQueryParams<FetchCollectionParams>;
 
 /**
  * Fetches collection information from the metadata API
  */
-export async function fetchCollection(params: FetchCollectionParams) {
-	const { collectionAddress, chainId, config } = params;
-
+export async function fetchCollection(
+	params: WithRequired<
+		CollectionQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+) {
+	const { chainId, collectionAddress, config } = params;
 	const metadataClient = getMetadataClient(config);
-
+	// API wrapper handles collectionAddress → contractAddress transformation
 	const result = await metadataClient.getContractInfo({
-		chainID: chainId.toString(),
-		contractAddress: collectionAddress,
+		chainId,
+		collectionAddress,
 	});
-
 	return result.contractInfo;
 }
 
-export type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
-	query?: StandardQueryOptions;
-};
-
 export function getCollectionQueryKey(params: CollectionQueryOptions) {
-	const apiArgs = {
-		chainID: String(params.chainId),
+	return createCollectionQueryKey('metadata', {
+		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetContractInfoArgs>;
-
-	return ['collection', 'metadata', apiArgs] as const;
+	});
 }
 
 export function collectionQueryOptions(params: CollectionQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchCollection,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionQueryKey(params),
-		queryFn: () =>
-			fetchCollection({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

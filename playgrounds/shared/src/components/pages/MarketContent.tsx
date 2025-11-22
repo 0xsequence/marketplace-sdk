@@ -92,7 +92,7 @@ export function MarketContent({
 		return (
 			<button
 				key={index}
-				onClick={() => handleCollectibleClick(card.tokenId)}
+				onClick={() => handleCollectibleClick(card.tokenId.toString())}
 				className={cn('w-full cursor-pointer')}
 				type="button"
 			>

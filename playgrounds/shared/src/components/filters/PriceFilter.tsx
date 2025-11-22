@@ -1,8 +1,10 @@
 import { Button, Separator, Skeleton, Text } from '@0xsequence/design-system';
-import { useMarketCurrencies } from '@0xsequence/marketplace-sdk/react';
+import {
+	useFilterState,
+	useMarketCurrencies,
+} from '@0xsequence/marketplace-sdk/react';
 import { useEffect, useState } from 'react';
-import type { Address } from 'viem';
-import { useFilterState } from '../../../../../sdk/src/react';
+import { type Address, formatUnits, parseUnits } from 'viem';
 import { CustomSelect } from '../../../../../sdk/src/react/ui/components/_internals/custom-select/CustomSelect';
 
 export function PriceFilter({
@@ -42,12 +44,12 @@ export function PriceFilter({
 				);
 				const decimals = selectedCurrencyData?.decimals || 0;
 
-				// Convert token amounts back to user-friendly decimal values
+				// Convert token amounts back to user-friendly decimal values using formatUnits
 				const minDecimal = existingFilter.min
-					? (Number.parseFloat(existingFilter.min) / 10 ** decimals).toString()
+					? formatUnits(BigInt(existingFilter.min), decimals)
 					: '';
 				const maxDecimal = existingFilter.max
-					? (Number.parseFloat(existingFilter.max) / 10 ** decimals).toString()
+					? formatUnits(BigInt(existingFilter.max), decimals)
 					: '';
 
 				setMinPrice(minDecimal);
@@ -104,12 +106,12 @@ export function PriceFilter({
 			);
 			const decimals = selectedCurrencyData?.decimals || 0;
 
-			// Convert user-friendly decimal values to actual token amounts
+			// Convert user-friendly decimal values to actual token amounts using parseUnits
 			const minTokenAmount = minPrice
-				? (Number.parseFloat(minPrice) * 10 ** decimals).toString()
+				? parseUnits(minPrice, decimals).toString()
 				: undefined;
 			const maxTokenAmount = maxPrice
-				? (Number.parseFloat(maxPrice) * 10 ** decimals).toString()
+				? parseUnits(maxPrice, decimals).toString()
 				: undefined;
 
 			setPriceFilter(selectedCurrency, minTokenAmount, maxTokenAmount);

@@ -27,7 +27,7 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
@@ -76,7 +76,7 @@ function TransactionStatusModalContent() {
 		price,
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 		callbacks,
 		queriesToInvalidate,
 	} = useTransactionModalState();
@@ -85,7 +85,7 @@ function TransactionStatusModalContent() {
 		useCollectibleDetail({
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);

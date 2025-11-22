@@ -25,7 +25,7 @@ export interface CollectiblesPageControllerProps {
 		tokenIds: string[];
 		isLoading: boolean;
 		salePrice?: {
-			amount?: string;
+			amount?: bigint;
 			currencyAddress?: Address;
 		};
 	}) => React.ReactNode;

@@ -17,7 +17,7 @@ import type { CardClassNames } from '../types';
 
 export interface MarketCardPresentationProps {
 	/** Token identification */
-	tokenId: string;
+	tokenId: bigint;
 	chainId: number;
 	collectionAddress: Address;
 	collectionType: ContractType;
@@ -33,7 +33,7 @@ export interface MarketCardPresentationProps {
 	assetSrcPrefixUrl?: string;
 
 	/** Interaction handlers */
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	onOfferClick?: (params: {
 		order: Order;
 		e: React.MouseEvent<HTMLButtonElement>;

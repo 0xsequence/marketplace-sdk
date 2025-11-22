@@ -12,7 +12,7 @@ import type { CardClassNames } from '../types';
 
 export interface ShopCardPresentationProps {
 	/** Token identification */
-	tokenId: string;
+	tokenId: bigint;
 	chainId: number;
 	collectionAddress: Address;
 	collectionType: ContractType;
@@ -23,7 +23,7 @@ export interface ShopCardPresentationProps {
 
 	/** Sale information */
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 
@@ -41,7 +41,7 @@ export interface ShopCardPresentationProps {
 	cardType: CardType;
 	salesContractAddress?: Address;
 	quantityDecimals?: number;
-	quantityRemaining?: number;
+	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
 	classNames?: CardClassNames;
@@ -114,11 +114,7 @@ export function ShopCardPresentation({
 				</div>
 
 				<Card.SaleDetails
-					quantityRemaining={
-						quantityRemaining !== undefined
-							? String(quantityRemaining)
-							: undefined
-					}
+					quantityRemaining={quantityRemaining}
 					type={collectionType}
 					unlimitedSupply={unlimitedSupply}
 					className={classNames?.cardSaleDetails}

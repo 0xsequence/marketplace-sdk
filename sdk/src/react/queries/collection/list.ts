@@ -1,66 +1,88 @@
-import type { ContractInfo } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/api-client';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { CardType, SdkConfig } from '../../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
 	ShopCollection,
-} from '../../../types/new-marketplace-types';
+} from '../../../types';
 import { compareAddress } from '../../../utils';
-import { getMetadataClient, type ValuesOptional } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMetadataClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createCollectionQueryKey } from './queryKeys';
 
-const allCollections = (marketplaceConfig: MarketplaceConfig) => {
+function getAllCollections(marketplaceConfig: MarketplaceConfig) {
 	return [
 		...marketplaceConfig.market.collections,
 		...marketplaceConfig.shop.collections,
 	];
-};
+}
+
+function filterCollectionsByType(
+	collections: Array<MarketCollection | ShopCollection>,
+	collectionType?: 'market' | 'shop',
+) {
+	if (!collectionType) {
+		return collections;
+	}
+	return collections.filter(
+		(c) => c.marketplaceCollectionType === collectionType,
+	);
+}
+
+function groupCollectionsByChain(
+	collections: Array<MarketCollection | ShopCollection>,
+) {
+	return collections.reduce<Record<string, string[]>>((acc, curr) => {
+		const { chainId, itemsAddress } = curr;
+		if (!acc[chainId]) {
+			acc[chainId] = [];
+		}
+		acc[chainId].push(itemsAddress);
+		return acc;
+	}, {});
+}
 
 export interface FetchListCollectionsParams {
-	cardType?: CardType;
+	collectionType?: 'market' | 'shop';
 	marketplaceConfig: MarketplaceConfig;
-	config: SdkConfig;
 }
+
+export type ListCollectionsQueryOptions =
+	SdkQueryParams<FetchListCollectionsParams>;
 
 /**
  * Fetches collections from the metadata API with marketplace config filtering
  */
-export async function fetchListCollections(params: FetchListCollectionsParams) {
-	const { cardType, marketplaceConfig, config } = params;
+export async function fetchListCollections(
+	params: WithRequired<
+		ListCollectionsQueryOptions,
+		'marketplaceConfig' | 'config'
+	>,
+) {
+	const { collectionType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
-	let collections = allCollections(marketplaceConfig);
+	let collections = getAllCollections(marketplaceConfig);
 
 	if (!collections?.length) {
 		return [];
 	}
 
-	if (cardType) {
-		collections = collections.filter(
-			(collection) => collection.cardType === cardType,
-		);
-	}
+	collections = filterCollectionsByType(collections, collectionType);
 
-	// Group collections by chainId
-	const collectionsByChain = collections.reduce<Record<string, string[]>>(
-		(acc, curr) => {
-			const { chainId, itemsAddress } = curr;
-			if (!acc[chainId]) {
-				acc[chainId] = [];
-			}
-			acc[chainId].push(itemsAddress);
-			return acc;
-		},
-		{},
-	);
+	// Group collections by chainId for batch fetching
+	const collectionsByChain = groupCollectionsByChain(collections);
 
 	// Fetch collections for each chain
 	const promises = Object.entries(collectionsByChain).map(
 		([chainId, addresses]) =>
 			metadataClient
 				.getContractInfoBatch({
-					chainID: chainId,
+					chainId: Number(chainId),
 					contractAddresses: addresses,
 				})
 				.then((resp) => Object.values(resp.contractInfoMap)),
@@ -70,7 +92,7 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 
 	// If all promises failed, throw the first error
 	if (settled.every((result) => result.status === 'rejected')) {
-		const firstError = settled[0] as PromiseRejectedResult;
+		const firstError = settled[0];
 		throw firstError.reason;
 	}
 
@@ -104,68 +126,52 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 	return collectionsWithMetadata;
 }
 
-export type ListCollectionsQueryOptions =
-	ValuesOptional<FetchListCollectionsParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getListCollectionsQueryKey(
 	params: ListCollectionsQueryOptions,
 ) {
 	const queryKeyParams = {
-		cardType: params.cardType,
+		collectionType: params.collectionType,
 		marketplaceConfig: params.marketplaceConfig,
 	} as const;
 
-	return ['collection', 'list', queryKeyParams] as const;
+	return createCollectionQueryKey('list', queryKeyParams);
 }
 
 export function listCollectionsQueryOptions(
 	params: ListCollectionsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.marketplaceConfig &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectionsQueryKey,
+			requiredParams: ['marketplaceConfig', 'config'] as const,
+			fetcher: fetchListCollections,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectionsQueryKey(params),
-		queryFn: enabled
-			? () =>
-					fetchListCollections({
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						marketplaceConfig: params.marketplaceConfig!,
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						config: params.config!,
-						cardType: params.cardType,
-					})
-			: skipToken,
-		...params.query,
-		enabled,
-	});
 }
 
 // Keep old function for backward compatibility during migration
 export const listCollectionsOptions = ({
-	cardType,
+	collectionType,
 	marketplaceConfig,
 	config,
-}: {
-	cardType?: CardType;
-	marketplaceConfig: MarketplaceConfig | undefined;
-	config: SdkConfig;
-}) => {
+	query,
+}: ListCollectionsQueryOptions) => {
 	return queryOptions({
-		queryKey: ['collection', 'list', { cardType, marketplaceConfig, config }],
-		queryFn: marketplaceConfig
-			? () =>
-					fetchListCollections({
-						marketplaceConfig,
-						config,
-						cardType,
-					})
-			: skipToken,
-		enabled: Boolean(marketplaceConfig),
+		queryKey: [
+			'collection',
+			'list',
+			{ collectionType, marketplaceConfig, config },
+		],
+		queryFn:
+			marketplaceConfig && config
+				? () =>
+						fetchListCollections({
+							marketplaceConfig,
+							config,
+							collectionType,
+						})
+				: skipToken,
+		...query,
 	});
 };

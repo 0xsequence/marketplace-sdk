@@ -1,13 +1,18 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
-import type { Currency, OrderbookKind, Price } from '../../../../types';
+import {
+	type Currency,
+	CurrencyStatus,
+	type OrderbookKind,
+	type Price,
+} from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind?: OrderbookKind;
-	collectibleId: string;
+	tokenId: bigint;
 	offerPrice: Price;
 	offerPriceChanged: boolean;
 	quantity: string;
@@ -21,7 +26,7 @@ type MakeOfferState = BaseModalState & {
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 };
@@ -31,9 +36,27 @@ type Actions = {
 	close: () => void;
 };
 
+// Empty Currency object for initial state - will be set when modal opens
+const emptyCurrency: Currency = {
+	chainId: 0,
+	contractAddress: '0x0000000000000000000000000000000000000000',
+	status: CurrencyStatus.unknown,
+	name: '',
+	symbol: '',
+	decimals: 0,
+	imageUrl: '',
+	exchangeRate: 0,
+	defaultChainCurrency: false,
+	nativeCurrency: false,
+	openseaListing: false,
+	openseaOffer: false,
+	createdAt: '',
+	updatedAt: '',
+};
+
 const offerPrice = {
-	amountRaw: '0',
-	currency: {} as Currency,
+	amountRaw: 0n,
+	currency: emptyCurrency,
 };
 
 const approval = {
@@ -55,9 +78,9 @@ const steps = {
 
 const initialState: MakeOfferState = {
 	isOpen: false,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
-	collectibleId: '',
+	tokenId: 0n,
 	orderbookKind: undefined,
 	callbacks: undefined,
 	offerPrice: { ...offerPrice },
@@ -74,7 +97,7 @@ const actions: Actions = {
 	open: (args) => {
 		makeOfferModal$.collectionAddress.set(args.collectionAddress);
 		makeOfferModal$.chainId.set(args.chainId);
-		makeOfferModal$.collectibleId.set(args.collectibleId);
+		makeOfferModal$.tokenId.set(args.tokenId);
 		makeOfferModal$.orderbookKind.set(args.orderbookKind);
 		makeOfferModal$.callbacks.set(args.callbacks);
 		makeOfferModal$.isOpen.set(true);

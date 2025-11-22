@@ -40,10 +40,11 @@ const Modal = observer(() => {
 		collectionAddress,
 		chainId,
 		listingPrice,
-		collectibleId,
+		tokenId,
 		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
@@ -62,7 +63,7 @@ const Modal = observer(() => {
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
@@ -76,7 +77,7 @@ const Modal = observer(() => {
 	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
-		collectableId: collectibleId,
+		tokenId,
 		userAddress: address ?? undefined,
 	});
 
@@ -104,11 +105,11 @@ const Modal = observer(() => {
 		listingInput: {
 			contractType: collectionQuery.data?.type as ContractType,
 			listing: {
-				tokenId: collectibleId,
+				tokenId,
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
-				).toString(),
+				),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
 				pricePerToken: listingPrice.amountRaw,
@@ -119,7 +120,7 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => createListingModal$.close(),
-		steps$: steps$,
+		steps$,
 		waasFeeConfirmation:
 			isWaaS && waasFeeStep
 				? {
@@ -174,7 +175,7 @@ const Modal = observer(() => {
 		disabled:
 			steps$.approval.exist.get() ||
 			tokenApprovalIsLoading ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			createListingModal$.invalidQuantity.get() ||
 			createListingModal$.listingIsBeingProcessed.get() ||
 			!!(isWaaS && waasFeeStep && !waasFeeStep.waasFee.optionConfirmed),
@@ -189,7 +190,7 @@ const Modal = observer(() => {
 		variant: 'secondary' as const,
 		disabled:
 			createListingModal$.invalidQuantity.get() ||
-			listingPrice.amountRaw === '0' ||
+			listingPrice.amountRaw === 0n ||
 			steps$?.approval.isExecuting.get() ||
 			tokenApprovalIsLoading ||
 			isLoading,
@@ -227,10 +228,6 @@ const Modal = observer(() => {
 		>
 			{({ collectible, collection, collectibleBalance }) => {
 				// Show fee selection UI if manual confirmation needed
-				// For now, we assume if step exists and not confirmed, we show it.
-				// But previously it was based on 'manual' mode.
-				// The simplified hook doesn't have mode logic, so we might need to check if options exist.
-				// However, the user asked for simplicity.
 				if (
 					waasFeeStep &&
 					waasFeeStep.waasFee.feeOptionConfirmation &&
@@ -261,7 +258,7 @@ const Modal = observer(() => {
 						<TokenPreview
 							collectionName={collection?.name}
 							collectionAddress={collectionAddress}
-							collectibleId={collectibleId}
+							tokenId={tokenId}
 							chainId={chainId}
 						/>
 						<div className="flex w-full flex-col gap-1">
@@ -279,9 +276,9 @@ const Modal = observer(() => {
 								modalType="listing"
 							/>
 
-							{listingPrice.amountRaw !== '0' && (
+							{listingPrice.amountRaw !== 0n && (
 								<FloorPriceText
-									tokenId={collectibleId}
+									tokenId={tokenId}
 									chainId={chainId}
 									collectionAddress={collectionAddress}
 									price={listingPrice}
@@ -307,7 +304,7 @@ const Modal = observer(() => {
 							onDateChange={(date) => createListingModal$.expiry.set(date)}
 						/>
 						<TransactionDetails
-							collectibleId={collectibleId}
+							tokenId={tokenId}
 							collectionAddress={collectionAddress}
 							chainId={chainId}
 							price={createListingModal$.listingPrice.get()}

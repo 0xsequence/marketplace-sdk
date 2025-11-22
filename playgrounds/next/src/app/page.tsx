@@ -1,6 +1,6 @@
 'use client';
 
-import type { ContractInfo } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
 import { useRouter } from 'next/navigation';
 import { CollectionsPageController } from 'shared-components';
 
