@@ -60,6 +60,7 @@
 		}
 	},
 	"dependencies": {
+		"0xtrails": "^0.6.6",
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
 		"@tailwindcss/cli": "^4.1.17",
@@ -69,8 +70,7 @@
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
 		"react-day-picker": "catalog:",
-		"tailwind-merge": "^3.4.0",
-		"xtrails": "npm:0xtrails@^0.6.6"
+		"tailwind-merge": "^3.4.0"
 	},
 	"peerDependencies": {
 		"0xsequence": "catalog:",

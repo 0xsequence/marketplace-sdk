@@ -1,9 +1,9 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
+import { useSupportedChains } from '0xtrails';
+import { TrailsWidget } from '0xtrails/widget';
 import { type Chain, formatUnits, type Hash } from 'viem';
-import { useSupportedChains } from 'xtrails';
-import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
@@ -137,7 +137,7 @@ export const BuyModalContent = () => {
 							mode="pay"
 							customCss={TRAILS_CUSTOM_CSS}
 							onDestinationConfirmation={handleTrailsSuccess}
-							payMessage='{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}'
+							payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
 						/>
 					</div>
 				)}
