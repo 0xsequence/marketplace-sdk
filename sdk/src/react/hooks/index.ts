@@ -11,3 +11,4 @@ export * from './token';
 export * from './transactions';
 export * from './ui';
 export * from './utils';
+export * from './waas';

@@ -12,6 +12,7 @@ import {
 	useConnectorMetadata,
 	useMarketCurrencies,
 	useMarketplaceConfig,
+	useWaasFeeStep,
 } from '../../../hooks';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
 import {
@@ -22,6 +23,7 @@ import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
+import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
@@ -44,6 +46,12 @@ const Modal = observer(() => {
 		callbacks,
 	} = state;
 	const { isWaaS } = useConnectorMetadata();
+
+	// WaaS fee management
+	const waasFeeStep = useWaasFeeStep({
+		enabled: isWaaS && makeOfferModal$.isOpen.get(),
+	});
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -109,6 +117,16 @@ const Modal = observer(() => {
 		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$: steps$,
+		waasFeeConfirmation:
+			isWaaS && waasFeeStep
+				? {
+						feeOptionConfirmation: waasFeeStep.waasFee.feeOptionConfirmation,
+						selectedOption: waasFeeStep.waasFee.selectedOption,
+						optionConfirmed: waasFeeStep.waasFee.optionConfirmed,
+						confirmFeeOption: waasFeeStep.waasFee.confirmFeeOption,
+						setOptionConfirmed: waasFeeStep.waasFee.setOptionConfirmed,
+					}
+				: undefined,
 	});
 
 	const erc20NotConfiguredError =
@@ -170,7 +188,8 @@ const Modal = observer(() => {
 			(orderbookKind === OrderbookKind.opensea &&
 				!openseaLowestPriceCriteriaMet) ||
 			isLoading ||
-			makeOfferModal$.offerIsBeingProcessed.get(),
+			makeOfferModal$.offerIsBeingProcessed.get() ||
+			!!(isWaaS && waasFeeStep && !waasFeeStep.waasFee.optionConfirmed),
 	};
 
 	const secondaryAction = {
@@ -215,89 +234,118 @@ const Modal = observer(() => {
 			//	makeOfferModal$.offerIsBeingProcessed.set(isBeingProcessed);
 			//}}
 			/*onWaasFeeSelectionCancel={() => {
-			//	makeOfferModal$.offerIsBeingProcessed.set(false);
-			//	steps$.transaction.isExecuting.set(false);
-			//}}*/
+		//	makeOfferModal$.offerIsBeingProcessed.set(false);
+		//	steps$.transaction.isExecuting.set(false);
+		//}}*/
 		>
-			{({ collection, collectible, royalty, lowestListing }) => (
-				<>
-					<TokenPreview
-						collectionName={collection?.name}
-						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
-						chainId={chainId}
-					/>
-
-					<PriceInput
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						price={offerPrice}
-						onPriceChange={(newPrice) => {
-							makeOfferModal$.offerPrice.set(newPrice);
-							makeOfferModal$.offerPriceChanged.set(true);
-						}}
-						onCurrencyChange={(newCurrency) => {
-							makeOfferModal$.offerPrice.currency.set(newCurrency);
-						}}
-						includeNativeCurrency={false}
-						checkBalance={{
-							enabled: true,
-							callback: (state) => setInsufficientBalance(state),
-						}}
-						setOpenseaLowestPriceCriteriaMet={(state) =>
-							setOpenseaLowestPriceCriteriaMet(state)
-						}
-						orderbookKind={orderbookKind}
-						modalType="offer"
-						feeData={{
-							royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
-						}}
-					/>
-
-					{collection?.type === ContractType.ERC1155 && (
-						<QuantityInput
-							quantity={use$(makeOfferModal$.quantity)}
-							invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-							onQuantityChange={(quantity) =>
-								makeOfferModal$.quantity.set(quantity)
-							}
-							onInvalidQuantityChange={(invalid) =>
-								makeOfferModal$.invalidQuantity.set(invalid)
-							}
-							decimals={collectible?.decimals || 0}
-							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+			{({ collection, collectible, royalty, lowestListing }) => {
+				// Show fee selection UI if manual confirmation needed
+				if (
+					waasFeeStep &&
+					waasFeeStep.waasFee.feeOptionConfirmation &&
+					!waasFeeStep.waasFee.optionConfirmed &&
+					waasFeeStep.waasFee.selectedOption
+				) {
+					return (
+						<SelectWaasFeeOptions
+							chainId={chainId}
+							feeOptionConfirmation={waasFeeStep.waasFee.feeOptionConfirmation}
+							selectedOption={waasFeeStep.waasFee.selectedOption}
+							onSelectedOptionChange={waasFeeStep.waasFee.setSelectedFeeOption}
+							onConfirm={() => {
+								waasFeeStep.waasFee.confirmFeeOption(
+									waasFeeStep.waasFee.feeOptionConfirmation.id,
+									waasFeeStep.waasFee.selectedOption?.token.contractAddress as
+										| string
+										| null,
+								);
+								waasFeeStep.waasFee.setOptionConfirmed(true);
+							}}
+							optionConfirmed={waasFeeStep.waasFee.optionConfirmed}
 						/>
-					)}
+					);
+				}
 
-					{offerPrice.amountRaw !== '0' &&
-						offerPriceChanged &&
-						!insufficientBalance && (
-							<FloorPriceText
-								tokenId={collectibleId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								price={offerPrice}
-								onBuyNow={() => {
-									makeOfferModal$.close();
+				return (
+					<>
+						<TokenPreview
+							collectionName={collection?.name}
+							collectionAddress={collectionAddress}
+							collectibleId={collectibleId}
+							chainId={chainId}
+						/>
 
-									if (lowestListing) {
-										buyModal.show({
-											chainId,
-											collectionAddress,
-											collectibleId,
-											orderId: lowestListing.orderId,
-											marketplace: lowestListing.marketplace,
-										});
-									}
-								}}
+						<PriceInput
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={offerPrice}
+							onPriceChange={(newPrice) => {
+								makeOfferModal$.offerPrice.set(newPrice);
+								makeOfferModal$.offerPriceChanged.set(true);
+							}}
+							onCurrencyChange={(newCurrency) => {
+								makeOfferModal$.offerPrice.currency.set(newCurrency);
+							}}
+							includeNativeCurrency={false}
+							checkBalance={{
+								enabled: true,
+								callback: (state) => setInsufficientBalance(state),
+							}}
+							setOpenseaLowestPriceCriteriaMet={(state) =>
+								setOpenseaLowestPriceCriteriaMet(state)
+							}
+							orderbookKind={orderbookKind}
+							modalType="offer"
+							feeData={{
+								royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
+							}}
+						/>
+
+						{collection?.type === ContractType.ERC1155 && (
+							<QuantityInput
+								quantity={use$(makeOfferModal$.quantity)}
+								invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+								onQuantityChange={(quantity) =>
+									makeOfferModal$.quantity.set(quantity)
+								}
+								onInvalidQuantityChange={(invalid) =>
+									makeOfferModal$.invalidQuantity.set(invalid)
+								}
+								decimals={collectible?.decimals || 0}
+								maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 							/>
 						)}
-					<ExpirationDateSelect
-						date={makeOfferModal$.expiry.get()}
-						onDateChange={(date) => makeOfferModal$.expiry.set(date)}
-					/>
-				</>
-			)}
+
+						{offerPrice.amountRaw !== '0' &&
+							offerPriceChanged &&
+							!insufficientBalance && (
+								<FloorPriceText
+									tokenId={collectibleId}
+									chainId={chainId}
+									collectionAddress={collectionAddress}
+									price={offerPrice}
+									onBuyNow={() => {
+										makeOfferModal$.close();
+
+										if (lowestListing) {
+											buyModal.show({
+												chainId,
+												collectionAddress,
+												collectibleId,
+												orderId: lowestListing.orderId,
+												marketplace: lowestListing.marketplace,
+											});
+										}
+									}}
+								/>
+							)}
+						<ExpirationDateSelect
+							date={makeOfferModal$.expiry.get()}
+							onDateChange={(date) => makeOfferModal$.expiry.set(date)}
+						/>
+					</>
+				);
+			}}
 		</ActionModal>
 	);
 });

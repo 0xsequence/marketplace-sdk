@@ -119,7 +119,7 @@ export const useCancelTransactionSteps = ({
 			let reservoirOrderId: string | undefined;
 
 			if (transactionStep) {
-				const result = await processStep(transactionStep, chainId);
+				const result = await processStep({ step: transactionStep, chainId });
 
 				if (result.type === 'transaction') {
 					hash = result.hash;
@@ -147,7 +147,7 @@ export const useCancelTransactionSteps = ({
 			}
 
 			if (signatureStep) {
-				const result = await processStep(signatureStep, chainId);
+				const result = await processStep({ step: signatureStep, chainId });
 
 				if (result.type === 'signature') {
 					reservoirOrderId = result.orderId;

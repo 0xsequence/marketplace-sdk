@@ -5,16 +5,10 @@ import type { Address } from 'viem';
 import type { CollectionType } from '../../../_internal';
 import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
-//import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import {
-	transferModalStore,
-	useIsOpen,
-	//useModalState,
-	useView,
-} from './store';
+import { transferModalStore, useIsOpen, useView } from './store';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
@@ -64,27 +58,6 @@ const TransactionModalView = () => {
 
 const TransferModal = () => {
 	const isOpen = useIsOpen();
-	//const modalState = useModalState();
-
-	// TODO: useWaasFeeManagement is deprecated. Handle fee management for this modal specifically.
-	/*
-	const waasFees = useWaasFeeManagement({
-		isProcessing: modalState.transferIsProcessing,
-		onCancel: () => {
-			// Reset transfer state when WaaS fee selection is cancelled
-			transferModalStore.send({
-				type: 'failTransfer',
-				error: new Error('Transfer cancelled'),
-			});
-		},
-		onAutoSelectError: (error: Error | undefined) => {
-			if (error) {
-				transferModalStore.send({ type: 'failTransfer', error });
-			}
-		},
-	});*/
-
-	//const { waasFeeOptionsShown } = waasFees;
 
 	if (!isOpen) return null;
 
@@ -93,7 +66,6 @@ const TransferModal = () => {
 			isDismissible={true}
 			onClose={() => {
 				transferModalStore.send({ type: 'close' });
-				//waasFees.reset();
 			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -107,15 +79,6 @@ const TransferModal = () => {
 			<div className="flex w-full flex-col p-7">
 				<TransactionModalView />
 			</div>
-
-			{/*waasFeeOptionsShown && (
-				<SelectWaasFeeOptions
-					chainId={Number(modalState.chainId)}
-					waasFees={waasFees}
-					titleOnConfirm="Processing transfer..."
-					className="p-7 pt-0"
-				/>
-			)}*/}
 		</Modal>
 	);
 };

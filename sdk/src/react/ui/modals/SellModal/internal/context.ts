@@ -1,19 +1,16 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
-import { useEffect, useState } from 'react';
 import type { Hash } from 'viem';
 import { useAccount } from 'wagmi';
 import type {
 	FeeOptionExtended,
-	WaasFeeConfirmationState,
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
 import type { Order } from '../../../../_internal';
 import {
-	useAutoSelectFeeOption,
 	useCollectionDetail,
 	useConfig,
 	useConnectorMetadata,
 	useCurrency,
+	useWaasFeeStep,
 } from '../../../../hooks';
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
@@ -60,14 +57,15 @@ import { useGenerateSellTransaction } from './use-generate-sell-transaction';
  * }
  * ```
  */
-export type WaasFee = Omit<
-	WaasFeeConfirmationState,
-	'feeOptionConfirmation'
-> & {
+export type WaasFee = {
 	feeOptionConfirmation: WaasFeeOptionConfirmation;
+	selectedOption: FeeOptionExtended | undefined;
+	optionConfirmed: boolean;
 	waasFeeSelectionError?: Error;
 	setSelectedFeeOption: (option: FeeOptionExtended | undefined) => void;
+	confirmFeeOption: (id: string, address: string | null) => void;
 	rejectFeeOption: (id: string) => void;
+	setOptionConfirmed: (confirmed: boolean) => void;
 };
 
 export type SellStepId = 'waas-fee-selection' | 'approve' | 'sell';
@@ -193,100 +191,11 @@ export function useSellModalContext({
 	const config = useConfig();
 	const { isWaaS, walletKind } = useConnectorMetadata();
 	const { address } = useAccount();
-	const [selectedFeeOption, setSelectedFeeOption] = useState<
-		FeeOptionExtended | undefined
-	>(undefined);
-	const [optionConfirmed, setOptionConfirmed] = useState(false);
-	const [waasFeeSelectionError, setWaasFeeSelectionError] = useState<
-		Error | undefined
-	>(undefined);
-	const [feeOptionConfirmation, confirmFeeOption, rejectFeeOption] =
-		useWaasFeeOptions();
-	const autoSelectFeeOption = useAutoSelectFeeOption({
-		enabled: config.waasFeeOptionSelectionType === 'automatic',
+
+	// Use unified WaaS fee management hook
+	const waasFeeStep = useWaasFeeStep({
+		enabled: isWaaS && state.isOpen,
 	});
-
-	// Automatic mode: Auto-select and auto-confirm
-	useEffect(() => {
-		if (config.waasFeeOptionSelectionType !== 'automatic') {
-			return;
-		}
-
-		if (!feeOptionConfirmation?.id) {
-			return;
-		}
-
-		// Skip if already confirmed
-		if (optionConfirmed) {
-			return;
-		}
-
-		autoSelectFeeOption()
-			.then((result) => {
-				if (!result.selectedOption) {
-					console.warn(
-						'[WaaS Fee Auto-Selection] No fee option could be auto-selected',
-					);
-					setWaasFeeSelectionError(
-						new Error('No fee option with sufficient balance available'),
-					);
-					return;
-				}
-
-				console.log(
-					'[WaaS Fee Auto-Selection] Auto-selected fee option:',
-					result.selectedOption.token.symbol,
-				);
-
-				// Set the selected option in state
-				setSelectedFeeOption(result.selectedOption);
-
-				// Auto-confirm immediately
-				confirmFeeOption(
-					feeOptionConfirmation.id,
-					result.selectedOption.token.contractAddress as string | null,
-				);
-				setOptionConfirmed(true);
-
-				console.log(
-					'[WaaS Fee Auto-Selection] Fee option confirmed automatically',
-				);
-			})
-			.catch((error) => {
-				if (error.message === 'Balances are still loading') {
-					console.log(
-						'[WaaS Fee Auto-Selection] Balances still loading, will retry...',
-					);
-					return;
-				}
-				console.error('[WaaS Fee Auto-Selection] Error:', error.message);
-				setWaasFeeSelectionError(error);
-			});
-	}, [
-		config.waasFeeOptionSelectionType,
-		autoSelectFeeOption,
-		confirmFeeOption,
-		feeOptionConfirmation,
-		optionConfirmed,
-	]);
-
-	// Manual mode: Pre-select for UI but don't confirm
-	useEffect(() => {
-		if (config.waasFeeOptionSelectionType === 'automatic') {
-			return;
-		}
-
-		const options = feeOptionConfirmation?.options as FeeOptionExtended[];
-		if (!options || options.length === 0) {
-			return;
-		}
-
-		// Pre-select first option with balance, or just first option
-		const firstOptionWithBalance = options.find(
-			(o) => o.hasEnoughBalanceForFee,
-		);
-		setSelectedFeeOption(firstOptionWithBalance || options[0]);
-	}, [config.waasFeeOptionSelectionType, feeOptionConfirmation]);
 
 	const collectionQuery = useCollectionDetail({
 		chainId: state.chainId,
@@ -323,48 +232,23 @@ export function useSellModalContext({
 	const { approve, sell } = useSellMutations({
 		tx: sellSteps.data,
 		onSuccess,
-		waasFeeConfirmation: isWaaS
-			? {
-					feeOptionConfirmation,
-					selectedOption: selectedFeeOption,
-					optionConfirmed,
-					confirmFeeOption,
-					setOptionConfirmed,
-				}
-			: undefined,
+		waasFeeConfirmation:
+			isWaaS && waasFeeStep
+				? {
+						feeOptionConfirmation: waasFeeStep.waasFee.feeOptionConfirmation,
+						selectedOption: waasFeeStep.waasFee.selectedOption,
+						optionConfirmed: waasFeeStep.waasFee.optionConfirmed,
+						confirmFeeOption: waasFeeStep.waasFee.confirmFeeOption,
+						setOptionConfirmed: waasFeeStep.waasFee.setOptionConfirmed,
+					}
+				: undefined,
 	});
 
 	const steps = [];
 
 	// WaaS fee selection step (only in manual mode)
-	if (
-		isWaaS &&
-		feeOptionConfirmation &&
-		config.waasFeeOptionSelectionType !== 'automatic'
-	) {
-		steps.push({
-			id: 'waas-fee-selection' satisfies SellStepId,
-			label: 'Select Fee Option',
-			status: optionConfirmed
-				? 'success'
-				: selectedFeeOption
-					? 'idle'
-					: 'pending',
-			isPending: !selectedFeeOption,
-			isSuccess: optionConfirmed,
-			isError: !!waasFeeSelectionError,
-			waasFee: {
-				feeOptionConfirmation: feeOptionConfirmation,
-				selectedOption: selectedFeeOption,
-				optionConfirmed: optionConfirmed,
-				waasFeeSelectionError: waasFeeSelectionError,
-				setSelectedFeeOption: setSelectedFeeOption,
-				confirmFeeOption: confirmFeeOption,
-				rejectFeeOption: rejectFeeOption,
-				setOptionConfirmed: setOptionConfirmed,
-			},
-			run: () => {},
-		});
+	if (waasFeeStep) {
+		steps.push(waasFeeStep);
 	}
 
 	// Approval step (if needed)
@@ -392,10 +276,10 @@ export function useSellModalContext({
 		run: () => sell.mutate(),
 	});
 	// Determine if fee confirmation is blocking
-	const feeStep = steps.find((s) => s.id === 'waas-fee-selection');
+	const feeStepInSteps = steps.find((s) => s.id === 'waas-fee-selection');
 	const feeNeedsConfirmation =
-		feeStep &&
-		!feeStep.isSuccess &&
+		feeStepInSteps &&
+		!feeStepInSteps.isSuccess &&
 		config.waasFeeOptionSelectionType !== 'automatic';
 
 	// Next executable step (fee selection blocks all other steps in manual mode)
@@ -443,13 +327,15 @@ export function useSellModalContext({
 		currencyQuery.error;
 
 	const handleClose = () => {
-		if (selectedFeeOption) {
-			setSelectedFeeOption(undefined);
-			setOptionConfirmed(false);
+		if (waasFeeStep?.waasFee.selectedOption) {
+			waasFeeStep.waasFee.setSelectedFeeOption(undefined);
+			waasFeeStep.waasFee.setOptionConfirmed(false);
 		}
 
-		if (feeOptionConfirmation?.id) {
-			rejectFeeOption(feeOptionConfirmation.id);
+		if (waasFeeStep?.waasFee.feeOptionConfirmation?.id) {
+			waasFeeStep.waasFee.rejectFeeOption(
+				waasFeeStep.waasFee.feeOptionConfirmation.id,
+			);
 		}
 
 		state.closeModal();

@@ -2,6 +2,7 @@ import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
+import type { WaasFeeConfirmationState } from '../../../../../types/waas-types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
 	OfferType,
@@ -32,6 +33,7 @@ interface UseTransactionStepsArgs {
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
+	waasFeeConfirmation?: WaasFeeConfirmationState;
 }
 
 export const useTransactionSteps = ({
@@ -42,6 +44,7 @@ export const useTransactionSteps = ({
 	callbacks,
 	closeMainModal,
 	steps$,
+	waasFeeConfirmation,
 }: UseTransactionStepsArgs) => {
 	const { address } = useAccount();
 	const publicClient = usePublicClient({ chainId });
@@ -101,7 +104,11 @@ export const useTransactionSteps = ({
 				throw new Error('No approval step found');
 			}
 
-			const result = await processStep(approvalStep, chainId);
+			const result = await processStep({
+				step: approvalStep,
+				chainId,
+				waasFeeConfirmation,
+			});
 
 			if (result.type === 'transaction') {
 				await waitForTransactionReceipt({
@@ -135,7 +142,11 @@ export const useTransactionSteps = ({
 
 			if (steps) {
 				for (const step of steps) {
-					const result = await processStep(step, chainId);
+					const result = await processStep({
+						step,
+						chainId,
+						waasFeeConfirmation,
+					});
 					if (result.type === 'transaction') {
 						hash = result.hash;
 					}
