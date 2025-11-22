@@ -7,7 +7,11 @@ import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { type SellStep, useSellModalContext } from './internal/context';
+import {
+	type SellStep,
+	useSellModalContext,
+	type WaasFeeSelectionStep,
+} from './internal/context';
 
 export function SellModal() {
 	const {
@@ -30,7 +34,9 @@ export function SellModal() {
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
 	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
-	const pendingStep = flow.steps.find((s) => s.isPending);
+	const waasFeeStep = flow.steps.find((s) => s.id === 'waas-fee-selection') as
+		| WaasFeeSelectionStep
+		| undefined;
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
@@ -70,20 +76,22 @@ export function SellModal() {
 			title="You have an offer"
 			type="sell"
 			primaryAction={
-				pendingStep?.waasFee.selectedOption &&
+				waasFeeStep &&
+				(waasFeeStep.status === 'idle' || waasFeeStep.status === 'pending') &&
 				waasFeeOptionSelectionType === 'manual'
 					? undefined
 					: sellAction
 			}
 			secondaryAction={
-				pendingStep?.waasFee.selectedOption &&
+				waasFeeStep &&
+				(waasFeeStep.status === 'idle' || waasFeeStep.status === 'pending') &&
 				waasFeeOptionSelectionType === 'manual'
 					? undefined
 					: approvalAction
 			}
 			queries={queries}
 			externalError={error}
-			actionError={pendingStep?.waasFee.waasFeeSelectionError}
+			actionError={waasFeeStep?.waasFee.waasFeeSelectionError}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -116,36 +124,43 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{pendingStep?.waasFee.selectedOption &&
-						waasFeeOptionSelectionType === 'manual' && (
+					{(() => {
+						const selectedOption = waasFeeStep?.waasFee.selectedOption;
+						const onSelectedOptionChange =
+							waasFeeStep?.waasFee.setSelectedFeeOption;
+						const optionConfirmed =
+							waasFeeStep?.waasFee.optionConfirmed || false;
+
+						return ((waasFeeStep &&
+							(waasFeeStep.status === 'idle' ||
+								waasFeeStep.status === 'pending')) ||
+							selectedOption) &&
+							waasFeeOptionSelectionType === 'manual' &&
+							selectedOption &&
+							onSelectedOptionChange ? (
 							<SelectWaasFeeOptions
 								chainId={chainId}
 								feeOptionConfirmation={
-									pendingStep.waasFee.feeOptionConfirmation
+									waasFeeStep?.waasFee.feeOptionConfirmation
 								}
-								selectedOption={pendingStep.waasFee.selectedOption}
-								onSelectedOptionChange={
-									pendingStep.waasFee.setSelectedFeeOption
-								}
+								selectedOption={selectedOption}
+								onSelectedOptionChange={onSelectedOptionChange}
 								onConfirm={() => {
-									const confirmationId =
-										pendingStep.waasFee.feeOptionConfirmation?.id;
+									const feeData = waasFeeStep?.waasFee;
+									const confirmationId = feeData?.feeOptionConfirmation?.id;
 									// null is used to indicate that the currency is the native currency
 									const currencyAddress =
-										pendingStep.waasFee.selectedOption?.token.contractAddress ||
-										null;
-									if (confirmationId) {
-										pendingStep.waasFee.confirmFeeOption?.(
-											confirmationId,
-											currencyAddress,
-										);
-										pendingStep.waasFee.setOptionConfirmed(true);
+										feeData?.selectedOption?.token.contractAddress || null;
+									if (confirmationId && feeData) {
+										feeData.confirmFeeOption?.(confirmationId, currencyAddress);
+										feeData.setOptionConfirmed(true);
 									}
 								}}
-								optionConfirmed={pendingStep.waasFee.optionConfirmed}
+								optionConfirmed={optionConfirmed}
 								titleOnConfirm="Confirming sale..."
 							/>
-						)}
+						) : null;
+					})()}
 				</>
 			)}
 		</ActionModal>
