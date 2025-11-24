@@ -1,13 +1,13 @@
+import type { Page } from '@0xsequence/api-client';
 import { queryOptions } from '@tanstack/react-query';
+import type { GetOrdersInput } from '../../../../api/src/adapters/marketplace/marketplace.gen';
 import type { SdkConfig } from '../../types';
 import {
 	type GetOrdersReturn,
 	getMarketplaceClient,
 	type ValuesOptional,
 } from '../_internal';
-import type { Page } from '@0xsequence/api-client';
 import type { StandardQueryOptions } from '../types/query';
-import { GetOrdersInput } from '../../../../api/src/adapters/marketplace/marketplace.gen';
 
 export interface FetchOrdersParams {
 	chainId: number;

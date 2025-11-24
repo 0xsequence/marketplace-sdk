@@ -1,14 +1,14 @@
-import { observable } from '@legendapp/state';
-import { addDays } from 'date-fns/addDays';
-import type { Address } from 'viem';
 import {
 	type Currency,
 	CurrencyStatus,
 	type OrderbookKind,
 } from '@0xsequence/api-client';
+import { observable } from '@legendapp/state';
+import { addDays } from 'date-fns/addDays';
+import type { Address } from 'viem';
+import type { Price } from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
-import { Price } from '../../../../types';
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind?: OrderbookKind;

@@ -1,8 +1,13 @@
 import { renderHook } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
+import {
+	ExecuteType,
+	type SignatureStep,
+	StepType,
+	type TransactionStep,
+} from '../../_internal';
 import { useProcessStep } from './useProcessStep';
-import { ExecuteType, SignatureStep, StepType, TransactionStep } from '../../_internal';
 
 vi.mock('wagmi', async (importOriginal) => {
 	const actual = await importOriginal();

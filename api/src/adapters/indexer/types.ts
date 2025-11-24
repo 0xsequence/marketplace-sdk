@@ -169,10 +169,10 @@ export interface GetTokenBalancesDetailsResponse {
 }
 
 export interface GetTokenBalancesByContractResponse {
-	page: Page
-	balances: Array<TokenBalance>
-     }
+	page: Page;
+	balances: Array<TokenBalance>;
+}
 
-     export interface GetNativeTokenBalanceResponse {
-	balance: NativeTokenBalance
-     }
+export interface GetNativeTokenBalanceResponse {
+	balance: NativeTokenBalance;
+}

@@ -3,12 +3,12 @@ import type {
 	CreateReq,
 	MarketplaceKind,
 } from '@0xsequence/api-client';
+import type { Hex } from 'viem';
 import type { SdkConfig } from '../../types';
 import type {
 	StandardInfiniteQueryOptions,
 	StandardQueryOptions,
 } from '../types/query';
-import { Hex } from 'viem';
 
 export interface QueryArg {
 	enabled?: boolean;
