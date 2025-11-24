@@ -78,7 +78,7 @@ export function PageSelect({
 
 	return (
 		<div className="flex items-center gap-2 sm:flex">
-			<Select
+			<Select.Helper
 				name="page"
 				options={options.map((option) => ({
 					label: option.label,
@@ -114,7 +114,7 @@ export function ItemsPerPageSelect({
 
 			<Field>
 				<FieldLabel>Items per page</FieldLabel>
-				<Select
+				<Select.Helper
 					name="pageSize"
 					value={pageSize.toString()}
 					options={Object.entries(PAGE_SIZE_OPTIONS).map(([, value]) => ({

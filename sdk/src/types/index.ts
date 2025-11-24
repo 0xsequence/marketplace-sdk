@@ -1,4 +1,5 @@
 export {
+	type ContractInfo,
 	FilterCondition,
 	type MarketplaceWallet,
 } from '@0xsequence/api-client';

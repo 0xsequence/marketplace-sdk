@@ -1,5 +1,5 @@
 import {
-	ButtonPreset,
+	Button,
 	CartIcon,
 	Progress,
 	Skeleton,
@@ -145,19 +145,18 @@ export function ERC721SaleControls({
 					disabled={Number(quantityRemaining) === 0}
 				/>
 
-				<ButtonPreset
+				<Button
 					variant="primary"
-					label={
-						address
-							? Number(quantityRemaining) === 0
-								? 'Sold out'
-								: 'Buy'
-							: 'Connect wallet'
-					}
-					leftIcon={address ? CartIcon : WalletIcon}
 					onClick={address ? handleBuy : () => openConnectModal()}
 					disabled={Number(quantityRemaining) === 0}
-				/>
+				>
+					{address ? <CartIcon /> : <WalletIcon />}
+					{address
+						? Number(quantityRemaining) === 0
+							? 'Sold out'
+							: 'Buy'
+						: 'Connect wallet'}
+				</Button>
 
 				<Text variant="small" className="text-text-50">
 					(Total:{' '}
