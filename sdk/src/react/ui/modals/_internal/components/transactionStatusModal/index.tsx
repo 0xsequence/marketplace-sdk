@@ -5,7 +5,7 @@ import type { ChainId } from '@0xsequence/network';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import { useCollectible } from '../../../../..';
+import { useCollectibleDetail } from '../../../../../hooks';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
 import type { ModalCallbacks } from '../../types';
@@ -82,11 +82,12 @@ function TransactionStatusModalContent() {
 		queriesToInvalidate,
 	} = useTransactionStatusModalState();
 
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
-		collectionAddress,
-		chainId,
-		tokenId,
-	});
+	const { data: collectible, isLoading: collectibleLoading } =
+		useCollectibleDetail({
+			collectionAddress,
+			chainId,
+			tokenId,
+		});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 

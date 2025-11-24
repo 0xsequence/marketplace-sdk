@@ -51,20 +51,14 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "createListing",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
@@ -90,20 +84,14 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "createListing",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
