@@ -71,7 +71,7 @@ export const BuyModalContent = () => {
 			},
 			collectionAddress,
 			chainId: modalProps.chainId,
-			collectibleId: collectible.tokenId,
+			tokenId: collectible.tokenId,
 			type: TransactionType.BUY,
 		});
 	};

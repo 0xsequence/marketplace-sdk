@@ -13,8 +13,8 @@ export const useBuyModalData = () => {
 	const isShop = isShopProps(buyModalProps);
 	const orderId = isMarket ? buyModalProps.orderId : undefined;
 	const marketplace = isMarket ? buyModalProps.marketplace : undefined;
-	const collectibleId = isMarket
-		? buyModalProps.collectibleId
+	const tokenId = isMarket
+		? buyModalProps.tokenId
 		: buyModalProps.items?.[0]?.tokenId;
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
@@ -26,7 +26,7 @@ export const useBuyModalData = () => {
 	} = useCollectible({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const {
 		data: collection,

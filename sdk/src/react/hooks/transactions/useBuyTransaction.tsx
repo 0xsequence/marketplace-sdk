@@ -30,8 +30,8 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 			? modalProps.marketplace
 			: MarketplaceKind.sequence_marketplace_v2,
 		orderId: isMarketProps(modalProps) ? modalProps.orderId : '',
-		collectibleId: isMarketProps(modalProps) ? modalProps.collectibleId : '',
-		quantity: '1', // Single item purchase for now
+		tokenId: isMarketProps(modalProps) ? modalProps.tokenId : 0n,
+		quantity: 1n, // Single item purchase for now
 		additionalFees: [marketPlatformFee],
 		enabled: transactionType === TransactionType.MARKET_BUY && !!buyer,
 	});
@@ -44,12 +44,12 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 			? modalProps.salesContractAddress
 			: zeroAddress,
 		tokenIds: isShopProps(modalProps)
-			? modalProps.items.map((item) => item.tokenId || '0')
+			? modalProps.items.map((item) => item.tokenId || 0n)
 			: [],
 		amounts: isShopProps(modalProps)
 			? modalProps.items.map((item) => Number(item.quantity) || 1)
 			: [],
-		maxTotal: isShopProps(modalProps) ? modalProps.salePrice.amount : '0',
+		maxTotal: isShopProps(modalProps) ? modalProps.salePrice.amount : 0n,
 		paymentToken: isShopProps(modalProps)
 			? modalProps.salePrice.currencyAddress
 			: zeroAddress,

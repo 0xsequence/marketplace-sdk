@@ -26,7 +26,7 @@ export async function fetchOrders(
 
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.getOrders({
-		chainId: String(apiParams.chainId),
+		chainId: apiParams.chainId,
 		input: apiParams.input,
 		page: apiParams.page,
 	});

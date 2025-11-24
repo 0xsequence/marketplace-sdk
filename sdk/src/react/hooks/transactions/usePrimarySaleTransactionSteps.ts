@@ -16,9 +16,9 @@ export interface UsePrimarySaleTransactionStepsParams {
 	buyer: Address;
 	recipient?: Address;
 	salesContractAddress: Address;
-	tokenIds: string[];
+	tokenIds: bigint[];
 	amounts: number[];
-	maxTotal: string;
+	maxTotal: bigint;
 	paymentToken: Address;
 	merkleProof?: string[];
 	contractType: ContractType.ERC721 | ContractType.ERC1155;
@@ -155,10 +155,10 @@ function formatMintArgs({
 	version,
 }: {
 	recipient: Address;
-	tokenIds: string[];
+	tokenIds: bigint[];
 	amounts: number[];
 	paymentToken: Address;
-	maxTotal: string;
+	maxTotal: bigint;
 	merkleProof: string[];
 	version: SalesContractVersion;
 }): unknown[] {

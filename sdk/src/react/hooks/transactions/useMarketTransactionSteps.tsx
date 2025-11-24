@@ -16,8 +16,8 @@ export interface UseMarketTransactionStepsParams {
 	buyer: Address;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	collectibleId: string;
-	quantity: string;
+	tokenId: bigint;
+	quantity: bigint;
 	additionalFees?: AdditionalFee[];
 	enabled?: boolean;
 }
@@ -32,7 +32,7 @@ export function useMarketTransactionSteps({
 	buyer,
 	marketplace,
 	orderId,
-	collectibleId,
+	tokenId,
 	quantity,
 	additionalFees = [],
 	enabled = true,
@@ -51,13 +51,13 @@ export function useMarketTransactionSteps({
 				collectionAddress,
 				buyer,
 				orderId,
-				collectibleId,
+				tokenId,
 				quantity,
 			},
 		],
 		queryFn: async () => {
 			const response = await marketplaceClient.generateBuyTransaction({
-				chainId: chainId.toString(),
+				chainId,
 				collectionAddress,
 				buyer,
 				marketplace,
@@ -65,7 +65,7 @@ export function useMarketTransactionSteps({
 					{
 						orderId,
 						quantity,
-						tokenId: collectibleId,
+						tokenId,
 					},
 				],
 				additionalFees,

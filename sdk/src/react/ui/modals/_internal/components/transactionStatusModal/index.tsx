@@ -5,9 +5,9 @@ import type { ChainId } from '@0xsequence/network';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
+import { useCollectible } from '../../../../..';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
-import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
@@ -28,7 +28,7 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
@@ -77,7 +77,7 @@ function TransactionStatusModalContent() {
 		price,
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 		callbacks,
 		queriesToInvalidate,
 	} = useTransactionStatusModalState();
@@ -85,7 +85,7 @@ function TransactionStatusModalContent() {
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 	});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
