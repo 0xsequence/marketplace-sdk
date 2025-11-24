@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { type Address, erc20Abi, zeroAddress } from 'viem';
-import { useAccount, usePublicClient } from 'wagmi';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
+import { useCurrencyBalance } from '../../../hooks';
 
 export const useHasSufficientBalance = ({
 	chainId,
@@ -12,32 +12,19 @@ export const useHasSufficientBalance = ({
 	tokenAddress: Address;
 }) => {
 	const { address } = useAccount();
-	const publicClient = usePublicClient({ chainId });
-	const nativeToken = tokenAddress === zeroAddress;
-
-	return useQuery({
-		queryKey: ['sufficientBalance', address, chainId, tokenAddress, value],
-		queryFn: async () => {
-			if (!address || !publicClient) return;
-
-			const balance = nativeToken
-				? await publicClient.getBalance({ address })
-				: await publicClient.readContract({
-						address: tokenAddress,
-						abi: erc20Abi,
-						functionName: 'balanceOf',
-						args: [address],
-					});
-
-			return {
-				hasSufficientBalance: balance >= value || value === 0n,
-				balance,
-			};
-		},
-		enabled:
-			!!address &&
-			!!publicClient &&
-			!!tokenAddress &&
-			(!!value || value === 0n),
+	const { data: balanceData, isLoading } = useCurrencyBalance({
+		currencyAddress: tokenAddress,
+		chainId,
+		userAddress: address,
 	});
+
+	const balance = balanceData?.value ?? 0n;
+
+	return {
+		data: {
+			hasSufficientBalance: balance >= value || value === 0n,
+			balance,
+		},
+		isLoading,
+	};
 };

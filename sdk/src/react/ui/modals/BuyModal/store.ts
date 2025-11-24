@@ -19,7 +19,7 @@ export type CheckoutOptionsSalesContractProps = {
 };
 
 export type PaymentModalProps = {
-	collectibleId: string;
+	tokenId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
 };

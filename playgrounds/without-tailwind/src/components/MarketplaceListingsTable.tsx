@@ -1,7 +1,7 @@
 import {
 	type CollectibleOrder,
 	formatPrice,
-	type OrderSide,
+	OrderSide,
 } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
@@ -46,7 +46,7 @@ export function MarketplaceListingsTable({
 	} = useListCollectibles({
 		collectionAddress,
 		chainId,
-		side: 'listing' as OrderSide,
+		side: OrderSide.listing,
 		filter: {
 			includeEmpty: false,
 		},
