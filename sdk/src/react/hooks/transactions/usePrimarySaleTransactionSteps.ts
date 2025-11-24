@@ -89,20 +89,20 @@ export function usePrimarySaleTransactionSteps({
 			if (
 				paymentToken !== zeroAddress &&
 				allowance !== undefined &&
-				allowance < BigInt(maxTotal)
+				allowance < maxTotal
 			) {
 				const approvalCalldata = encodeFunctionData({
 					abi: ERC20_ABI,
 					functionName: 'approve',
-					args: [salesContractAddress, BigInt(maxTotal)],
+					args: [salesContractAddress, maxTotal],
 				});
 
 				steps.push({
 					id: StepType.tokenApproval,
 					data: approvalCalldata,
 					to: paymentToken,
-					value: BigInt(0),
-					price: BigInt(0),
+					value: 0n,
+					price: 0n,
 				});
 			}
 
@@ -128,7 +128,7 @@ export function usePrimarySaleTransactionSteps({
 				id: StepType.buy,
 				data: mintCalldata,
 				to: salesContractAddress,
-				value: paymentToken === zeroAddress ? BigInt(maxTotal) : BigInt(0),
+				value: paymentToken === zeroAddress ? maxTotal : 0n,
 				price: maxTotal,
 			});
 
@@ -158,19 +158,15 @@ function formatMintArgs({
 	merkleProof: string[];
 	version: SalesContractVersion;
 }): unknown[] {
-	// Convert tokenIds and amounts to bigint arrays
-	const tokenIdsBigInt = tokenIds.map((id) => BigInt(id));
-	const amountsBigInt = amounts.map((amount) => BigInt(amount));
-
 	// V1 contracts have different argument order than V0
 	if (version === SalesContractVersion.V1) {
 		return [
 			recipient, // to
-			tokenIdsBigInt, // tokenIds
-			amountsBigInt, // amounts
+			tokenIds, // tokenIds
+			amounts, // amounts
 			'0x', // data (empty bytes)
 			paymentToken, // expectedPaymentToken
-			BigInt(maxTotal), // maxTotal
+			maxTotal, // maxTotal
 			merkleProof, // proof
 		];
 	}
@@ -178,10 +174,10 @@ function formatMintArgs({
 	// V0 contracts
 	return [
 		recipient, // to
-		tokenIdsBigInt, // tokenIds
-		amountsBigInt, // amounts
+		tokenIds, // tokenIds
+		amounts, // amounts
 		paymentToken, // expectedPaymentToken
-		BigInt(maxTotal), // maxTotal
+		maxTotal, // maxTotal
 		'0x', // data (empty bytes)
 	];
 }
