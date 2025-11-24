@@ -1,11 +1,10 @@
+import { type Step, StepType } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../utils/abi';
 import type { ContractType } from '../../_internal';
-import type { Step } from '../../_internal/api';
-import { StepType } from '../../_internal/api';
 import {
 	SalesContractVersion,
 	useSalesContractABI,
@@ -102,8 +101,8 @@ export function usePrimarySaleTransactionSteps({
 					id: StepType.tokenApproval,
 					data: approvalCalldata,
 					to: paymentToken,
-					value: '0x0',
-					price: '0',
+					value: BigInt(0),
+					price: BigInt(0),
 				});
 			}
 
@@ -129,10 +128,7 @@ export function usePrimarySaleTransactionSteps({
 				id: StepType.buy,
 				data: mintCalldata,
 				to: salesContractAddress,
-				value:
-					paymentToken === zeroAddress
-						? `0x${BigInt(maxTotal).toString(16)}`
-						: '0x0',
+				value: paymentToken === zeroAddress ? BigInt(maxTotal) : BigInt(0),
 				price: maxTotal,
 			});
 

@@ -104,7 +104,7 @@ const useExecuteBundledTransactions = ({
 			senderAddress: address,
 			publicClient,
 			walletClient,
-			indexerClient,
+			indexerClient: indexerClient.raw,
 			connector,
 			transactions,
 			transactionConfirmations: 1,
