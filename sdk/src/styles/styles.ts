@@ -335,6 +335,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     container-type: inline-size;
     container-name: field-group;
   }
+  .\@container {
+    container-type: inline-size;
+  }
   .pointer-events-auto {
     pointer-events: auto;
   }
