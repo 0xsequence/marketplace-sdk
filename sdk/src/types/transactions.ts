@@ -1,5 +1,5 @@
 import type { Address } from 'viem';
-import type { AdditionalFee, MarketplaceKind } from '../react/_internal/api';
+import type { AdditionalFee, MarketplaceKind } from '@0xsequence/api-client';
 
 /**
  * Transaction types supported by the new buy modal

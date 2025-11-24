@@ -7,7 +7,6 @@ import { formatUnits } from 'viem';
 import type { Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
 import type { SdkConfig } from '../../../types';
-import { getIndexerClient } from '../../_internal';
 import {
 	Deferred,
 	type FeeOptionConfirmationResult,
@@ -16,6 +15,7 @@ import {
 	type WaasFeeOptionConfirmation,
 	waasFeeOptionsStore,
 } from './waasFeeOptionsStore';
+import { getIndexerClient } from '../../_internal';
 
 // Re-export types for backward compatibility
 export type { FeeOptionExtended, WaasFeeOptionConfirmation };

@@ -1,6 +1,6 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Address, Hex } from 'viem';
-import { ContractType } from '../../../../../../types';
+import { ContractType } from '@0xsequence/api-client';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 
 import { TransactionType } from '../../../../../_internal/types';

@@ -167,3 +167,12 @@ export interface GetTokenBalancesDetailsResponse {
 	nativeBalances: Array<NativeTokenBalance>;
 	balances: Array<TokenBalance>;
 }
+
+export interface GetTokenBalancesByContractResponse {
+	page: Page
+	balances: Array<TokenBalance>
+     }
+
+     export interface GetNativeTokenBalanceResponse {
+	balance: NativeTokenBalance
+     }

@@ -1,8 +1,7 @@
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
-import { ContractType } from '../../_internal';
-import { MarketplaceKind } from '../../_internal/api';
+import { ContractType, MarketplaceKind } from '../../_internal';
 import { useMarketPlatformFee } from '../../ui/modals/BuyModal/hooks/useMarketPlatformFee';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import { isMarketProps, isShopProps } from '../../ui/modals/BuyModal/store';

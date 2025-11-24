@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
-import type { AdditionalFee, MarketplaceKind, Step } from '../../_internal/api';
-import { getMarketplaceClient, WalletKind } from '../../_internal/api';
+import { WalletKind, type AdditionalFee, type MarketplaceKind, type Step } from '@0xsequence/api-client';
+import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
 
 export interface UseMarketTransactionStepsParams {

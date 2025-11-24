@@ -2,7 +2,7 @@
 
 import { CartIcon } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import type { Order, OrderbookKind } from '../../../../../../types';
+import type { Order, OrderbookKind } from '@0xsequence/api-client';
 import { CollectibleCardAction } from '../../../../../../types';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';

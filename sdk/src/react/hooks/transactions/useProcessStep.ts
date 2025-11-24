@@ -1,13 +1,8 @@
 import { type Hex, isHex } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
-import {
-	ExecuteType,
-	isTransactionStep,
-	type Step,
-	StepType,
-} from '../../../types';
 import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
+import { ExecuteType, isTransactionStep, Step, StepType } from '../../_internal';
 
 type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }

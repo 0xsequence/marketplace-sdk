@@ -5,10 +5,10 @@ import {
 	type Currency,
 	CurrencyStatus,
 	type OrderbookKind,
-	type Price,
-} from '../../../../types';
+} from '@0xsequence/api-client';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
+import { Price } from '../../../../types';
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind?: OrderbookKind;

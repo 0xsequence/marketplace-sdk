@@ -2,9 +2,9 @@ import type { Marketplace } from '@0xsequence/api-client';
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { OrderbookKind, type Price } from '../../../../../types';
+import { type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
-import { StepType, type TransactionSteps } from '../../../../_internal';
+import { OrderbookKind, StepType, type TransactionSteps } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
 import {

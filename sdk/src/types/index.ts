@@ -1,51 +1,9 @@
-export type {
-	CheckoutOptions,
-	CollectibleOrder,
-	ContractInfo,
-	ContractInfoExtensions,
-	Order,
-	OrderData,
-	Page,
-	PriceFilter,
-	PropertyFilter,
-	Step,
-	TokenMetadata,
-} from '@0xsequence/api-client';
-// Export step types and utilities
 export {
-	type ApprovalStep,
-	type BuyStep,
-	type CancelStep,
-	ContractType,
-	type CreateListingStep,
-	type CreateOfferStep,
-	type Currency,
-	CurrencyStatus,
-	ExecuteType,
 	FilterCondition,
-	findApprovalStep,
-	findBuyStep,
-	findSellStep,
-	findStepByType,
-	hasPendingApproval,
-	isApprovalStep,
-	isBuyStep,
-	isCancelStep,
-	isCreateListingStep,
-	isCreateOfferStep,
-	isSellStep,
-	isSignatureStep,
-	isTransactionStep,
-	MarketplaceKind,
 	type MarketplaceWallet,
-	OrderbookKind,
-	OrderSide,
-	type SellStep,
-	type SignatureStep,
-	StepType,
-	type TransactionStep,
-	WalletKind,
 } from '@0xsequence/api-client';
-export type * from '../react/queries/marketplace/config';
+export type * from '../react/queries/market/marketplaceConfig';
+export * from './api-types';
 export * from './sdk-config';
+export * from './transactions';
 export * from './types';

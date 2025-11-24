@@ -5,8 +5,9 @@ import {
 	getMarketplaceClient,
 	type ValuesOptional,
 } from '../_internal';
-import type { GetOrdersInput, Page } from '../_internal/api/marketplace.gen';
+import type { Page } from '@0xsequence/api-client';
 import type { StandardQueryOptions } from '../types/query';
+import { GetOrdersInput } from '../../../../api/src/adapters/marketplace/marketplace.gen';
 
 export interface FetchOrdersParams {
 	chainId: number;
