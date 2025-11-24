@@ -66,7 +66,8 @@ export const BuyModalContent = () => {
 			hash: hash as Hash,
 			orderId: isMarket ? order?.orderId : undefined,
 			price: {
-				amountRaw: (isMarket ? marketPriceAmount : salePrice?.amount) ?? '0',
+				amountRaw:
+					(isMarket ? marketPriceAmount : salePrice?.amount) ?? BigInt(0),
 				currency,
 			},
 			collectionAddress,

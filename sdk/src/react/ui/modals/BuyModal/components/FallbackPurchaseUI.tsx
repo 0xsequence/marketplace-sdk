@@ -93,7 +93,7 @@ export const FallbackPurchaseUI = ({
 	} = useExecuteBundledTransactions({
 		chainId,
 		approvalStep,
-		priceAmount: priceAmount as string,
+		priceAmount: BigInt(priceAmount || 0),
 	});
 
 	const executeTransaction = async (step: Step) => {

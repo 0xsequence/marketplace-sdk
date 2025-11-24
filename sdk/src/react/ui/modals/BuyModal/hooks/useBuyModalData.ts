@@ -71,7 +71,7 @@ export const useBuyModalData = () => {
 	const salePrice = isShop ? buyModalProps.salePrice : undefined;
 
 	const marketPriceAmount = isMarket
-		? (orders?.orders[0]?.priceAmount ?? '0')
+		? (orders?.orders[0]?.priceAmount ?? BigInt(0))
 		: undefined;
 
 	return {

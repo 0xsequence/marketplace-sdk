@@ -21,7 +21,7 @@ class FeeOptionInsufficientFundsError extends Error {
 type UseExecuteBundledTransactions = {
 	chainId: number;
 	approvalStep?: Step;
-	priceAmount: string;
+	priceAmount: bigint;
 };
 
 const useExecuteBundledTransactions = ({
@@ -89,9 +89,7 @@ const useExecuteBundledTransactions = ({
 			to: step.to as Address,
 			data: step.data as Hex,
 			chainId,
-			...(currency?.nativeCurrency
-				? { value: BigInt(priceAmount) as bigint }
-				: {}),
+			...(currency?.nativeCurrency ? { value: priceAmount } : {}),
 		};
 
 		const transactions = [
