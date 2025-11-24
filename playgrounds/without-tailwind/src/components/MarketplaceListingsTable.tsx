@@ -46,7 +46,7 @@ export function MarketplaceListingsTable({
 	} = useListCollectibles({
 		collectionAddress,
 		chainId,
-		side: OrderSide.listing,
+		side: "listing" as OrderSide,
 		filter: {
 			includeEmpty: false,
 		},

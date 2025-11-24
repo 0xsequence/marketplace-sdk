@@ -358,29 +358,27 @@ export const FallbackPurchaseUI = ({
 				{!isOnCorrectChain && (
 					<Button
 						onClick={handleSwitchChain}
-						pending={isSwitchingChain}
 						disabled={isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={
-							isSwitchingChain
-								? 'Switching Network...'
-								: `Switch to ${requiredChainName}`
-						}
 						className="w-full"
-					/>
+					>
+						{isSwitchingChain
+							? 'Switching Network...'
+							: `Switch to ${requiredChainName}`}
+					</Button>
 				)}
 
 				{approvalStep && !isSequenceConnector && (
 					<Button
 						onClick={executeApproval}
-						pending={isApproving}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={approvalButtonLabel}
 						className="w-full"
-					/>
+					>
+						{approvalButtonLabel}
+					</Button>
 				)}
 
 				{canBuy && (
@@ -389,13 +387,13 @@ export const FallbackPurchaseUI = ({
 							setError(null); // Clear any previous errors
 							return executeBuy();
 						}}
-						pending={isExecuting || isExecutingBundledTransactions}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={buyButtonLabel}
 						className="w-full"
-					/>
+					>
+						{buyButtonLabel}
+					</Button>
 				)}
 
 				{error && (
