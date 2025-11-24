@@ -1,5 +1,6 @@
 'use client';
 
+import { OrderbookKind } from '@0xsequence/api-client';
 import {
 	Field,
 	FieldLabel,
@@ -11,11 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { type Address, formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type Currency,
-	OrderbookKind,
-	type Price,
-} from '../../../../../../types';
+import type { Currency, Price } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
 import { validateOpenseaOfferDecimals } from '../../../../../../utils/price';
 import {

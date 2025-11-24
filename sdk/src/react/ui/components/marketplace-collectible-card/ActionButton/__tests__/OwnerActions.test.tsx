@@ -1,13 +1,13 @@
 'use client';
 
-import { MarketplaceMocks } from '@0xsequence/api-client';
+import { MarketplaceMocks, OrderSide } from '@0xsequence/api-client';
 import { render, screen } from '@test';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { mockOrder } = MarketplaceMocks;
 
-import { CollectibleCardAction, OrderSide } from '../../../../../../types';
+import { CollectibleCardAction } from '../../../../../../types';
 import { OwnerActions } from '../components/OwnerActions';
 
 describe('OwnerActions', () => {

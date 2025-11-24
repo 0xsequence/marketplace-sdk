@@ -1,7 +1,8 @@
+import { OrderbookKind } from '@0xsequence/api-client';
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
-import { type Currency, OrderbookKind } from '../../../../types';
+import type { Currency } from '../../../../types';
 import {
 	type CollectionType,
 	CurrencyStatus,

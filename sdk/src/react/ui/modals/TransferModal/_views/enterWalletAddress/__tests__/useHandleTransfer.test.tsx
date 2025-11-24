@@ -1,8 +1,8 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContractType } from '../../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
 import type { CollectionType } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
