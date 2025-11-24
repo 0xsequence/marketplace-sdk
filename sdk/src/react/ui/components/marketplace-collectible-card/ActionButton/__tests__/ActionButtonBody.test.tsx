@@ -37,7 +37,7 @@ describe('ActionButtonBody', () => {
 		action: CollectibleCardAction.BUY as CollectibleCardAction.BUY,
 	};
 
-beforeEach(() => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 
 		// Default to connected state
