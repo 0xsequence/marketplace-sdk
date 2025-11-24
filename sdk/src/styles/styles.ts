@@ -1,21 +1,5 @@
 export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow DOM, see Marketplace SDK - compile-tailwind.js and postcss.config.mjs */
 :root, :host {
-  --tw-animation-delay: 0s;
-  --tw-animation-direction: normal;
-  --tw-animation-fill-mode: none;
-  --tw-animation-iteration-count: 1;
-  --tw-enter-blur: 0;
-  --tw-enter-opacity: 1;
-  --tw-enter-rotate: 0;
-  --tw-enter-scale: 1;
-  --tw-enter-translate-x: 0;
-  --tw-enter-translate-y: 0;
-  --tw-exit-blur: 0;
-  --tw-exit-opacity: 1;
-  --tw-exit-rotate: 0;
-  --tw-exit-scale: 1;
-  --tw-exit-translate-x: 0;
-  --tw-exit-translate-y: 0;
   --tw-translate-x: 0;
   --tw-translate-y: 0;
   --tw-translate-z: 0;
@@ -43,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -61,6 +45,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-orange-400: oklch(75% 0.183 55.934);
     --color-orange-500: oklch(70.5% 0.213 47.604);
     --color-orange-900: oklch(40.8% 0.123 38.172);
+    --color-amber-300: oklch(87.9% 0.169 91.605);
     --color-amber-500: oklch(76.9% 0.188 70.08);
     --color-yellow-300: oklch(90.5% 0.182 98.111);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
@@ -149,9 +134,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --default-font-family: var(--font-sans);
     --default-mono-font-family: "Roboto", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-border-focus: hsla(247, 100%, 75%, 1);
     --color-border-base: hsla(0, 0%, 31%, 1);
+    --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-overlay-light: hsla(0, 0%, 100%, 0.1);
     --color-overlay-glass: hsla(0, 0%, 100%, 0.05);
     --color-surface-neutral: hsla(0, 0%, 15%, 1);
@@ -313,13 +298,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
 }
 @layer utilities {
-  .\@container\/field-group {
-    container-type: inline-size;
-    container-name: field-group;
-  }
-  .\@container {
-    container-type: inline-size;
-  }
   .pointer-events-auto {
     pointer-events: auto;
   }
@@ -376,17 +354,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .top-1 {
     top: calc(var(--spacing) * 1);
   }
-  .top-1\/2 {
-    top: calc(1/2 * 100%);
-  }
   .top-4 {
     top: calc(var(--spacing) * 4);
   }
   .top-8 {
     top: calc(var(--spacing) * 8);
-  }
-  .top-\[50\%\] {
-    top: 50%;
   }
   .right-0 {
     right: calc(var(--spacing) * 0);
@@ -411,9 +383,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .left-4 {
     left: calc(var(--spacing) * 4);
-  }
-  .left-\[50\%\] {
-    left: 50%;
   }
   .z-1 {
     z-index: 1;
@@ -552,9 +521,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .mr-4 {
     margin-right: calc(var(--spacing) * 4);
-  }
-  .-mb-\[2px\] {
-    margin-bottom: calc(2px * -1);
   }
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
@@ -750,6 +716,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[64px\] {
     height: 64px;
   }
+  .h-\[84px\] {
+    height: 84px;
+  }
+  .h-\[98px\] {
+    height: 98px;
+  }
   .h-\[150px\] {
     height: 150px;
   }
@@ -770,9 +742,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .h-px {
     height: 1px;
-  }
-  .max-h-\(--radix-dropdown-menu-content-available-height\) {
-    max-height: var(--radix-dropdown-menu-content-available-height);
   }
   .max-h-64 {
     max-height: calc(var(--spacing) * 64);
@@ -825,9 +794,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-3 {
     width: calc(var(--spacing) * 3);
   }
-  .w-3\/4 {
-    width: calc(3/4 * 100%);
-  }
   .w-4 {
     width: calc(var(--spacing) * 4);
   }
@@ -870,6 +836,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
+  }
+  .w-32 {
+    width: calc(var(--spacing) * 32);
+  }
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
@@ -882,11 +854,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-\[22px\] {
     width: 22px;
   }
-  .w-\[32px\] {
-    width: 32px;
+  .w-\[52px\] {
+    width: 52px;
   }
-  .w-\[46px\] {
-    width: 46px;
+  .w-\[84px\] {
+    width: 84px;
   }
   .w-\[100px\] {
     width: 100px;
@@ -899,6 +871,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .w-\[150px\] {
     width: 150px;
+  }
+  .w-\[200px\] {
+    width: 200px;
   }
   .w-auto {
     width: auto;
@@ -923,9 +898,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .max-w-\[532px\] {
     max-width: 532px;
-  }
-  .max-w-\[calc\(100\%-2rem\)\] {
-    max-width: calc(100% - 2rem);
   }
   .max-w-full {
     max-width: 100%;
@@ -960,9 +932,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .min-w-13 {
     min-width: calc(var(--spacing) * 13);
   }
-  .min-w-\[8rem\] {
-    min-width: 8rem;
-  }
   .min-w-\[var\(--radix-select-trigger-width\)\] {
     min-width: var(--radix-select-trigger-width);
   }
@@ -993,15 +962,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-collapse {
     border-collapse: collapse;
   }
-  .origin-\(--radix-dropdown-menu-content-transform-origin\) {
-    transform-origin: var(--radix-dropdown-menu-content-transform-origin);
-  }
-  .origin-\(--radix-popover-content-transform-origin\) {
-    transform-origin: var(--radix-popover-content-transform-origin);
-  }
-  .origin-\(--radix-tooltip-content-transform-origin\) {
-    transform-origin: var(--radix-tooltip-content-transform-origin);
-  }
   .origin-bottom {
     transform-origin: bottom;
   }
@@ -1016,16 +976,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-translate-x: calc(var(--spacing) * 0);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
-  .translate-x-\[-50\%\] {
-    --tw-translate-x: -50%;
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
   .-translate-y-1 {
     --tw-translate-y: calc(var(--spacing) * -1);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .translate-y-\[-50\%\] {
-    --tw-translate-y: -50%;
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .rotate-180 {
@@ -1034,9 +986,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
-  .animate-in {
-    animation: enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none);
-  }
   .animate-pulse {
     animation: var(--animate-pulse);
   }
@@ -1044,7 +993,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     animation: var(--animate-shimmer);
   }
   .animate-skeleton {
-    animation: skeleton 3s ease infinite;
+    animation: skeleton 1s ease infinite;
   }
   .animate-spin {
     animation: var(--animate-spin);
@@ -1081,6 +1030,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .grid-cols-5 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .grid-cols-\[1fr_2fr\] {
+    grid-template-columns: 1fr 2fr;
+  }
+  .grid-cols-\[2fr_1fr\] {
+    grid-template-columns: 2fr 1fr;
   }
   .grid-cols-\[repeat\(auto-fill\,minmax\(150px\,1fr\)\)\] {
     grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
@@ -1135,9 +1090,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
-  }
-  .gap-1\.5 {
-    gap: calc(var(--spacing) * 1.5);
   }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
@@ -1323,6 +1275,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-border-style: solid;
     border-style: solid;
   }
+  .border-amber-500 {
+    border-color: var(--color-amber-500);
+  }
+  .border-amber-500\/30 {
+    border-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-amber-500) 30%, transparent);
+    }
+  }
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
@@ -1332,11 +1293,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-border-base {
     border-color: var(--color-border-base);
   }
-  .border-border-button {
-    border-color: var(--seq-color-border-button);
-  }
-  .border-border-card {
-    border-color: var(--seq-color-border-card);
+  .border-border-error {
+    border-color: var(--seq-color-border-error);
   }
   .border-border-focus {
     border-color: var(--color-border-focus);
@@ -1377,11 +1335,20 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-\[hsla\(247\,100\%\,75\%\,0\.3\)\] {
     background-color: hsla(247,100%,75%,0.3);
   }
-  .bg-background-active {
-    background-color: var(--seq-color-background-active);
+  .bg-amber-500 {
+    background-color: var(--color-amber-500);
   }
-  .bg-background-input {
-    background-color: var(--seq-color-background-input);
+  .bg-amber-500\/10 {
+    background-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
+    }
+  }
+  .bg-background-backdrop {
+    background-color: var(--seq-color-background-backdrop);
+  }
+  .bg-background-control {
+    background-color: var(--seq-color-background-control);
   }
   .bg-background-inverse {
     background-color: var(--seq-color-background-inverse);
@@ -1395,10 +1362,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-background-primary {
     background-color: var(--seq-color-background-primary);
   }
-  .bg-background-primary\/70 {
+  .bg-background-primary\/25 {
     background-color: var(--seq-color-background-primary);
     @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--seq-color-background-primary) 70%, transparent);
+      background-color: color-mix(in oklab, var(--seq-color-background-primary) 25%, transparent);
     }
   }
   .bg-background-raised {
@@ -1413,8 +1380,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-border-normal {
     background-color: var(--seq-color-border-normal);
   }
-  .bg-destructive {
-    background-color: var(--seq-color-destructive);
+  .bg-button-emphasis {
+    background-color: var(--seq-color-button-emphasis);
+  }
+  .bg-button-glass {
+    background-color: var(--seq-color-button-glass);
+  }
+  .bg-button-inverse {
+    background-color: var(--seq-color-button-inverse);
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
@@ -1436,18 +1409,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-primary {
     background-color: var(--seq-color-primary);
-  }
-  .bg-primary\/20 {
-    background-color: var(--seq-color-primary);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--seq-color-primary) 20%, transparent);
-    }
-  }
-  .bg-primary\/50 {
-    background-color: var(--seq-color-primary);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--seq-color-primary) 50%, transparent);
-    }
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -1511,9 +1472,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .p-0 {
     padding: calc(var(--spacing) * 0);
-  }
-  .p-0\.75 {
-    padding: calc(var(--spacing) * 0.75);
   }
   .p-1 {
     padding: calc(var(--spacing) * 1);
@@ -1583,6 +1541,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
+  }
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
   }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
@@ -1661,28 +1622,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-right {
     text-align: right;
-  }
-  .type-normal {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-leading: calc(var(--spacing) * 5);
-    line-height: calc(var(--spacing) * 5);
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    --tw-tracking: var(--tracking-wide);
-    letter-spacing: var(--tracking-wide);
-  }
-  .type-small {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-leading: calc(var(--spacing) * 4);
-    line-height: calc(var(--spacing) * 4);
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    --tw-tracking: var(--tracking-wide);
-    letter-spacing: var(--tracking-wide);
   }
   .font-body {
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -1796,6 +1735,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
+  .tracking-\[0\.8px\] {
+    --tw-tracking: 0.8px;
+    letter-spacing: 0.8px;
+  }
   .tracking-normal {
     --tw-tracking: var(--tracking-normal);
     letter-spacing: var(--tracking-normal);
@@ -1823,6 +1766,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .whitespace-pre-wrap {
     white-space: pre-wrap;
   }
+  .text-amber-300 {
+    color: var(--color-amber-300);
+  }
   .text-amber-500 {
     color: var(--color-amber-500);
   }
@@ -1849,9 +1795,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-current {
     color: currentcolor;
-  }
-  .text-destructive {
-    color: var(--seq-color-destructive);
   }
   .text-gray-300 {
     color: var(--color-gray-300);
@@ -1985,12 +1928,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .shadow-lg {
-    --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  .shadow-\[0_0_10px_0_rgba\(0\,0\,0\,0\.5\)\] {
+    --tw-shadow: 0 0 10px 0 var(--tw-shadow-color, rgba(0,0,0,0.5));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .shadow-primary {
-    --tw-shadow: 0 0 16px 0 var(--tw-shadow-color, var(--seq-color-drop-shadow));
+  .shadow-lg {
+    --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .shadow-sm {
@@ -2005,6 +1948,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .shadow-primary {
+    --tw-shadow-color: var(--seq-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-shadow-color: color-mix(in oklab, var(--seq-color-primary) var(--tw-shadow-alpha), transparent);
+    }
+  }
+  .ring-border-error {
+    --tw-ring-color: var(--seq-color-border-error);
+  }
   .ring-border-focus {
     --tw-ring-color: var(--color-border-focus);
   }
@@ -2013,6 +1965,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .ring-white {
     --tw-ring-color: var(--color-white);
+  }
+  .ring-white\/10 {
+    --tw-ring-color: color-mix(in srgb, #fff 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-ring-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    }
   }
   .outline-hidden {
     --tw-outline-style: none;
@@ -2028,9 +1986,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .outline-offset-1 {
     outline-offset: 1px;
-  }
-  .outline-offset-\[-2px\] {
-    outline-offset: -2px;
   }
   .blur {
     --tw-blur: blur(8px);
@@ -2114,10 +2069,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .will-change-transform {
     will-change: transform;
   }
-  .fade-in-0 {
-    --tw-enter-opacity: calc(0/100);
-    --tw-enter-opacity: 0;
-  }
   .outline-none {
     --tw-outline-style: none;
     outline-style: none;
@@ -2126,23 +2077,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     -webkit-user-select: none;
     user-select: none;
   }
-  .zoom-in-95 {
-    --tw-enter-scale: calc(95*1%);
-    --tw-enter-scale: .95;
-  }
-  .paused {
-    animation-play-state: paused;
-  }
   .ring-inset {
     --tw-ring-inset: inset;
-  }
-  .running {
-    animation-play-state: running;
-  }
-  .group-focus-within\/input-group\:opacity-0 {
-    &:is(:where(.group\/input-group):focus-within *) {
-      opacity: 0%;
-    }
   }
   .group-hover\:translate-y-\[-64px\] {
     &:is(:where(.group):hover *) {
@@ -2162,105 +2098,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .group-has-\[\[data-orientation\=horizontal\]\]\/field\:text-balance {
-    &:is(:where(.group\/field):has(*:is([data-orientation=horizontal])) *) {
-      text-wrap: balance;
-    }
-  }
-  .group-has-\[\>input\]\/input-group\:pt-2\.5 {
-    &:is(:where(.group\/input-group):has(>input) *) {
-      padding-top: calc(var(--spacing) * 2.5);
-    }
-  }
-  .group-has-\[\>input\]\/input-group\:pb-2\.5 {
-    &:is(:where(.group\/input-group):has(>input) *) {
-      padding-bottom: calc(var(--spacing) * 2.5);
-    }
-  }
-  .group-data-\[disabled\=true\]\:pointer-events-none {
-    &:is(:where(.group)[data-disabled="true"] *) {
-      pointer-events: none;
-    }
-  }
-  .group-data-\[disabled\=true\]\:opacity-50 {
-    &:is(:where(.group)[data-disabled="true"] *) {
-      opacity: 50%;
-    }
-  }
-  .group-data-\[disabled\=true\]\/field\:opacity-50 {
-    &:is(:where(.group\/field)[data-disabled="true"] *) {
-      opacity: 50%;
-    }
-  }
-  .group-data-\[disabled\=true\]\/input-group\:opacity-50 {
-    &:is(:where(.group\/input-group)[data-disabled="true"] *) {
-      opacity: 50%;
-    }
-  }
-  .group-data-\[variant\=outline\]\/field-group\:-mb-2 {
-    &:is(:where(.group\/field-group)[data-variant="outline"] *) {
-      margin-bottom: calc(var(--spacing) * -2);
-    }
-  }
-  .peer-disabled\:cursor-not-allowed {
-    &:is(:where(.peer):disabled ~ *) {
-      cursor: not-allowed;
-    }
-  }
-  .peer-disabled\:opacity-50 {
-    &:is(:where(.peer):disabled ~ *) {
-      opacity: 50%;
-    }
-  }
   .selection\:bg-transparent {
     & *::selection {
       background-color: transparent;
     }
     &::selection {
       background-color: transparent;
-    }
-  }
-  .file\:inline-flex {
-    &::file-selector-button {
-      display: inline-flex;
-    }
-  }
-  .file\:h-13 {
-    &::file-selector-button {
-      height: calc(var(--spacing) * 13);
-    }
-  }
-  .file\:border-0 {
-    &::file-selector-button {
-      border-style: var(--tw-border-style);
-      border-width: 0px;
-    }
-  }
-  .file\:bg-transparent {
-    &::file-selector-button {
-      background-color: transparent;
-    }
-  }
-  .file\:text-sm {
-    &::file-selector-button {
-      font-size: var(--text-sm);
-      line-height: var(--tw-leading, var(--text-sm--line-height));
-    }
-  }
-  .file\:font-medium {
-    &::file-selector-button {
-      --tw-font-weight: var(--font-weight-medium);
-      font-weight: var(--font-weight-medium);
-    }
-  }
-  .file\:text-primary {
-    &::file-selector-button {
-      color: var(--seq-color-primary);
-    }
-  }
-  .placeholder\:text-muted {
-    &::placeholder {
-      color: var(--seq-color-muted);
     }
   }
   .before\:pointer-events-none {
@@ -2382,20 +2225,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
     }
   }
+  .before\:to-background-overlay {
+    &::before {
+      content: var(--tw-content);
+      --tw-gradient-to: var(--seq-color-background-overlay);
+      --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+    }
+  }
   .before\:to-background-primary {
     &::before {
       content: var(--tw-content);
       --tw-gradient-to: var(--seq-color-background-primary);
-      --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-    }
-  }
-  .before\:to-background-primary\/70 {
-    &::before {
-      content: var(--tw-content);
-      --tw-gradient-to: var(--seq-color-background-primary);
-      @supports (color: color-mix(in lab, red, red)) {
-        --tw-gradient-to: color-mix(in oklab, var(--seq-color-background-primary) 70%, transparent);
-      }
       --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
     }
   }
@@ -2441,10 +2281,22 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       z-index: 10;
     }
   }
+  .after\:block {
+    &::after {
+      content: var(--tw-content);
+      display: block;
+    }
+  }
   .after\:hidden {
     &::after {
       content: var(--tw-content);
       display: none;
+    }
+  }
+  .after\:h-3 {
+    &::after {
+      content: var(--tw-content);
+      height: calc(var(--spacing) * 3);
     }
   }
   .after\:h-4 {
@@ -2453,10 +2305,22 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       height: calc(var(--spacing) * 4);
     }
   }
+  .after\:h-\[18px\] {
+    &::after {
+      content: var(--tw-content);
+      height: 18px;
+    }
+  }
   .after\:h-full {
     &::after {
       content: var(--tw-content);
       height: 100%;
+    }
+  }
+  .after\:w-3 {
+    &::after {
+      content: var(--tw-content);
+      width: calc(var(--spacing) * 3);
     }
   }
   .after\:w-4 {
@@ -2465,10 +2329,28 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       width: calc(var(--spacing) * 4);
     }
   }
+  .after\:w-\[18px\] {
+    &::after {
+      content: var(--tw-content);
+      width: 18px;
+    }
+  }
   .after\:w-full {
     &::after {
       content: var(--tw-content);
       width: 100%;
+    }
+  }
+  .after\:rounded-full {
+    &::after {
+      content: var(--tw-content);
+      border-radius: calc(infinity * 1px);
+    }
+  }
+  .after\:bg-current {
+    &::after {
+      content: var(--tw-content);
+      background-color: currentcolor;
     }
   }
   .after\:bg-linear-to-b {
@@ -2505,9 +2387,41 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
     }
   }
-  .last\:mt-0 {
-    &:last-child {
-      margin-top: calc(var(--spacing) * 0);
+  .after\:content-\[\"\"\] {
+    &::after {
+      --tw-content: "";
+      content: var(--tw-content);
+    }
+  }
+  .focus-within\:border-transparent {
+    &:focus-within {
+      border-color: transparent;
+    }
+  }
+  .focus-within\:opacity-100 {
+    &:focus-within {
+      opacity: 100%;
+    }
+  }
+  .focus-within\:ring-2 {
+    &:focus-within {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .focus-within\:ring-border-error {
+    &:focus-within {
+      --tw-ring-color: var(--seq-color-border-error);
+    }
+  }
+  .focus-within\:ring-border-focus {
+    &:focus-within {
+      --tw-ring-color: var(--color-border-focus);
+    }
+  }
+  .focus-within\:ring-inset {
+    &:focus-within {
+      --tw-ring-inset: inset;
     }
   }
   .hover\:animate-bell-ring {
@@ -2524,34 +2438,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .hover\:border-border-card {
+  .hover\:bg-button-glass {
     &:hover {
       @media (hover: hover) {
-        border-color: var(--seq-color-border-card);
-      }
-    }
-  }
-  .hover\:border-border-hover {
-    &:hover {
-      @media (hover: hover) {
-        border-color: var(--color-border-hover);
-      }
-    }
-  }
-  .hover\:bg-background-hover {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--seq-color-background-hover);
-      }
-    }
-  }
-  .hover\:bg-destructive\/80 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--seq-color-destructive);
-        @supports (color: color-mix(in lab, red, red)) {
-          background-color: color-mix(in oklab, var(--seq-color-destructive) 80%, transparent);
-        }
+        background-color: var(--seq-color-button-glass);
       }
     }
   }
@@ -2562,40 +2452,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .hover\:bg-primary\/15 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--seq-color-primary);
-        @supports (color: color-mix(in lab, red, red)) {
-          background-color: color-mix(in oklab, var(--seq-color-primary) 15%, transparent);
-        }
-      }
-    }
-  }
-  .hover\:bg-primary\/80 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--seq-color-primary);
-        @supports (color: color-mix(in lab, red, red)) {
-          background-color: color-mix(in oklab, var(--seq-color-primary) 80%, transparent);
-        }
-      }
-    }
-  }
   .hover\:text-gray-300 {
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-300);
-      }
-    }
-  }
-  .hover\:text-primary\/80 {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--seq-color-primary);
-        @supports (color: color-mix(in lab, red, red)) {
-          color: color-mix(in oklab, var(--seq-color-primary) 80%, transparent);
-        }
       }
     }
   }
@@ -2627,6 +2487,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:opacity-100 {
+    &:hover {
+      @media (hover: hover) {
+        opacity: 100%;
+      }
+    }
+  }
   .hover\:shadow-lg {
     &:hover {
       @media (hover: hover) {
@@ -2635,26 +2502,38 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .hover\:not-disabled\:not-\[\[aria-invalid\=true\]\]\:not-has-\[\[aria-invalid\=true\]\]\:border-border-hover {
+  .hover\:ring-border-focus {
     &:hover {
       @media (hover: hover) {
-        &:not(*:disabled) {
-          &:not(*:is([aria-invalid=true])) {
-            &:not(*:has(*:is([aria-invalid=true]))) {
-              border-color: var(--color-border-hover);
-            }
-          }
-        }
+        --tw-ring-color: var(--color-border-focus);
       }
     }
   }
-  .hover\:not-\[\[data-state\=active\]\]\:opacity-80 {
-    &:hover {
-      @media (hover: hover) {
-        &:not(*:is([data-state=active])) {
-          opacity: 80%;
-        }
-      }
+  .focus\:opacity-100 {
+    &:focus {
+      opacity: 100%;
+    }
+  }
+  .focus\:ring-0 {
+    &:focus {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .focus\:ring-2 {
+    &:focus {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .focus\:ring-border-error {
+    &:focus {
+      --tw-ring-color: var(--seq-color-border-error);
+    }
+  }
+  .focus\:ring-border-focus {
+    &:focus {
+      --tw-ring-color: var(--color-border-focus);
     }
   }
   .focus\:outline-hidden {
@@ -2684,20 +2563,25 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
-  .focus-visible\:outline-2 {
+  .focus-visible\:ring-2 {
     &:focus-visible {
-      outline-style: var(--tw-outline-style);
-      outline-width: 2px;
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
-  .focus-visible\:outline-offset-1 {
+  .focus-visible\:ring-border-focus {
     &:focus-visible {
-      outline-offset: 1px;
+      --tw-ring-color: var(--color-border-focus);
     }
   }
-  .focus-visible\:outline-border-focus {
+  .focus-visible\:outline-hidden {
     &:focus-visible {
-      outline-color: var(--color-border-focus);
+      --tw-outline-style: none;
+      outline-style: none;
+      @media (forced-colors: active) {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+      }
     }
   }
   .active\:border-border-focus {
@@ -2717,170 +2601,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
-  .disabled\:pointer-events-none {
-    &:disabled {
-      pointer-events: none;
-    }
-  }
   .disabled\:cursor-default {
     &:disabled {
       cursor: default;
     }
   }
-  .disabled\:cursor-not-allowed {
-    &:disabled {
-      cursor: not-allowed;
-    }
-  }
   .disabled\:opacity-50 {
     &:disabled {
       opacity: 50%;
-    }
-  }
-  .disabled\:opacity-100 {
-    &:disabled {
-      opacity: 100%;
-    }
-  }
-  .inert\:opacity-0 {
-    &:is([inert], [inert] *) {
-      opacity: 0%;
-    }
-  }
-  .has-data-\[state\=checked\]\:border-primary {
-    &:has(*[data-state="checked"]) {
-      border-color: var(--seq-color-primary);
-    }
-  }
-  .has-data-\[state\=checked\]\:bg-primary\/5 {
-    &:has(*[data-state="checked"]) {
-      background-color: var(--seq-color-primary);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--seq-color-primary) 5%, transparent);
-      }
-    }
-  }
-  .has-\[\:focus-visible\]\:outline-2 {
-    &:has(*:is(:focus-visible)) {
-      outline-style: var(--tw-outline-style);
-      outline-width: 2px;
-    }
-  }
-  .has-\[\:focus-visible\]\:outline-border-focus {
-    &:has(*:is(:focus-visible)) {
-      outline-color: var(--color-border-focus);
-    }
-  }
-  .has-\[\[aria-invalid\=true\]\]\:border-destructive {
-    &:has(*:is([aria-invalid=true])) {
-      border-color: var(--seq-color-destructive);
-    }
-  }
-  .has-\[\[aria-invalid\=true\]\]\:outline-destructive {
-    &:has(*:is([aria-invalid=true])) {
-      outline-color: var(--seq-color-destructive);
-    }
-  }
-  .has-\[\[data-slot\=input-group-control\]\:disabled\]\:pointer-events-none {
-    &:has(*:is([data-slot=input-group-control]:disabled)) {
-      pointer-events: none;
-    }
-  }
-  .has-\[\[data-slot\=input-group-control\]\:disabled\]\:cursor-not-allowed {
-    &:has(*:is([data-slot=input-group-control]:disabled)) {
-      cursor: not-allowed;
-    }
-  }
-  .has-\[\[data-slot\=input-group-control\]\:disabled\]\:opacity-50 {
-    &:has(*:is([data-slot=input-group-control]:disabled)) {
-      opacity: 50%;
-    }
-  }
-  .has-\[\[data-slot\=input-group-control\]\:focus-visible\]\:ring-\[3px\] {
-    &:has(*:is([data-slot=input-group-control]:focus-visible)) {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-  }
-  .has-\[\[data-slot\]\[aria-invalid\=true\]\]\:border-destructive {
-    &:has(*:is([data-slot][aria-invalid=true])) {
-      border-color: var(--seq-color-destructive);
-    }
-  }
-  .has-\[\[data-slot\]\[aria-invalid\=true\]\]\:outline-destructive {
-    &:has(*:is([data-slot][aria-invalid=true])) {
-      outline-color: var(--seq-color-destructive);
-    }
-  }
-  .has-\[\>\[data-align\=block-end\]\]\:h-auto {
-    &:has(>[data-align=block-end]) {
-      height: auto;
-    }
-  }
-  .has-\[\>\[data-align\=block-end\]\]\:flex-col {
-    &:has(>[data-align=block-end]) {
-      flex-direction: column;
-    }
-  }
-  .has-\[\>\[data-align\=block-start\]\]\:h-auto {
-    &:has(>[data-align=block-start]) {
-      height: auto;
-    }
-  }
-  .has-\[\>\[data-align\=block-start\]\]\:flex-col {
-    &:has(>[data-align=block-start]) {
-      flex-direction: column;
-    }
-  }
-  .has-\[\>\[data-slot\=checkbox-group\]\]\:gap-3 {
-    &:has(>[data-slot=checkbox-group]) {
-      gap: calc(var(--spacing) * 3);
-    }
-  }
-  .has-\[\>\[data-slot\=field-content\]\]\:items-start {
-    &:has(>[data-slot=field-content]) {
-      align-items: flex-start;
-    }
-  }
-  .has-\[\>\[data-slot\=field\]\]\:w-full {
-    &:has(>[data-slot=field]) {
-      width: 100%;
-    }
-  }
-  .has-\[\>\[data-slot\=field\]\]\:flex-col {
-    &:has(>[data-slot=field]) {
-      flex-direction: column;
-    }
-  }
-  .has-\[\>\[data-slot\=field\]\]\:rounded-md {
-    &:has(>[data-slot=field]) {
-      border-radius: var(--radius-md);
-    }
-  }
-  .has-\[\>\[data-slot\=field\]\]\:border {
-    &:has(>[data-slot=field]) {
-      border-style: var(--tw-border-style);
-      border-width: 1px;
-    }
-  }
-  .has-\[\>\[data-slot\=radio-group\]\]\:gap-3 {
-    &:has(>[data-slot=radio-group]) {
-      gap: calc(var(--spacing) * 3);
-    }
-  }
-  .has-\[\>textarea\]\:h-auto {
-    &:has(>textarea) {
-      height: auto;
-    }
-  }
-  .aria-invalid\:border-destructive {
-    &[aria-invalid="true"] {
-      border-color: var(--seq-color-destructive);
-    }
-  }
-  .aria-invalid\:outline-destructive {
-    &[aria-invalid="true"] {
-      outline-color: var(--seq-color-destructive);
     }
   }
   .data-disabled\:pointer-events-none {
@@ -2908,17 +2636,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       opacity: 80%;
     }
   }
-  .data-highlighted\:bg-background-active\/33 {
+  .data-highlighted\:bg-background-contrast {
     &[data-highlighted] {
-      background-color: var(--seq-color-background-active);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--seq-color-background-active) 33%, transparent);
-      }
+      background-color: var(--seq-color-background-contrast);
     }
   }
-  .data-highlighted\:bg-background-hover {
+  .data-highlighted\:bg-background-secondary {
     &[data-highlighted] {
-      background-color: var(--seq-color-background-hover);
+      background-color: var(--seq-color-background-secondary);
     }
   }
   .data-\[disabled\]\:pointer-events-none {
@@ -2931,181 +2656,25 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       opacity: 50%;
     }
   }
-  .data-\[invalid\=true\]\:text-destructive {
-    &[data-invalid="true"] {
-      color: var(--seq-color-destructive);
-    }
-  }
-  .data-\[orientation\=horizontal\]\:h-px {
-    &[data-orientation="horizontal"] {
-      height: 1px;
-    }
-  }
-  .data-\[orientation\=horizontal\]\:w-full {
-    &[data-orientation="horizontal"] {
-      width: 100%;
-    }
-  }
-  .data-\[orientation\=vertical\]\:h-full {
-    &[data-orientation="vertical"] {
-      height: 100%;
-    }
-  }
-  .data-\[orientation\=vertical\]\:w-px {
-    &[data-orientation="vertical"] {
-      width: 1px;
-    }
-  }
-  .data-\[side\=bottom\]\:slide-in-from-top-2 {
-    &[data-side="bottom"] {
-      --tw-enter-translate-y: calc(2*var(--spacing)*-1);
-    }
-  }
-  .data-\[side\=left\]\:slide-in-from-right-2 {
-    &[data-side="left"] {
-      --tw-enter-translate-x: calc(2*var(--spacing));
-    }
-  }
-  .data-\[side\=right\]\:slide-in-from-left-2 {
-    &[data-side="right"] {
-      --tw-enter-translate-x: calc(2*var(--spacing)*-1);
-    }
-  }
-  .data-\[side\=top\]\:slide-in-from-bottom-2 {
-    &[data-side="top"] {
-      --tw-enter-translate-y: calc(2*var(--spacing));
-    }
-  }
-  .data-\[slot\=checkbox-group\]\:gap-3 {
-    &[data-slot="checkbox-group"] {
-      gap: calc(var(--spacing) * 3);
-    }
-  }
-  .data-\[state\=active\]\:border-border-focus {
-    &[data-state="active"] {
-      border-color: var(--color-border-focus);
-    }
-  }
-  .data-\[state\=active\]\:text-border-focus {
-    &[data-state="active"] {
-      color: var(--color-border-focus);
-    }
-  }
   .data-\[state\=active\]\:text-primary {
     &[data-state="active"] {
       color: var(--seq-color-primary);
     }
   }
-  .data-\[state\=checked\]\:translate-x-full {
+  .data-\[state\=checked\]\:translate-x-5 {
     &[data-state="checked"] {
-      --tw-translate-x: 100%;
+      --tw-translate-x: calc(var(--spacing) * 5);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
-  .data-\[state\=checked\]\:border-transparent\! {
+  .data-\[state\=checked\]\:bg-background-control {
     &[data-state="checked"] {
-      border-color: transparent !important;
-    }
-  }
-  .data-\[state\=checked\]\:bg-background-active {
-    &[data-state="checked"] {
-      background-color: var(--seq-color-background-active);
-    }
-  }
-  .data-\[state\=checked\]\:bg-white {
-    &[data-state="checked"] {
-      background-color: var(--color-white);
+      background-color: var(--seq-color-background-control);
     }
   }
   .data-\[state\=checked\]\:bg-gradient-primary {
     &[data-state="checked"] {
       background-image: var(--seq-color-gradient-primary);
-    }
-  }
-  .data-\[state\=closed\]\:animate-out {
-    &[data-state="closed"] {
-      animation: exit var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none);
-    }
-  }
-  .data-\[state\=closed\]\:duration-300 {
-    &[data-state="closed"] {
-      --tw-duration: 300ms;
-      transition-duration: 300ms;
-    }
-  }
-  .data-\[state\=closed\]\:fade-out-0 {
-    &[data-state="closed"] {
-      --tw-exit-opacity: calc(0/100);
-      --tw-exit-opacity: 0;
-    }
-  }
-  .data-\[state\=closed\]\:zoom-out-95 {
-    &[data-state="closed"] {
-      --tw-exit-scale: calc(95*1%);
-      --tw-exit-scale: .95;
-    }
-  }
-  .data-\[state\=closed\]\:slide-out-to-bottom {
-    &[data-state="closed"] {
-      --tw-exit-translate-y: 100%;
-    }
-  }
-  .data-\[state\=closed\]\:slide-out-to-left {
-    &[data-state="closed"] {
-      --tw-exit-translate-x: -100%;
-    }
-  }
-  .data-\[state\=closed\]\:slide-out-to-right {
-    &[data-state="closed"] {
-      --tw-exit-translate-x: 100%;
-    }
-  }
-  .data-\[state\=closed\]\:slide-out-to-top {
-    &[data-state="closed"] {
-      --tw-exit-translate-y: -100%;
-    }
-  }
-  .data-\[state\=open\]\:animate-in {
-    &[data-state="open"] {
-      animation: enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none);
-    }
-  }
-  .data-\[state\=open\]\:duration-500 {
-    &[data-state="open"] {
-      --tw-duration: 500ms;
-      transition-duration: 500ms;
-    }
-  }
-  .data-\[state\=open\]\:fade-in-0 {
-    &[data-state="open"] {
-      --tw-enter-opacity: calc(0/100);
-      --tw-enter-opacity: 0;
-    }
-  }
-  .data-\[state\=open\]\:zoom-in-95 {
-    &[data-state="open"] {
-      --tw-enter-scale: calc(95*1%);
-      --tw-enter-scale: .95;
-    }
-  }
-  .data-\[state\=open\]\:slide-in-from-bottom {
-    &[data-state="open"] {
-      --tw-enter-translate-y: 100%;
-    }
-  }
-  .data-\[state\=open\]\:slide-in-from-left {
-    &[data-state="open"] {
-      --tw-enter-translate-x: -100%;
-    }
-  }
-  .data-\[state\=open\]\:slide-in-from-right {
-    &[data-state="open"] {
-      --tw-enter-translate-x: 100%;
-    }
-  }
-  .data-\[state\=open\]\:slide-in-from-top {
-    &[data-state="open"] {
-      --tw-enter-translate-y: -100%;
     }
   }
   .data-\[swipe\=cancel\]\:translate-x-0 {
@@ -3144,41 +2713,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
-  .nth-last-2\:-mt-1 {
-    &:nth-last-child(2) {
-      margin-top: calc(var(--spacing) * -1);
-    }
-  }
-  .sm\:inline-flex {
-    @media (width >= 40rem) {
-      display: inline-flex;
-    }
-  }
-  .sm\:max-w-lg {
-    @media (width >= 40rem) {
-      max-width: var(--container-lg);
-    }
-  }
-  .sm\:max-w-sm {
-    @media (width >= 40rem) {
-      max-width: var(--container-sm);
-    }
-  }
-  .sm\:flex-row {
-    @media (width >= 40rem) {
-      flex-direction: row;
-    }
-  }
-  .sm\:justify-end {
-    @media (width >= 40rem) {
-      justify-content: flex-end;
-    }
-  }
-  .sm\:text-left {
-    @media (width >= 40rem) {
-      text-align: left;
-    }
-  }
   .md\:bottom-auto {
     @media (width >= 48rem) {
       bottom: auto;
@@ -3215,52 +2749,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       height: auto !important;
     }
   }
-  .\@md\/field-group\:flex-row {
-    @container field-group (width >= 28rem) {
-      flex-direction: row;
-    }
-  }
-  .\@md\/field-group\:items-center {
-    @container field-group (width >= 28rem) {
-      align-items: center;
-    }
-  }
-  .\@md\/field-group\:has-\[\>\[data-slot\=field-content\]\]\:items-start {
-    @container field-group (width >= 28rem) {
-      &:has(>[data-slot=field-content]) {
-        align-items: flex-start;
-      }
-    }
-  }
-  .\[\&_span\]\:size-\[12px\] {
-    & span {
-      width: 12px;
-      height: 12px;
-    }
-  }
-  .\[\&_span\]\:size-\[18px\] {
-    & span {
-      width: 18px;
-      height: 18px;
-    }
-  }
-  .\[\&_svg\]\:pointer-events-none {
-    & svg {
-      pointer-events: none;
-    }
-  }
-  .\[\&_svg\:not\(\[class\*\=\"size-\"\]\)\]\:size-4 {
-    & svg:not([class*="size-"]) {
-      width: calc(var(--spacing) * 4);
-      height: calc(var(--spacing) * 4);
-    }
-  }
-  .\[\&_svg\:not\(\[class\*\=\"size-\"\]\)\]\:size-5 {
-    & svg:not([class*="size-"]) {
-      width: calc(var(--spacing) * 5);
-      height: calc(var(--spacing) * 5);
-    }
-  }
   .\[\&\:has\(\:disabled\)\]\:cursor-default {
     &:has(:disabled) {
       cursor: default;
@@ -3271,91 +2759,34 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       opacity: 50%;
     }
   }
+  .\[\&\:has\(\:disabled\)\:hover\]\:cursor-default {
+    &:has(:disabled):hover {
+      cursor: default;
+    }
+  }
+  .\[\&\:has\(\:disabled\)\:hover\]\:opacity-50 {
+    &:has(:disabled):hover {
+      opacity: 50%;
+    }
+  }
+  .focus-within\:\[\&\:has\(\:focus-visible\)\]\:ring-2 {
+    &:focus-within {
+      &:has(:focus-visible) {
+        --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+      }
+    }
+  }
+  .focus-within\:\[\&\:has\(\:focus-visible\)\]\:ring-border-focus {
+    &:focus-within {
+      &:has(:focus-visible) {
+        --tw-ring-color: var(--color-border-focus);
+      }
+    }
+  }
   .\[\&\:has\(div\:nth-child\(4\)\)\>div\]\:col-\[unset\] {
     &:has(div:nth-child(4))>div {
       grid-column: unset;
-    }
-  }
-  .\[\.border-b\]\:pb-3 {
-    &:is(.border-b) {
-      padding-bottom: calc(var(--spacing) * 3);
-    }
-  }
-  .\[\.border-t\]\:pt-3 {
-    &:is(.border-t) {
-      padding-top: calc(var(--spacing) * 3);
-    }
-  }
-  .\[\&\>\*\]\:w-full {
-    &>* {
-      width: 100%;
-    }
-  }
-  .\[\&\>\*\]\:data-\[slot\=field\]\:p-4 {
-    &>* {
-      &[data-slot="field"] {
-        padding: calc(var(--spacing) * 4);
-      }
-    }
-  }
-  .\@md\/field-group\:\[\&\>\*\]\:w-auto {
-    @container field-group (width >= 28rem) {
-      &>* {
-        width: auto;
-      }
-    }
-  }
-  .\[\&\>\.sr-only\]\:w-auto {
-    &>.sr-only {
-      width: auto;
-    }
-  }
-  .\[\&\>\[data-slot\=field-group\]\]\:gap-4 {
-    &>[data-slot=field-group] {
-      gap: calc(var(--spacing) * 4);
-    }
-  }
-  .\[\&\>\[data-slot\=field-label\]\]\:flex-auto {
-    &>[data-slot=field-label] {
-      flex: auto;
-    }
-  }
-  .\@md\/field-group\:\[\&\>\[data-slot\=field-label\]\]\:flex-auto {
-    @container field-group (width >= 28rem) {
-      &>[data-slot=field-label] {
-        flex: auto;
-      }
-    }
-  }
-  .has-\[\>\[data-slot\=field-content\]\]\:\[\&\>\[role\=checkbox\]\,\[role\=radio\]\]\:mt-px {
-    &:has(>[data-slot=field-content]) {
-      &>[role=checkbox],[role=radio] {
-        margin-top: 1px;
-      }
-    }
-  }
-  .\@md\/field-group\:has-\[\>\[data-slot\=field-content\]\]\:\[\&\>\[role\=checkbox\]\,\[role\=radio\]\]\:mt-px {
-    @container field-group (width >= 28rem) {
-      &:has(>[data-slot=field-content]) {
-        &>[role=checkbox],[role=radio] {
-          margin-top: 1px;
-        }
-      }
-    }
-  }
-  .\[\&\>a\]\:underline {
-    &>a {
-      text-decoration-line: underline;
-    }
-  }
-  .\[\&\>a\]\:underline-offset-4 {
-    &>a {
-      text-underline-offset: 4px;
-    }
-  }
-  .\[\&\>a\:hover\]\:text-primary {
-    &>a:hover {
-      color: var(--seq-color-primary);
     }
   }
   .\[\&\>div\]\:justify-center {
@@ -3397,34 +2828,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &>input {
       font-size: var(--text-xs);
       line-height: var(--tw-leading, var(--text-xs--line-height));
-    }
-  }
-  .has-\[\>\[data-align\=block-end\]\]\:\[\&\>input\]\:pt-3 {
-    &:has(>[data-align=block-end]) {
-      &>input {
-        padding-top: calc(var(--spacing) * 3);
-      }
-    }
-  }
-  .has-\[\>\[data-align\=block-start\]\]\:\[\&\>input\]\:pb-3 {
-    &:has(>[data-align=block-start]) {
-      &>input {
-        padding-bottom: calc(var(--spacing) * 3);
-      }
-    }
-  }
-  .has-\[\>\[data-align\=inline-end\]\]\:\[\&\>input\]\:pr-2 {
-    &:has(>[data-align=inline-end]) {
-      &>input {
-        padding-right: calc(var(--spacing) * 2);
-      }
-    }
-  }
-  .has-\[\>\[data-align\=inline-start\]\]\:\[\&\>input\]\:pl-2 {
-    &:has(>[data-align=inline-start]) {
-      &>input {
-        padding-left: calc(var(--spacing) * 2);
-      }
     }
   }
   .\[\&\>label\]\:flex {
@@ -3515,47 +2918,31 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       stroke-width: calc(24 / 32 * 2px);
     }
   }
-  .\[\[data-variant\=legend\]\+\&\]\:-mt-1\.5 {
-    [data-variant=legend]+& {
-      margin-top: calc(var(--spacing) * -1.5);
-    }
-  }
-}
-@property --tw-animation-duration {
-  syntax: "*";
-  inherits: false;
 }
 :root, [data-theme=dark] {
-  --seq-color-positive: var(--color-green-500);
-  --seq-color-negative: var(--color-red-500);
-  --seq-color-info: var(--color-blue-500);
-  --seq-color-warning: var(--color-yellow-500);
-  --seq-color-destructive: var(--color-red-500);
-  --seq-color-primary: white;
-  --seq-color-secondary: white;
-  --seq-color-muted: var(--color-zinc-500);
-  --seq-color-inverse: black;
-  --seq-color-background-primary: black;
-  --seq-color-background-secondary: var(--color-zinc-900);
-  --seq-color-background-muted: var(--color-zinc-950);
-  --seq-color-background-inverse: white;
-  --seq-color-background-overlay: color-mix( in oklab, oklch(37% 0.013 285.805) 90%, transparent );
-  @supports (color: color-mix(in lab, red, red)) {
-    --seq-color-background-overlay: color-mix( in oklab, var(--color-zinc-700) 90%, transparent );
-  }
-  --seq-color-background-raised: var(--color-zinc-800);
-  --seq-color-background-input: var(--color-zinc-950);
-  --seq-color-background-hover: var(--color-zinc-900);
-  --seq-color-background-active: var(--color-zinc-700);
-  --seq-color-border-normal: var(--color-zinc-700);
-  --seq-color-border-hover: var(--color-zinc-600);
-  --seq-color-border-focus: var(--color-violet-500);
-  --seq-color-border-card: var(--color-zinc-800);
-  --seq-color-border-button: var(--color-zinc-700);
-  --seq-color-drop-shadow: color-mix( in oklab, oklch(14.1% 0.005 285.823) 40%, transparent );
-  @supports (color: color-mix(in lab, red, red)) {
-    --seq-color-drop-shadow: color-mix( in oklab, var(--color-zinc-950) 40%, transparent );
-  }
+  --seq-color-positive: #1fc266;
+  --seq-color-negative: #c2501f;
+  --seq-color-info: #0076cc;
+  --seq-color-warning: #f4b03e;
+  --seq-color-primary: rgba(255, 255, 255, 1);
+  --seq-color-secondary: rgba(255, 255, 255, 0.8);
+  --seq-color-muted: rgba(255, 255, 255, 0.5);
+  --seq-color-inverse: rgba(0, 0, 0, 1);
+  --seq-color-background-primary: rgba(0, 0, 0, 1);
+  --seq-color-background-secondary: rgba(255, 255, 255, 0.1);
+  --seq-color-background-contrast: rgba(0, 0, 0, 0.5);
+  --seq-color-background-muted: rgba(255, 255, 255, 0.05);
+  --seq-color-background-control: rgba(255, 255, 255, 0.25);
+  --seq-color-background-inverse: rgba(255, 255, 255, 1);
+  --seq-color-background-backdrop: rgba(34, 34, 34, 0.9);
+  --seq-color-background-overlay: rgba(0, 0, 0, 0.7);
+  --seq-color-background-raised: rgba(54, 54, 54, 0.7);
+  --seq-color-border-normal: rgba(255, 255, 255, 0.25);
+  --seq-color-border-focus: rgba(255, 255, 255, 0.5);
+  --seq-color-border-error: rgba(255, 69, 0, 1);
+  --seq-color-button-glass: rgba(255, 255, 255, 0.15);
+  --seq-color-button-emphasis: rgba(0, 0, 0, 0.5);
+  --seq-color-button-inverse: rgba(255, 255, 255, 0.8);
   --seq-color-gradient-backdrop: linear-gradient(
       
       243.18deg,
@@ -3577,40 +2964,33 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       
       -45deg,
       transparent,
-      var(--color-zinc-700),
+      var(--seq-color-background-secondary),
       transparent );
 }
 [data-theme=light] {
-  --seq-color-positive: var(--color-green-600);
-  --seq-color-negative: var(--color-red-600);
-  --seq-color-info: var(--color-blue-600);
-  --seq-color-warning: var(--color-yellow-600);
-  --seq-color-destructive: var(--color-red-600);
-  --seq-color-primary: var(--color-slate-800);
-  --seq-color-secondary: var(--color-slate-800);
-  --seq-color-muted: var(--color-slate-500);
-  --seq-color-inverse: var(--color-slate-50);
-  --seq-color-background-primary: var(--color-slate-50);
-  --seq-color-background-secondary: white;
-  --seq-color-background-muted: var(--color-slate-100);
-  --seq-color-background-inverse: black;
-  --seq-color-background-overlay: color-mix( in oklab, oklch(86.9% 0.022 252.894) 80%, transparent );
-  @supports (color: color-mix(in lab, red, red)) {
-    --seq-color-background-overlay: color-mix( in oklab, var(--color-slate-300) 80%, transparent );
-  }
-  --seq-color-background-raised: white;
-  --seq-color-background-input: var(--color-slate-50);
-  --seq-color-background-hover: var(--color-slate-100);
-  --seq-color-background-active: var(--color-slate-200);
-  --seq-color-border-normal: var(--color-slate-300);
-  --seq-color-border-hover: var(--color-slate-400);
-  --seq-color-border-focus: var(--color-violet-600);
-  --seq-color-border-card: var(--color-slate-200);
-  --seq-color-border-button: var(--color-slate-300);
-  --seq-color-drop-shadow: color-mix( in oklab, oklch(12.9% 0.042 264.695) 15%, transparent );
-  @supports (color: color-mix(in lab, red, red)) {
-    --seq-color-drop-shadow: color-mix( in oklab, var(--color-slate-950) 15%, transparent );
-  }
+  --seq-color-positive: #1fc266;
+  --seq-color-negative: #c2501f;
+  --seq-color-info: #0076cc;
+  --seq-color-warning: #f4b03e;
+  --seq-color-primary: rgba(0, 0, 0, 1);
+  --seq-color-secondary: rgba(0, 0, 0, 0.8);
+  --seq-color-muted: rgba(0, 0, 0, 0.5);
+  --seq-color-inverse: rgba(255, 255, 255, 1);
+  --seq-color-background-primary: rgba(244, 244, 244, 1);
+  --seq-color-background-secondary: rgba(0, 0, 0, 0.1);
+  --seq-color-background-contrast: rgba(244, 244, 244, 0.5);
+  --seq-color-background-muted: rgba(0, 0, 0, 0.05);
+  --seq-color-background-control: rgba(0, 0, 0, 0.25);
+  --seq-color-background-inverse: rgba(0, 0, 0, 1);
+  --seq-color-background-backdrop: rgba(221, 221, 221, 0.9);
+  --seq-color-background-overlay: rgba(244, 244, 244, 0.7);
+  --seq-color-background-raised: rgba(192, 192, 192, 0.7);
+  --seq-color-border-normal: rgba(0, 0, 0, 0.25);
+  --seq-color-border-focus: rgba(0, 0, 0, 0.5);
+  --seq-color-border-error: rgba(255, 69, 0, 1);
+  --seq-color-button-glass: rgba(0, 0, 0, 0.15);
+  --seq-color-button-emphasis: rgba(255, 255, 255, 0.5);
+  --seq-color-button-inverse: rgba(0, 0, 0, 0.8);
   --seq-color-gradient-backdrop: linear-gradient(
       
       243.18deg,
@@ -3632,11 +3012,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       
       -45deg,
       transparent,
-      var(--color-slate-300),
+      var(--seq-color-background-secondary),
       transparent );
-}
-:root {
-  --base-unit: 16;
 }
 .rdp-root {
   --rdp-accent-color: blue;
@@ -4295,20 +3672,6 @@ video::-webkit-media-controls {
     opacity: 0.5;
   }
 }
-@keyframes enter {
-  from {
-    opacity: var(--tw-enter-opacity,1);
-    transform: translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0)scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1))rotate(var(--tw-enter-rotate,0));
-    filter: blur(var(--tw-enter-blur,0));
-  }
-}
-@keyframes exit {
-  to {
-    opacity: var(--tw-exit-opacity,1);
-    transform: translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0)scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1))rotate(var(--tw-exit-rotate,0));
-    filter: blur(var(--tw-exit-blur,0));
-  }
-}
 @keyframes skeleton {
   0% {
     background-position: 0% 50%;
@@ -4396,23 +3759,6 @@ video::-webkit-media-controls {
       --tw-gradient-from-position: 0%;
       --tw-gradient-via-position: 50%;
       --tw-gradient-to-position: 100%;
-      --tw-animation-delay: 0s;
-      --tw-animation-direction: normal;
-      --tw-animation-duration: initial;
-      --tw-animation-fill-mode: none;
-      --tw-animation-iteration-count: 1;
-      --tw-enter-blur: 0;
-      --tw-enter-opacity: 1;
-      --tw-enter-rotate: 0;
-      --tw-enter-scale: 1;
-      --tw-enter-translate-x: 0;
-      --tw-enter-translate-y: 0;
-      --tw-exit-blur: 0;
-      --tw-exit-opacity: 1;
-      --tw-exit-rotate: 0;
-      --tw-exit-scale: 1;
-      --tw-exit-translate-x: 0;
-      --tw-exit-translate-y: 0;
     }
   }
 }

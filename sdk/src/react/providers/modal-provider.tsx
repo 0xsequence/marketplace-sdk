@@ -1,7 +1,7 @@
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+// import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
-import { marketplaceApiURL } from '../_internal';
+//import { marketplaceApiURL } from '../_internal';
 import { useConfig } from '../hooks';
 import SwitchChainErrorModal from '../ui/modals/_internal/components/switchChainErrorModal';
 import TransactionStatusModal from '../ui/modals/_internal/components/transactionStatusModal';
@@ -21,35 +21,28 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 	const sdkConfig = useConfig();
 	const { shadowDom, experimentalShadowDomCssOverride } = sdkConfig;
 
-	const overrides = sdkConfig._internal?.overrides?.api?.marketplace;
-	const marketplaceApiUrl =
-		overrides?.url || marketplaceApiURL(overrides?.env || 'production');
+	//const overrides = sdkConfig._internal?.overrides?.api?.marketplace;
+	//const _marketplaceApiUrl = overrides?.url || marketplaceApiURL(overrides?.env || 'production');
 
 	return (
 		<>
 			{children}
-			<SequenceCheckoutProvider
-				config={{
-					env: {
-						marketplaceApiUrl,
-					},
-				}}
+			{/* <SequenceCheckoutProvider> */}
+			<ShadowRoot
+				enabled={shadowDom ?? true}
+				customCSS={experimentalShadowDomCssOverride}
 			>
-				<ShadowRoot
-					enabled={shadowDom ?? true}
-					customCSS={experimentalShadowDomCssOverride}
-				>
-					<CreateListingModal />
-					<MakeOfferModal />
-					<TransferModal />
-					<SellModal />
-					<BuyModal />
-					<SuccessfulPurchaseModal />
-					{/* Helper modals */}
-					<SwitchChainErrorModal />
-					<TransactionStatusModal />
-				</ShadowRoot>
-			</SequenceCheckoutProvider>
+				<CreateListingModal />
+				<MakeOfferModal />
+				<TransferModal />
+				<SellModal />
+				<BuyModal />
+				<SuccessfulPurchaseModal />
+				{/* Helper modals */}
+				<SwitchChainErrorModal />
+				<TransactionStatusModal />
+			</ShadowRoot>
+			{/* </SequenceCheckoutProvider> */}
 		</>
 	);
 });

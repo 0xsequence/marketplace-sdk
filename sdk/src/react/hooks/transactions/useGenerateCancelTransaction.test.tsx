@@ -124,9 +124,6 @@ describe('useGenerateCancelTransaction', () => {
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
 				createMockSteps([StepType.cancel]),
-				defaultArgs,
-				undefined,
-				expect.any(Object), // React Query context
 			);
 		});
 	});

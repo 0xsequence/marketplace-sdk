@@ -8,6 +8,7 @@ import type {
 	StandardInfiniteQueryOptions,
 	StandardQueryOptions,
 } from '../types/query';
+import { Hex } from 'viem';
 
 export interface QueryArg {
 	enabled?: boolean;
@@ -16,6 +17,12 @@ export interface QueryArg {
 export type CollectableId = string | number;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
+
+export interface Transaction {
+	to: Hex;
+	data?: Hex;
+	value?: bigint;
+}
 
 type TransactionStep = {
 	exist: boolean;
