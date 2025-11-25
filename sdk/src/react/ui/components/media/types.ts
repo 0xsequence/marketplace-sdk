@@ -20,7 +20,6 @@ type MediaProps = {
 	mediaClassname?: string;
 	isLoading?: boolean;
 	fallbackContent?: ReactNode;
-	shouldListenForLoad?: boolean;
 };
 
 export type { ContentType, ContentTypeState, MediaProps };
