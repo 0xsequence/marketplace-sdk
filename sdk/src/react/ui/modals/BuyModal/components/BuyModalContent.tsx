@@ -1,106 +1,32 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { useSupportedChains } from '0xtrails';
 import { TrailsWidget } from '0xtrails/widget';
-import { type Chain, formatUnits, type Hash } from 'viem';
-import { TransactionType } from '../../../../_internal';
-import { useConfig } from '../../../../hooks';
-import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
-import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
-import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { useBuyModal } from '..';
-import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useBuyModalProps, useOnSuccess } from '../store';
-import { FallbackPurchaseUI } from './FallbackPurchaseUI';
+import { useBuyModalContext } from '../internal/buyModalContext';
+import { CryptoPaymentModal } from './CryptoPaymentModal';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
-	const config = useConfig();
-	const modalProps = useBuyModalProps();
-	const { close } = useBuyModal();
-	const onSuccess = useOnSuccess();
-	const transactionStatusModal = useTransactionStatusModal();
-	const { supportedChains, isLoadingChains } = useSupportedChains();
-	const { data: steps, isLoading: isLoadingSteps } =
-		useBuyTransaction(modalProps);
 	const {
-		collectible,
+		config,
+		modalProps,
+		close,
+		steps,
+		buyStep,
+		isLoading,
+		useTrailsModal,
+		useCryptoPaymentModal,
+		formattedAmount,
 		currencyAddress,
-		currency,
-		order,
-		collectionAddress,
-		salePrice,
-		marketPriceAmount,
-		isLoading: isBuyModalDataLoading,
-		isMarket,
-	} = useBuyModalData();
-	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
-		useWaasFeeOptions(modalProps.chainId, config);
-
-	const isChainSupported = supportedChains.some(
-		(chain: Chain) => chain.id === modalProps.chainId,
-	);
-
-	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
-
-	const buyStep = steps?.find((step) => step.id === 'buy');
-
-	const useTrailsModal = isChainSupported && buyStep && !isLoading;
-	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
-
-	const formattedAmount = currency?.decimals
-		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
-		: '0';
-
-	const handleTransactionSuccess = (hash: Hash | string) => {
-		if (!collectible) throw new Error('Collectible not found');
-		if (isMarket && !order) throw new Error('Order not found');
-		if (!currency) throw new Error('Currency not found');
-
-		close();
-		onSuccess({ hash: hash as Hash });
-
-		transactionStatusModal.show({
-			hash: hash as Hash,
-			orderId: isMarket ? order?.orderId : undefined,
-			price: {
-				amountRaw:
-					(isMarket ? marketPriceAmount : salePrice?.amount) ?? BigInt(0),
-				currency,
-			},
-			collectionAddress,
-			chainId: modalProps.chainId,
-			tokenId: collectible.tokenId,
-			type: TransactionType.BUY,
-		});
-	};
-
-	const handleTrailsSuccess = (data: {
-		txHash: string;
-		chainId: number;
-		sessionId: string;
-	}) => {
-		handleTransactionSuccess(data.txHash as Hash);
-	};
-
-	const handleClose = () => {
-		if (pendingFeeOptionConfirmation?.id) {
-			console.log(
-				'rejecting pending fee option',
-				pendingFeeOptionConfirmation?.id,
-			);
-			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
-		}
-
-		close();
-	};
+		handleTrailsSuccess,
+		handleTransactionSuccess,
+	} = useBuyModalContext();
 
 	return (
 		<Modal
 			isDismissible
-			onClose={handleClose}
+			onClose={close}
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={{
 				style: {
@@ -124,7 +50,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useTrailsModal && (
+				{useTrailsModal && buyStep && (
 					<div className="w-full">
 						<TrailsWidget
 							apiKey={config.projectAccessKey}
@@ -143,8 +69,8 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useFallbackPurchaseUI && (
-					<FallbackPurchaseUI
+				{useCryptoPaymentModal && steps && (
+					<CryptoPaymentModal
 						chainId={modalProps.chainId}
 						steps={steps}
 						onSuccess={handleTransactionSuccess}
