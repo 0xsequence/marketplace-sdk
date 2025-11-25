@@ -41,7 +41,7 @@ export function useBuyModalContext() {
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
 	const useTrailsModal = isChainSupported && buyStep && !isLoading;
-	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
+	const useCryptoPaymentModal = !useTrailsModal && steps && !isLoading;
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -106,7 +106,7 @@ export function useBuyModalContext() {
 		buyStep,
 		isLoading,
 		useTrailsModal,
-		useFallbackPurchaseUI,
+		useCryptoPaymentModal,
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,

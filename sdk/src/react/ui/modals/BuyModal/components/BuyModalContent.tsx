@@ -3,8 +3,8 @@
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
-import { useBuyModalContext } from '../internal/context';
-import { FallbackPurchaseUI } from './FallbackPurchaseUI';
+import { useBuyModalContext } from '../internal/buyModalContext';
+import { CryptoPaymentModal } from './CryptoPaymentModal';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
@@ -16,7 +16,7 @@ export const BuyModalContent = () => {
 		buyStep,
 		isLoading,
 		useTrailsModal,
-		useFallbackPurchaseUI,
+		useCryptoPaymentModal,
 		formattedAmount,
 		currencyAddress,
 		handleTrailsSuccess,
@@ -69,8 +69,8 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useFallbackPurchaseUI && steps && (
-					<FallbackPurchaseUI
+				{useCryptoPaymentModal && steps && (
+					<CryptoPaymentModal
 						chainId={modalProps.chainId}
 						steps={steps}
 						onSuccess={handleTransactionSuccess}

@@ -1,6 +1,6 @@
 import { Skeleton } from '@0xsequence/design-system';
 
-export const FallbackPurchaseUISkeleton = ({
+export const CryptoPaymentModalSkeleton = ({
 	networkMismatch,
 }: {
 	networkMismatch: boolean;

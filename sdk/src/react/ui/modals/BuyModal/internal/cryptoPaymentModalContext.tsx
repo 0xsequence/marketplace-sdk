@@ -14,7 +14,7 @@ import { useExecuteBundledTransactions } from '../components/hook/useExecuteBund
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 
-type FallbackPurchaseUIContextReturn = {
+type CryptoPaymentModalReturn = {
 	data: {
 		collectible: Awaited<ReturnType<typeof useBuyModalData>>['collectible'];
 		currency: Awaited<ReturnType<typeof useBuyModalData>>['currency'];
@@ -74,7 +74,7 @@ type FallbackPurchaseUIContextReturn = {
 	};
 };
 
-export function useFallbackPurchaseUIContext({
+export function useCryptoPaymentModalContext({
 	chainId,
 	steps,
 	onSuccess,
@@ -82,7 +82,7 @@ export function useFallbackPurchaseUIContext({
 	chainId: number;
 	steps: Step[];
 	onSuccess: (hash: Hex | string) => void;
-}): FallbackPurchaseUIContextReturn {
+}): CryptoPaymentModalReturn {
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
 	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
@@ -307,7 +307,7 @@ export function useFallbackPurchaseUIContext({
 		isOnCorrectChain &&
 		(isSequenceConnector ? true : !approvalStep);
 
-	const result: FallbackPurchaseUIContextReturn = {
+	const result: CryptoPaymentModalReturn = {
 		data: {
 			collectible,
 			currency,
@@ -366,4 +366,4 @@ export function useFallbackPurchaseUIContext({
 	return result;
 }
 
-export type FallbackPurchaseUIContext = FallbackPurchaseUIContextReturn;
+export type CryptoPaymentModalContext = CryptoPaymentModalReturn;

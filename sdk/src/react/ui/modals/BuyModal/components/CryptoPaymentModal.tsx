@@ -11,20 +11,20 @@ import type { Hex } from 'viem';
 import type { Step } from '../../../../_internal';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
-import { useFallbackPurchaseUIContext } from '../internal/FallbackPurchaseUIContext';
-import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
+import { useCryptoPaymentModalContext } from '../internal/cryptoPaymentModalContext';
+import { CryptoPaymentModalSkeleton } from './CryptoPaymentModalSkeleton';
 
-export interface FallbackPurchaseUIProps {
+export interface CryptoPaymentModalProps {
 	chainId: number;
 	steps: Step[];
 	onSuccess: (hash: Hex | string) => void;
 }
 
-export const FallbackPurchaseUI = ({
+export const CryptoPaymentModal = ({
 	chainId,
 	steps,
 	onSuccess,
-}: FallbackPurchaseUIProps) => {
+}: CryptoPaymentModalProps) => {
 	const {
 		data: { collectible, currency, collection },
 		loading: { isLoadingBuyModalData, isLoadingBalance },
@@ -49,7 +49,7 @@ export const FallbackPurchaseUI = ({
 		permissions: { canApprove, canBuy },
 		price: { formattedPrice, renderCurrencyPrice, renderPriceUSD },
 		actions: { executeApproval, executeBuy, handleSwitchChain },
-	} = useFallbackPurchaseUIContext({ chainId, steps, onSuccess });
+	} = useCryptoPaymentModalContext({ chainId, steps, onSuccess });
 
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export const FallbackPurchaseUI = ({
 
 	if (isLoadingBuyModalData || isLoadingBalance) {
 		return (
-			<FallbackPurchaseUISkeleton
+			<CryptoPaymentModalSkeleton
 				networkMismatch={!isOnCorrectChain && currentChainId !== undefined}
 			/>
 		);
