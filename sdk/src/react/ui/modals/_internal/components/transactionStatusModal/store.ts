@@ -82,7 +82,7 @@ export const transactionStatusModalStore = createStore({
 export const useIsOpen = () =>
 	useSelector(transactionStatusModalStore, (state) => state.context.isOpen);
 
-export const useTransactionModalState = () =>
+export const useTransactionStatusModalState = () =>
 	useSelector(transactionStatusModalStore, (state) => state.context);
 
 export const useTransactionHash = () =>

@@ -1,9 +1,9 @@
 'use client';
 
+import { OrderbookKind } from '@0xsequence/api-client';
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
 import type { TransactionSteps } from '../../../../_internal';
 import type { OfferInput } from '../../../../_internal/types';
 import type { ModalCallbacks } from '../../_internal/types';

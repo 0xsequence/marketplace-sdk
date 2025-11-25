@@ -69,6 +69,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '2000000000000000000', // 2 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,
@@ -116,6 +117,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '500000000000000000', // 0.5 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,
@@ -159,6 +161,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '500000000000000000', // 0.5 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,

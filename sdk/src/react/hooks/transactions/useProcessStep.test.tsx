@@ -6,7 +6,7 @@ import {
 	type SignatureStep,
 	StepType,
 	type TransactionStep,
-} from '../../../types';
+} from '../../_internal';
 import { useProcessStep } from './useProcessStep';
 
 vi.mock('wagmi', async (importOriginal) => {

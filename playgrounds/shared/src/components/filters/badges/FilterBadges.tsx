@@ -1,6 +1,6 @@
 'use client';
 
-import { ButtonPreset } from '@0xsequence/design-system';
+import { Button } from '@0xsequence/design-system';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import { type PropertyFilter, PropertyType } from '@0xsequence/metadata';
 import { useCallback } from 'react';
@@ -74,14 +74,15 @@ export const FilterBadges = ({
 				))}
 
 				{hasFilters && (
-					<ButtonPreset
+					<Button
 						className="rounded-lg bg-background-secondary"
 						size="xs"
 						variant="secondary"
 						onClick={clearAllFilters}
-						label="Clear all"
 						shape="square"
-					/>
+					>
+						Clear all
+					</Button>
 				)}
 			</div>
 		</div>

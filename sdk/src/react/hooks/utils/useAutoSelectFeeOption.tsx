@@ -111,6 +111,8 @@ export function useAutoSelectFeeOption({
 }: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
 
+	const isEnabled = enabled ?? true;
+
 	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
 		(option) => normalizeWaasFeeTokenAddress(option.token.contractAddress),
 	);
@@ -128,7 +130,7 @@ export function useAutoSelectFeeOption({
 		},
 		query: {
 			enabled:
-				!!pendingFeeOptionConfirmation.options && !!userAddress && enabled,
+				!!pendingFeeOptionConfirmation.options && !!userAddress && isEnabled,
 		},
 	});
 	const chain = useChain(pendingFeeOptionConfirmation.chainId);
@@ -205,8 +207,6 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
-		console.debug('auto selected option', selectedOption);
-
 		return { selectedOption, error: null };
 	}, [
 		userAddress,
@@ -214,6 +214,7 @@ export function useAutoSelectFeeOption({
 		isBalanceDetailsLoading,
 		isBalanceDetailsError,
 		combinedBalances,
+		isEnabled,
 	]);
 
 	return autoSelectedOption();
