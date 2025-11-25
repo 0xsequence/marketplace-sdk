@@ -2,27 +2,17 @@
 
 import {
 	Button,
-	ChevronLeftIcon,
 	NetworkImage,
 	Spinner,
 	Text,
 	Tooltip,
 } from '@0xsequence/design-system';
-import { useState } from 'react';
-import type { Address, Hash, Hex } from 'viem';
-import { useSendTransaction } from 'wagmi';
-import { formatPrice, getPresentableChainName } from '../../../../../utils';
-import { type Step, StepType } from '../../../../_internal';
-import { useConnectorMetadata } from '../../../../hooks';
-import { useConfig } from '../../../../hooks/config/useConfig';
-import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
-import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import type { Hex } from 'viem';
+import type { Step } from '../../../../_internal';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
-import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { useFallbackPurchaseUIContext } from '../internal/FallbackPurchaseUIContext';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
-import { useExecuteBundledTransactions } from './hook/useExecuteBundledTransactions';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -35,225 +25,31 @@ export const FallbackPurchaseUI = ({
 	steps,
 	onSuccess,
 }: FallbackPurchaseUIProps) => {
-	const [isExecuting, setIsExecuting] = useState(false);
-	const [isApproving, setIsApproving] = useState(false);
-	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
-	const [error, setError] = useState<{
-		title: string;
-		message: string;
-		details?: Error;
-	} | null>(null);
-	const { isSequence: isSequenceConnector } = useConnectorMetadata();
-
-	const buyStep = steps.find((step) => step.id === StepType.buy);
-	if (!buyStep) throw new Error('Buy step not found');
-
 	const {
-		collectible,
-		currencyAddress,
-		currency,
-		order,
-		salePrice,
-		isMarket,
-		isShop,
-		collection,
-		isLoading: isLoadingBuyModalData,
-	} = useBuyModalData();
-	const sdkConfig = useConfig();
-
-	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
-	const isOnCorrectChain = currentChainId === chainId;
-	const requiredChainName = getPresentableChainName(chainId);
-	const currentChainName = currentChainId
-		? getPresentableChainName(currentChainId)
-		: 'Unknown';
-	const priceAmount = isMarket ? order?.priceAmount : salePrice?.amount;
-	const priceCurrencyAddress = isMarket
-		? currencyAddress
-		: (salePrice?.currencyAddress as Address);
-	const isAnyTransactionPending =
-		isApproving || isExecuting || isSwitchingChain;
-
-	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
-		chainId,
-		value: BigInt(priceAmount || 0),
-		tokenAddress: priceCurrencyAddress,
-	});
-
-	const hasSufficientBalance = data?.hasSufficientBalance;
-	const { sendTransactionAsync } = useSendTransaction();
-
-	const [approvalStep, setApprovalStep] = useState(
-		steps.find((step) => step.id === StepType.tokenApproval),
-	);
-
-	const {
-		executeBundledTransactions,
-		isExecuting: isExecutingBundledTransactions,
-	} = useExecuteBundledTransactions({
-		chainId,
-		approvalStep,
-		priceAmount: BigInt(priceAmount || 0),
-	});
-
-	const executeTransaction = async (step: Step) => {
-		const data = step.data as Hex;
-		const to = step.to as Address;
-		const value = BigInt(step.value);
-
-		if (!data || !to) {
-			const errorDetails =
-				new Error(`Invalid step: 'data' and 'to' are required:
-				data: ${data}
-				to: ${to}
-
-				${JSON.stringify(step)}`);
-
-			setError({
-				title: 'Invalid step',
-				message: '`data` and `to` are required',
-				details: errorDetails,
-			});
-			throw errorDetails;
-		}
-
-		await ensureCorrectChainAsync(chainId);
-
-		const hash = await sendTransactionAsync({
-			to,
-			data,
-			value,
-		});
-
-		await waitForTransactionReceipt({
-			txHash: hash,
-			chainId,
-			sdkConfig,
-		});
-
-		return hash;
-	};
-
-	const executeApproval = async () => {
-		if (!approvalStep) throw new Error('Approval step not found');
-
-		setError(null); // Clear any previous errors
-		setIsApproving(true);
-		try {
-			await executeTransaction(approvalStep);
-			setApprovalStep(undefined);
-		} catch (error) {
-			console.error('Approval transaction failed:', error);
-		} finally {
-			setIsApproving(false);
-		}
-	};
-
-	const executeBuy = async () => {
-		setError(null); // Clear any previous errors
-		setIsExecuting(true);
-		try {
-			// if it's market, bundling occurs on the backend. We add the approval step to the bundled transactions for shop purchases
-			const hash =
-				isShop && approvalStep
-					? await executeBundledTransactions({
-							step: buyStep,
-							onBalanceInsufficientForFeeOption:
-								handleBalanceInsufficientForWaasFeeOption,
-							onTransactionFailed: handleTransactionFailed,
-						})
-					: await executeTransaction(buyStep);
-
-			onSuccess(hash as Hash);
-		} catch (error) {
-			console.error('Buy transaction failed:', error);
-		} finally {
-			setIsExecuting(false);
-		}
-	};
-
-	const handleSwitchChain = async () => {
-		setIsSwitchingChain(true);
-		try {
-			await ensureCorrectChainAsync(chainId);
-		} catch (error) {
-			console.error('Chain switch failed:', error);
-		} finally {
-			setIsSwitchingChain(false);
-		}
-	};
-
-	const handleBalanceInsufficientForWaasFeeOption = (error: Error) => {
-		setError({
-			title: 'Insufficient balance for fee option',
-			message: 'You do not have enough balance to purchase this item.',
-			details: error,
-		});
-
-		console.error('Balance insufficient for fee option:', error);
-	};
-
-	const handleTransactionFailed = (error: Error) => {
-		setError({
-			title: 'Transaction failed',
-			message: error.message,
-			details: error,
-		});
-
-		console.error('Transaction failed:', error);
-	};
-
-	const renderPriceUSD = () => {
-		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
-		if (!priceUSD) return '';
-
-		const numericPrice =
-			typeof priceUSD === 'string' ? Number.parseFloat(priceUSD) : priceUSD;
-
-		if (numericPrice < 0.0001) {
-			return (
-				<div className="flex items-center">
-					<ChevronLeftIcon className="w-3" /> <Text>$0.0001</Text>
-				</div>
-			);
-		}
-
-		return `~$${priceUSD}`;
-	};
-
-	const formattedPrice = formatPrice(
-		BigInt(priceAmount || 0),
-		currency?.decimals || 0,
-	);
-	const isFree = formattedPrice === '0';
-
-	const renderCurrencyPrice = () => {
-		if (isFree) return 'Free';
-
-		const numericPrice = Number.parseFloat(formattedPrice);
-		if (numericPrice < 0.0001) {
-			return (
-				<div className="flex items-center">
-					<ChevronLeftIcon className="w-4" />
-					<Text>0.0001 {currency?.symbol}</Text>
-				</div>
-			);
-		}
-
-		return `${formattedPrice} ${currency?.symbol}`;
-	};
-
-	const canApprove =
-		hasSufficientBalance &&
-		!isLoadingBalance &&
-		!isLoadingBuyModalData &&
-		isOnCorrectChain;
-	const canBuy =
-		hasSufficientBalance &&
-		!isLoadingBalance &&
-		!isLoadingBuyModalData &&
-		isOnCorrectChain &&
-		(isSequenceConnector ? true : !approvalStep);
+		data: { collectible, currency, collection },
+		loading: { isLoadingBuyModalData, isLoadingBalance },
+		chain: {
+			isOnCorrectChain,
+			currentChainName,
+			requiredChainName,
+			currentChainId,
+		},
+		balance: { hasSufficientBalance },
+		transaction: {
+			isApproving,
+			isExecuting,
+			isSwitchingChain,
+			isExecutingBundledTransactions,
+			isAnyTransactionPending,
+		},
+		error: { error, dismissError },
+		steps: { approvalStep },
+		connector: { isSequenceConnector },
+		flags: { isMarket },
+		permissions: { canApprove, canBuy },
+		price: { formattedPrice, renderCurrencyPrice, renderPriceUSD },
+		actions: { executeApproval, executeBuy, handleSwitchChain },
+	} = useFallbackPurchaseUIContext({ chainId, steps, onSuccess });
 
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
@@ -324,7 +120,7 @@ export const FallbackPurchaseUI = ({
 								</div>
 							</Tooltip>
 
-							{isMarket && (
+							{isMarket && renderPriceUSD() && (
 								<Text className="font-bold text-text-50 text-xs">
 									{renderPriceUSD()}
 								</Text>
@@ -384,7 +180,7 @@ export const FallbackPurchaseUI = ({
 				{canBuy && (
 					<Button
 						onClick={() => {
-							setError(null); // Clear any previous errors
+							dismissError();
 							return executeBuy();
 						}}
 						disabled={!canBuy || isAnyTransactionPending}
@@ -401,7 +197,7 @@ export const FallbackPurchaseUI = ({
 						title={error.title}
 						message={error.message}
 						error={error.details}
-						onDismiss={() => setError(null)}
+						onDismiss={dismissError}
 					/>
 				)}
 			</div>
