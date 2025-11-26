@@ -26,5 +26,6 @@ export default defineConfig([
 		loader: {
 			'.png': 'dataurl',
 		},
+		external: ['tldts-core', 'tldts'],
 	},
 ]);
