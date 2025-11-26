@@ -26,6 +26,6 @@ export default defineConfig([
 		loader: {
 			'.png': 'dataurl',
 		},
-		external: ['tldts-core', 'tldts'],
+		external: ['tldts', 'tldts-core', 'tough-cookie', '@0xsequence/api-client'],
 	},
 ]);
