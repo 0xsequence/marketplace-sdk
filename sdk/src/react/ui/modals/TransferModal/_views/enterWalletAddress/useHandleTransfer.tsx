@@ -45,7 +45,7 @@ const useHandleTransfer = () => {
 		return await transferTokensAsync({
 			...baseParams,
 			contractType: ContractType.ERC1155,
-			quantity: String(quantity),
+			quantity: quantity.toString(),
 		});
 	};
 

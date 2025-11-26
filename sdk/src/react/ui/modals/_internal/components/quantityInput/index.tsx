@@ -8,7 +8,7 @@ import {
 	NumericInput,
 	SubtractIcon,
 } from '@0xsequence/design-system';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
@@ -16,7 +16,7 @@ type QuantityInputProps = {
 	invalidQuantity: boolean;
 	onQuantityChange: (quantity: bigint) => void;
 	onInvalidQuantityChange: (invalid: boolean) => void;
-	maxQuantity: string;
+	maxQuantity: bigint;
 	className?: string;
 	disabled?: boolean;
 };
@@ -30,32 +30,25 @@ export default function QuantityInput({
 	className,
 	disabled,
 }: QuantityInputProps) {
-	const maxQuantityBigInt = useMemo(() => BigInt(maxQuantity), [maxQuantity]);
 	const minQuantity = 1n;
 
 	const [currentQuantity, setCurrentQuantity] = useState(quantity);
-	const [localQuantity, setLocalQuantity] = useState(quantity.toString());
+	const [localQuantity, setLocalQuantity] = useState(quantity);
 
 	// Sync internal state with external prop changes and validate initial quantity
 	useEffect(() => {
 		// Check if initial quantity exceeds max quantity
-		if (quantity > maxQuantityBigInt) {
+		if (quantity > maxQuantity) {
 			// If initial quantity is too high, set it to max quantity
 			setLocalQuantity(maxQuantity);
-			setCurrentQuantity(maxQuantityBigInt);
-			onQuantityChange(maxQuantityBigInt);
+			setCurrentQuantity(maxQuantity);
+			onQuantityChange(maxQuantity);
 			onInvalidQuantityChange(false);
 		} else {
-			setLocalQuantity(quantity.toString());
+			setLocalQuantity(quantity);
 			setCurrentQuantity(quantity);
 		}
-	}, [
-		quantity,
-		maxQuantity,
-		maxQuantityBigInt,
-		onQuantityChange,
-		onInvalidQuantityChange,
-	]);
+	}, [quantity, maxQuantity, onQuantityChange, onInvalidQuantityChange]);
 
 	const setQuantity = ({
 		value,
@@ -64,7 +57,7 @@ export default function QuantityInput({
 		value: string;
 		isValid: boolean;
 	}) => {
-		setLocalQuantity(value);
+		setLocalQuantity(BigInt(value));
 		if (isValid) {
 			const bigIntValue = BigInt(value);
 			onQuantityChange(bigIntValue);
@@ -77,7 +70,7 @@ export default function QuantityInput({
 
 	function handleChangeQuantity(value: string) {
 		if (!value) {
-			setLocalQuantity('');
+			setLocalQuantity(0n);
 			return;
 		}
 
@@ -91,7 +84,7 @@ export default function QuantityInput({
 
 		try {
 			const bigIntValue = BigInt(value);
-			const isBiggerThanMax = bigIntValue > maxQuantityBigInt;
+			const isBiggerThanMax = bigIntValue > maxQuantity;
 			const isLessThanMin = bigIntValue < minQuantity;
 
 			if (isLessThanMin) {
@@ -104,7 +97,7 @@ export default function QuantityInput({
 
 			if (isBiggerThanMax) {
 				setQuantity({
-					value: maxQuantity,
+					value: maxQuantity.toString(),
 					isValid: true, // Is valid is true because we override the value
 				});
 				return;
@@ -125,9 +118,9 @@ export default function QuantityInput({
 
 	function handleIncrement() {
 		const newValue = currentQuantity + 1n;
-		if (newValue >= maxQuantityBigInt) {
+		if (newValue >= maxQuantity) {
 			setQuantity({
-				value: maxQuantity,
+				value: maxQuantity.toString(),
 				isValid: true,
 			});
 		} else {
@@ -190,14 +183,14 @@ export default function QuantityInput({
 							/>
 
 							<IconButton
-								disabled={currentQuantity >= maxQuantityBigInt}
+								disabled={currentQuantity >= maxQuantity}
 								onClick={handleIncrement}
 								size="xs"
 								icon={AddIcon}
 							/>
 						</div>
 					}
-					value={localQuantity}
+					value={localQuantity.toString()}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						handleChangeQuantity(e.target.value)
 					}

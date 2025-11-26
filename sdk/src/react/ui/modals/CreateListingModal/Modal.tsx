@@ -250,7 +250,7 @@ const Modal = observer(() => {
 							onInvalidQuantityChange={(invalid) =>
 								createListingModal$.invalidQuantity.set(invalid)
 							}
-							maxQuantity={balanceWithDecimals.toString()}
+							maxQuantity={BigInt(balanceWithDecimals)}
 							disabled={shouldHideListButton}
 						/>
 					)}

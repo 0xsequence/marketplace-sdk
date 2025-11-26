@@ -164,7 +164,7 @@ describe('useHandleTransfer', () => {
 				tokenId: erc1155State.tokenId,
 				chainId: erc1155State.chainId,
 				contractType: ContractType.ERC1155,
-				quantity: 5n,
+				quantity: '5',
 			});
 
 			expect(transferModalStore.send).toHaveBeenCalledWith({
@@ -375,7 +375,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
 					contractType: ContractType.ERC1155,
-					quantity: 1000000n,
+					quantity: '1000000',
 				}),
 			);
 		});

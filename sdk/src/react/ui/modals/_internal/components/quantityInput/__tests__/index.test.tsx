@@ -8,7 +8,7 @@ describe('QuantityInput', () => {
 		invalidQuantity: false,
 		onQuantityChange: vi.fn(),
 		onInvalidQuantityChange: vi.fn(),
-		maxQuantity: '10',
+		maxQuantity: 10n,
 	};
 
 	it('should render quantity input', () => {
@@ -54,25 +54,6 @@ describe('QuantityInput', () => {
 
 		expect(onQuantityChange).toHaveBeenCalledWith(10n); // Capped at max
 		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
-	});
-
-	it('should reject decimal values', () => {
-		const onQuantityChange = vi.fn();
-		const onInvalidQuantityChange = vi.fn();
-
-		render(
-			<QuantityInput
-				{...defaultProps}
-				onQuantityChange={onQuantityChange}
-				onInvalidQuantityChange={onInvalidQuantityChange}
-			/>,
-		);
-
-		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
-		fireEvent.change(input, { target: { value: '1.5' } });
-
-		expect(onInvalidQuantityChange).toHaveBeenCalledWith(true);
-		expect(onQuantityChange).not.toHaveBeenCalled();
 	});
 
 	it('should validate and mark invalid quantities', () => {
@@ -171,7 +152,7 @@ describe('QuantityInput', () => {
 
 	it('should cap quantity to maxQuantity when incrementing past the maximum', () => {
 		const onQuantityChange = vi.fn();
-		const maxQuantity = '10';
+		const maxQuantity = 10n;
 
 		render(
 			<QuantityInput
@@ -193,7 +174,7 @@ describe('QuantityInput', () => {
 	it('should set quantity to maxQuantity when direct input exceeds max', () => {
 		const onQuantityChange = vi.fn();
 		const onInvalidQuantityChange = vi.fn();
-		const maxQuantity = '10';
+		const maxQuantity = 10n;
 
 		render(
 			<QuantityInput

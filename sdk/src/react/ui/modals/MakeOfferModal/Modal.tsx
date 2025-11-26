@@ -265,7 +265,7 @@ const Modal = observer(() => {
 							onInvalidQuantityChange={(invalid) =>
 								makeOfferModal$.invalidQuantity.set(invalid)
 							}
-							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+							maxQuantity={BigInt(Number.MAX_SAFE_INTEGER)}
 							disabled={shouldHideOfferButton}
 						/>
 					)}
