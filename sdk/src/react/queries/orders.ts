@@ -4,7 +4,6 @@ import type { SdkConfig } from '../../types';
 import { getMarketplaceClient, type ValuesOptional } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
-
 export interface FetchOrdersParams {
 	chainId: number;
 	input: GetOrdersInput[];
@@ -15,9 +14,7 @@ export interface FetchOrdersParams {
 /**
  * Fetches orders from the marketplace API
  */
-export async function fetchOrders(
-	params: FetchOrdersParams,
-) {
+export async function fetchOrders(params: FetchOrdersParams) {
 	const { config, ...apiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
