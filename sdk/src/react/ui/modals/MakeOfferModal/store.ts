@@ -15,7 +15,7 @@ type MakeOfferState = BaseModalState & {
 	tokenId: bigint;
 	offerPrice: Price;
 	offerPriceChanged: boolean;
-	quantity: string;
+	quantity: bigint;
 	expiry: Date;
 	invalidQuantity: boolean;
 	collectionType?: CollectionType;
@@ -85,7 +85,7 @@ const initialState: MakeOfferState = {
 	callbacks: undefined,
 	offerPrice: { ...offerPrice },
 	offerPriceChanged: false,
-	quantity: '1',
+	quantity: 1n,
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,

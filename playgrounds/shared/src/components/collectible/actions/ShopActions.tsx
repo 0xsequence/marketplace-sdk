@@ -115,7 +115,6 @@ export function ShopActions({
 								currencyAddress:
 									(primarySaleItem?.currencyAddress as Address) ?? '0x',
 							},
-							quantityDecimals: 0,
 							// TODO: This is 0 for unlimited supply, fix it
 							quantityRemaining: primarySaleItem?.supply ?? 0n,
 						})
@@ -181,7 +180,6 @@ export function ShopActions({
 									currencyAddress:
 										(primarySaleItem?.currencyAddress as Address) ?? '0x',
 								},
-								quantityDecimals: 0,
 								quantityRemaining: primarySaleItem?.supply ?? 0n,
 							})
 						}

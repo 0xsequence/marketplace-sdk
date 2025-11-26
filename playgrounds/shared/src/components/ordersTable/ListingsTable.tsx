@@ -1,7 +1,6 @@
 'use client';
 import { Text } from '@0xsequence/design-system';
 import {
-	useCollectible,
 	useCountListingsForCollectible,
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
@@ -24,12 +23,6 @@ const ListingsTable = ({
 	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(initialPageSize);
-
-	const { data: collectible } = useCollectible({
-		chainId,
-		collectionAddress,
-		tokenId,
-	});
 
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
@@ -101,7 +94,6 @@ const ListingsTable = ({
 				isLoading={listingsLoading}
 				chainId={chainId}
 				tokenId={tokenId}
-				decimals={collectible?.decimals || 0}
 			/>
 		</div>
 	);

@@ -47,7 +47,6 @@ type ShopCardSpecificProps = {
 		| undefined;
 	saleStartsAt: string | undefined;
 	saleEndsAt: string | undefined;
-	quantityDecimals: number | undefined;
 	quantityInitial: bigint | undefined;
 	quantityRemaining: bigint | undefined;
 	unlimitedSupply?: boolean; // it's useful for 1155 tokens

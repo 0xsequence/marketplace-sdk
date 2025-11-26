@@ -118,7 +118,6 @@ const EnterWalletAddressView = () => {
 				{showQuantityInput && (
 					<TokenQuantityInput
 						balanceAmount={balanceAmount ? BigInt(balanceAmount) : undefined}
-						collection={collection}
 						isProcessingWithWaaS={isProcessingWithWaaS ?? false}
 					/>
 				)}

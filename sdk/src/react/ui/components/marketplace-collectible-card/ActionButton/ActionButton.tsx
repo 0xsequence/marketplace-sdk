@@ -27,7 +27,6 @@ type ActionButtonProps = {
 		amount: bigint;
 		currencyAddress: Address;
 	};
-	quantityDecimals?: number;
 	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
@@ -55,7 +54,6 @@ export function ActionButton({
 	salesContractAddress,
 	prioritizeOwnerActions,
 	salePrice,
-	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
@@ -98,7 +96,6 @@ export function ActionButton({
 					tokenId,
 					collectionAddress,
 					chainId,
-					quantityDecimals,
 					quantityRemaining,
 					unlimitedSupply,
 					hideQuantitySelector,
@@ -112,7 +109,6 @@ export function ActionButton({
 					tokenId,
 					collectionAddress,
 					chainId,
-					quantityDecimals,
 					quantityRemaining,
 					hideQuantitySelector,
 					labelOverride,

@@ -40,7 +40,6 @@ export interface ShopCardPresentationProps {
 	/** Action button configuration */
 	cardType: CardType;
 	salesContractAddress?: Address;
-	quantityDecimals?: number;
 	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
@@ -79,7 +78,6 @@ export function ShopCardPresentation({
 	shopState,
 	cardType,
 	salesContractAddress,
-	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
@@ -136,7 +134,6 @@ export function ShopCardPresentation({
 					cardType={cardType}
 					salesContractAddress={salesContractAddress}
 					salePrice={salePrice}
-					quantityDecimals={quantityDecimals}
 					quantityRemaining={quantityRemaining}
 					unlimitedSupply={unlimitedSupply}
 					hideQuantitySelector={hideQuantitySelector}

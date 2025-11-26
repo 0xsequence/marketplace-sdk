@@ -147,7 +147,6 @@ export function MarketCardPresentation({
 				<Card.Badge
 					type={collectionType}
 					balance={balance}
-					decimals={collectibleMetadata.decimals}
 					className={classNames?.cardBadge}
 				/>
 			</Card.Content>

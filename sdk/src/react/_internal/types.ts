@@ -46,7 +46,6 @@ export enum TransactionType {
 
 export interface BuyInput {
 	orderId: string;
-	collectableDecimals: number;
 	marketplace: MarketplaceKind;
 	quantity: string;
 }

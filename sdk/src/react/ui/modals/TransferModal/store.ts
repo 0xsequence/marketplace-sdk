@@ -12,7 +12,7 @@ export interface TransferModalState {
 	chainId: number;
 	collectionAddress: Hex;
 	tokenId: bigint;
-	quantity: string;
+	quantity: bigint;
 	receiverAddress: string;
 	transferIsProcessing: boolean;
 	view: TransferModalView;
@@ -26,7 +26,7 @@ const initialContext: TransferModalState = {
 	chainId: 0,
 	collectionAddress: '0x' as Hex,
 	tokenId: 0n,
-	quantity: '1',
+	quantity: 1n,
 	receiverAddress: '',
 	transferIsProcessing: false,
 	view: 'enterReceiverAddress',
@@ -53,7 +53,7 @@ export const transferModalStore = createStore({
 			context,
 			event: {
 				receiverAddress?: string;
-				quantity?: string;
+				quantity?: bigint;
 			},
 		) => ({
 			...context,

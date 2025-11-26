@@ -49,7 +49,6 @@ export const NonTradableInventoryCard = forwardRef<
 					<Card.Badge
 						type={collectionType as ContractType}
 						balance={balance}
-						decimals={collectibleMetadata.decimals}
 						className={classNames?.cardBadge}
 					/>
 				</Card.Content>

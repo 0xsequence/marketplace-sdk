@@ -8,16 +8,14 @@ import {
 	NumericInput,
 	SubtractIcon,
 } from '@0xsequence/design-system';
-import * as dn from 'dnum';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
-	quantity: string;
+	quantity: bigint;
 	invalidQuantity: boolean;
-	onQuantityChange: (quantity: string) => void;
+	onQuantityChange: (quantity: bigint) => void;
 	onInvalidQuantityChange: (invalid: boolean) => void;
-	decimals: number;
 	maxQuantity: string;
 	className?: string;
 	disabled?: boolean;
@@ -28,41 +26,33 @@ export default function QuantityInput({
 	invalidQuantity,
 	onQuantityChange,
 	onInvalidQuantityChange,
-	decimals,
 	maxQuantity,
 	className,
 	disabled,
 }: QuantityInputProps) {
-	const dnMaxQuantity = dn.from(maxQuantity, decimals);
-	const minIncrement = decimals > 0 ? `0.${'1'.padStart(decimals, '0')}` : '1';
-	const dnIncrement = dn.from(minIncrement, decimals);
-	const min = decimals > 0 ? minIncrement : '0';
-	const dnMin = dn.from(min, decimals);
+	const maxQuantityBigInt = useMemo(() => BigInt(maxQuantity), [maxQuantity]);
+	const minQuantity = 1n;
 
-	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
-	const [localQuantity, setLocalQuantity] = useState(quantity);
+	const [currentQuantity, setCurrentQuantity] = useState(quantity);
+	const [localQuantity, setLocalQuantity] = useState(quantity.toString());
 
 	// Sync internal state with external prop changes and validate initial quantity
 	useEffect(() => {
-		const dnInitialQuantity = dn.from(quantity, decimals);
-		const dnMaxQuantity = dn.from(maxQuantity, decimals);
-
 		// Check if initial quantity exceeds max quantity
-		if (dn.greaterThan(dnInitialQuantity, dnMaxQuantity)) {
+		if (quantity > maxQuantityBigInt) {
 			// If initial quantity is too high, set it to max quantity
-			const validQuantity = dn.toString(dnMaxQuantity, decimals);
-			setLocalQuantity(validQuantity);
-			setDnQuantity(dnMaxQuantity);
-			onQuantityChange(validQuantity);
+			setLocalQuantity(maxQuantity);
+			setCurrentQuantity(maxQuantityBigInt);
+			onQuantityChange(maxQuantityBigInt);
 			onInvalidQuantityChange(false);
 		} else {
-			setLocalQuantity(quantity);
-			setDnQuantity(dnInitialQuantity);
+			setLocalQuantity(quantity.toString());
+			setCurrentQuantity(quantity);
 		}
 	}, [
 		quantity,
-		decimals,
 		maxQuantity,
+		maxQuantityBigInt,
 		onQuantityChange,
 		onInvalidQuantityChange,
 	]);
@@ -76,8 +66,9 @@ export default function QuantityInput({
 	}) => {
 		setLocalQuantity(value);
 		if (isValid) {
-			onQuantityChange(value);
-			setDnQuantity(dn.from(value, decimals));
+			const bigIntValue = BigInt(value);
+			onQuantityChange(bigIntValue);
+			setCurrentQuantity(bigIntValue);
 			onInvalidQuantityChange(false);
 		} else {
 			onInvalidQuantityChange(true);
@@ -85,64 +76,87 @@ export default function QuantityInput({
 	};
 
 	function handleChangeQuantity(value: string) {
-		if (!value || Number.isNaN(Number(value)) || value.endsWith('.')) {
+		if (!value) {
+			setLocalQuantity('');
+			return;
+		}
+
+		if (value.includes('.')) {
 			setQuantity({
 				value,
 				isValid: false,
 			});
 			return;
 		}
-		const dnValue = dn.from(value, decimals);
-		const isBiggerThanMax = dn.greaterThan(dnValue, dnMaxQuantity);
-		const isLessThanMin = dn.lessThan(dnValue, dnMin);
 
-		if (isLessThanMin) {
+		try {
+			const bigIntValue = BigInt(value);
+			const isBiggerThanMax = bigIntValue > maxQuantityBigInt;
+			const isLessThanMin = bigIntValue < minQuantity;
+
+			if (isLessThanMin) {
+				setQuantity({
+					value, // Trying to enter value less than 1
+					isValid: false,
+				});
+				return;
+			}
+
+			if (isBiggerThanMax) {
+				setQuantity({
+					value: maxQuantity,
+					isValid: true, // Is valid is true because we override the value
+				});
+				return;
+			}
+
 			setQuantity({
-				value, // Trying to enter fraction starting with 0
+				value,
+				isValid: true,
+			});
+		} catch {
+			// Invalid BigInt value
+			setQuantity({
+				value,
 				isValid: false,
 			});
-			return;
 		}
-
-		if (isBiggerThanMax) {
-			setQuantity({
-				value: maxQuantity,
-				isValid: true, // Is vaid is true because we override the value
-			});
-			return;
-		}
-
-		setQuantity({
-			value: dn.toString(dnValue, decimals),
-			isValid: true,
-		});
 	}
 
 	function handleIncrement() {
-		const newValue = dn.add(dnQuantity, dnIncrement);
-		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
+		const newValue = currentQuantity + 1n;
+		if (newValue >= maxQuantityBigInt) {
 			setQuantity({
-				value: dn.toString(dnMaxQuantity, decimals),
+				value: maxQuantity,
 				isValid: true,
 			});
 		} else {
 			setQuantity({
-				value: dn.toString(newValue, decimals),
+				value: newValue.toString(),
 				isValid: true,
 			});
 		}
 	}
 
 	function handleDecrement() {
-		const newValue = dn.subtract(dnQuantity, dnIncrement);
-		if (dn.lessThanOrEqual(newValue, dnMin)) {
+		const newValue = currentQuantity - 1n;
+		if (newValue < minQuantity) {
 			setQuantity({
-				value: dn.toString(dnMin, decimals),
+				value: minQuantity.toString(),
 				isValid: true,
 			});
 		} else {
 			setQuantity({
-				value: dn.toString(newValue, decimals),
+				value: newValue.toString(),
+				isValid: true,
+			});
+		}
+	}
+
+	function handleBlur() {
+		if (!localQuantity) {
+			setQuantity({
+				value: minQuantity.toString(),
 				isValid: true,
 			});
 		}
@@ -165,18 +179,18 @@ export default function QuantityInput({
 					aria-label="Enter quantity"
 					className="h-9 w-full rounded pr-0 [&>div]:pr-2 [&>input]:text-xs"
 					name={'quantity'}
-					decimals={decimals || 0}
+					decimals={0}
 					controls={
 						<div className="flex items-center gap-1">
 							<IconButton
-								disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
+								disabled={currentQuantity <= minQuantity}
 								onClick={handleDecrement}
 								size="xs"
 								icon={SubtractIcon}
 							/>
 
 							<IconButton
-								disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
+								disabled={currentQuantity >= maxQuantityBigInt}
 								onClick={handleIncrement}
 								size="xs"
 								icon={AddIcon}
@@ -187,6 +201,7 @@ export default function QuantityInput({
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						handleChangeQuantity(e.target.value)
 					}
+					onBlur={handleBlur}
 					width={'full'}
 				/>
 			</Field>

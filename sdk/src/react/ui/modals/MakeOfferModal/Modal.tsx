@@ -3,13 +3,11 @@
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
-import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
 import {
-	useCollectibleDetail,
 	useCollectibleMarketLowestListing,
 	useCollectionDetail,
 	useMarketCurrencies,
@@ -59,11 +57,6 @@ const Modal = observer(() => {
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
 		useState(true);
-	const collectibleQuery = useCollectibleDetail({
-		chainId,
-		collectionAddress,
-		tokenId,
-	});
 	const { isWaaS } = useConnectorMetadata();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
@@ -96,7 +89,6 @@ const Modal = observer(() => {
 	});
 
 	const modalLoading =
-		collectibleQuery.isLoading ||
 		collectionQuery.isLoading ||
 		marketCurrenciesQuery.isLoading ||
 		royaltyQuery.isLoading;
@@ -110,10 +102,7 @@ const Modal = observer(() => {
 			contractType: collectionQuery.data?.type as ContractType,
 			offer: {
 				tokenId,
-				quantity: parseUnits(
-					makeOfferModal$.quantity.get(),
-					collectibleQuery.data?.decimals || 0,
-				),
+				quantity: makeOfferModal$.quantity.get(),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress: offerPrice.currency.contractAddress,
 				pricePerToken: offerPrice.amountRaw,
@@ -206,7 +195,6 @@ const Modal = observer(() => {
 
 	const queries = {
 		collection: collectionQuery,
-		collectible: collectibleQuery,
 		royalty: royaltyQuery,
 		lowestListing: lowestListingQuery,
 	};
@@ -231,7 +219,7 @@ const Modal = observer(() => {
 			}}
 			externalError={makeOfferError || erc20NotConfiguredError}
 		>
-			{({ collection, collectible, royalty, lowestListing }) => (
+			{({ collection, royalty, lowestListing }) => (
 				<>
 					<TokenPreview
 						collectionName={collection?.name}
@@ -277,7 +265,6 @@ const Modal = observer(() => {
 							onInvalidQuantityChange={(invalid) =>
 								makeOfferModal$.invalidQuantity.set(invalid)
 							}
-							decimals={collectible?.decimals || 0}
 							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 							disabled={shouldHideOfferButton}
 						/>

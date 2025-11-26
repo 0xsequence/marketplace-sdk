@@ -1,15 +1,12 @@
 'use client';
 
 import { observer, Show, use$ } from '@legendapp/state/react';
-import * as dnum from 'dnum';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
 	useCollectibleBalance,
-	useCollectibleDetail,
 	useCollectionDetail,
 	useMarketCurrencies,
 	useMarketplaceConfig,
@@ -73,11 +70,6 @@ const Modal = observer(() => {
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
-	const collectibleQuery = useCollectibleDetail({
-		chainId,
-		collectionAddress,
-		tokenId,
-	});
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
 		collectionAddress,
@@ -94,18 +86,10 @@ const Modal = observer(() => {
 		userAddress: address ?? undefined,
 	});
 
-	const modalLoading =
-		collectibleQuery.isLoading ||
-		collectionQuery.isLoading ||
-		currenciesQuery.isLoading;
+	const modalLoading = collectionQuery.isLoading || currenciesQuery.isLoading;
 
 	const balanceWithDecimals = collectibleBalanceQuery.data?.balance
-		? dnum.toNumber(
-				dnum.from([
-					BigInt(collectibleBalanceQuery.data?.balance ?? 0),
-					collectibleQuery.data?.decimals || 0,
-				]),
-			)
+		? Number(collectibleBalanceQuery.data.balance)
 		: 0;
 
 	const {
@@ -119,10 +103,7 @@ const Modal = observer(() => {
 			contractType: collectionQuery.data?.type as ContractType,
 			listing: {
 				tokenId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectibleQuery.data?.decimals || 0,
-				),
+				quantity: createListingModal$.quantity.get(),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
 				pricePerToken: listingPrice.amountRaw,
@@ -206,7 +187,6 @@ const Modal = observer(() => {
 	};
 
 	const queries = {
-		collectible: collectibleQuery,
 		collection: collectionQuery,
 		collectibleBalance: collectibleBalanceQuery,
 	};
@@ -227,7 +207,7 @@ const Modal = observer(() => {
 			queries={queries}
 			externalError={createListingError || erc20NotConfiguredError}
 		>
-			{({ collectible, collection, collectibleBalance }) => (
+			{({ collection, collectibleBalance }) => (
 				<>
 					<TokenPreview
 						collectionName={collection?.name}
@@ -270,7 +250,6 @@ const Modal = observer(() => {
 							onInvalidQuantityChange={(invalid) =>
 								createListingModal$.invalidQuantity.set(invalid)
 							}
-							decimals={collectible?.decimals || 0}
 							maxQuantity={balanceWithDecimals.toString()}
 							disabled={shouldHideListButton}
 						/>
