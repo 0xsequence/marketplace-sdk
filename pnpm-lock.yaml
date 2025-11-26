@@ -148,9 +148,6 @@ importers:
       msw:
         specifier: ^2.12.1
         version: 2.12.1(@types/node@24.10.0)(typescript@5.9.3)
-      tsdown:
-        specifier: ^0.14.2
-        version: 0.14.2(oxc-resolver@11.13.1)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

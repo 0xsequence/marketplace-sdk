@@ -2,7 +2,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "pnpm run --r --filter \"./sdk\" build",
+		"build": "pnpm run --filter \"./api\" build && pnpm run --filter \"./sdk\" build",
 		"deps": "pnpx taze -r",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
