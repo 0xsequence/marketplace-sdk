@@ -67,6 +67,7 @@ export type {
 	GetCollectibleLowestListingRequest,
 	GetCollectibleLowestListingResponse,
 	GetCountOfListingsForCollectibleResponse,
+	GetOrdersInput,
 	GetCountOfOffersForCollectibleResponse,
 	GetCountOfPrimarySaleItemsResponse,
 	ListCollectibleActivitiesResponse,
