@@ -27,14 +27,14 @@ const Modal = () => {
 	}
 
 	const showApproveButton =
-		ctx.steps.approve && ctx.steps.approve.status !== 'complete';
+		ctx.steps.approval && ctx.steps.approval.status !== 'complete';
 
 	const approveAction = showApproveButton
 		? {
 				label: 'Approve',
-				onClick: ctx.steps.approve?.execute || (() => {}),
-				loading: ctx.steps.approve?.isPending,
-				disabled: ctx.steps.approve?.isDisabled,
+				onClick: ctx.steps.approval?.execute || (() => {}),
+				loading: ctx.steps.approval?.isPending,
+				disabled: ctx.steps.approval?.isDisabled,
 				variant: 'ghost' as const,
 				testid: 'make-offer-approve-button',
 			}
@@ -100,7 +100,7 @@ const Modal = () => {
 									includeNativeCurrency={false}
 									orderbookKind={ctx.item.orderbookKind}
 									modalType="offer"
-									disabled={ctx.isPending}
+									disabled={ctx.flow.isPending}
 								/>
 							)}
 
@@ -114,7 +114,7 @@ const Modal = () => {
 									onInvalidQuantityChange={() => {}}
 									decimals={collectible.decimals || 0}
 									maxQuantity={String(Number.MAX_SAFE_INTEGER)}
-									disabled={ctx.isPending}
+									disabled={ctx.flow.isPending}
 								/>
 							)}
 
@@ -143,7 +143,7 @@ const Modal = () => {
 									);
 									ctx.form.expiry.update(days);
 								}}
-								disabled={ctx.isPending}
+								disabled={ctx.flow.isPending}
 							/>
 
 							{ctx.steps.fee?.isSelecting && (

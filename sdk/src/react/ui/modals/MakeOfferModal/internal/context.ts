@@ -41,8 +41,8 @@ import {
 	executeNextStep,
 } from '../../_internal/helpers/flow-state';
 import {
-	createApproveStepGuard,
-	createOfferStepGuard,
+	createApprovalGuard,
+	createFinalTransactionGuard,
 } from '../../_internal/helpers/step-guards';
 import type {
 	ApprovalStep,
@@ -371,8 +371,8 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 	}, [isWaaS, waas, feeIsSponsored]);
 
 	// Approve step (conditional)
-	const approveStepGuard = useMemo(() => {
-		return createApproveStepGuard({
+	const approvalGuard = useMemo(() => {
+		return createApprovalGuard({
 			isFormValid: formIsValid,
 			txReady: !!offerSteps.data?.approveStep,
 			walletConnected: !!address,
@@ -382,7 +382,7 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 	const approvalStep: ApprovalStep | undefined = useMemo(() => {
 		if (!offerSteps.data?.approveStep) return undefined;
 
-		const guard = approveStepGuard();
+		const guard = approvalGuard();
 
 		return {
 			status: approve.isSuccess
@@ -403,7 +403,7 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 					? { type: 'transaction', hash: approve.data.hash }
 					: null,
 			execute: async () => {
-				const result = approveStepGuard();
+				const result = approvalGuard();
 				if (!result.canProceed) {
 					throw new Error(result.reason);
 				}
@@ -417,12 +417,12 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 		approve.isPending,
 		approve.error,
 		approve.data,
-		approveStepGuard,
+		approvalGuard,
 		approve,
 	]);
 
-	const offerStepGuard = useMemo(() => {
-		return createOfferStepGuard({
+	const offerGuard = useMemo(() => {
+		return createFinalTransactionGuard({
 			isFormValid: formIsValid,
 			txReady: !!offerSteps.data?.offerStep,
 			walletConnected: !!address,
@@ -432,7 +432,7 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 	}, [formIsValid, address, approvalStep, offerSteps.data?.offerStep]);
 
 	const offerStep: TransactionStep = useMemo(() => {
-		const guard = offerStepGuard();
+		const guard = offerGuard();
 
 		return {
 			status: makeOffer.isSuccess
@@ -455,7 +455,7 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 						? { type: 'signature', orderId: makeOffer.data.orderId ?? '' }
 						: null,
 			execute: async () => {
-				const result = offerStepGuard();
+				const result = offerGuard();
 				if (!result.canProceed) {
 					throw new Error(result.reason);
 				}
@@ -467,7 +467,7 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 		makeOffer.isPending,
 		makeOffer.error,
 		makeOffer.data,
-		offerStepGuard,
+		offerGuard,
 		makeOffer,
 	]);
 
