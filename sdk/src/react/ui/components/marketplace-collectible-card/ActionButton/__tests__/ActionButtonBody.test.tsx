@@ -14,14 +14,9 @@ vi.mock('../store', () => ({
 	})),
 }));
 
-vi.mock('../../../../../hooks', async (importOriginal) => {
-	const actual =
-		(await importOriginal()) as typeof import('../../../../../hooks');
-	return {
-		...actual,
-		useOpenConnectModal: vi.fn(),
-	};
-});
+vi.mock('../../../../../hooks/ui/useOpenConnectModal', () => ({
+	useOpenConnectModal: vi.fn(),
+}));
 
 vi.mock('wagmi', async () => {
 	const actual = await vi.importActual('wagmi');
@@ -61,7 +56,7 @@ describe('ActionButtonBody', () => {
 			status: 'connected',
 		});
 
-		vi.spyOn(hooksModule, 'useOpenConnectModal').mockReturnValue({
+		vi.mocked(hooksModule.useOpenConnectModal).mockReturnValue({
 			openConnectModal: mockOpenConnectModal,
 		});
 

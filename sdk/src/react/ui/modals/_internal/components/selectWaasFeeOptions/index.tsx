@@ -32,11 +32,14 @@ const SelectWaasFeeOptions = ({
 		insufficientBalance,
 		feeOptionsConfirmed,
 		handleConfirmFeeOption,
+		rejectPendingFeeOption,
 	} = useWaasFeeOptionManager(chainId);
 
-	console.log('pendingFeeOptionConfirmation', pendingFeeOptionConfirmation);
-
 	const handleCancelFeeOption = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
 		hide();
 		onCancel?.();
 	};

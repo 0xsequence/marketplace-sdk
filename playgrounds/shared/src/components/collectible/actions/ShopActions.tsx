@@ -1,4 +1,4 @@
-import { ButtonPreset, Skeleton, Text } from '@0xsequence/design-system';
+import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import { ContractType, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
@@ -92,12 +92,11 @@ export function ShopActions({
 					Unlimited supply
 				</Text>
 
-				<ButtonPreset
+				<Button
 					className="rounded-xl [&>div]:justify-center"
 					variant="primary"
 					shape="square"
 					size="lg"
-					label="Buy now"
 					onClick={() =>
 						showBuyModal({
 							chainId: Number(chainId),
@@ -121,7 +120,9 @@ export function ShopActions({
 							quantityRemaining: primarySaleItem?.supply ?? 0n,
 						})
 					}
-				/>
+				>
+					Buy now
+				</Button>
 			</div>
 		);
 	}
@@ -157,12 +158,11 @@ export function ShopActions({
 				</Text>
 
 				{contractType === ContractType.ERC1155 && (
-					<ButtonPreset
+					<Button
 						className="rounded-xl [&>div]:justify-center"
 						variant="primary"
 						shape="square"
 						size="lg"
-						label="Buy now"
 						onClick={() =>
 							showBuyModal({
 								chainId: Number(chainId),
@@ -185,7 +185,9 @@ export function ShopActions({
 								quantityRemaining: primarySaleItem?.supply ?? 0n,
 							})
 						}
-					/>
+					>
+						Buy now
+					</Button>
 				)}
 			</div>
 		);

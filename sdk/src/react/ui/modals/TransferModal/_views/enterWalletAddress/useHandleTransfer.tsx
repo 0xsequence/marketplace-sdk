@@ -1,11 +1,11 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Address, Hex } from 'viem';
-import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 
 import { TransactionType } from '../../../../../_internal/types';
-import { useCollectionDetail, useTransferTokens } from '../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../hooks/config/useConnectorMetadata';
+import { useCollectionDetail, useTransferTokens } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModalStore, useModalState } from '../../store';
 

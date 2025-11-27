@@ -1,10 +1,13 @@
-import { MarketplaceMocks } from '@0xsequence/api-client';
+import {
+	MarketplaceKind,
+	MarketplaceMocks,
+	StepType,
+	WalletKind,
+} from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as types from '../../../types';
-import { StepType, WalletKind } from '../../../types';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
@@ -86,7 +89,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -134,7 +137,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation
 		const cancelPromise = result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// Wait for immediate state updates
@@ -164,7 +167,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -214,7 +217,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -272,7 +275,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation and wait for it to complete
 		await result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// After cancellation is complete, verify the success callback was called

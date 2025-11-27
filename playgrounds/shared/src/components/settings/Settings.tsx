@@ -160,7 +160,7 @@ export function Settings({ collectionAddress }: SettingsProps) {
 						<Field>
 							<FieldLabel>Orderbook</FieldLabel>
 
-							<Select
+							<Select.Helper
 								name="orderbook"
 								defaultValue="default"
 								value={orderbookKind ? orderbookKind : 'default'}
@@ -339,7 +339,7 @@ function ApiServiceOverride({
 			</div>
 			{isOverridden && (
 				<div className="mt-2 flex gap-2">
-					<Select
+					<Select.Helper
 						name={`${service}-env`}
 						value={env}
 						options={ENV_OPTIONS}
@@ -400,7 +400,7 @@ function BulkApiOverride({ currentConfigs, onUpdate }: BulkApiOverrideProps) {
 			</div>
 
 			<div className="flex gap-2">
-				<Select
+				<Select.Helper
 					name="bulk-env"
 					value={env}
 					options={ENV_OPTIONS}

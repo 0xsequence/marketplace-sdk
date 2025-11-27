@@ -33,7 +33,12 @@ export const useGenerateSellTransaction = (
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
-		onSuccess: params.onSuccess,
+		onSuccess: (data) => {
+			// Only pass the data (steps) to the user's onSuccess callback to maintain backwards compatibility
+			if (params.onSuccess) {
+				params.onSuccess(data);
+			}
+		},
 		mutationFn: (
 			args: Omit<GenerateSellTransactionRequestWithNumberChainId, 'chainId'>,
 		) => generateSellTransaction({ ...args, chainId: params.chainId }, config),

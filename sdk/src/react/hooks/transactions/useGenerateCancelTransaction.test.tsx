@@ -1,4 +1,8 @@
-import { MarketplaceMocks } from '@0xsequence/api-client';
+import {
+	MarketplaceKind,
+	MarketplaceMocks,
+	StepType,
+} from '@0xsequence/api-client';
 
 const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
 
@@ -6,7 +10,6 @@ import { act, renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
-import { MarketplaceKind, StepType } from '../../../types';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
 const defaultArgs = {
@@ -124,9 +127,6 @@ describe('useGenerateCancelTransaction', () => {
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
 				createMockSteps([StepType.cancel]),
-				defaultArgs,
-				undefined,
-				expect.any(Object), // React Query context
 			);
 		});
 	});

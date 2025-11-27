@@ -1,6 +1,8 @@
 import {
+	ContractType,
 	IndexerMocks,
 	MarketplaceMocks,
+	OrderbookKind,
 	PropertyType,
 } from '@0xsequence/api-client';
 
@@ -19,8 +21,8 @@ describe('useMarketCardData', () => {
 	const defaultProps = {
 		collectionAddress: zeroAddress,
 		chainId: 1,
-		orderbookKind: types.OrderbookKind.sequence_marketplace_v2,
-		collectionType: types.ContractType.ERC721,
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType: ContractType.ERC721,
 	};
 
 	beforeEach(() => {

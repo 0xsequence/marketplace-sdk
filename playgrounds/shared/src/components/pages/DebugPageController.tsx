@@ -1,5 +1,5 @@
 import {
-	ButtonPreset,
+	Button,
 	Card,
 	Field,
 	FieldLabel,
@@ -107,7 +107,7 @@ export function DebugPageController() {
 
 					<Field>
 						<FieldLabel>Select ABI</FieldLabel>
-						<Select
+						<Select.Helper
 							value={selectedAbi}
 							name="abi"
 							onValueChange={(value) =>
@@ -136,12 +136,13 @@ export function DebugPageController() {
 							/>
 						</Field>
 					</div>
-					<ButtonPreset
+					<Button
 						variant="primary"
 						onClick={handleDecodeData}
-						label="Decode Data"
 						disabled={!inputData}
-					/>
+					>
+						Decode Data
+					</Button>
 				</div>
 
 				<div className="flex items-end gap-3">
@@ -156,12 +157,13 @@ export function DebugPageController() {
 							/>
 						</Field>
 					</div>
-					<ButtonPreset
+					<Button
 						variant="primary"
 						onClick={handleDecodeError}
-						label="Decode Error"
 						disabled={!errorData}
-					/>
+					>
+						Decode Error
+					</Button>
 				</div>
 				<CheckApproval selectedAbi={selectedAbi} />
 			</Card>
@@ -175,11 +177,9 @@ export function DebugPageController() {
 			</Card>
 			<Card>
 				<Text variant="large">Switch Chain</Text>
-				<ButtonPreset
-					variant="primary"
-					label="Open Chain Selector"
-					onClick={() => setIsChainModalOpen(true)}
-				/>
+				<Button variant="primary" onClick={() => setIsChainModalOpen(true)}>
+					Open Chain Selector
+				</Button>
 				<ChainSwitchModal
 					isOpen={isChainModalOpen}
 					onClose={() => setIsChainModalOpen(false)}
@@ -214,9 +214,8 @@ export function DebugPageController() {
 						<FieldLabel>Value</FieldLabel>
 						<TextInput name="simulateValue" placeholder="Enter value in wei" />
 					</Field>
-					<ButtonPreset
+					<Button
 						variant="primary"
-						label="Simulate Call"
 						onClick={async () => {
 							try {
 								const chainId = (
@@ -263,7 +262,9 @@ export function DebugPageController() {
 								console.error('Simulation error:', error);
 							}
 						}}
-					/>
+					>
+						Simulate Call
+					</Button>
 				</div>
 			</Card>
 		</div>
@@ -396,13 +397,14 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 							/>
 						</Field>
 					</div>
-					<ButtonPreset
+					<Button
 						onClick={() =>
 							connectedWalletAddress && setWalletAddress(connectedWalletAddress)
 						}
-						label="Use connected Wallet"
 						disabled={!connectedWalletAddress}
-					/>
+					>
+						Use connected Wallet
+					</Button>
 				</div>
 				<Field>
 					<FieldLabel>Spender Address</FieldLabel>
@@ -414,10 +416,9 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					/>
 				</Field>
 				<div className="flex gap-3">
-					<ButtonPreset
+					<Button
 						variant="primary"
 						onClick={handleCheck}
-						label="Check Approval"
 						disabled={
 							isLoading ||
 							!contractAddress ||
@@ -425,12 +426,13 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 							!spenderAddress ||
 							!chainId
 						}
-					/>
+					>
+						Check Approval
+					</Button>
 					{selectedAbi === 'ERC20' && (
-						<ButtonPreset
+						<Button
 							variant="destructive"
 							onClick={handleRevokeApproval}
-							label="Set Approval to 0"
 							disabled={
 								isRevoking ||
 								isPending ||
@@ -438,7 +440,9 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 								!spenderAddress ||
 								!chainId
 							}
-						/>
+						>
+							Set Approval to 0
+						</Button>
 					)}
 				</div>
 				{result && (
@@ -469,16 +473,17 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 		<Modal onClose={onClose} size="sm">
 			<div className="flex flex-col gap-2 p-10">
 				{chains.map((chainInfo: { id: number; name: string }) => (
-					<ButtonPreset
+					<Button
 						className="w-full"
 						key={chainInfo.id}
 						disabled={chain?.id === chainInfo.id}
-						label={chainInfo.name}
 						onClick={async () => {
 							await switchChainAsync({ chainId: chainInfo.id });
 							onClose();
 						}}
-					/>
+					>
+						{chainInfo.name}
+					</Button>
 				))}
 			</div>
 		</Modal>

@@ -1,3 +1,4 @@
+import { ContractType, OrderbookKind } from '@0xsequence/api-client';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
@@ -19,8 +20,8 @@ describe('useMarketCardDataPaged', () => {
 	const defaultProps = {
 		collectionAddress: zeroAddress,
 		chainId: 1,
-		orderbookKind: types.OrderbookKind.sequence_marketplace_v2,
-		collectionType: types.ContractType.ERC721,
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType: ContractType.ERC721,
 		page: 1,
 		pageSize: 10,
 	};

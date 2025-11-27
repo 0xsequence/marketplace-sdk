@@ -1,16 +1,13 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContractType } from '../../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
 import type { CollectionType } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
-import {
-	useCollectionDetail,
-	useTransferTokens,
-} from '../../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../../hooks/config/useConnectorMetadata';
+import { useCollectionDetail, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
 import {
 	type TransferModalState,
@@ -22,9 +19,9 @@ import useHandleTransfer from '../useHandleTransfer';
 // Mock dependencies
 vi.mock('@0xsequence/connect');
 vi.mock('../../../../../../hooks/config/useConnectorMetadata');
-vi.mock('../../../../../../hooks', async (importOriginal) => {
+vi.mock('../../../../../hooks', async (importOriginal) => {
 	const actual =
-		(await importOriginal()) as typeof import('../../../../../../hooks');
+		(await importOriginal()) as typeof import('../../../../../hooks');
 	return {
 		...actual,
 		useCollectionDetail: vi.fn(),

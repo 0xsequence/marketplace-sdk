@@ -5,7 +5,7 @@ import {
 	isTransactionStep,
 	type Step,
 	StepType,
-} from '../../../types';
+} from '../../_internal';
 import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
 

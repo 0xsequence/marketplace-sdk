@@ -38,7 +38,8 @@ const WaasFeeOptionsSelect = ({
 	if (options.length === 0 || !selectedFeeOption?.token) return null;
 
 	return (
-		<Select
+		<Select.Helper
+			id="fee-option"
 			name="fee-option"
 			options={feeOptions.map((option) => ({
 				label: option.content,
