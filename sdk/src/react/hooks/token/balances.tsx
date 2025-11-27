@@ -25,5 +25,5 @@ import { useConfig } from '../config/useConfig';
 export function useTokenBalances(args: UseListBalancesArgs) {
 	const config = useConfig();
 
-	return useInfiniteQuery(listBalancesOptions({ ...args }, config));
+	return useInfiniteQuery(listBalancesOptions({ ...args, config }));
 }

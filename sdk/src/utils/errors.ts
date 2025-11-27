@@ -52,12 +52,12 @@ export class ChainMismatchError extends SequenceMarketplaceError {
 }
 
 export class InvalidContractTypeError extends SequenceMarketplaceError {
-	readonly contractAddress: string;
+	readonly contractAddress: `0x${string}`;
 	readonly expectedType: string;
 	readonly actualType?: string;
 
 	constructor(
-		contractAddress: string,
+		contractAddress: `0x${string}`,
 		expectedType: string,
 		actualType?: string,
 	) {
@@ -101,10 +101,10 @@ export class TransactionStepNotFoundError extends SequenceMarketplaceError {
 }
 
 export class ApprovalStepMissingError extends SequenceMarketplaceError {
-	readonly tokenAddress: string;
-	readonly spenderAddress: string;
+	readonly tokenAddress: `0x${string}`;
+	readonly spenderAddress?: `0x${string}`;
 
-	constructor(tokenAddress: string, spenderAddress?: string) {
+	constructor(tokenAddress: `0x${string}`, spenderAddress?: `0x${string}`) {
 		super(
 			`Approval step missing for token ${tokenAddress}${
 				spenderAddress ? ` to spender ${spenderAddress}` : ''
@@ -112,7 +112,7 @@ export class ApprovalStepMissingError extends SequenceMarketplaceError {
 		);
 		this.name = 'ApprovalStepMissingError';
 		this.tokenAddress = tokenAddress;
-		this.spenderAddress = spenderAddress || '';
+		this.spenderAddress = spenderAddress;
 		Object.setPrototypeOf(this, ApprovalStepMissingError.prototype);
 	}
 }

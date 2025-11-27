@@ -1,13 +1,13 @@
+import { BuilderMocks, MarketplaceMocks } from '@0xsequence/api-client';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { renderHook, server, waitFor } from '../../../../test';
 import { USDC_ADDRESS } from '../../../../test/const';
-import { mockConfig } from '../../_internal/api/__mocks__/builder.msw';
-import {
-	mockCurrencies,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockConfig } = BuilderMocks;
+const { mockCurrencies, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { useCurrencyList } from './list';
 
 describe('useCurrencyList', () => {
@@ -45,7 +45,9 @@ describe('useCurrencyList', () => {
 		});
 
 		expect(result.current.data).toEqual(
-			mockCurrencies.filter((currency) => !currency.nativeCurrency),
+			mockCurrencies.filter(
+				(currency: { nativeCurrency?: boolean }) => !currency.nativeCurrency,
+			),
 		);
 	});
 
@@ -173,7 +175,8 @@ describe('useCurrencyList', () => {
 		const args = {
 			...defaultArgs,
 			includeNativeCurrency: false,
-			collectionAddress: '0x1234567890123456789012345678901234567890',
+			collectionAddress:
+				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 		} satisfies Parameters<typeof useCurrencyList>[0];
 
 		const { result } = renderHook(() => useCurrencyList(args));

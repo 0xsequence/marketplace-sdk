@@ -14,13 +14,13 @@ vi.mock('../hooks/useGetTokenApproval', () => ({
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 // Mock currency object with all required properties
 const mockCurrency = {
 	chainId: 1,
-	contractAddress: '0x123',
+	contractAddress: '0x123' as `0x${string}`,
 	status: CurrencyStatus.active,
 	name: 'Test Token',
 	symbol: 'TEST',
@@ -78,8 +78,8 @@ describe('MakeOfferModal', () => {
 					id: StepType.tokenApproval,
 					data: '0x',
 					to: '0x0000000000000000000000000000000000000000',
-					value: '0',
-					price: '0',
+					value: 0n,
+					price: 0n,
 				},
 			}, // Approval needed
 			isLoading: false,
@@ -125,8 +125,8 @@ describe('MakeOfferModal', () => {
 						id: StepType.tokenApproval,
 						data: '0x',
 						to: '0x0000000000000000000000000000000000000000',
-						value: '0',
-						price: '0',
+						value: 0n,
+						price: 0n,
 					},
 				}, // Approval needed
 				isLoading: false,
@@ -137,7 +137,7 @@ describe('MakeOfferModal', () => {
 
 			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
 			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
+				amountRaw: 1000000000000000000n,
 				currency: mockCurrency,
 			});
 			makeOfferModal$.offerPriceChanged.set(true);
@@ -166,7 +166,7 @@ describe('MakeOfferModal', () => {
 
 			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
 			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
+				amountRaw: 1000000000000000000n,
 				currency: mockCurrency,
 			});
 			makeOfferModal$.offerPriceChanged.set(true);

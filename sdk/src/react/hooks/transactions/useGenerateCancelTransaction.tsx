@@ -1,10 +1,10 @@
+import type { Step } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import type * as types from '../../../types';
 import {
 	type GenerateCancelTransactionRequest,
 	getMarketplaceClient,
 } from '../../_internal';
-import type { Step } from '../../_internal/api/marketplace.gen';
 import { useConfig } from '../config/useConfig';
 
 // Create a type that uses number for chainId
@@ -23,10 +23,10 @@ interface UseGenerateCancelTransactionRequest {
 export const generateCancelTransaction = async (
 	args: GenerateCancelTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
-		.generateCancelTransaction({ ...args, chainId: String(args.chainId) })
+		.generateCancelTransaction(args)
 		.then((data) => data.steps);
 };
 

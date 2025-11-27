@@ -4,6 +4,7 @@ import { Button } from '@0xsequence/design-system';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { Navigation, ROUTES, Settings } from 'shared-components';
+import type { Address } from 'viem';
 
 export function NextNavigation() {
 	const pathname = usePathname();
@@ -13,7 +14,7 @@ export function NextNavigation() {
 
 	return (
 		<>
-			<Settings collectionAddress={collectionAddress as `0x${string}`} />
+			<Settings collectionAddress={collectionAddress as Address} />
 			<Navigation
 				routes={ROUTES}
 				pathname={pathname}

@@ -1,81 +1,67 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Order } from '@0xsequence/api-client';
 import {
-	type GetCollectibleHighestOfferRequest,
+	buildQueryOptions,
+	type GetHighestPriceOfferForCollectibleRequest,
 	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchHighestOfferParams
-	extends Omit<
-		GetCollectibleHighestOfferRequest,
-		'contractAddress' | 'chainId'
-	> {
-	collectionAddress: string;
-	chainId: number;
-	config: SdkConfig;
-}
+export type HighestOfferQueryOptions =
+	SdkQueryParams<GetHighestPriceOfferForCollectibleRequest>;
 
 /**
  * Fetches the highest offer for a collectible from the marketplace API
  */
-export async function fetchHighestOffer(params: FetchHighestOfferParams) {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
-
+export async function fetchHighestOffer(
+	params: WithRequired<
+		HighestOfferQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
+): Promise<Order | undefined> {
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const apiArgs: GetCollectibleHighestOfferRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		...additionalApiParams,
-	};
-
 	const result =
-		await marketplaceClient.getHighestPriceOfferForCollectible(apiArgs);
-	return result.order ?? null;
+		await marketplaceClient.getHighestPriceOfferForCollectible(apiParams);
+	return result.order;
 }
-
-export type HighestOfferQueryOptions =
-	ValuesOptional<FetchHighestOfferParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
-		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCollectibleHighestOfferRequest>;
-
-	return ['collectible', 'market-highest-offer', apiArgs] as const;
+	return [
+		'collectible',
+		'market-highest-offer',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			filter: params.filter,
+		},
+	] as const;
 }
 
-export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+export function highestOfferQueryOptions(
+	params: HighestOfferQueryOptions,
+): ReturnType<
+	typeof buildQueryOptions<
+		WithRequired<
+			HighestOfferQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>,
+		Order | undefined,
+		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
+	>
+> {
+	return buildQueryOptions(
+		{
+			getQueryKey: getHighestOfferQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchHighestOffer,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getHighestOfferQueryKey(params),
-		queryFn: () =>
-			fetchHighestOffer({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

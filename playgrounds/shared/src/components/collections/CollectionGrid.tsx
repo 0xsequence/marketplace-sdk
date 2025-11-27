@@ -1,4 +1,4 @@
-import type { ContractInfo } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
 import { CollectionCard } from './CollectionCard';
 
 export interface CollectionGridProps {

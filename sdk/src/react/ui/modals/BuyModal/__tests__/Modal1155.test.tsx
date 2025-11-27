@@ -19,29 +19,31 @@ const analyticsFn = {
 const testOrder: Order = {
 	chainId: 1,
 	orderId: '1',
-	collectionContractAddress: '0x1234567890123456789012345678901234567890',
+	collectionContractAddress:
+		'0x1234567890123456789012345678901234567890' as `0x${string}`,
 	createdAt: '2023-01-01T00:00:00Z',
-	createdBy: '0x123',
+	createdBy: '0x123' as `0x${string}`,
 	feeBps: 250,
 	feeBreakdown: [],
 	marketplace: MarketplaceKind.sequence_marketplace_v2,
-	priceAmount: '1000000000000000000',
+	priceAmount: 1000000000000000000n,
 	priceAmountFormatted: '1',
-	priceAmountNet: '975000000000000000',
+	priceAmountNet: 975000000000000000n,
 	side: OrderSide.listing,
 	status: OrderStatus.active,
 	originName: '',
 	slug: 'test-order',
 	priceAmountNetFormatted: '',
-	priceCurrencyAddress: '0x0000000000000000000000000000000000000000',
+	priceCurrencyAddress:
+		'0x0000000000000000000000000000000000000000' as `0x${string}`,
 	priceDecimals: 0,
 	priceUSD: 0,
 	priceUSDFormatted: '',
-	quantityInitial: '10',
+	quantityInitial: 10n,
 	quantityInitialFormatted: '10',
-	quantityRemaining: '10',
+	quantityRemaining: 10n,
 	quantityRemainingFormatted: '10',
-	quantityAvailable: '10',
+	quantityAvailable: 10n,
 	quantityAvailableFormatted: '10',
 	quantityDecimals: 0,
 	validFrom: '',
@@ -60,7 +62,7 @@ describe('ERC1155QuantityModal', () => {
 				orderId: '1',
 				collectionAddress:
 					'0x1234567890123456789012345678901234567890' as `0x${string}`,
-				collectibleId: '1',
+				tokenId: 1n,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 				cardType: 'market',
 			},
@@ -80,7 +82,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -124,7 +126,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -167,7 +169,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 
@@ -215,7 +217,7 @@ describe('ERC1155QuantityModal', () => {
 				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10n}
 			/>,
 		);
 

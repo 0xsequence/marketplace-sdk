@@ -23,7 +23,7 @@ interface ERC721SaleControlsProps {
 	tokenIds: string[];
 	isLoading: boolean;
 	salePrice?: {
-		amount?: string;
+		amount?: bigint;
 		currencyAddress?: Address;
 	};
 }
@@ -66,14 +66,14 @@ export function ERC721SaleControls({
 			salesContractAddress,
 			cardType: 'shop',
 			quantityDecimals: 0,
-			quantityRemaining: quantityRemaining ? Number(quantityRemaining) : 0,
+			quantityRemaining: quantityRemaining ?? 0n,
 			items: [
 				{
-					quantity: quantity.toString(),
+					quantity: BigInt(quantity),
 				},
 			],
 			salePrice: {
-				amount: salePrice?.amount || '0',
+				amount: salePrice?.amount || 0n,
 				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
 			},
 		});

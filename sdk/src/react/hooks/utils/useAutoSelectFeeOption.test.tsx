@@ -1,14 +1,14 @@
+import { IndexerMocks } from '@0xsequence/api-client';
+
+const { mockIndexerEndpoint, mockIndexerHandler, mockTokenBalance } =
+	IndexerMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
-import {
-	mockIndexerEndpoint,
-	mockIndexerHandler,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
 import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
 
 describe('useAutoSelectFeeOption', () => {

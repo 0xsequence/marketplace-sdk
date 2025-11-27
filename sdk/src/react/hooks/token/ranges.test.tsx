@@ -1,8 +1,11 @@
+import { IndexerMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
+
+const { mockIndexerEndpoint } = IndexerMocks;
+
 import type { UseTokenRangesParams } from './ranges';
 import { useTokenRanges } from './ranges';
 
@@ -25,7 +28,7 @@ describe('useTokenRanges', () => {
 		});
 
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.tokenIDRanges).toBeDefined();
+		expect(result.current.data?.ranges).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
 

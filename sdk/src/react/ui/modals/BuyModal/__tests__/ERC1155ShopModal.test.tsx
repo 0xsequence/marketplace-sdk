@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/api-client';
 import { render, screen, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import type { Address } from 'viem';
@@ -34,13 +34,13 @@ const mockCollection = {
 };
 
 const mockShopData = {
-	salesContractAddress: '0x456',
+	salesContractAddress: '0x4560000000000000000000000000000000000000' as Address,
 	items: [
-		{ tokenId: '1', quantity: '2' },
-		{ tokenId: '2', quantity: '1' },
+		{ tokenId: 1n, quantity: 2n },
+		{ tokenId: 2n, quantity: 1n },
 	],
 	salePrice: {
-		amount: '1000000000000000000',
+		amount: 1000000000000000000n,
 		currencyAddress: USDC_ADDRESS,
 	},
 	checkoutOptions: {
@@ -76,7 +76,7 @@ describe('ERC1155ShopModal', () => {
 				salesContractAddress: mockShopData.salesContractAddress as Address,
 				items: mockShopData.items,
 				quantityDecimals: 0,
-				quantityRemaining: 10,
+				quantityRemaining: 10n,
 				salePrice: {
 					amount: mockShopData.salePrice.amount,
 					currencyAddress: mockShopData.salePrice.currencyAddress as Address,
@@ -236,10 +236,7 @@ describe('ERC1155ShopModal', () => {
 			chainId: 1,
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
-			items: mockShopData.items.map((item) => ({
-				...item,
-				quantity: '2', // This comes from the store's quantity
-			})),
+			items: mockShopData.items, // Shop items use their own quantities, not the store quantity
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,
 			enabled: true,
@@ -251,7 +248,7 @@ describe('ERC1155ShopModal', () => {
 			...mockShopData,
 			items: [
 				{}, // No tokenId or quantity
-				{ tokenId: '2' }, // No quantity
+				{ tokenId: 2n }, // No quantity
 			],
 		};
 
@@ -279,8 +276,8 @@ describe('ERC1155ShopModal', () => {
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
 			items: shopDataWithMissingProps.items.map((item) => ({
-				tokenId: item.tokenId ?? '0',
-				quantity: '2', // This comes from the store's quantity
+				tokenId: item.tokenId ?? 0n,
+				quantity: 2n, // This comes from the store's quantity
 			})),
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,

@@ -1,7 +1,19 @@
-import type { WebrpcError } from '../react/_internal/api/marketplace.gen';
+import type { WebrpcError } from '@0xsequence/api-client';
 import { isMarketplaceError } from './errors';
 import { getWagmiErrorMessage, isWagmiError } from './getWagmiErrorMessage';
 import { getWebRPCErrorMessage } from './getWebRPCErrorMessage';
+
+/**
+ * Type guard to check if an error is a WebRPC error
+ */
+function isWebrpcError(error: unknown): error is WebrpcError {
+	return (
+		typeof error === 'object' &&
+		error !== null &&
+		'code' in error &&
+		typeof (error as { code: unknown }).code === 'number'
+	);
+}
 
 export const getErrorMessage = (error: Error): string => {
 	// Handle SDK-specific errors first
@@ -10,8 +22,8 @@ export const getErrorMessage = (error: Error): string => {
 	}
 
 	// Check if it's a WebRPC error (has numeric code property)
-	if ('code' in error && typeof (error as any).code === 'number') {
-		return getWebRPCErrorMessage(error as WebrpcError);
+	if (isWebrpcError(error)) {
+		return getWebRPCErrorMessage(error);
 	}
 
 	if (isWagmiError(error)) {

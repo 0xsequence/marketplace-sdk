@@ -4,7 +4,7 @@ import { Text } from '@0xsequence/design-system';
 import {
 	getMarketplaceDetails,
 	type MarketplaceKind,
-} from '../../../../../../sdk/src';
+} from '@0xsequence/marketplace-sdk';
 import Pill from './Pill';
 
 const MarketplacePill = ({
@@ -15,7 +15,7 @@ const MarketplacePill = ({
 	marketplace: MarketplaceKind;
 }) => {
 	const marketplaceDetails = getMarketplaceDetails({
-		originName: originName,
+		originName,
 		kind: marketplaceKind,
 	});
 

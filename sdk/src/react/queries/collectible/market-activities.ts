@@ -1,121 +1,81 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
-	QueryKeyArgs,
 	SortBy,
-	ValuesOptional,
 } from '../../_internal';
-import { getMarketplaceClient } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchListCollectibleActivitiesParams
-	extends Omit<
-		ListCollectibleActivitiesRequest,
-		'chainId' | 'contractAddress' | 'page'
-	> {
-	chainId: number;
-	collectionAddress: Address;
-	page?: number;
-	pageSize?: number;
-	sort?: SortBy[];
-	config: SdkConfig;
-}
+export type ListCollectibleActivitiesQueryOptions = SdkQueryParams<
+	Omit<ListCollectibleActivitiesRequest, 'page'> & {
+		page?: number;
+		pageSize?: number;
+		sort?: SortBy[];
+	}
+>;
 
 /**
  * Fetches collectible activities from the Marketplace API
  */
 export async function fetchListCollectibleActivities(
-	params: FetchListCollectibleActivitiesParams,
+	params: WithRequired<
+		ListCollectibleActivitiesQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
 ): Promise<ListCollectibleActivitiesResponse> {
-	const {
-		collectionAddress,
-		chainId,
-		config,
-		page,
-		pageSize,
-		sort,
-		...additionalApiParams
-	} = params;
+	const { chainId, config, page, pageSize, sort, ...additionalApiParams } =
+		params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const pageParams: Page | undefined =
-		page || pageSize || sort
-			? {
-					page: page ?? 1,
-					pageSize: pageSize ?? 10,
-					sort,
-				}
-			: undefined;
-
-	const apiArgs: ListCollectibleActivitiesRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		page: pageParams,
+	return await marketplaceClient.listCollectibleActivities({
+		chainId,
+		page:
+			page || pageSize || sort
+				? {
+						page: page ?? 1,
+						pageSize: pageSize ?? 10,
+						sort,
+					}
+				: undefined,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectibleActivities(apiArgs);
+	});
 }
-
-export type ListCollectibleActivitiesQueryOptions =
-	ValuesOptional<FetchListCollectibleActivitiesParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
-	// TODO: Do we actually want to do the page like this?
-	const page =
-		params.page || params.pageSize || params.sort
-			? {
-					page: params.page ?? 1,
-					pageSize: params.pageSize ?? 10,
-					sort: params.sort,
-				}
-			: undefined;
-
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
-		page: page,
-	} satisfies QueryKeyArgs<ListCollectibleActivitiesRequest>;
-
-	return ['collectible', 'market-activities', apiArgs] as const;
+	return [
+		'collectible',
+		'market-activities',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			page: params.page,
+			pageSize: params.pageSize,
+			sort: params.sort,
+		},
+	] as const;
 }
 
 export function listCollectibleActivitiesQueryOptions(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getListCollectibleActivitiesQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchListCollectibleActivities,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getListCollectibleActivitiesQueryKey(params),
-		queryFn: () =>
-			fetchListCollectibleActivities({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				page: params.page,
-				pageSize: params.pageSize,
-				sort: params.sort,
-			}),
-		...params.query,
-		enabled,
-	});
 }

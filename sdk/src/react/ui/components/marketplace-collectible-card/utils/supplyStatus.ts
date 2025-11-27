@@ -5,7 +5,7 @@ export const getSupplyStatusText = ({
 	collectionType,
 	unlimitedSupply,
 }: {
-	quantityRemaining: string | undefined;
+	quantityRemaining: bigint | undefined;
 	collectionType: ContractType;
 	unlimitedSupply?: boolean;
 }): string => {
@@ -23,13 +23,13 @@ export const getSupplyStatusText = ({
 	if (
 		collectionType === ContractType.ERC1155 &&
 		!unlimitedSupply &&
-		quantityRemaining === '0'
+		quantityRemaining === 0n
 	) {
 		return 'Out of stock';
 	}
 
-	if (quantityRemaining && Number(quantityRemaining) > 0) {
-		return `Supply: ${quantityRemaining}`;
+	if (quantityRemaining && quantityRemaining > 0n) {
+		return `Supply: ${quantityRemaining.toString()}`;
 	}
 
 	return 'Out of stock';

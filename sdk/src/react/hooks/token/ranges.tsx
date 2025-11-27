@@ -5,6 +5,7 @@ import type { Address } from 'viem';
 import type { Optional } from '../../_internal';
 import {
 	type FetchGetTokenRangesParams,
+	type fetchGetTokenRanges,
 	type GetTokenRangesQueryOptions,
 	getTokenRangesQueryOptions,
 } from '../../queries/token/ranges';
@@ -38,8 +39,8 @@ export type UseTokenRangesParams = Optional<
  * })
  *
  * if (data) {
- *   console.log(`Token ranges: ${JSON.stringify(data.tokenIDRanges)}`);
- *   data.tokenIDRanges?.forEach(range => {
+ *   console.log(`Token ranges: ${JSON.stringify(data.ranges)}`);
+ *   data.ranges?.forEach(range => {
  *     console.log(`Range: ${range.start} - ${range.end}`);
  *   });
  * }
@@ -88,5 +89,5 @@ export type UseGetTokenRangesProps = {
 };
 
 export type UseGetTokenRangesReturn = Awaited<
-	ReturnType<typeof import('../../queries/token/ranges').fetchGetTokenRanges>
+	ReturnType<typeof fetchGetTokenRanges>
 >;

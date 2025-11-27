@@ -1,6 +1,5 @@
 import * as dn from 'dnum';
 import { formatUnits } from 'viem';
-import { applyFeeMultiplier, calculateFeeAmount } from './dnum-utils';
 
 type CalculatePriceDifferencePercentageArgs = {
 	inputPriceRaw: bigint;
@@ -74,11 +73,15 @@ export const calculateEarningsAfterFees = (
 	fees: number[],
 ): string => {
 	try {
-		let earnings = dn.from([amount, decimals]);
+		// formatUnits already returns a string, no need for Number conversion
+		const decimalAmount = formatUnits(amount, decimals);
+		let earnings = dn.from(decimalAmount, decimals);
 
 		for (const fee of fees) {
 			if (fee > 0) {
-				earnings = applyFeeMultiplier(earnings, fee, 'subtract');
+				// dnum accepts numbers directly via Numberish type
+				const feeMultiplier = dn.from(1 - fee / 100, decimals);
+				earnings = dn.multiply(earnings, feeMultiplier);
 			}
 		}
 
@@ -110,8 +113,12 @@ export const formatPriceWithFee = (
 	feePercentage: number,
 ): string => {
 	try {
-		const price = dn.from([amount, decimals]);
-		const totalPrice = applyFeeMultiplier(price, feePercentage, 'add');
+		// formatUnits already returns a string, no need for Number conversion
+		const decimalAmount = formatUnits(amount, decimals);
+		const price = dn.from(decimalAmount, decimals);
+		// dnum accepts numbers directly via Numberish type
+		const feeMultiplier = dn.from(1 + feePercentage / 100, decimals);
+		const totalPrice = dn.multiply(price, feeMultiplier);
 
 		return dn.format(totalPrice, {
 			digits: decimals,
@@ -134,7 +141,11 @@ export const calculateTotalOfferCost = (
 		let totalCost = dn.from(dnumAmount);
 
 		if (royaltyPercentage > 0) {
-			const royaltyFee = calculateFeeAmount(totalCost, royaltyPercentage);
+			// dnum accepts numbers directly via Numberish type
+			const royaltyFee = dn.multiply(
+				totalCost,
+				dn.from(royaltyPercentage / 100, decimals),
+			);
 			totalCost = dn.add(totalCost, royaltyFee);
 		}
 

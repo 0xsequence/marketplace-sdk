@@ -1,38 +1,42 @@
 import type {
 	Filter,
 	Page,
-	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
-} from '@0xsequence/metadata';
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Address } from 'viem';
 import {
 	getMetadataClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchSearchTokenMetadataParams {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	filter?: Filter;
 	page?: Page;
-	config: SdkConfig;
 }
+
+export type SearchTokenMetadataQueryOptions =
+	SdkInfiniteQueryParams<FetchSearchTokenMetadataParams>;
 
 /**
  * Fetches token metadata from the metadata API using search filters
  */
 export async function fetchSearchTokenMetadata(
-	params: FetchSearchTokenMetadataParams,
+	params: WithRequired<
+		SearchTokenMetadataQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ): Promise<SearchTokenMetadataReturn> {
 	const { chainId, collectionAddress, filter, page, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	const response = await metadataClient.searchTokenMetadata({
-		chainID: chainId.toString(),
-		contractAddress: collectionAddress,
+		chainId,
+		collectionAddress,
 		filter: filter ?? {},
 		page,
 	});
@@ -43,21 +47,16 @@ export async function fetchSearchTokenMetadata(
 	};
 }
 
-export type SearchTokenMetadataQueryOptions =
-	ValuesOptional<FetchSearchTokenMetadataParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getSearchTokenMetadataQueryKey(
 	params: SearchTokenMetadataQueryOptions,
 ) {
 	const apiArgs = {
-		chainID: String(params.chainId!),
-		contractAddress: params.collectionAddress!,
+		chainId: params.chainId ?? 0,
+		collectionAddress: params.collectionAddress ?? '',
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<SearchTokenMetadataArgs, 'page'>>;
+	};
 
-	return ['token', 'metadata', 'search', apiArgs] as const;
+	return createTokenQueryKey('metadata-search', apiArgs);
 }
 
 export function searchTokenMetadataQueryOptions(
@@ -72,20 +71,23 @@ export function searchTokenMetadataQueryOptions(
 
 	const initialPageParam = { page: 1, pageSize: 30 };
 
+	const queryFn = ({ pageParam = initialPageParam }) => {
+		const requiredParams = params as WithRequired<
+			SearchTokenMetadataQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>;
+		return fetchSearchTokenMetadata({
+			chainId: requiredParams.chainId,
+			collectionAddress: requiredParams.collectionAddress,
+			filter: params.filter,
+			config: requiredParams.config,
+			page: pageParam,
+		});
+	};
+
 	return infiniteQueryOptions({
 		queryKey: getSearchTokenMetadataQueryKey(params),
-		queryFn: ({ pageParam = initialPageParam }) =>
-			fetchSearchTokenMetadata({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				filter: params.filter!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				page: pageParam,
-			}),
+		queryFn,
 		initialPageParam,
 		getNextPageParam: (lastPage) => {
 			if (!lastPage.page?.more) return undefined;

@@ -1,18 +1,22 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type { MarketplaceKind, Optional } from '../../_internal';
+import type {
+	MarketplaceKind,
+	Optional,
+	WithOptionalParams,
+} from '../../_internal';
 import {
 	type FetchMarketCheckoutOptionsParams,
+	type fetchMarketCheckoutOptions,
 	type MarketCheckoutOptionsQueryOptions,
 	marketCheckoutOptionsQueryOptions,
 } from '../../queries/checkout/market-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UseMarketCheckoutOptionsParams = Optional<
-	MarketCheckoutOptionsQueryOptions,
+	WithOptionalParams<MarketCheckoutOptionsQueryOptions>,
 	'config' | 'walletAddress'
 >;
 
@@ -63,12 +67,16 @@ export function useMarketCheckoutOptions(
 	const { address } = useAccount();
 	const defaultConfig = useConfig();
 
-	const { config = defaultConfig, ...rest } = params;
+	const { config, ...rest } = params;
 
 	const queryOptions = marketCheckoutOptionsQueryOptions({
-		config,
-		walletAddress: address as Address,
+		config: config ?? defaultConfig,
+		walletAddress: address ?? '0x0000000000000000000000000000000000000000',
 		...rest,
+		query: {
+			...rest.query,
+			enabled: address ? (rest.query?.enabled ?? true) : false,
+		},
 	});
 
 	return useQuery({
@@ -78,10 +86,7 @@ export function useMarketCheckoutOptions(
 
 export { marketCheckoutOptionsQueryOptions };
 
-export type {
-	FetchMarketCheckoutOptionsParams,
-	MarketCheckoutOptionsQueryOptions,
-};
+export type { FetchMarketCheckoutOptionsParams };
 
 // Legacy export for backward compatibility
 export type UseMarketCheckoutOptionsArgs = {
@@ -97,7 +102,5 @@ export type UseMarketCheckoutOptionsArgs = {
 };
 
 export type UseMarketCheckoutOptionsReturn = Awaited<
-	ReturnType<
-		typeof import('../../queries/checkout/market-checkout-options').fetchMarketCheckoutOptions
-	>
+	ReturnType<typeof fetchMarketCheckoutOptions>
 >;

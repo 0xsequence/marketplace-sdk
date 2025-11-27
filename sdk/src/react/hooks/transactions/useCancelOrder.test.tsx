@@ -1,11 +1,13 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as types from '../../../types';
-import { StepType } from '../../../types';
-import { WalletKind } from '../../_internal/api';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { StepType, WalletKind } from '../../../types';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 import { useProcessStep } from './useProcessStep';
@@ -117,7 +119,7 @@ describe('useCancelOrder', () => {
 											id: StepType.cancel,
 											data: '0x...',
 											to: defaultProps.collectionAddress,
-											value: '0',
+											value: 0n,
 											executeType: 'order',
 										},
 									],
@@ -187,7 +189,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],
@@ -235,7 +237,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],

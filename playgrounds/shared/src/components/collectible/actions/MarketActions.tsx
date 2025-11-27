@@ -6,6 +6,7 @@ import {
 	SendIcon,
 	Text,
 } from '@0xsequence/design-system';
+import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -14,21 +15,20 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { toast } from 'sonner';
 import type { Address } from 'viem';
-import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
 export function MarketActionsCard({
 	lowestListing,
 	orderbookKind,
 	collectionAddress,
 	chainId,
-	collectibleId,
+	tokenId,
 	isOwner,
 }: {
 	lowestListing: Order | undefined | null;
 	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	isOwner: boolean;
 }) {
 	const shouldShowBuyButton = !!lowestListing;
@@ -71,7 +71,7 @@ export function MarketActionsCard({
 	const hooksProps = {
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 	};
 
 	return (
@@ -92,7 +92,7 @@ export function MarketActionsCard({
 								openBuyModal({
 									collectionAddress,
 									chainId,
-									collectibleId,
+									tokenId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
 								})
@@ -144,7 +144,7 @@ export function MarketActionsCard({
 									openTransferModal({
 										collectionAddress,
 										chainId,
-										collectibleId,
+										tokenId,
 									})
 								}
 								rightIcon={SendIcon}

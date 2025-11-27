@@ -27,11 +27,12 @@ interface UseMarketCardDataProps {
 	searchText?: string;
 	showListedOnly?: boolean;
 	priceFilters?: PriceFilter[];
-	onCollectibleClick?: (tokenId: string) => void;
+	onCollectibleClick?: (tokenId: bigint) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
 	hideQuantitySelector?: boolean;
+	enabled?: boolean;
 }
 
 export function useMarketCardData({
@@ -48,6 +49,7 @@ export function useMarketCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
+	enabled,
 }: UseMarketCardDataProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
@@ -71,7 +73,8 @@ export function useMarketCardData({
 			prices: priceFilters,
 		},
 		query: {
-			enabled: !!collectionAddress && !!chainId,
+			enabled:
+				enabled !== undefined ? enabled : !!collectionAddress && !!chainId,
 		},
 	});
 
@@ -97,20 +100,28 @@ export function useMarketCardData({
 
 	// Generate card props for each collectible
 	const collectibleCards = useMemo(() => {
-		return allCollectibles.map((collectible: CollectibleOrder) => {
-			const balance = collectionBalance?.balances.find(
-				(balance) => balance.tokenID === collectible.metadata.tokenId,
-			)?.balance;
+		return allCollectibles.map((collectible) => {
+			const balanceObj = collectionBalance?.balances.find(
+				(b: { tokenId: bigint }) =>
+					b.tokenId === BigInt(collectible.metadata.tokenId),
+			);
+			const balance = balanceObj?.balance?.toString();
 
 			const cardProps: MarketCollectibleCardProps = {
-				collectibleId: collectible.metadata.tokenId,
+				tokenId: BigInt(collectible.metadata.tokenId),
 				chainId,
 				collectionAddress,
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
 				cardType: 'market',
 				orderbookKind,
-				collectible,
+				collectible: {
+					...collectible,
+					metadata: {
+						...collectible.metadata,
+						tokenId: BigInt(collectible.metadata.tokenId),
+					},
+				} as CollectibleOrder,
 				onCollectibleClick,
 				balance,
 				balanceIsLoading: balanceLoading,
@@ -125,7 +136,7 @@ export function useMarketCardData({
 						showSellModal({
 							chainId,
 							collectionAddress,
-							tokenId: collectible.metadata.tokenId,
+							tokenId: BigInt(collectible.metadata.tokenId),
 							order: order as Order,
 						});
 						return;
@@ -161,5 +172,13 @@ export function useMarketCardData({
 		isFetchingNextPage,
 		fetchNextPage,
 		allCollectibles,
+	} as {
+		collectibleCards: MarketCollectibleCardProps[];
+		isLoading: boolean;
+		error: Error | null;
+		hasNextPage: boolean | undefined;
+		isFetchingNextPage: boolean;
+		fetchNextPage: () => Promise<unknown>;
+		allCollectibles: CollectibleOrder[];
 	};
 }
