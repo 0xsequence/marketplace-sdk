@@ -63,12 +63,14 @@ export type TransactionStep = BaseStep & {
 	execute: () => Promise<void>;
 };
 
-export type FlowState = {
+export type BaseStepName = 'form' | 'fee' | 'approval';
+
+export type FlowState<TFinalStepName extends string = 'transaction'> = {
 	status: 'idle' | 'pending' | 'success' | 'error';
 	isPending: boolean;
 	isSuccess: boolean;
-	currentStep: string;
-	nextStep: string | null;
+	currentStep: BaseStepName | TFinalStepName;
+	nextStep: BaseStepName | TFinalStepName | null;
 	progress: {
 		current: number;
 		total: number;
@@ -85,11 +87,14 @@ export type ModalSteps<TFinalStepName extends string = 'transaction'> = {
 	[K in TFinalStepName]: TransactionStep;
 };
 
-export type ModalContext<TSteps extends ModalSteps = ModalSteps> = {
+export type ModalContext<
+	TFinalStepName extends string = 'transaction',
+	TSteps extends ModalSteps<TFinalStepName> = ModalSteps<TFinalStepName>,
+> = {
 	isOpen: boolean;
 	close: () => void;
 	steps: TSteps;
-	flow: FlowState;
+	flow: FlowState<TFinalStepName>;
 	error: Error | null;
 };
 

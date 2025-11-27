@@ -1,5 +1,6 @@
 import type {
 	ApprovalStep,
+	BaseStepName,
 	FeeStep,
 	FlowState,
 	FormStep,
@@ -127,9 +128,9 @@ export function isStepPending(
 	return false;
 }
 
-export function computeFlowState(
+export function computeFlowState<TFinalStepName extends string = 'transaction'>(
 	steps: Record<string, FormStep | FeeStep | ApprovalStep | TransactionStep>,
-): FlowState {
+): FlowState<TFinalStepName> {
 	const stepEntries = getStepEntries(steps);
 
 	const totalSteps = stepEntries.length;
@@ -140,14 +141,18 @@ export function computeFlowState(
 	const currentStepEntry = stepEntries.find(
 		({ step }) => !isStepComplete(step) && !isStepDisabled(step),
 	);
-	const currentStep =
-		currentStepEntry?.name || stepEntries[0]?.name || 'unknown';
+	const currentStep = (currentStepEntry?.name ||
+		stepEntries[0]?.name ||
+		'form') as BaseStepName | TFinalStepName;
 
 	const nextStepEntry = stepEntries.find(({ step }) => {
 		const status = getStepStatus(step);
 		return status === 'idle' && !isStepDisabled(step);
 	});
-	const nextStep = nextStepEntry?.name || null;
+	const nextStep = (nextStepEntry?.name || null) as
+		| BaseStepName
+		| TFinalStepName
+		| null;
 
 	const isPending = stepEntries.some(({ step }) => isStepPending(step));
 	const isSuccess = completedSteps === totalSteps && totalSteps > 0;
