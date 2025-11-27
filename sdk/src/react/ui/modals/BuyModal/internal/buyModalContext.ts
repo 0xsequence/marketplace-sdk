@@ -7,12 +7,7 @@ import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
-import {
-	CheckoutMode as CheckoutModeConst,
-	useBuyModalProps,
-	useCheckoutMode,
-	useOnSuccess,
-} from '../store';
+import { useBuyModalProps, useCheckoutMode, useOnSuccess } from '../store';
 
 export function useBuyModalContext() {
 	const config = useConfig();
@@ -47,19 +42,16 @@ export function useBuyModalContext() {
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
 	const useTrailsModal =
-		checkoutMode === CheckoutModeConst.trails &&
-		isChainSupported &&
-		buyStep &&
-		!isLoading;
+		checkoutMode === 'trails' && isChainSupported && buyStep && !isLoading;
 	const useCryptoPaymentModal =
-		(checkoutMode === CheckoutModeConst.crypto ||
-			(checkoutMode === CheckoutModeConst.trails && !isChainSupported)) &&
+		(checkoutMode === 'crypto' ||
+			(checkoutMode === 'trails' && !isChainSupported)) &&
 		steps &&
 		!isLoading;
 	const useSequenceCheckoutModal =
 		(typeof checkoutMode === 'object' &&
-			checkoutMode.mode === CheckoutModeConst.sequenceCheckout) ||
-		checkoutMode === CheckoutModeConst.sequenceCheckout;
+			checkoutMode.mode === 'sequence-checkout') ||
+		checkoutMode === 'sequence-checkout';
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -126,6 +118,7 @@ export function useBuyModalContext() {
 		useTrailsModal,
 		useCryptoPaymentModal,
 		useSequenceCheckoutModal,
+		checkoutMode,
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,

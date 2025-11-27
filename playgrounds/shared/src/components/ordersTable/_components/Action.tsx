@@ -7,7 +7,6 @@ import {
 	TransactionCrypto,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CheckoutMode,
 	useBalanceOfCollectible,
 	useBuyModal,
 	useCancelOrder,
@@ -53,11 +52,11 @@ const OrdersTableAction = ({
 	});
 	const { show: openBuyModal } = useBuyModal({
 		checkoutMode: {
-			mode: CheckoutMode.sequenceCheckout,
+			mode: 'sequence-checkout',
 			options: {
 				swap: [],
-				nftCheckout: [],
 				crypto: TransactionCrypto.all,
+				nftCheckout: [],
 				onRamp: [],
 			},
 		},

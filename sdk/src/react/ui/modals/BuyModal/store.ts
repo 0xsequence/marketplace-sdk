@@ -12,15 +12,6 @@ import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
 
-export const CheckoutMode = {
-	crypto: 'crypto',
-	sequenceCheckout: 'sequence-checkout',
-	trails: 'trails',
-} as const;
-
-export type CheckoutModeString =
-	(typeof CheckoutMode)[keyof typeof CheckoutMode];
-
 export type CheckoutMode =
 	| 'crypto'
 	| 'trails'
