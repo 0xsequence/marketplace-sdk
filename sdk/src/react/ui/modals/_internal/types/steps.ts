@@ -65,6 +65,11 @@ export type TransactionStep = BaseStep & {
 
 export type BaseStepName = 'form' | 'fee' | 'approval';
 
+export type FlowStepInfo<TFinalStepName extends string = 'transaction'> = {
+	name: BaseStepName | TFinalStepName;
+	status: StepStatus;
+};
+
 export type FlowState<TFinalStepName extends string = 'transaction'> = {
 	status: 'idle' | 'pending' | 'success' | 'error';
 	isPending: boolean;
@@ -76,6 +81,7 @@ export type FlowState<TFinalStepName extends string = 'transaction'> = {
 		total: number;
 		percent: number;
 	};
+	allSteps: FlowStepInfo<TFinalStepName>[];
 	hasInvalidatedSteps: boolean;
 };
 

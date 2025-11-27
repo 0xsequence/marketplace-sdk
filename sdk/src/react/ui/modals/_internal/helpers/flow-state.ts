@@ -183,6 +183,11 @@ export function computeFlowState<TFinalStepName extends string = 'transaction'>(
 	const progressPercent =
 		totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
 
+	const allSteps = stepEntries.map(({ name, step }) => ({
+		name: name as BaseStepName | TFinalStepName,
+		status: getStepStatus(step),
+	}));
+
 	return {
 		status,
 		isPending,
@@ -194,6 +199,7 @@ export function computeFlowState<TFinalStepName extends string = 'transaction'>(
 			total: totalSteps,
 			percent: progressPercent,
 		},
+		allSteps,
 		hasInvalidatedSteps,
 	};
 }
