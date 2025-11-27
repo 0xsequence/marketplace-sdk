@@ -23,10 +23,6 @@ import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
-/**
- * SellModal step configuration
- * Uses named properties for better DX and type safety
- */
 export type SellModalSteps = {
 	fee?: FeeStep;
 	approval?: ApprovalStep;
