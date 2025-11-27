@@ -2,7 +2,7 @@ import { defineConfig } from 'tsdown';
 
 // @ts-expect-error - Js file
 import { generateStyles } from './compile-tailwind.js';
-import { preserveDirectives } from './plugins/preserve-directives.ts';
+import { preserveDirectives } from './preserve-directives.ts';
 
 const tailwindPlugin = () => {
 	return {
