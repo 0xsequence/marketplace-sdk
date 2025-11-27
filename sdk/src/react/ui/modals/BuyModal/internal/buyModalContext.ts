@@ -44,7 +44,7 @@ export function useBuyModalContext() {
 	const useTrailsModal =
 		checkoutMode === 'trails' && isChainSupported && buyStep && !isLoading;
 	const useCryptoPaymentModal =
-		checkoutMode === 'crypto' && steps && !isLoading;
+		(checkoutMode === 'crypto' || (checkoutMode === 'trails' && !isChainSupported)) && steps && !isLoading;
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -96,6 +96,7 @@ export function useBuyModalContext() {
 	return {
 		config,
 		modalProps,
+		checkoutMode,
 		close: handleClose,
 		steps,
 		collectible,

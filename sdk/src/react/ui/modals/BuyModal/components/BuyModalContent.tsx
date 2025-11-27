@@ -5,6 +5,7 @@ import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
+import { SequenceCheckout } from './SequenceCheckout';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
@@ -21,6 +22,7 @@ export const BuyModalContent = () => {
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
+		checkoutMode
 	} = useBuyModalContext();
 
 	return (
@@ -50,7 +52,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useTrailsModal && buyStep && (
+				{checkoutMode === 'trails' && useTrailsModal && buyStep && (
 					<div className="w-full">
 						<TrailsWidget
 							apiKey={config.projectAccessKey}
@@ -69,7 +71,11 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useCryptoPaymentModal && steps && (
+				{checkoutMode === 'sequence-checkout' && (
+					<SequenceCheckout />
+				)}
+
+				{((checkoutMode === 'crypto') || (checkoutMode === 'trails' && !useTrailsModal)) && useCryptoPaymentModal && steps && (
 					<CryptoPaymentModal
 						chainId={modalProps.chainId}
 						steps={steps}
