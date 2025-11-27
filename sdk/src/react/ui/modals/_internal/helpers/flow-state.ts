@@ -57,11 +57,11 @@ export function getStepStatus(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): StepStatus {
 	if (isFormStep(step)) {
-		return step.status === 'complete' ? 'complete' : 'idle';
+		return step.status === 'success' ? 'success' : 'idle';
 	}
 
 	if (isFeeStep(step)) {
-		if (step.status === 'complete') return 'complete';
+		if (step.status === 'success') return 'success';
 		if (step.status === 'selecting') return 'pending';
 		return 'idle';
 	}
@@ -77,15 +77,15 @@ export function isStepComplete(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
 	if (isFormStep(step)) {
-		return step.status === 'complete' && step.isValid;
+		return step.status === 'success' && step.isValid;
 	}
 
 	if (isFeeStep(step)) {
-		return step.status === 'complete';
+		return step.status === 'success';
 	}
 
 	if (isTransactionStep(step)) {
-		return step.isComplete;
+		return step.isSuccess;
 	}
 
 	return false;
@@ -150,7 +150,7 @@ export function computeFlowState(
 	const nextStep = nextStepEntry?.name || null;
 
 	const isPending = stepEntries.some(({ step }) => isStepPending(step));
-	const isComplete = completedSteps === totalSteps && totalSteps > 0;
+	const isSuccess = completedSteps === totalSteps && totalSteps > 0;
 
 	const hasError = stepEntries.some(({ step }) => {
 		if (isTransactionStep(step)) {
@@ -164,8 +164,8 @@ export function computeFlowState(
 		status = 'pending';
 	} else if (hasError) {
 		status = 'error';
-	} else if (isComplete) {
-		status = 'complete';
+	} else if (isSuccess) {
+		status = 'success';
 	}
 
 	const hasInvalidatedSteps = stepEntries.some(({ step }) => {
@@ -181,7 +181,7 @@ export function computeFlowState(
 	return {
 		status,
 		isPending,
-		isComplete,
+		isSuccess,
 		currentStep,
 		nextStep,
 		progress: {
@@ -258,7 +258,7 @@ export async function executeNextStep(
 	const stepEntries = getStepEntries(steps);
 
 	const nextStep = stepEntries.find(({ step }) => {
-		if (isFeeStep(step) && step.status !== 'complete') {
+		if (isFeeStep(step) && step.status !== 'success') {
 			return true;
 		}
 

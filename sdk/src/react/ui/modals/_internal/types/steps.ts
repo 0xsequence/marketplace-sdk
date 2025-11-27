@@ -1,4 +1,6 @@
-export type StepStatus = 'idle' | 'pending' | 'complete' | 'error';
+import type { FeeOption } from '../../../../../types/waas-types';
+
+export type StepStatus = 'idle' | 'pending' | 'success' | 'error';
 
 export type TransactionResult =
 	| { type: 'transaction'; hash: string }
@@ -15,7 +17,7 @@ export type SuggestedAction =
 
 export type StepGuardResult = {
 	canProceed: boolean;
-	reason?: string;
+	error?: Error;
 	suggestedAction?: SuggestedAction;
 };
 
@@ -23,7 +25,7 @@ export type BaseStep = {
 	label: string;
 	status: StepStatus;
 	isPending: boolean;
-	isComplete: boolean;
+	isSuccess: boolean;
 	isDisabled: boolean;
 	disabledReason: string | null;
 	error: Error | null;
@@ -31,17 +33,17 @@ export type BaseStep = {
 
 export type FormStep = {
 	label: string;
-	status: 'idle' | 'complete';
+	status: 'idle' | 'success';
 	isValid: boolean;
 	errors: Record<string, string | null>;
 };
 
 export type FeeStep = {
 	label: string;
-	status: 'idle' | 'selecting' | 'complete';
+	status: 'idle' | 'selecting' | 'success';
 	isSponsored: boolean;
 	isSelecting: boolean;
-	selectedOption: unknown;
+	selectedOption: FeeOption | undefined;
 	show: () => void;
 	cancel: () => void;
 };
@@ -62,9 +64,9 @@ export type TransactionStep = BaseStep & {
 };
 
 export type FlowState = {
-	status: 'idle' | 'pending' | 'complete' | 'error';
+	status: 'idle' | 'pending' | 'success' | 'error';
 	isPending: boolean;
-	isComplete: boolean;
+	isSuccess: boolean;
 	currentStep: string;
 	nextStep: string | null;
 	progress: {

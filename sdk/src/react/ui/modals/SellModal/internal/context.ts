@@ -80,7 +80,7 @@ export function useSellModalContext() {
 
 		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'complete' : waas.isVisible ? 'selecting' : 'idle',
+			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
 			isSponsored,
 			isSelecting: waas.isVisible,
 			selectedOption: waas.selectedFeeOption,
@@ -107,16 +107,16 @@ export function useSellModalContext() {
 		steps.approval = {
 			label: 'Approve Token',
 			status: approve.isSuccess
-				? 'complete'
+				? 'success'
 				: approve.isPending
 					? 'pending'
 					: approve.error
 						? 'error'
 						: 'idle',
 			isPending: approve.isPending,
-			isComplete: approve.isSuccess,
+			isSuccess: approve.isSuccess,
 			isDisabled: !guardResult.canProceed,
-			disabledReason: guardResult.reason || null,
+			disabledReason: guardResult.error?.message || null,
 			error: approve.error,
 			canExecute: guardResult.canProceed,
 			result: approveTransactionHash
@@ -144,16 +144,16 @@ export function useSellModalContext() {
 	steps.sell = {
 		label: 'Accept Offer',
 		status: sell.isSuccess
-			? 'complete'
+			? 'success'
 			: sell.isPending
 				? 'pending'
 				: sell.error
 					? 'error'
 					: 'idle',
 		isPending: sell.isPending,
-		isComplete: sell.isSuccess,
+		isSuccess: sell.isSuccess,
 		isDisabled: !sellGuardResult.canProceed,
-		disabledReason: sellGuardResult.reason || null,
+		disabledReason: sellGuardResult.error?.message || null,
 		error: sell.error,
 		canExecute: sellGuardResult.canProceed,
 		result: sellTransactionHash
