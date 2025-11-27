@@ -1,0 +1,38 @@
+export type {
+	AdditionalFee,
+	CheckoutOptions,
+	CheckoutOptionsItem,
+	Collectible,
+	CollectibleOrder,
+	CollectiblesFilter,
+	Collection,
+	CreateReq,
+	Currency,
+	Filter,
+	Order,
+	OrderData,
+	OrderFilter,
+	Page,
+	PostRequest,
+	PriceFilter,
+	PropertyFilter,
+	Signature,
+	SortBy,
+	Step,
+	TokenMetadata,
+} from '@0xsequence/api-client';
+
+// Export enums as values (not type-only)
+export {
+	CollectionStatus,
+	ContractType,
+	MarketplaceKind,
+	OrderbookKind,
+	OrderSide,
+	OrderStatus,
+	PropertyType,
+	SortOrder,
+	StepType,
+	TransactionCrypto,
+	WalletKind,
+} from '@0xsequence/api-client';

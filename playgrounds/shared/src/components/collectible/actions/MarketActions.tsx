@@ -1,6 +1,6 @@
 import {
 	AddIcon,
-	ButtonPreset,
+	Button,
 	Card,
 	CartIcon,
 	SendIcon,
@@ -86,7 +86,7 @@ export function MarketActionsCard({
 						<Text variant="small" color="text80">
 							Current Price: ${lowestListing?.priceUSDFormatted}
 						</Text>
-						<ButtonPreset
+						<Button
 							variant="primary"
 							onClick={() =>
 								openBuyModal({
@@ -97,16 +97,17 @@ export function MarketActionsCard({
 									marketplace: lowestListing.marketplace,
 								})
 							}
-							leftIcon={CartIcon}
 							disabled={isOwner}
-							label="Buy Now"
 							className="w-full"
-						/>
+						>
+							<CartIcon />
+							Buy Now
+						</Button>
 					</div>
 				)}
 
 				{!isOwner && (
-					<ButtonPreset
+					<Button
 						variant="secondary"
 						onClick={() =>
 							openMakeOfferModal({
@@ -114,10 +115,11 @@ export function MarketActionsCard({
 								orderbookKind,
 							})
 						}
-						leftIcon={AddIcon}
-						label="Make Offer"
 						className="w-full"
-					/>
+					>
+						<AddIcon />
+						Make Offer
+					</Button>
 				)}
 
 				{isOwner && (
@@ -126,7 +128,7 @@ export function MarketActionsCard({
 							Owner Actions
 						</Text>
 						<div className="flex flex-row gap-2">
-							<ButtonPreset
+							<Button
 								variant="secondary"
 								onClick={() =>
 									openCreateListingModal({
@@ -134,11 +136,12 @@ export function MarketActionsCard({
 										orderbookKind,
 									})
 								}
-								rightIcon={AddIcon}
-								label="Create Listing"
 								className="w-full"
-							/>
-							<ButtonPreset
+							>
+								Create Listing
+								<AddIcon />
+							</Button>
+							<Button
 								variant="secondary"
 								onClick={() =>
 									openTransferModal({
@@ -147,10 +150,11 @@ export function MarketActionsCard({
 										tokenId,
 									})
 								}
-								rightIcon={SendIcon}
-								label="Transfer"
 								className="w-full"
-							/>
+							>
+								Transfer
+								<SendIcon />
+							</Button>
 						</div>
 					</div>
 				)}

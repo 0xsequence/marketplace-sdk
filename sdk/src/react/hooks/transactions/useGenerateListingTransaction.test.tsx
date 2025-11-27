@@ -51,45 +51,19 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "createListing",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			  ],
-			  {
-			    "additionalFees": [],
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "listing": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": 1000000000000000000n,
-			      "quantity": 1n,
-			      "tokenId": 1n,
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			    "owner": "0x0000000000000000000000000000000000000000",
-			  },
-			  undefined,
-			  {
-			    "client": QueryClient {},
-			    "meta": undefined,
-			    "mutationKey": undefined,
-			  },
 			]
 		`);
 	});
@@ -110,45 +84,19 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "createListing",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			  ],
-			  {
-			    "additionalFees": [],
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "listing": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": 1000000000000000000n,
-			      "quantity": 1n,
-			      "tokenId": 1n,
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			    "owner": "0x0000000000000000000000000000000000000000",
-			  },
-			  undefined,
-			  {
-			    "client": QueryClient {},
-			    "meta": undefined,
-			    "mutationKey": undefined,
-			  },
 			]
 		`);
 	});

@@ -1,7 +1,8 @@
+import { OrderbookKind } from '@0xsequence/api-client';
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { OrderbookKind, type Price } from '../../../../../types';
+import type { Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
 	OfferType,

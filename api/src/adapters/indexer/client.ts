@@ -109,6 +109,35 @@ export class IndexerClient {
 	}
 
 	/**
+	 * Get token balances by contract with normalized types (bigint)
+	 */
+	async getTokenBalancesByContract(
+		args: IndexerGen.GetTokenBalancesByContractArgs,
+	): Promise<Normalized.GetTokenBalancesByContractResponse> {
+		const rawResponse = await this.client.getTokenBalancesByContract(args);
+		return {
+			page: transforms.toPage(rawResponse.page) || {
+				page: 0,
+				pageSize: 0,
+				more: false,
+			},
+			balances: rawResponse.balances.map(transforms.toTokenBalance),
+		};
+	}
+
+	/**
+	 * Get native token balance with normalized types (bigint)
+	 */
+	async getNativeTokenBalance(
+		args: IndexerGen.GetNativeTokenBalanceArgs,
+	): Promise<Normalized.GetNativeTokenBalanceResponse> {
+		const rawResponse = await this.client.getNativeTokenBalance(args);
+		return {
+			balance: transforms.toNativeTokenBalance(rawResponse.balance),
+		};
+	}
+
+	/**
 	 * Fetch transaction receipt with normalized types (bigint)
 	 */
 	async fetchTransactionReceipt(args: {

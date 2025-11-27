@@ -87,6 +87,7 @@ export type {
 	GetFloorOrderRequest,
 	GetHighestPriceOfferForCollectibleRequest,
 	GetLowestPriceListingForCollectibleRequest,
+	GetOrdersInput,
 	GetOrdersRequest,
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,

@@ -1,13 +1,12 @@
-import type { Indexer } from '@0xsequence/api-client';
+import { type Indexer, OrderSide } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type CollectibleCardAction,
-	type CollectibleOrder,
-	type ContractType,
-	type OrderbookKind,
-	OrderSide,
-	type PropertyFilter,
+import type {
+	CollectibleCardAction,
+	CollectibleOrder,
+	ContractType,
+	OrderbookKind,
+	PropertyFilter,
 } from '../../../../types';
 import type { Order, PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';

@@ -55,7 +55,7 @@ export function useSellModalContext() {
 
 	const { walletKind, isWaaS } = useConnectorMetadata();
 
-	const sellSteps = useGenerateSellTransaction({
+	const transactionData = useGenerateSellTransaction({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		seller: address,
@@ -72,7 +72,7 @@ export function useSellModalContext() {
 			: undefined,
 	});
 
-	const { approve, sell } = useSellMutations(sellSteps.data);
+	const { approve, sell } = useSellMutations(transactionData.data);
 
 	const waas = useSelectWaasFeeOptionsStore();
 	const [pendingFee] = useWaasFeeOptions();
@@ -85,22 +85,23 @@ export function useSellModalContext() {
 	const approveGuard = useMemo(() => {
 		return createApprovalGuard({
 			isFormValid: true, // No form validation for sell modal
-			txReady: !!sellSteps.data?.approveStep,
+			txReady: !!transactionData.data?.approveStep,
 			walletConnected: !!address,
 		});
-	}, [sellSteps.data?.approveStep, address]);
+	}, [transactionData.data?.approveStep, address]);
 
 	const sellGuard = useMemo(() => {
 		return createFinalTransactionGuard({
 			isFormValid: true, // No form validation for sell modal
-			txReady: !!sellSteps.data?.sellStep,
+			txReady: !!transactionData.data?.sellStep,
 			walletConnected: !!address,
-			requiresApproval: !!sellSteps.data?.approveStep && !approve.isSuccess,
+			requiresApproval:
+				!!transactionData.data?.approveStep && !approve.isSuccess,
 			approvalComplete: approve.isSuccess,
 		});
 	}, [
-		sellSteps.data?.sellStep,
-		sellSteps.data?.approveStep,
+		transactionData.data?.sellStep,
+		transactionData.data?.approveStep,
 		address,
 		approve.isSuccess,
 	]);
@@ -125,7 +126,7 @@ export function useSellModalContext() {
 
 	// Approval step (conditional)
 	const approvalStep: ApprovalStep | undefined = useMemo(() => {
-		if (!sellSteps.data?.approveStep) return undefined;
+		if (!transactionData.data?.approveStep) return undefined;
 
 		const guard = approveGuard();
 
@@ -157,7 +158,7 @@ export function useSellModalContext() {
 			reset: () => approve.reset(),
 		};
 	}, [
-		sellSteps.data?.approveStep,
+		transactionData.data?.approveStep,
 		approve.isSuccess,
 		approve.isPending,
 		approve.error,
@@ -212,7 +213,7 @@ export function useSellModalContext() {
 	const error =
 		approve.error ||
 		sell.error ||
-		sellSteps.error ||
+		transactionData.error ||
 		collectionQuery.error ||
 		currencyQuery.error;
 
@@ -241,10 +242,18 @@ export function useSellModalContext() {
 		executeNext,
 
 		// Loading states
-		isLoading:
-			collectionQuery.isLoading ||
-			currencyQuery.isLoading ||
-			sellSteps.isLoading,
+		loading: {
+			collection: collectionQuery.isLoading,
+			currency: currencyQuery.isLoading,
+			steps: transactionData.isLoading,
+		},
+
+		transactions: {
+			approve:
+				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
+			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
+		},
+
 		error,
 
 		// Queries for advanced usage

@@ -69,6 +69,7 @@ export type {
 	GetCountOfListingsForCollectibleResponse,
 	GetCountOfOffersForCollectibleResponse,
 	GetCountOfPrimarySaleItemsResponse,
+	GetOrdersInput,
 	ListCollectibleActivitiesResponse,
 	ListCollectibleListingsRequest,
 	ListCollectionActivitiesResponse,

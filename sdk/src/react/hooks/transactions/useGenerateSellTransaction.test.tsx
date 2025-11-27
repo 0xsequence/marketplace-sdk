@@ -48,45 +48,19 @@ describe('useGenerateSellTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "tokenApproval",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
-			      "gas": undefined,
 			      "id": "sell",
-			      "maxFeePerGas": undefined,
-			      "maxPriorityFeePerGas": undefined,
 			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": 0n,
 			    },
 			  ],
-			  {
-			    "additionalFees": [],
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "marketplace": "sequence_marketplace_v2",
-			    "orderbook": "sequence_marketplace_v2",
-			    "ordersData": [
-			      {
-			        "orderId": "1",
-			        "quantity": 1n,
-			      },
-			    ],
-			    "seller": "0x0000000000000000000000000000000000000000",
-			  },
-			  undefined,
-			  {
-			    "client": QueryClient {},
-			    "meta": undefined,
-			    "mutationKey": undefined,
-			  },
 			]
 		`);
 	});
@@ -101,9 +75,6 @@ describe('useGenerateSellTransaction', () => {
 		await waitFor(() => {
 			expect(mockOnSuccess).toHaveBeenCalledWith(
 				createMockSteps([StepType.tokenApproval, StepType.sell]),
-				mockTransactionProps,
-				undefined,
-				expect.any(Object), // React Query context
 			);
 		});
 	});
