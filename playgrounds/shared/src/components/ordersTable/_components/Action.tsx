@@ -1,8 +1,13 @@
 'use client';
 
 import { Button, Spinner } from '@0xsequence/design-system';
-import { type Order, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
+	type Order,
+	OrderSide,
+	TransactionCrypto,
+} from '@0xsequence/marketplace-sdk';
+import {
+	CheckoutMode,
 	useBalanceOfCollectible,
 	useBuyModal,
 	useCancelOrder,
@@ -47,6 +52,15 @@ const OrdersTableAction = ({
 		},
 	});
 	const { show: openBuyModal } = useBuyModal({
+		checkoutMode: {
+			mode: CheckoutMode.sequenceCheckout,
+			options: {
+				swap: [],
+				nftCheckout: [],
+				crypto: TransactionCrypto.all,
+				onRamp: [],
+			},
+		},
 		callbacks: {
 			onError: (error) => {
 				toast.error(`An error occurred while purchasing: ${error.message}`);

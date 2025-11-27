@@ -1,6 +1,6 @@
 import { useAnalytics } from '../../../_internal/databeat';
 import type { ModalCallbacks } from '../_internal/types';
-import { CheckoutMode, buyModalStore, type BuyModalProps } from './store';
+import { type BuyModalProps, buyModalStore, CheckoutMode } from './store';
 
 type UseBuyModalProps = {
 	checkoutMode?: CheckoutMode;
