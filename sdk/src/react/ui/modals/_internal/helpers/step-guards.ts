@@ -8,7 +8,7 @@ export type SuggestedAction =
 
 export type GuardResult = {
 	canProceed: boolean;
-	reason?: string;
+	error?: Error;
 	suggestedAction?: SuggestedAction;
 };
 
@@ -23,7 +23,7 @@ export function createBaseGuard(params: {
 		if (!walletConnected) {
 			return {
 				canProceed: false,
-				reason: 'Please connect your wallet',
+				error: new Error('Please connect your wallet'),
 				suggestedAction: 'connect-wallet',
 			};
 		}
@@ -31,7 +31,7 @@ export function createBaseGuard(params: {
 		if (!isFormValid) {
 			return {
 				canProceed: false,
-				reason: 'Please fix form validation errors',
+				error: new Error('Please fix form validation errors'),
 				suggestedAction: 'fix-form',
 			};
 		}
@@ -39,7 +39,7 @@ export function createBaseGuard(params: {
 		if (!txReady) {
 			return {
 				canProceed: false,
-				reason: 'Transaction not ready',
+				error: new Error('Transaction not ready'),
 				suggestedAction: 'wait-for-tx',
 			};
 		}
@@ -75,7 +75,7 @@ export function createFinalTransactionGuard(params: {
 		if (!walletConnected) {
 			return {
 				canProceed: false,
-				reason: 'Please connect your wallet',
+				error: new Error('Please connect your wallet'),
 				suggestedAction: 'connect-wallet',
 			};
 		}
@@ -83,7 +83,7 @@ export function createFinalTransactionGuard(params: {
 		if (!isFormValid) {
 			return {
 				canProceed: false,
-				reason: 'Please fix form validation errors',
+				error: new Error('Please fix form validation errors'),
 				suggestedAction: 'fix-form',
 			};
 		}
@@ -91,7 +91,7 @@ export function createFinalTransactionGuard(params: {
 		if (requiresApproval && !approvalComplete) {
 			return {
 				canProceed: false,
-				reason: 'Please approve token first',
+				error: new Error('Please approve token first'),
 				suggestedAction: 'complete-approval',
 			};
 		}
@@ -99,7 +99,7 @@ export function createFinalTransactionGuard(params: {
 		if (!txReady) {
 			return {
 				canProceed: false,
-				reason: 'Transaction not ready',
+				error: new Error('Transaction not ready'),
 				suggestedAction: 'wait-for-tx',
 			};
 		}
@@ -117,7 +117,7 @@ export function createFeeGuard(params: {
 		if (feeSelectionVisible) {
 			return {
 				canProceed: false,
-				reason: 'Please select a fee option',
+				error: new Error('Please select a fee option'),
 				suggestedAction: 'select-fee',
 			};
 		}
