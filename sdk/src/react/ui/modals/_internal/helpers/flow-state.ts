@@ -204,36 +204,6 @@ export function computeFlowState<TFinalStepName extends string = 'transaction'>(
 	};
 }
 
-export function getStepLabel(stepName: string): string {
-	const labels: Record<string, string> = {
-		form: 'Set Details',
-		fee: 'Select Fee',
-		approval: 'Approve Token',
-		offer: 'Make Offer',
-		sell: 'Accept Offer',
-		listing: 'Create Listing',
-		list: 'Create Listing',
-		buy: 'Complete Purchase',
-	};
-
-	return labels[stepName] || stepName;
-}
-
-export function getStepDescription(stepName: string): string | undefined {
-	const descriptions: Record<string, string> = {
-		form: 'Enter price, quantity, and expiry',
-		fee: 'Choose gas fee option',
-		approval: 'Allow marketplace to access your tokens',
-		offer: 'Sign transaction to create your offer',
-		sell: 'Sign transaction to accept the offer',
-		listing: 'Sign transaction to create your listing',
-		list: 'Sign transaction to create your listing',
-		buy: 'Sign transaction to complete purchase',
-	};
-
-	return descriptions[stepName];
-}
-
 export function stepNeedsAction(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
