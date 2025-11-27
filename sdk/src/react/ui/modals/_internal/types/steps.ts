@@ -57,6 +57,7 @@ export type StepGuardResult = {
  * Base step - common fields for transaction steps
  */
 export type BaseStep = {
+	label: string; // Human-readable step label (e.g., "Approve Token", "Accept Offer")
 	status: StepStatus;
 	isPending: boolean;
 	isComplete: boolean;
@@ -73,6 +74,7 @@ export type BaseStep = {
  * ```typescript
  * steps: {
  *   form: {
+ *     label: 'Form',
  *     status: 'complete',
  *     isValid: true,
  *     errors: {}
@@ -81,6 +83,7 @@ export type BaseStep = {
  * ```
  */
 export type FormStep = {
+	label: string; // Human-readable step label (e.g., "Form")
 	status: 'idle' | 'complete';
 	isValid: boolean;
 	errors: Record<string, string | null>;
@@ -94,6 +97,7 @@ export type FormStep = {
  * ```typescript
  * steps: {
  *   fee: {
+ *     label: 'Select Fee',
  *     status: 'selecting',
  *     isSponsored: false,
  *     isSelecting: true,
@@ -105,6 +109,7 @@ export type FormStep = {
  * ```
  */
 export type FeeStep = {
+	label: string; // Human-readable step label (e.g., "Select Fee")
 	status: 'idle' | 'selecting' | 'complete';
 	isSponsored: boolean;
 	isSelecting: boolean;

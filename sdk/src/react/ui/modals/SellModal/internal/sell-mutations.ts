@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import type { Hex } from 'viem';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Step, TransactionType } from '../../../../_internal';
@@ -8,6 +9,13 @@ import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useSellModalState } from './store';
 import type { useGenerateSellTransaction } from './use-generate-sell-transaction';
+
+/**
+ * Result type from processStep mutation
+ */
+export type ProcessStepResult =
+	| { type: 'transaction'; hash: Hex }
+	| { type: 'signature'; orderId?: string; signature?: Hex };
 
 export const useSellMutations = (
 	tx: ReturnType<typeof useGenerateSellTransaction>['data'],
@@ -35,7 +43,7 @@ export const useSellMutations = (
 		return res;
 	}
 
-	const approve = useMutation({
+	const approve = useMutation<ProcessStepResult, Error, void>({
 		mutationFn: async () => {
 			if (!tx?.approveStep) throw new Error('No approval step available');
 			return await executeStepAndWait(tx.approveStep);
@@ -43,7 +51,7 @@ export const useSellMutations = (
 		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
-	const sell = useMutation({
+	const sell = useMutation<ProcessStepResult, Error, void>({
 		mutationFn: async () => {
 			if (!tx?.sellStep) throw new Error('No sell step available');
 			const res = await executeStepAndWait(tx.sellStep);

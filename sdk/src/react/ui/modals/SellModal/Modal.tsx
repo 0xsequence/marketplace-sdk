@@ -26,7 +26,6 @@ export function SellModal() {
 		return null;
 	}
 
-	// Use named properties instead of array.find()
 	const approvalStep = steps.approval;
 	const sellStep = steps.sell;
 	const feeStep = steps.fee;
@@ -35,8 +34,8 @@ export function SellModal() {
 
 	const approvalAction = showApprovalButton
 		? {
-				label: 'Approve Token',
-				actionName: 'Approve Token',
+				label: approvalStep.label,
+				actionName: approvalStep.label,
 				onClick: approvalStep.execute,
 				loading: approvalStep.isPending,
 				disabled: approvalStep.isDisabled || !!error || flow.isPending,
@@ -46,8 +45,8 @@ export function SellModal() {
 		: undefined;
 
 	const sellAction = {
-		label: 'Accept Offer',
-		actionName: 'Accept Offer',
+		label: sellStep.label,
+		actionName: sellStep.label,
 		onClick: sellStep.execute,
 		loading: sellStep.isPending && !showApprovalButton,
 		disabled:

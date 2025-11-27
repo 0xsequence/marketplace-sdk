@@ -34,7 +34,9 @@ type StepEntry = {
  * Convert ModalSteps object to array of step entries
  * Maintains order: form → fee → approval → [finalStep]
  */
-export function getStepEntries(steps: ModalSteps): StepEntry[] {
+export function getStepEntries(
+	steps: Record<string, FormStep | FeeStep | ApprovalStep | TransactionStep>,
+): StepEntry[] {
 	const entries: StepEntry[] = [];
 
 	// Always check in this order for consistent flow
@@ -164,7 +166,7 @@ export function isStepPending(
  * This is the main utility function that eliminates manual counting
  * in each modal context
  *
- * @param steps - The modal steps object
+ * @param steps - The modal steps object (accepts any final step name)
  * @returns FlowState - Computed flow state
  *
  * @example
@@ -179,7 +181,9 @@ export function isStepPending(
  * // flow.progress.percent === 66 (2 of 3 complete)
  * ```
  */
-export function computeFlowState(steps: ModalSteps): FlowState {
+export function computeFlowState(
+	steps: Record<string, FormStep | FeeStep | ApprovalStep | TransactionStep>,
+): FlowState {
 	const stepEntries = getStepEntries(steps);
 
 	// Count completed steps

@@ -1,5 +1,4 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	useCollectionDetail,
@@ -18,7 +17,6 @@ import {
 import type {
 	ApprovalStep,
 	FeeStep,
-	ModalSteps,
 	TransactionStep,
 } from '../../_internal/types/steps';
 import { useSellMutations } from './sell-mutations';
@@ -26,17 +24,10 @@ import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
 /**
- * Result type from processStep mutation
- */
-type ProcessStepResult =
-	| { type: 'transaction'; hash: Hex }
-	| { type: 'signature'; orderId?: string; signature?: Hex };
-
-/**
  * SellModal step configuration
  * Uses named properties for better DX and type safety
  */
-export type SellModalSteps = ModalSteps<'sell'> & {
+export type SellModalSteps = {
 	fee?: FeeStep;
 	approval?: ApprovalStep;
 	sell: TransactionStep;
@@ -86,17 +77,13 @@ export function useSellModalContext() {
 	const [pendingFee] = useWaasFeeOptions();
 	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
 
-	// ============================================
-	// BUILD STEPS OBJECT (NAMED PROPERTIES)
-	// ============================================
-
 	const steps: SellModalSteps = {} as SellModalSteps;
 
-	// Fee step (WaaS only)
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
 
 		steps.fee = {
+			label: 'Select Fee',
 			status: feeSelected ? 'complete' : waas.isVisible ? 'selecting' : 'idle',
 			isSponsored,
 			isSelecting: waas.isVisible,
@@ -106,17 +93,23 @@ export function useSellModalContext() {
 		};
 	}
 
-	// Approval step (if needed)
-	if (sellSteps.data?.approveStep && !approve.isSuccess) {
+	if (sellSteps.data?.approveStep) {
 		const approvalGuard = createApprovalGuard({
-			isFormValid: true, // No form validation for SellModal
+			isFormValid: true,
 			txReady: !!sellSteps.data?.approveStep,
 			walletConnected: !!address,
 		});
 		const guardResult = approvalGuard();
 
-		const approveData = approve.data as ProcessStepResult | undefined;
+		const approveTransactionHash =
+			approve.data &&
+			'type' in approve.data &&
+			approve.data.type === 'transaction'
+				? approve.data.hash
+				: undefined;
+
 		steps.approval = {
+			label: 'Approve Token',
 			status: approve.isSuccess
 				? 'complete'
 				: approve.isPending
@@ -130,20 +123,16 @@ export function useSellModalContext() {
 			disabledReason: guardResult.reason || null,
 			error: approve.error,
 			canExecute: guardResult.canProceed,
-			result:
-				approveData && approveData.type === 'transaction'
-					? { type: 'transaction' as const, hash: approveData.hash }
-					: null,
+			result: approveTransactionHash
+				? { type: 'transaction', hash: approveTransactionHash }
+				: null,
 			execute: async () => approve.mutate(),
-			reset: () => {
-				// No reset needed for SellModal approval
-			},
+			reset: () => {},
 		};
 	}
 
-	// Sell step (always present)
 	const sellGuard = createFinalTransactionGuard({
-		isFormValid: true, // No form validation for SellModal
+		isFormValid: true,
 		txReady: !!sellSteps.data?.sellStep,
 		walletConnected: !!address,
 		requiresApproval: !!sellSteps.data?.approveStep,
@@ -151,8 +140,13 @@ export function useSellModalContext() {
 	});
 	const sellGuardResult = sellGuard();
 
-	const sellData = sell.data as ProcessStepResult | undefined;
+	const sellTransactionHash =
+		sell.data && 'type' in sell.data && sell.data.type === 'transaction'
+			? sell.data.hash
+			: undefined;
+
 	steps.sell = {
+		label: 'Accept Offer',
 		status: sell.isSuccess
 			? 'complete'
 			: sell.isPending
@@ -166,18 +160,13 @@ export function useSellModalContext() {
 		disabledReason: sellGuardResult.reason || null,
 		error: sell.error,
 		canExecute: sellGuardResult.canProceed,
-		result:
-			sellData && sellData.type === 'transaction'
-				? { type: 'transaction' as const, hash: sellData.hash }
-				: null,
+		result: sellTransactionHash
+			? { type: 'transaction', hash: sellTransactionHash }
+			: null,
 		execute: async () => sell.mutate(),
 	};
 
-	// ============================================
-	// COMPUTE FLOW STATE
-	// ============================================
-
-	const flow = computeFlowState(steps as unknown as ModalSteps);
+	const flow = computeFlowState(steps);
 
 	const error =
 		approve.error ||
@@ -185,10 +174,6 @@ export function useSellModalContext() {
 		sellSteps.error ||
 		collectionQuery.error ||
 		currencyQuery.error;
-
-	// ============================================
-	// RETURN CONTEXT
-	// ============================================
 
 	return {
 		isOpen: state.isOpen,
