@@ -1,3 +1,4 @@
+import type { CheckoutOptions } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
@@ -17,8 +18,23 @@ export const CheckoutMode = {
 	trails: 'trails',
 } as const;
 
-export type CheckoutMode =
+export type CheckoutModeString =
 	(typeof CheckoutMode)[keyof typeof CheckoutMode];
+
+export type CheckoutMode =
+	| 'crypto'
+	| 'trails'
+	| 'sequence-checkout'
+	| {
+			mode: 'sequence-checkout';
+			options: CheckoutOptions;
+	  };
+
+export function getSequenceCheckoutOptions(
+	checkoutMode: CheckoutMode,
+): CheckoutOptions | undefined {
+	return typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
+}
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -87,13 +103,20 @@ export type onSuccessCallback = ({
 }) => void;
 export type onErrorCallback = (error: Error) => void;
 
-const initialContext = {
+const initialContext: {
+	isOpen: boolean;
+	props: BuyModalProps | null;
+	buyAnalyticsId: string;
+	onError: onErrorCallback;
+	onSuccess: onSuccessCallback;
+	checkoutMode: CheckoutMode;
+} = {
 	isOpen: false,
-	props: null as BuyModalProps | null,
+	props: null,
 	buyAnalyticsId: '',
-	onError: (() => {}) as onErrorCallback,
-	onSuccess: (() => {}) as onSuccessCallback,
-	checkoutMode: 'crypto' as CheckoutMode,
+	onError: () => {},
+	onSuccess: () => {},
+	checkoutMode: 'crypto',
 };
 
 export const buyModalStore = createStore({

@@ -18,9 +18,16 @@ export { ShopCardPresentation } from './components/marketplace-collectible-card/
 // components
 export { Media } from './components/media/Media';
 export { useBuyModal } from './modals/BuyModal';
+export type {
+	CheckoutMode as CheckoutModeType,
+	CheckoutModeString,
+} from './modals/BuyModal/store';
+export {
+	CheckoutMode,
+	getSequenceCheckoutOptions,
+} from './modals/BuyModal/store';
 export { useCreateListingModal } from './modals/CreateListingModal';
 export { useMakeOfferModal } from './modals/MakeOfferModal';
 export { useSellModal } from './modals/SellModal';
 export { useSuccessfulPurchaseModal } from './modals/SuccessfulPurchaseModal';
 export { useTransferModal } from './modals/TransferModal';
-export { CheckoutMode } from './modals/BuyModal/store';
