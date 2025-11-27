@@ -3,9 +3,9 @@ import type { FeeOption } from '@0xsequence/waas';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import { useConfig } from '../../../../..';
-import { getIndexerClient, type Step } from '../../../../../_internal';
-import { useBuyModalData } from '../../hooks/useBuyModalData';
+import { useConfig } from '../../../..';
+import { getIndexerClient, type Step } from '../../../../_internal';
+import { useBuyModalData } from './useBuyModalData';
 
 // https://github.com/0xsequence/web-sdk/blob/620b6fe7681ae49efd4eb3fa7607ef01dd7ede54/packages/connect/src/utils/transactions.ts#L11-L19
 class FeeOptionInsufficientFundsError extends Error {

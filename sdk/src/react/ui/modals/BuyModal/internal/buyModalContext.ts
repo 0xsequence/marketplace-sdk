@@ -7,11 +7,12 @@ import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useBuyModalProps, useOnSuccess } from '../store';
+import { useBuyModalProps, useCheckoutMode, useOnSuccess } from '../store';
 
 export function useBuyModalContext() {
 	const config = useConfig();
 	const modalProps = useBuyModalProps();
+	const checkoutMode = useCheckoutMode();
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
 	const transactionStatusModal = useTransactionStatusModal();
@@ -40,8 +41,10 @@ export function useBuyModalContext() {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
-	const useTrailsModal = isChainSupported && buyStep && !isLoading;
-	const useCryptoPaymentModal = !useTrailsModal && steps && !isLoading;
+	const useTrailsModal =
+		checkoutMode === 'trails' && isChainSupported && buyStep && !isLoading;
+	const useCryptoPaymentModal =
+		checkoutMode === 'crypto' && steps && !isLoading;
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)

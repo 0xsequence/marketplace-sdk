@@ -11,6 +11,15 @@ import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
 
+export const CheckoutMode = {
+	crypto: 'crypto',
+	sequenceCheckout: 'sequence-checkout',
+	trails: 'trails',
+} as const;
+
+export type CheckoutMode =
+	(typeof CheckoutMode)[keyof typeof CheckoutMode];
+
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
 	salesContractAddress: Address;
@@ -84,6 +93,7 @@ const initialContext = {
 	buyAnalyticsId: '',
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
+	checkoutMode: 'crypto' as CheckoutMode,
 };
 
 export const buyModalStore = createStore({
@@ -93,6 +103,7 @@ export const buyModalStore = createStore({
 			context,
 			event: {
 				props: BuyModalProps;
+				checkoutMode?: CheckoutMode;
 				onError?: onErrorCallback;
 				onSuccess?: onSuccessCallback;
 				analyticsFn: ReturnType<typeof useAnalytics>;
@@ -119,6 +130,7 @@ export const buyModalStore = createStore({
 				...context,
 				props: event.props,
 				buyAnalyticsId,
+				checkoutMode: event.checkoutMode ?? context.checkoutMode,
 				onError: event.onError ?? context.onError,
 				onSuccess: event.onSuccess ?? context.onSuccess,
 				isOpen: true,
@@ -153,3 +165,6 @@ export const useOnSuccess = () =>
 
 export const useBuyAnalyticsId = () =>
 	useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);
+
+export const useCheckoutMode = () =>
+	useSelector(buyModalStore, (state) => state.context.checkoutMode);

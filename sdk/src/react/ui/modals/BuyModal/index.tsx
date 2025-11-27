@@ -1,8 +1,16 @@
 import { useAnalytics } from '../../../_internal/databeat';
 import type { ModalCallbacks } from '../_internal/types';
-import { type BuyModalProps, buyModalStore } from './store';
+import { CheckoutMode, buyModalStore, type BuyModalProps } from './store';
 
-export const useBuyModal = (callbacks?: ModalCallbacks) => {
+type UseBuyModalProps = {
+	checkoutMode?: CheckoutMode;
+	callbacks?: ModalCallbacks;
+};
+
+export const useBuyModal = ({
+	checkoutMode = CheckoutMode.trails,
+	callbacks,
+}: UseBuyModalProps = {}) => {
 	const analyticsFn = useAnalytics();
 
 	return {
@@ -10,6 +18,7 @@ export const useBuyModal = (callbacks?: ModalCallbacks) => {
 			buyModalStore.send({
 				type: 'open',
 				props: args,
+				checkoutMode,
 				...callbacks,
 				analyticsFn,
 			}),

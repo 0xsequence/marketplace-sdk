@@ -23,3 +23,4 @@ export { useMakeOfferModal } from './modals/MakeOfferModal';
 export { useSellModal } from './modals/SellModal';
 export { useSuccessfulPurchaseModal } from './modals/SuccessfulPurchaseModal';
 export { useTransferModal } from './modals/TransferModal';
+export { CheckoutMode } from './modals/BuyModal/store';

@@ -47,11 +47,13 @@ const OrdersTableAction = ({
 		},
 	});
 	const { show: openBuyModal } = useBuyModal({
-		onError: (error) => {
-			toast.error(`An error occurred while purchasing: ${error.message}`);
-		},
-		onSuccess: () => {
-			toast.success('You purchased the collectible');
+		callbacks: {
+			onError: (error) => {
+				toast.error(`An error occurred while purchasing: ${error.message}`);
+			},
+			onSuccess: () => {
+				toast.success('You purchased the collectible');
+			},
 		},
 	});
 	const accountHasCollectible = !!balance?.balance || false;
