@@ -27,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {

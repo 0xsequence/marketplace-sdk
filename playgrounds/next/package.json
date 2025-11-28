@@ -23,7 +23,7 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@0xsequence/wallet-widget": "catalog:",
-		"@tailwindcss/postcss": "^4.1.16",
+		"@tailwindcss/postcss": "^4.1.17",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"date-fns": "catalog:",
@@ -36,13 +36,13 @@
 		"react-dom": "catalog:",
 		"react-virtuoso": "^4.14.1",
 		"shared-components": "workspace:*",
-		"tailwindcss": "^4.1.16",
+		"tailwindcss": "^4.1.17",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.9.1",
+		"@types/node": "^24.10.1",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"typescript": "catalog:"
