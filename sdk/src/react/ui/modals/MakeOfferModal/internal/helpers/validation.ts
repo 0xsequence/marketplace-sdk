@@ -9,7 +9,7 @@
  */
 
 import { type Dnum, greaterThan } from 'dnum';
-import { isPositive } from '../../../_internal/helpers/dnum-utils';
+import { isPositive } from './dnum-utils';
 
 export type FieldValidation = {
 	isValid: boolean;

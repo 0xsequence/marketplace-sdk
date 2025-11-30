@@ -1,5 +1,5 @@
 /**
- * Shared dnum helpers for all modals
+ * Dnum helpers for MakeOfferModal
  *
  * Only includes wrappers for:
  * 1. Functions dnum doesn't export directly (isZero, isPositive)

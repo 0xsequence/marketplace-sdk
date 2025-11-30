@@ -1,12 +1,6 @@
-/**
- * Flow state utilities for modal transaction flows
- *
- * Pure functions for computing modal flow state from step configuration
- * Eliminates manual step counting and status checking in each modal
- */
-
 import type {
 	ApprovalStep,
+	BaseStepName,
 	FeeStep,
 	FlowState,
 	FormStep,
@@ -21,23 +15,16 @@ import {
 	isTransactionStep,
 } from '../types/steps';
 
-// ============================================
-// STEP HELPERS
-// ============================================
-
 type StepEntry = {
 	name: string;
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep;
 };
 
-/**
- * Convert ModalSteps object to array of step entries
- * Maintains order: form → fee → approval → [finalStep]
- */
-export function getStepEntries(steps: ModalSteps): StepEntry[] {
+export function getStepEntries(
+	steps: Record<string, FormStep | FeeStep | ApprovalStep | TransactionStep>,
+): StepEntry[] {
 	const entries: StepEntry[] = [];
 
-	// Always check in this order for consistent flow
 	if (steps.form) {
 		entries.push({ name: 'form', step: steps.form });
 	}
@@ -50,7 +37,6 @@ export function getStepEntries(steps: ModalSteps): StepEntry[] {
 		entries.push({ name: 'approval', step: steps.approval });
 	}
 
-	// Find the final step (any key that's not form/fee/approval)
 	const finalStepKey = Object.keys(steps).find(
 		(key) => key !== 'form' && key !== 'fee' && key !== 'approval',
 	);
@@ -68,18 +54,15 @@ export function getStepEntries(steps: ModalSteps): StepEntry[] {
 	return entries;
 }
 
-/**
- * Get status of a step (normalized across different step types)
- */
 export function getStepStatus(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): StepStatus {
 	if (isFormStep(step)) {
-		return step.status === 'complete' ? 'complete' : 'idle';
+		return step.status === 'success' ? 'success' : 'idle';
 	}
 
 	if (isFeeStep(step)) {
-		if (step.status === 'complete') return 'complete';
+		if (step.status === 'success') return 'success';
 		if (step.status === 'selecting') return 'pending';
 		return 'idle';
 	}
@@ -91,39 +74,33 @@ export function getStepStatus(
 	return 'idle';
 }
 
-/**
- * Check if a step is complete
- */
 export function isStepComplete(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
 	if (isFormStep(step)) {
-		return step.status === 'complete' && step.isValid;
+		return step.status === 'success' && step.isValid;
 	}
 
 	if (isFeeStep(step)) {
-		return step.status === 'complete';
+		return step.status === 'success';
 	}
 
 	if (isTransactionStep(step)) {
-		return step.isComplete;
+		return step.isSuccess;
 	}
 
 	return false;
 }
 
-/**
- * Check if a step is disabled
- */
 export function isStepDisabled(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
 	if (isFormStep(step)) {
-		return false; // Form is never disabled
+		return false;
 	}
 
 	if (isFeeStep(step)) {
-		return false; // Fee selection is never disabled when shown
+		return false;
 	}
 
 	if (isTransactionStep(step)) {
@@ -133,14 +110,11 @@ export function isStepDisabled(
 	return false;
 }
 
-/**
- * Check if a step is pending (actively processing)
- */
 export function isStepPending(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
 	if (isFormStep(step)) {
-		return false; // Form is never pending
+		return false;
 	}
 
 	if (isFeeStep(step)) {
@@ -154,61 +128,35 @@ export function isStepPending(
 	return false;
 }
 
-// ============================================
-// FLOW STATE COMPUTATION
-// ============================================
-
-/**
- * Compute complete flow state from modal steps
- *
- * This is the main utility function that eliminates manual counting
- * in each modal context
- *
- * @param steps - The modal steps object
- * @returns FlowState - Computed flow state
- *
- * @example
- * ```typescript
- * const flow = computeFlowState({
- *   form: { status: 'complete', isValid: true, errors: {} },
- *   approval: { status: 'complete', ... },
- *   offer: { status: 'pending', ... }
- * });
- *
- * // flow.currentStep === 'offer'
- * // flow.progress.percent === 66 (2 of 3 complete)
- * ```
- */
-export function computeFlowState(steps: ModalSteps): FlowState {
+export function computeFlowState<TFinalStepName extends string = 'transaction'>(
+	steps: Record<string, FormStep | FeeStep | ApprovalStep | TransactionStep>,
+): FlowState<TFinalStepName> {
 	const stepEntries = getStepEntries(steps);
 
-	// Count completed steps
 	const totalSteps = stepEntries.length;
 	const completedSteps = stepEntries.filter(({ step }) =>
 		isStepComplete(step),
 	).length;
 
-	// Find current step (first non-complete, non-disabled step)
 	const currentStepEntry = stepEntries.find(
 		({ step }) => !isStepComplete(step) && !isStepDisabled(step),
 	);
-	const currentStep =
-		currentStepEntry?.name || stepEntries[0]?.name || 'unknown';
+	const currentStep = (currentStepEntry?.name ||
+		stepEntries[0]?.name ||
+		'form') as BaseStepName | TFinalStepName;
 
-	// Find next actionable step (first idle, non-disabled step)
 	const nextStepEntry = stepEntries.find(({ step }) => {
 		const status = getStepStatus(step);
 		return status === 'idle' && !isStepDisabled(step);
 	});
-	const nextStep = nextStepEntry?.name || null;
+	const nextStep = (nextStepEntry?.name || null) as
+		| BaseStepName
+		| TFinalStepName
+		| null;
 
-	// Check if any step is pending
 	const isPending = stepEntries.some(({ step }) => isStepPending(step));
+	const isSuccess = completedSteps === totalSteps && totalSteps > 0;
 
-	// Check if all steps are complete
-	const isComplete = completedSteps === totalSteps && totalSteps > 0;
-
-	// Check if any step has error
 	const hasError = stepEntries.some(({ step }) => {
 		if (isTransactionStep(step)) {
 			return step.status === 'error' || step.error !== null;
@@ -216,17 +164,15 @@ export function computeFlowState(steps: ModalSteps): FlowState {
 		return false;
 	});
 
-	// Determine overall status
 	let status: FlowState['status'] = 'idle';
 	if (isPending) {
 		status = 'pending';
 	} else if (hasError) {
 		status = 'error';
-	} else if (isComplete) {
-		status = 'complete';
+	} else if (isSuccess) {
+		status = 'success';
 	}
 
-	// Check for invalidated steps (approval invalidation)
 	const hasInvalidatedSteps = stepEntries.some(({ step }) => {
 		if (isApprovalStep(step)) {
 			return step.invalidated === true;
@@ -234,14 +180,18 @@ export function computeFlowState(steps: ModalSteps): FlowState {
 		return false;
 	});
 
-	// Calculate progress percentage
 	const progressPercent =
 		totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+	const allSteps = stepEntries.map(({ name, step }) => ({
+		name: name as BaseStepName | TFinalStepName,
+		status: getStepStatus(step),
+	}));
 
 	return {
 		status,
 		isPending,
-		isComplete,
+		isSuccess,
 		currentStep,
 		nextStep,
 		progress: {
@@ -249,53 +199,11 @@ export function computeFlowState(steps: ModalSteps): FlowState {
 			total: totalSteps,
 			percent: progressPercent,
 		},
+		allSteps,
 		hasInvalidatedSteps,
 	};
 }
 
-// ============================================
-// CONVENIENCE HELPERS
-// ============================================
-
-/**
- * Get a human-readable label for a step
- */
-export function getStepLabel(stepName: string): string {
-	const labels: Record<string, string> = {
-		form: 'Set Details',
-		fee: 'Select Fee',
-		approval: 'Approve Token',
-		offer: 'Make Offer',
-		sell: 'Accept Offer',
-		listing: 'Create Listing',
-		list: 'Create Listing',
-		buy: 'Complete Purchase',
-	};
-
-	return labels[stepName] || stepName;
-}
-
-/**
- * Get a human-readable description for a step
- */
-export function getStepDescription(stepName: string): string | undefined {
-	const descriptions: Record<string, string> = {
-		form: 'Enter price, quantity, and expiry',
-		fee: 'Choose gas fee option',
-		approval: 'Allow marketplace to access your tokens',
-		offer: 'Sign transaction to create your offer',
-		sell: 'Sign transaction to accept the offer',
-		listing: 'Sign transaction to create your listing',
-		list: 'Sign transaction to create your listing',
-		buy: 'Sign transaction to complete purchase',
-	};
-
-	return descriptions[stepName];
-}
-
-/**
- * Check if a specific step needs user action
- */
 export function stepNeedsAction(
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep,
 ): boolean {
@@ -303,9 +211,6 @@ export function stepNeedsAction(
 	return status === 'idle' && !isStepDisabled(step);
 }
 
-/**
- * Get all steps that need user action
- */
 export function getActionableSteps(steps: ModalSteps): Array<{
 	name: string;
 	step: FormStep | FeeStep | ApprovalStep | TransactionStep;
@@ -313,9 +218,6 @@ export function getActionableSteps(steps: ModalSteps): Array<{
 	return getStepEntries(steps).filter(({ step }) => stepNeedsAction(step));
 }
 
-/**
- * Get the first step that has an error
- */
 export function getFirstErrorStep(
 	steps: ModalSteps,
 ): { name: string; step: TransactionStep | ApprovalStep } | null {
@@ -331,31 +233,16 @@ export function getFirstErrorStep(
 		: null;
 }
 
-/**
- * Execute the next actionable step
- * Returns the step name that was executed, or null if no step can be executed
- *
- * @example
- * ```typescript
- * const result = await executeNextStep(steps);
- * if (result) {
- *   console.log(`Executed step: ${result.stepName}`);
- * }
- * ```
- */
 export async function executeNextStep(
 	steps: ModalSteps,
 ): Promise<{ stepName: string } | null> {
 	const stepEntries = getStepEntries(steps);
 
-	// Find the first actionable step
 	const nextStep = stepEntries.find(({ step }) => {
-		// Fee step can be "shown" but doesn't execute
-		if (isFeeStep(step) && step.status !== 'complete') {
+		if (isFeeStep(step) && step.status !== 'success') {
 			return true;
 		}
 
-		// Transaction steps can be executed
 		if (isTransactionStep(step)) {
 			const status = getStepStatus(step);
 			return status === 'idle' && !isStepDisabled(step);
@@ -368,13 +255,11 @@ export async function executeNextStep(
 		return null;
 	}
 
-	// Execute fee step (show fee selector)
 	if (isFeeStep(nextStep.step)) {
 		nextStep.step.show();
 		return { stepName: nextStep.name };
 	}
 
-	// Execute transaction step
 	if (isTransactionStep(nextStep.step)) {
 		await nextStep.step.execute();
 		return { stepName: nextStep.name };

@@ -7,7 +7,7 @@ import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { fromBigIntString } from '../../_internal/helpers/dnum-utils';
+import { fromBigIntString } from './helpers/dnum-utils';
 import { useMakeOfferModalState } from './store';
 
 type GeneratedOfferSteps = {
@@ -107,7 +107,12 @@ export const useOfferMutations = (
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
 				callbacks: state.callbacks,
 				collectionAddress: state.collectionAddress,
-				collectibleId: state.collectibleId,
+				tokenId: BigInt(state.collectibleId),
+				queriesToInvalidate: [
+					['collectible', 'market-highest-offer'],
+					['collectible', 'market-list-offers'],
+					['collectible', 'market-count-offers'],
+				],
 			});
 
 			state.callbacks?.onSuccess?.({

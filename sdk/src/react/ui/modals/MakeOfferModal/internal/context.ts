@@ -1,45 +1,22 @@
-/**
- * Unified context hook for MakeOfferModal
- * Provides a flat, headless-first API for building custom offer UIs
- *
- * This hook consolidates:
- * - Data fetching (collectible, collection, currencies, balances)
- * - Form state and validation (pure functions)
- * - Step orchestration (approve, offer)
- * - Transaction mutations (using TanStack Query)
- *
- * All decimal handling uses dnum for precision safety
- */
-
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
-import type { UseQueryResult } from '@tanstack/react-query';
-import type { Dnum } from 'dnum';
-import * as dnum from 'dnum';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import type { OrderbookKind } from '../../../../../types';
 import { dateToUnixTime } from '../../../../../utils/date';
+import { type ContractType, OfferType } from '../../../../_internal';
 import {
-	type ContractType,
-	type Currency,
-	OfferType,
-} from '../../../../_internal';
-import {
-	useCollectible,
 	useCollectibleBalance,
-	useCollection,
+	useCollectibleMarketLowestListing,
+	useCollectibleMetadata,
+	useCollectionMetadata,
 	useConnectorMetadata,
-	useLowestListing,
-	useMarketCurrencies,
+	useCurrencyList,
 } from '../../../../hooks';
-import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
-import { parseInput, toBigIntString } from '../../_internal/helpers/dnum-utils';
 import {
-	computeFlowState,
-	executeNextStep,
-} from '../../_internal/helpers/flow-state';
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../../_internal/components/selectWaasFeeOptions/store';
+import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
 	createApprovalGuard,
 	createFinalTransactionGuard,
@@ -47,142 +24,25 @@ import {
 import type {
 	ApprovalStep,
 	FeeStep,
-	FlowState,
-	ModalSteps,
 	TransactionStep,
 } from '../../_internal/types/steps';
 import {
 	filterCurrenciesForOrderbook,
 	getDefaultCurrency,
 } from './helpers/currency';
+import { parseInput, toBigIntString } from './helpers/dnum-utils';
 import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
 import { useGenerateOfferTransaction } from './use-generate-offer-transaction';
 
-/**
- * MakeOfferModal steps type
- * Uses the common ModalSteps pattern with 'offer' as the final step
- */
-export type MakeOfferSteps = ModalSteps<'offer'>;
-
-/**
- * MakeOfferModal context type
- * Extends the base ModalContext with offer-specific fields
- */
-export type MakeOfferModalContext = {
-	// Modal state
-	isOpen: boolean;
-	close: () => void;
-
-	// Item data
-	item: {
-		tokenId: string;
-		collectionAddress: Address;
-		chainId: number;
-		collectible?: TokenMetadata;
-		collection?: ContractInfo;
-		balance?: Dnum;
-		balanceWithDecimals?: string;
-		orderbookKind?: OrderbookKind;
-	};
-
-	// Offer details
-	offer: {
-		price: {
-			input: string;
-			amountRaw: string;
-			currency: Currency | null;
-			dnum: Dnum;
-		};
-		quantity: {
-			input: string;
-			parsed: string;
-			dnum: Dnum;
-		};
-		expiry: Date;
-	};
-
-	// Form controls
-	form: {
-		price: {
-			input: string;
-			update: (value: string) => void;
-			validation: {
-				isValid: boolean;
-				error: string | null;
-			};
-		};
-		quantity: {
-			input: string;
-			update: (value: string) => void;
-			validation: {
-				isValid: boolean;
-				error: string | null;
-			};
-		};
-		expiry: {
-			date: Date;
-			update: (days: number) => void;
-		};
-		isValid: boolean;
-		errors: Record<string, string | null>;
-	};
-
-	// Currencies
-	currencies: {
-		all: Currency[];
-		available: Currency[];
-		selected: Currency | null;
-		select: (address: Address) => void;
-	};
-
-	// Steps (using common types)
-	steps: MakeOfferSteps;
-
-	// Flow state (computed)
-	flow: FlowState;
-
-	// Execute next step in the flow
-	executeNext: () => Promise<{ stepName: string } | null>;
-
-	// Loading and error states
-	isLoading: boolean;
-	error: Error | null;
-
-	// Queries (for v2 ActionModal pattern)
-	queries: {
-		collectible: UseQueryResult<TokenMetadata | undefined>;
-		collection: UseQueryResult<ContractInfo | undefined>;
-		currencies: UseQueryResult<Currency[] | undefined>;
-	};
+export type MakeOfferModalSteps = {
+	fee?: FeeStep;
+	approval?: ApprovalStep;
+	offer: TransactionStep;
 };
 
-// ============================================
-// CONTEXT HOOK
-// ============================================
-
-/**
- * Main context hook for MakeOfferModal
- * Use this hook to access all offer modal state and actions
- *
- * @example
- * ```tsx
- * function CustomOfferUI() {
- *   const { form, steps, currencies } = useMakeOfferModalContext();
- *
- *   return (
- *     <div>
- *       <input value={form.price.input} onChange={e => form.price.update(e.target.value)} />
- *       <button onClick={steps.offer.execute} disabled={steps.offer.isDisabled}>
- *         Make Offer
- *       </button>
- *     </div>
- *   );
- * }
- * ```
- */
-export function useMakeOfferModalContext(): MakeOfferModalContext {
+export function useMakeOfferModalContext() {
 	const state = useMakeOfferModalState();
 	const { address } = useAccount();
 
@@ -190,81 +50,56 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 	// DATA FETCHING
 	// ============================================
 
-	const collectibleQuery = useCollectible({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-		collectibleId: state.collectibleId,
-	});
+	// Convert string tokenId to bigint for hooks that require it
+	const tokenIdBigInt = state.collectibleId
+		? BigInt(state.collectibleId)
+		: undefined;
 
-	const collectionQuery = useCollection({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-	});
-
-	const currenciesQuery = useMarketCurrencies({
-		chainId: state.chainId,
-	});
-
-	const {
-		data: collectible,
-		isLoading: collectibleLoading,
-		error: collectibleError,
-	} = collectibleQuery;
-
-	const {
-		data: collection,
-		isLoading: collectionLoading,
-		error: collectionError,
-	} = collectionQuery;
-
-	const {
-		data: currencies,
-		isLoading: currenciesLoading,
-		error: currenciesError,
-	} = currenciesQuery;
-
-	const { data: lowestListing } = useLowestListing({
+	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		tokenId: state.collectibleId,
 	});
 
-	// Fetch balance directly (instead of from store)
-	const { data: balanceData } = useCollectibleBalance({
+	const collectionQuery = useCollectionMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		collectableId: state.collectibleId,
+	});
+
+	const currenciesQuery = useCurrencyList({
+		chainId: state.chainId,
+	});
+
+	const lowestListingQuery = useCollectibleMarketLowestListing({
+		chainId: state.chainId,
+		collectionAddress: state.collectionAddress,
+		tokenId: tokenIdBigInt,
+	});
+
+	const balanceQuery = useCollectibleBalance({
+		chainId: state.chainId,
+		collectionAddress: state.collectionAddress,
+		tokenId: tokenIdBigInt,
 		userAddress: address,
 	});
+
+	const { isWaaS } = useConnectorMetadata();
 
 	// ============================================
 	// DERIVED STATE
 	// ============================================
 
-	// Derive WaaS state from connector metadata
-	const { isWaaS } = useConnectorMetadata();
-	const waas = useSelectWaasFeeOptionsStore();
-	const [pendingFee] = useWaasFeeOptions();
-	const feeIsSponsored = (pendingFee?.options?.length ?? -1) === 0;
-
-	// Balance
-	const balanceDnum: Dnum | undefined = useMemo(() => {
-		if (!balanceData?.balance || collectible?.decimals === undefined)
-			return undefined;
-		return [BigInt(balanceData.balance), collectible.decimals];
-	}, [balanceData?.balance, collectible?.decimals]);
-
-	// Available currencies (filtered by orderbook)
+	// Keep useMemo for array filtering - creates new array reference
 	const availableCurrencies = useMemo(() => {
-		if (!currencies) return [];
+		if (!currenciesQuery.data) return [];
 		return filterCurrenciesForOrderbook(
-			currencies,
+			currenciesQuery.data,
 			state.orderbookKind,
 			state.chainId,
 		);
-	}, [currencies, state.orderbookKind, state.chainId]);
+	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 
-	// Selected currency
+	// Keep useMemo - depends on availableCurrencies and does array.find
 	const selectedCurrency = useMemo(() => {
 		if (state.currencyAddress) {
 			return (
@@ -276,68 +111,66 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 		return getDefaultCurrency(availableCurrencies, state.orderbookKind);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
-	// Expiry date - simple calculation, no memoization needed
-	const now = new Date();
+	// Expiry date calculation - no useMemo needed, Date creation is cheap
 	const expiryDate = new Date(
-		now.getTime() + state.expiryDays * 24 * 60 * 60 * 1000,
+		Date.now() + state.expiryDays * 24 * 60 * 60 * 1000,
 	);
 
-	// Price as Dnum
-	const priceDnum: Dnum = useMemo(() => {
-		return parseInput(state.priceInput, selectedCurrency?.decimals || 18);
-	}, [state.priceInput, selectedCurrency?.decimals]);
-
-	// Simple function call - no memoization needed
+	// Price as Dnum - no useMemo needed, parseInput is cheap and no downstream memoized consumers
+	const priceDnum = parseInput(
+		state.priceInput,
+		selectedCurrency?.decimals || 18,
+	);
 	const priceRaw = toBigIntString(priceDnum);
 
-	// Quantity as Dnum
-	const quantityDnum: Dnum = useMemo(() => {
-		return parseInput(state.quantityInput, collectible?.decimals || 0);
-	}, [state.quantityInput, collectible?.decimals]);
-
-	// Simple function call - no memoization needed
+	// Quantity as Dnum - no useMemo needed
+	const quantityDnum = parseInput(
+		state.quantityInput,
+		collectibleQuery.data?.decimals || 0,
+	);
 	const quantityRaw = toBigIntString(quantityDnum);
 
-	// Lowest listing as Dnum (for OpenSea validation)
-	const lowestListingDnum: Dnum | undefined = useMemo(() => {
-		if (!lowestListing?.priceAmount || !selectedCurrency?.decimals) {
-			return undefined;
-		}
-		return [BigInt(lowestListing.priceAmount), selectedCurrency.decimals];
-	}, [lowestListing?.priceAmount, selectedCurrency?.decimals]);
+	// Balance as Dnum - no useMemo needed, tuple creation is trivial
+	const balanceDnum =
+		balanceQuery.data?.balance && selectedCurrency?.decimals
+			? ([
+					BigInt(balanceQuery.data.balance),
+					selectedCurrency.decimals,
+				] as const)
+			: undefined;
+
+	// Lowest listing as Dnum - no useMemo needed
+	const lowestListingDnum =
+		lowestListingQuery.data?.priceAmount && selectedCurrency?.decimals
+			? ([
+					BigInt(lowestListingQuery.data.priceAmount),
+					selectedCurrency.decimals,
+				] as const)
+			: undefined;
 
 	// ============================================
 	// VALIDATION
 	// ============================================
 
-	const validation = useMemo(() => {
-		return validateOfferForm({
-			price: priceDnum,
-			quantity: quantityDnum,
-			balance: balanceDnum,
-			lowestListing: lowestListingDnum,
-			orderbookKind: state.orderbookKind,
-		});
-	}, [
-		priceDnum,
-		quantityDnum,
-		balanceDnum,
-		lowestListingDnum,
-		state.orderbookKind,
-	]);
+	// No useMemo needed - validateOfferForm is cheap and no downstream memoized consumers
+	const validation = validateOfferForm({
+		price: priceDnum,
+		quantity: quantityDnum,
+		balance: balanceDnum,
+		lowestListing: lowestListingDnum,
+		orderbookKind: state.orderbookKind,
+	});
 
-	// Simple function call on already-memoized value - no additional memoization needed
 	const formIsValid = isFormValid(validation);
 
 	// ============================================
 	// TRANSACTION GENERATION
 	// ============================================
 
-	// Generate transaction steps (only when form is valid)
-	const offerSteps = useGenerateOfferTransaction({
+	const transactionData = useGenerateOfferTransaction({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		contractType: collection?.type as ContractType,
+		contractType: collectionQuery.data?.type as ContractType,
 		orderbook: state.orderbookKind,
 		maker: address,
 		offer: {
@@ -351,222 +184,219 @@ export function useMakeOfferModalContext(): MakeOfferModalContext {
 		offerType: OfferType.item,
 	});
 
-	const { approve, makeOffer } = useOfferMutations(offerSteps.data, {
+	const { approve, makeOffer } = useOfferMutations(transactionData.data, {
 		priceRaw,
 		currencyAddress: selectedCurrency?.contractAddress as Address,
 		currencyDecimals: selectedCurrency?.decimals ?? 18,
 	});
 
-	const feeStep: FeeStep | undefined = useMemo(() => {
-		if (!isWaaS) return undefined;
+	// ============================================
+	// STEPS
+	// ============================================
 
-		return {
-			status: waas.isVisible ? 'selecting' : 'complete',
-			isSponsored: feeIsSponsored,
+	const waas = useSelectWaasFeeOptionsStore();
+	const [pendingFee] = useWaasFeeOptions();
+	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
+
+	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
+
+	// Fee step (WaaS only)
+	if (isWaaS) {
+		const feeSelected = isSponsored || !!waas.selectedFeeOption;
+
+		steps.fee = {
+			label: 'Select Fee',
+			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			isSponsored,
 			isSelecting: waas.isVisible,
 			selectedOption: waas.selectedFeeOption,
-			show: () => waas.show(),
-			cancel: () => waas.hide(),
+			show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
+			cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
 		};
-	}, [isWaaS, waas, feeIsSponsored]);
+	}
 
-	// Approve step (conditional)
-	const approvalGuard = useMemo(() => {
-		return createApprovalGuard({
+	// Approval step (conditional)
+	if (transactionData.data?.approveStep) {
+		const approvalGuard = createApprovalGuard({
 			isFormValid: formIsValid,
-			txReady: !!offerSteps.data?.approveStep,
+			txReady: !!transactionData.data?.approveStep,
 			walletConnected: !!address,
 		});
-	}, [formIsValid, address, offerSteps.data?.approveStep]);
+		const guardResult = approvalGuard();
 
-	const approvalStep: ApprovalStep | undefined = useMemo(() => {
-		if (!offerSteps.data?.approveStep) return undefined;
+		const approveTransactionHash =
+			approve.data &&
+			'type' in approve.data &&
+			approve.data.type === 'transaction'
+				? approve.data.hash
+				: undefined;
 
-		const guard = approvalGuard();
-
-		return {
+		steps.approval = {
+			label: 'Approve TOKEN',
 			status: approve.isSuccess
-				? 'complete'
+				? 'success'
 				: approve.isPending
 					? 'pending'
 					: approve.error
 						? 'error'
 						: 'idle',
-			canExecute: guard.canProceed,
 			isPending: approve.isPending,
-			isComplete: approve.isSuccess,
-			isDisabled: !guard.canProceed,
-			disabledReason: guard.reason || null,
+			isSuccess: approve.isSuccess,
+			isDisabled: !guardResult.canProceed,
+			disabledReason: guardResult.error?.message || null,
 			error: approve.error,
-			result:
-				approve.data?.type === 'transaction'
-					? { type: 'transaction', hash: approve.data.hash }
-					: null,
-			execute: async () => {
-				const result = approvalGuard();
-				if (!result.canProceed) {
-					throw new Error(result.reason);
-				}
-				await approve.mutateAsync();
-			},
+			canExecute: guardResult.canProceed,
+			result: approveTransactionHash
+				? { type: 'transaction', hash: approveTransactionHash }
+				: null,
+			execute: async () => approve.mutate(),
 			reset: () => approve.reset(),
 		};
-	}, [
-		offerSteps.data?.approveStep,
-		approve.isSuccess,
-		approve.isPending,
-		approve.error,
-		approve.data,
-		approvalGuard,
-		approve,
-	]);
+	}
 
-	const offerGuard = useMemo(() => {
-		return createFinalTransactionGuard({
-			isFormValid: formIsValid,
-			txReady: !!offerSteps.data?.offerStep,
-			walletConnected: !!address,
-			requiresApproval: !!approvalStep,
-			approvalComplete: approvalStep?.isComplete || false,
-		});
-	}, [formIsValid, address, approvalStep, offerSteps.data?.offerStep]);
+	// Offer step (always present)
+	const offerGuard = createFinalTransactionGuard({
+		isFormValid: formIsValid,
+		txReady: !!transactionData.data?.offerStep,
+		walletConnected: !!address,
+		requiresApproval: !!transactionData.data?.approveStep,
+		approvalComplete: approve.isSuccess || !transactionData.data?.approveStep,
+	});
+	const offerGuardResult = offerGuard();
 
-	const offerStep: TransactionStep = useMemo(() => {
-		const guard = offerGuard();
+	const offerTransactionHash =
+		makeOffer.data &&
+		'type' in makeOffer.data &&
+		makeOffer.data.type === 'transaction'
+			? makeOffer.data.hash
+			: undefined;
 
-		return {
-			status: makeOffer.isSuccess
-				? 'complete'
-				: makeOffer.isPending
-					? 'pending'
-					: makeOffer.error
-						? 'error'
-						: 'idle',
-			canExecute: guard.canProceed,
-			isPending: makeOffer.isPending,
-			isComplete: makeOffer.isSuccess,
-			isDisabled: !guard.canProceed,
-			disabledReason: guard.reason || null,
-			error: makeOffer.error,
-			result:
-				makeOffer.data?.type === 'transaction'
-					? { type: 'transaction', hash: makeOffer.data.hash }
-					: makeOffer.data?.type === 'signature'
-						? { type: 'signature', orderId: makeOffer.data.orderId ?? '' }
-						: null,
-			execute: async () => {
-				const result = offerGuard();
-				if (!result.canProceed) {
-					throw new Error(result.reason);
-				}
-				await makeOffer.mutateAsync();
-			},
-		};
-	}, [
-		makeOffer.isSuccess,
-		makeOffer.isPending,
-		makeOffer.error,
-		makeOffer.data,
-		offerGuard,
-		makeOffer,
-	]);
-
-	// Build steps object for flow computation
-	const steps: MakeOfferSteps = {
-		...(feeStep ? { fee: feeStep } : {}),
-		...(approvalStep ? { approval: approvalStep } : {}),
-		offer: offerStep,
+	steps.offer = {
+		label: 'Make Offer',
+		status: makeOffer.isSuccess
+			? 'success'
+			: makeOffer.isPending
+				? 'pending'
+				: makeOffer.error
+					? 'error'
+					: 'idle',
+		isPending: makeOffer.isPending,
+		isSuccess: makeOffer.isSuccess,
+		isDisabled: !offerGuardResult.canProceed,
+		disabledReason: offerGuardResult.error?.message || null,
+		error: makeOffer.error,
+		canExecute: offerGuardResult.canProceed,
+		result: offerTransactionHash
+			? { type: 'transaction', hash: offerTransactionHash }
+			: makeOffer.data?.type === 'signature'
+				? { type: 'signature', orderId: makeOffer.data.orderId ?? '' }
+				: null,
+		execute: async () => makeOffer.mutate(),
 	};
 
-	// Compute flow state using utility function
-	const flow = computeFlowState(steps as unknown as ModalSteps);
+	const flow = computeFlowState(steps);
 
-	// Global error aggregation
 	const error =
-		collectibleError ||
-		collectionError ||
-		currenciesError ||
 		approve.error ||
 		makeOffer.error ||
-		null;
-
-	// Execute next step helper
-	const executeNext = async () => {
-		return executeNextStep(steps as unknown as ModalSteps);
-	};
+		transactionData.error ||
+		collectibleQuery.error ||
+		collectionQuery.error ||
+		currenciesQuery.error;
 
 	return {
 		isOpen: state.isOpen,
 		close: state.closeModal,
 
+		// Item data - grouped under `item` to match Modal.tsx expectations
 		item: {
-			tokenId: state.collectibleId,
-			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
-			collectible,
-			collection,
-			balance: balanceDnum,
-			balanceWithDecimals: balanceDnum ? dnum.format(balanceDnum) : undefined,
+			collectionAddress: state.collectionAddress,
+			tokenId: state.collectibleId,
 			orderbookKind: state.orderbookKind,
 		},
 
+		// Keep flat access for backwards compatibility
+		collectibleId: state.collectibleId,
+		collectionAddress: state.collectionAddress,
+		chainId: state.chainId,
+		collectible: collectibleQuery.data,
+		collection: collectionQuery.data,
+
+		// Offer data
 		offer: {
 			price: {
 				input: state.priceInput,
 				amountRaw: priceRaw,
 				currency: selectedCurrency,
-				dnum: priceDnum,
 			},
 			quantity: {
 				input: state.quantityInput,
 				parsed: quantityRaw,
-				dnum: quantityDnum,
 			},
 			expiry: expiryDate,
 		},
 
+		// Form controls - restructured to match Modal.tsx expectations
 		form: {
 			price: {
 				input: state.priceInput,
-				update: (value: string) => state.updatePriceInput(value),
-				validation: validation.price,
+				update: state.updatePriceInput,
 			},
 			quantity: {
 				input: state.quantityInput,
-				update: (value: string) => state.updateQuantityInput(value),
+				update: state.updateQuantityInput,
 				validation: validation.quantity,
 			},
 			expiry: {
-				date: expiryDate,
-				update: (days: number) => state.updateExpiryDays(days),
+				update: state.updateExpiryDays,
 			},
 			isValid: formIsValid,
 			errors: {
 				price: validation.price.error,
 				quantity: validation.quantity.error,
 				balance: validation.balance.error,
-				openseaCriteria: validation.openseaCriteria?.error ?? null,
+				openseaCriteria: validation.openseaCriteria?.error,
 			},
 		},
 
+		// Currencies
 		currencies: {
-			all: currencies || [],
 			available: availableCurrencies,
 			selected: selectedCurrency,
-			select: (address) => state.updateCurrency(address),
+			select: state.updateCurrency,
 		},
 
+		// Steps and flow
 		steps,
 		flow,
-		executeNext,
 
-		isLoading: collectibleLoading || collectionLoading || currenciesLoading,
+		// Loading states
+		loading: {
+			collectible: collectibleQuery.isLoading,
+			collection: collectionQuery.isLoading,
+			currencies: currenciesQuery.isLoading,
+			steps: transactionData.isLoading,
+		},
+
+		// Transaction hashes
+		transactions: {
+			approve:
+				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
+			offer:
+				makeOffer.data?.type === 'transaction'
+					? makeOffer.data.hash
+					: undefined,
+		},
+
 		error,
-
 		queries: {
 			collectible: collectibleQuery,
 			collection: collectionQuery,
 			currencies: currenciesQuery,
+			lowestListing: lowestListingQuery,
 		},
 	};
 }
+
+export type MakeOfferModalContext = ReturnType<typeof useMakeOfferModalContext>;

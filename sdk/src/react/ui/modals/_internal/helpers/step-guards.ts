@@ -1,13 +1,3 @@
-/**
- * Step guard utilities for modal transaction flows
- * Pure functions for determining if a step can execute
- *
- * All functions in this module are:
- * - Pure (no side effects)
- * - Testable without React
- * - Return clear reasons for blocking
- */
-
 export type SuggestedAction =
 	| 'fix-form'
 	| 'complete-approval'
@@ -18,14 +8,10 @@ export type SuggestedAction =
 
 export type GuardResult = {
 	canProceed: boolean;
-	reason?: string;
+	error?: Error;
 	suggestedAction?: SuggestedAction;
 };
 
-/**
- * Base guard that checks wallet connection, form validity, and transaction readiness
- * Used as foundation for more specific guards
- */
 export function createBaseGuard(params: {
 	isFormValid: boolean;
 	txReady: boolean;
@@ -37,7 +23,7 @@ export function createBaseGuard(params: {
 		if (!walletConnected) {
 			return {
 				canProceed: false,
-				reason: 'Please connect your wallet',
+				error: new Error('Please connect your wallet'),
 				suggestedAction: 'connect-wallet',
 			};
 		}
@@ -45,7 +31,7 @@ export function createBaseGuard(params: {
 		if (!isFormValid) {
 			return {
 				canProceed: false,
-				reason: 'Please fix form validation errors',
+				error: new Error('Please fix form validation errors'),
 				suggestedAction: 'fix-form',
 			};
 		}
@@ -53,7 +39,7 @@ export function createBaseGuard(params: {
 		if (!txReady) {
 			return {
 				canProceed: false,
-				reason: 'Transaction not ready',
+				error: new Error('Transaction not ready'),
 				suggestedAction: 'wait-for-tx',
 			};
 		}
@@ -62,18 +48,6 @@ export function createBaseGuard(params: {
 	};
 }
 
-/**
- * Create guard for approval step
- * Pure function - returns function that checks conditions
- *
- * @example
- * const guard = createApprovalGuard({
- *   isFormValid: true,
- *   txReady: true,
- *   walletConnected: true,
- * });
- * const result = guard(); // { canProceed: true }
- */
 export function createApprovalGuard(params: {
 	isFormValid: boolean;
 	txReady: boolean;
@@ -82,20 +56,6 @@ export function createApprovalGuard(params: {
 	return createBaseGuard(params);
 }
 
-/**
- * Create guard for final transaction step (e.g., make offer, accept offer, sell)
- * Checks if approval is complete before proceeding
- *
- * @example
- * const guard = createFinalTransactionGuard({
- *   isFormValid: true,
- *   txReady: true,
- *   walletConnected: true,
- *   requiresApproval: true,
- *   approvalComplete: false,
- * });
- * const result = guard(); // { canProceed: false, reason: "Please approve token first" }
- */
 export function createFinalTransactionGuard(params: {
 	isFormValid: boolean;
 	txReady: boolean;
@@ -115,7 +75,7 @@ export function createFinalTransactionGuard(params: {
 		if (!walletConnected) {
 			return {
 				canProceed: false,
-				reason: 'Please connect your wallet',
+				error: new Error('Please connect your wallet'),
 				suggestedAction: 'connect-wallet',
 			};
 		}
@@ -123,7 +83,7 @@ export function createFinalTransactionGuard(params: {
 		if (!isFormValid) {
 			return {
 				canProceed: false,
-				reason: 'Please fix form validation errors',
+				error: new Error('Please fix form validation errors'),
 				suggestedAction: 'fix-form',
 			};
 		}
@@ -131,7 +91,7 @@ export function createFinalTransactionGuard(params: {
 		if (requiresApproval && !approvalComplete) {
 			return {
 				canProceed: false,
-				reason: 'Please approve token first',
+				error: new Error('Please approve token first'),
 				suggestedAction: 'complete-approval',
 			};
 		}
@@ -139,7 +99,7 @@ export function createFinalTransactionGuard(params: {
 		if (!txReady) {
 			return {
 				canProceed: false,
-				reason: 'Transaction not ready',
+				error: new Error('Transaction not ready'),
 				suggestedAction: 'wait-for-tx',
 			};
 		}
@@ -148,16 +108,6 @@ export function createFinalTransactionGuard(params: {
 	};
 }
 
-/**
- * Create guard for fee selection step (WaaS only)
- * Pure function - returns function that checks conditions
- *
- * @example
- * const guard = createFeeGuard({
- *   feeSelectionVisible: true,
- * });
- * const result = guard(); // { canProceed: false, reason: "Please select a fee option" }
- */
 export function createFeeGuard(params: {
 	feeSelectionVisible: boolean;
 }): () => GuardResult {
@@ -167,7 +117,7 @@ export function createFeeGuard(params: {
 		if (feeSelectionVisible) {
 			return {
 				canProceed: false,
-				reason: 'Please select a fee option',
+				error: new Error('Please select a fee option'),
 				suggestedAction: 'select-fee',
 			};
 		}
@@ -176,7 +126,6 @@ export function createFeeGuard(params: {
 	};
 }
 
-// Legacy exports for backward compatibility (MakeOfferModal)
 export { createApprovalGuard as createApproveStepGuard };
 export { createFinalTransactionGuard as createOfferStepGuard };
 export { createFeeGuard as createFeeStepGuard };

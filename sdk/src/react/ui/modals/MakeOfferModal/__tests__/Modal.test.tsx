@@ -1,187 +1,70 @@
-import { cleanup, render, renderHook, waitFor } from '@test';
+import { renderHook } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CurrencyStatus, StepType } from '../../../../_internal';
 import { useMakeOfferModal } from '..';
-import { useGetTokenApprovalData } from '../hooks/useGetTokenApproval';
 import { makeOfferModalStore } from '../internal/store';
-import { MakeOfferModal } from '../Modal';
-
-vi.mock('../hooks/useGetTokenApproval', () => ({
-	useGetTokenApprovalData: vi.fn(),
-}));
 
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	tokenId: TEST_COLLECTIBLE.tokenId,
-};
-
-// Mock currency object with all required properties
-const mockCurrency = {
-	chainId: 1,
-	contractAddress: '0x123' as `0x${string}`,
-	status: CurrencyStatus.active,
-	name: 'Test Token',
-	symbol: 'TEST',
-	decimals: 18,
-	imageUrl: 'https://example.com/test.png',
-	exchangeRate: 1,
-	defaultChainCurrency: false,
-	nativeCurrency: false,
-	openseaListing: true,
-	openseaOffer: true,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	collectibleId: String(TEST_COLLECTIBLE.tokenId),
 };
 
 describe('MakeOfferModal', () => {
 	beforeEach(() => {
-		cleanup();
-		// Reset all mocks
 		vi.clearAllMocks();
 		vi.resetAllMocks();
 		vi.restoreAllMocks();
-		// Set default mock behavior
-		vi.mocked(useGetTokenApprovalData).mockReturnValue({
-			data: { step: null }, // No approval needed by default
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			error: null,
-		});
+		// Reset store state
+		makeOfferModalStore.send({ type: 'close' });
 	});
 
-	it.skip('should show main button if there is no approval step', async () => {
-		// Render the modal
-		const { result } = renderHook(() => useMakeOfferModal());
-		result.current.show(defaultArgs);
-
-		const { queryByText } = render(<MakeOfferModal />);
-
-		// Wait for the component to update
-		await waitFor(() => {
-			// The Approve TOKEN button should not exist
-			const approveButton = queryByText('Approve TOKEN');
-			expect(approveButton).toBeNull();
-
-			const makeOfferButton = queryByText('Make offer');
-			expect(makeOfferButton).toBeDefined();
-		});
-	});
-
-	it.skip('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
-		// Mock the hook to return approval needed
-		vi.mocked(useGetTokenApprovalData).mockReturnValue({
-			data: {
-				step: {
-					id: StepType.tokenApproval,
-					data: '0x',
-					to: '0x0000000000000000000000000000000000000000',
-					value: 0n,
-					price: 0n,
-				},
-			}, // Approval needed
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			error: null,
-		});
-
-		// Render the modal
-		const { result } = renderHook(() => useMakeOfferModal());
-		result.current.show(defaultArgs);
-
-		const { getByText } = render(<MakeOfferModal />);
-
-		await waitFor(() => {
-			// find the Approve TOKEN button
-			const approveButton = getByText('Approve TOKEN');
-			expect(approveButton).toBeDefined();
-
-			// main button is disabled when approval step exists
-			const makeOfferButton = getByText('Make offer');
-			expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
-		});
-	});
-
-	describe('CTA visibility based on approval requirement', () => {
-		beforeEach(() => {
-			makeOfferModalStore.send({ type: 'close' });
-			vi.clearAllMocks();
-			vi.mocked(useGetTokenApprovalData).mockReturnValue({
-				data: { step: null },
-				isLoading: false,
-				isSuccess: true,
-				isError: false,
-				error: null,
-			});
-		});
-
-		it.skip('should show Approve TOKEN button when approval is required', async () => {
-			vi.mocked(useGetTokenApprovalData).mockReturnValue({
-				data: {
-					step: {
-						id: StepType.tokenApproval,
-						data: '0x',
-						to: '0x0000000000000000000000000000000000000000',
-						value: 0n,
-						price: 0n,
-					},
-				}, // Approval needed
-				isLoading: false,
-				isSuccess: true,
-				isError: false,
-				error: null,
-			});
-
+	describe('Store and Hook', () => {
+		it('should open and close the modal via store', () => {
+			// Open modal
 			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
-			makeOfferModal$.offerPrice.set({
-				amountRaw: 1000000000000000000n,
-				currency: mockCurrency,
-			});
-			makeOfferModal$.offerPriceChanged.set(true);
+			expect(makeOfferModalStore.getSnapshot().context.isOpen).toBe(true);
 
-			const { getByText } = render(<MakeOfferModal />);
-
-			await waitFor(() => {
-				const approveButton = getByText('Approve TOKEN');
-				expect(approveButton).toBeDefined();
-
-				// Make offer button should be disabled when approval is required
-				const makeOfferButton = getByText('Make offer');
-				expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
-			});
+			// Close modal
+			makeOfferModalStore.send({ type: 'close' });
+			expect(makeOfferModalStore.getSnapshot().context.isOpen).toBe(false);
 		});
 
-		it.skip('should hide Approve TOKEN button when approval is not required', async () => {
-			makeOfferModalStore.send({ type: 'close' });
-			vi.mocked(useGetTokenApprovalData).mockReturnValue({
-				data: { step: null }, // No approval needed
-				isLoading: false,
-				isSuccess: true,
-				isError: false,
-				error: null,
-			});
+		it('should provide show and close methods via useMakeOfferModal hook', () => {
+			const { result } = renderHook(() => useMakeOfferModal());
 
-			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
-			makeOfferModal$.offerPrice.set({
-				amountRaw: 1000000000000000000n,
-				currency: mockCurrency,
-			});
-			makeOfferModal$.offerPriceChanged.set(true);
-
-			const { queryByText, getByText } = render(<MakeOfferModal />);
-
-			await waitFor(() => {
-				expect(getByText('Make offer')).toBeInTheDocument();
-			});
-			const approveButton = queryByText('Approve TOKEN');
-			expect(approveButton).not.toBeInTheDocument();
-
-			// Make offer button should be enabled when no approval needed
-			const makeOfferButton = getByText('Make offer');
-			expect(makeOfferButton.closest('button')).not.toHaveAttribute('disabled');
+			expect(result.current.show).toBeDefined();
+			expect(result.current.close).toBeDefined();
 		});
 	});
+
+	describe('Form State Management', () => {
+		it('should update price input via store', () => {
+			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
+			makeOfferModalStore.send({ type: 'updatePrice', value: '1.5' });
+
+			expect(makeOfferModalStore.getSnapshot().context.priceInput).toBe('1.5');
+		});
+
+		it('should update quantity input via store', () => {
+			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
+			makeOfferModalStore.send({ type: 'updateQuantity', value: '5' });
+
+			expect(makeOfferModalStore.getSnapshot().context.quantityInput).toBe('5');
+		});
+
+		it('should update expiry days via store', () => {
+			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
+			makeOfferModalStore.send({ type: 'updateExpiryDays', days: 14 });
+
+			expect(makeOfferModalStore.getSnapshot().context.expiryDays).toBe(14);
+		});
+	});
+
+	// TODO: Add integration tests for:
+	// - Approval step visibility
+	// - Form validation display
+	// - Currency selection
+	// - Transaction flow
+	// These require mocking the React Query hooks used in useMakeOfferModalContext
 });
