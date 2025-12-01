@@ -1,4 +1,4 @@
-import type { CheckoutOptions, Step } from '@0xsequence/api-client';
+import type { Step } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
@@ -11,21 +11,6 @@ import type { TransactionOnRampProvider } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
-
-export type CheckoutMode =
-	| 'crypto'
-	| 'trails'
-	| 'sequence-checkout'
-	| {
-			mode: 'sequence-checkout';
-			options: CheckoutOptions;
-	  };
-
-export function getSequenceCheckoutOptions(
-	checkoutMode: CheckoutMode,
-): CheckoutOptions | undefined {
-	return typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
-}
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -105,7 +90,6 @@ const initialContext: {
 	buyAnalyticsId: string;
 	onError: onErrorCallback;
 	onSuccess: onSuccessCallback;
-	checkoutMode: CheckoutMode;
 	paymentModalState: SubModalState;
 	checkoutModalState: SubModalState;
 	quantity: number | undefined;
@@ -115,7 +99,6 @@ const initialContext: {
 	buyAnalyticsId: '',
 	onError: () => {},
 	onSuccess: () => {},
-	checkoutMode: 'crypto',
 	paymentModalState: 'idle',
 	checkoutModalState: 'idle',
 	quantity: undefined,
@@ -128,7 +111,6 @@ export const buyModalStore = createStore({
 			context,
 			event: {
 				props: BuyModalProps;
-				checkoutMode?: CheckoutMode;
 				onError?: onErrorCallback;
 				onSuccess?: onSuccessCallback;
 				analyticsFn: ReturnType<typeof useAnalytics>;
@@ -155,7 +137,6 @@ export const buyModalStore = createStore({
 				...context,
 				props: event.props,
 				buyAnalyticsId,
-				checkoutMode: event.checkoutMode ?? context.checkoutMode,
 				onError: event.onError ?? context.onError,
 				onSuccess: event.onSuccess ?? context.onSuccess,
 				isOpen: true,
@@ -235,9 +216,6 @@ export const useOnSuccess = () =>
 
 export const useBuyAnalyticsId = () =>
 	useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);
-
-export const useCheckoutMode = () =>
-	useSelector(buyModalStore, (state) => state.context.checkoutMode);
 
 export const usePaymentModalState = () =>
 	useSelector(buyModalStore, (state) => state.context.paymentModalState);

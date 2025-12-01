@@ -51,15 +51,6 @@ const OrdersTableAction = ({
 		},
 	});
 	const { show: openBuyModal } = useBuyModal({
-		checkoutMode: {
-			mode: 'sequence-checkout',
-			options: {
-				swap: [],
-				crypto: TransactionCrypto.all,
-				nftCheckout: [],
-				onRamp: [],
-			},
-		},
 		callbacks: {
 			onError: (error) => {
 				toast.error(`An error occurred while purchasing: ${error.message}`);

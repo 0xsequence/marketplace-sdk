@@ -11,7 +11,6 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { TransactionSwapProvider } from '../../../../../../api/src/adapters/marketplace/marketplace.gen';
 
 interface ShopActionsProps {
 	contractType: ContractType | undefined;
@@ -29,17 +28,7 @@ export function ShopActions({
 	collectibleName,
 }: ShopActionsProps) {
 	const { address: accountAddress } = useAccount();
-	const { show: showBuyModal } = useBuyModal({
-		checkoutMode: {
-			mode: 'sequence-checkout',
-			options: {
-				crypto: TransactionCrypto.none,
-				swap: [TransactionSwapProvider.lifi],
-				nftCheckout: [],
-				onRamp: [],
-			},
-		},
-	});
+	const { show: showBuyModal } = useBuyModal();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const saleConfig = marketplaceConfig?.shop?.collections?.find((c) =>

@@ -11,6 +11,7 @@ import {
 } from '../../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import type {
 	AdditionalFee,
+	CheckoutMode,
 	MarketplaceKind,
 	SdkConfig,
 } from '../../../../../../../types';
@@ -25,8 +26,6 @@ import { useMarketPlatformFee } from '../../../hooks/useMarketPlatformFee';
 import { useBuyModalContext } from '../../../internal/buyModalContext';
 import {
 	buyModalStore,
-	type CheckoutMode,
-	getSequenceCheckoutOptions,
 	isMarketProps,
 	useBuyAnalyticsId,
 	useBuyModalProps,
@@ -76,7 +75,8 @@ export const getBuyCollectableParams = async ({
 	checkoutMode,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const checkoutOptions = getSequenceCheckoutOptions(checkoutMode);
+	const checkoutOptions =
+		typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
 	const { steps } = await marketplaceClient.generateBuyTransaction({
 		chainId,
 		collectionAddress,

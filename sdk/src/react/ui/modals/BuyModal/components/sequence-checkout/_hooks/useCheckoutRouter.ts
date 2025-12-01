@@ -7,18 +7,14 @@ import {
 	useCurrency,
 } from '../../../../../hooks';
 import { useBuyModalContext } from '../../../internal/buyModalContext';
-import {
-	getSequenceCheckoutOptions,
-	isMarketProps,
-	isShopProps,
-	useBuyModalProps,
-} from '../../../store';
+import { isMarketProps, isShopProps, useBuyModalProps } from '../../../store';
 
 export const useCheckoutRouter = () => {
 	const props = useBuyModalProps();
 	const { chainId, collectionAddress } = props;
 	const { checkoutMode } = useBuyModalContext();
-	const sequenceCheckoutOptions = getSequenceCheckoutOptions(checkoutMode);
+	const sequenceCheckoutOptions =
+		typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
 
 	const isMarket = isMarketProps(props);
 	const isShop = isShopProps(props);

@@ -4,15 +4,16 @@ import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import type { CheckoutMode } from '../../..';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useBuyModalProps, useCheckoutMode, useOnSuccess } from '../store';
+import { useBuyModalProps, useOnSuccess } from '../store';
 
 export function useBuyModalContext() {
 	const config = useConfig();
 	const modalProps = useBuyModalProps();
-	const checkoutMode = useCheckoutMode();
+	const checkoutMode: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
 	const transactionStatusModal = useTransactionStatusModal();

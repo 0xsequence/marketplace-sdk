@@ -68,6 +68,7 @@ export const defaultContext = {
 		projectId: DEFAULT_PROJECT_ID,
 		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
+		checkoutMode: 'sequence-checkout',
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
