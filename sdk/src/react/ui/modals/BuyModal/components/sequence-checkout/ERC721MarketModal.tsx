@@ -25,16 +25,9 @@ export const ERC721MarketModal = ({
 }: ERC721MarketModalProps) => {
 	const quantity = useQuantity();
 
-	// Ensure quantity is set to 1 for ERC721
-	useEffect(() => {
-		if (!quantity) {
-			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
-		}
-	}, [quantity]);
-
 	const paymentModalParams = usePaymentModalParams({
 		address,
-		quantity: quantity ?? undefined,
+		quantity,
 		marketplace: order?.marketplace,
 		collectable,
 		priceCurrencyAddress: order?.priceCurrencyAddress,

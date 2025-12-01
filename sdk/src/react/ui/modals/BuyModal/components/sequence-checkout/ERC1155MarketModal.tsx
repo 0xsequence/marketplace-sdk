@@ -35,9 +35,6 @@ export const ERC1155MarketModal = ({
 	const modalProps = useBuyModalProps();
 	const cardType = modalProps.cardType || 'market';
 	const isShop = isShopProps(modalProps);
-	const quantityDecimals = isShop
-		? modalProps.quantityDecimals
-		: collectable.decimals || 0;
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining
 		: order?.quantityRemaining;
@@ -49,26 +46,12 @@ export const ERC1155MarketModal = ({
 		priceCurrencyAddress: order?.priceCurrencyAddress,
 		enabled: true,
 	});
-	useEffect(() => {
-		if (modalProps.hideQuantitySelector && !quantity) {
-			buyModalStore.send({
-				type: 'setQuantity',
-				quantity: 1,
-			});
-		}
-	}, [
-		modalProps.hideQuantitySelector,
-		quantity,
-		quantityDecimals,
-		quantityRemaining,
-	]);
 
-	if (!quantity && !modalProps.hideQuantitySelector) {
+	if (!modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				order={order}
 				cardType={cardType}
-				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				chainId={chainId}
 			/>

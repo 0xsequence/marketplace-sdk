@@ -4,7 +4,7 @@ import type { Order } from '@0xsequence/api-client';
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import { maxUint256, parseUnits } from 'viem';
+import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { CardType } from '../../../../../../types';
 import { formatPriceWithFee } from '../../../../../../utils/price';
@@ -21,7 +21,6 @@ import {
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	cardType: CardType;
-	quantityDecimals: number;
 	quantityRemaining: bigint;
 	unlimitedSupply?: boolean;
 	salePrice?: {
@@ -33,7 +32,6 @@ type ERC1155QuantityModalProps = {
 
 export const ERC1155QuantityModal = ({
 	order,
-	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
 	salePrice,
@@ -42,26 +40,16 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	//const isOpen = useIsOpen();
 
-	const minQuantity =
-		quantityDecimals > 0 ? `0.${'1'.padStart(quantityDecimals, '0')}` : '1';
+	const minQuantity = '1';
 	const [localQuantity, setLocalQuantity] = useState(minQuantity);
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
-	const maxQuantity: bigint = unlimitedSupply
-		? maxUint256
-		: quantityDecimals > 0
-			? quantityRemaining / BigInt(10) ** BigInt(quantityDecimals)
-			: quantityRemaining;
+	const maxQuantity: bigint = unlimitedSupply ? maxUint256 : quantityRemaining;
 
 	const handleBuyNow = () => {
-		// Convert the quantity to account for decimals
-		const quantityWithDecimals = parseUnits(
-			localQuantity,
-			quantityDecimals,
-		).toString();
 		buyModalStore.send({
 			type: 'setQuantity',
-			quantity: Number(quantityWithDecimals),
+			quantity: Number(localQuantity),
 		});
 	};
 
@@ -91,7 +79,7 @@ export const ERC1155QuantityModal = ({
 							invalidQuantity={invalidQuantity}
 							onQuantityChange={setLocalQuantity}
 							onInvalidQuantityChange={setInvalidQuantity}
-							decimals={quantityDecimals}
+							decimals={0}
 							maxQuantity={maxQuantity.toString()}
 						/>
 
@@ -107,7 +95,6 @@ export const ERC1155QuantityModal = ({
 							}}
 							chainId={chainId}
 							cardType={cardType}
-							quantityDecimals={quantityDecimals}
 						/>
 					</div>
 				);
@@ -125,7 +112,6 @@ type TotalPriceProps = {
 	};
 	chainId: number;
 	cardType: CardType;
-	quantityDecimals: number;
 };
 
 const TotalPrice = ({
@@ -134,7 +120,6 @@ const TotalPrice = ({
 	salePrice,
 	chainId,
 	cardType,
-	quantityDecimals,
 }: TotalPriceProps) => {
 	const isShop = cardType === 'shop';
 	const isMarket = cardType === 'market';
@@ -149,8 +134,8 @@ const TotalPrice = ({
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	// Convert quantity to proper decimal format for multiplication
-	const quantityForCalculation = parseUnits(quantityStr, quantityDecimals);
+	// Convert quantity to bigint for multiplication
+	const quantityForCalculation = BigInt(quantityStr);
 
 	if (isMarket && currency && order) {
 		try {

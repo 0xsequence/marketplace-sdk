@@ -30,8 +30,6 @@ export const ERC1155ShopModal = ({
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
 	const isShop = isShopProps(modalProps);
-	const quantityDecimals =
-		isShop && modalProps.quantityDecimals ? modalProps.quantityDecimals : 0;
 	const quantityRemaining =
 		isShop && modalProps.quantityRemaining ? modalProps.quantityRemaining : 0n;
 	const unlimitedSupply =
@@ -59,7 +57,6 @@ export const ERC1155ShopModal = ({
 						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
 				}}
 				cardType="shop"
-				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
