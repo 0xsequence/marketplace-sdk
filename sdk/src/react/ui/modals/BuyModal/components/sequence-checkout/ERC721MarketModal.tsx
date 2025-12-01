@@ -7,10 +7,10 @@ import {
 } from '@0xsequence/checkout';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import { ErrorLogBox } from '../../../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../../../_internal/components/baseModal';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../../store';
 import { usePaymentModalParams } from './_hooks/usePaymentModalParams';
+import { useBuyModalContext } from '../../internal/buyModalContext';
 
 interface ERC721MarketModalProps {
 	collectable: TokenMetadata;
@@ -33,12 +33,7 @@ export const ERC721MarketModal = ({
 		}
 	}, [quantity]);
 
-	const {
-		data: paymentModalParams,
-		isLoading: isPaymentModalParamsLoading,
-		isError: isPaymentModalParamsError,
-		error: paymentModalParamsError,
-	} = usePaymentModalParams({
+	const paymentModalParams = usePaymentModalParams({
 		address,
 		quantity: quantity ?? undefined,
 		marketplace: order?.marketplace,
@@ -47,13 +42,11 @@ export const ERC721MarketModal = ({
 		enabled: true,
 	});
 
-	if (paymentModalParamsError) {
 		return (
 			<ActionModal
 				chainId={order.chainId}
 				type="buy"
-				queries={{}}
-				externalError={paymentModalParamsError}
+				queries={{ paymentModalParams }}
 				onErrorDismiss={() => {
 					buyModalStore.send({ type: 'close' });
 				}}
@@ -70,31 +63,15 @@ export const ERC721MarketModal = ({
 						buyModalStore.send({ type: 'close' });
 					},
 				}}
-				children={() => {
-					return (
-						<ErrorLogBox
-							title={paymentModalParamsError.name}
-							message={paymentModalParamsError.message}
-							error={paymentModalParamsError}
-						/>
-					);
+			>
+				{({ paymentModalParams }) => {if (paymentModalParams) {	
+					return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
+				} else {
+					return null;
+				}
 				}}
-			/>
+			</ActionModal>
 		);
-	}
-
-	// Show loading or error states would be handled by parent router
-	if (isPaymentModalParamsLoading || !paymentModalParams) {
-		return null;
-	}
-
-	if (isPaymentModalParamsError) {
-		throw new Error(
-			'Failed to load payment parameters for ERC721 marketplace purchase',
-		);
-	}
-
-	return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 };
 
 interface PaymentModalOpenerProps {
