@@ -25,8 +25,6 @@ const generateOfferTransaction = async (
 	config: any,
 ) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	// Convert BigInt values to strings for JSON serialization
-	// The API expects string representations of large numbers
 	const serializedArgs = {
 		...args,
 		chainId: args.chainId,
@@ -78,7 +76,6 @@ export const useGenerateOfferTransaction = (
 		!!orderbook &&
 		!!offer;
 
-	// Create a serializable query key - convert BigInt values to strings for JSON serialization
 	const serializableParams = {
 		...params,
 		offer: params.offer
@@ -105,7 +102,7 @@ export const useGenerateOfferTransaction = (
 							orderbook: orderbook as OrderbookKind,
 							offer: offer as CreateReq,
 							additionalFees: additionalFees || [],
-							offerType: OfferType.item, // WE only support item offers for now
+							offerType: OfferType.item,
 						},
 						config,
 					)

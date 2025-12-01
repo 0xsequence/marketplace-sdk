@@ -76,7 +76,6 @@ export const useMakeOfferModal = () => {
 	};
 };
 
-// Internal hook for context to access state
 export const useMakeOfferModalState = () => {
 	const {
 		isOpen,

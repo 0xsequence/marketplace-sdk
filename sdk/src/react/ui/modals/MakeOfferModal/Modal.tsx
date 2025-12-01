@@ -29,7 +29,6 @@ const Modal = () => {
 	const showApproveButton =
 		ctx.steps.approval && ctx.steps.approval.status !== 'success';
 
-	// Approval button - renders as primary (on top) when approval is needed
 	const approveAction = showApproveButton
 		? {
 				label: 'Approve',
@@ -40,13 +39,11 @@ const Modal = () => {
 			}
 		: undefined;
 
-	// Offer button - renders as secondary (below) when approval is needed, primary otherwise
 	const offerAction = {
 		label: 'Make Offer',
 		onClick: ctx.steps.offer.execute,
 		loading: ctx.steps.offer.isPending,
 		disabled: ctx.steps.offer.isDisabled,
-		// Use ghost variant when approval step is visible, to make approval more prominent
 		variant: showApproveButton ? ('ghost' as const) : undefined,
 		testid: 'make-offer-button',
 	};
@@ -57,8 +54,6 @@ const Modal = () => {
 			onClose={ctx.close}
 			title="Make an offer"
 			type="offer"
-			// When approval is needed: Approve is primary (top), Offer is secondary (bottom)
-			// When no approval: Offer is primary (top), no secondary
 			primaryAction={showApproveButton ? approveAction : offerAction}
 			secondaryAction={showApproveButton ? offerAction : undefined}
 			queries={{

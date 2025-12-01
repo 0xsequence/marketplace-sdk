@@ -46,10 +46,6 @@ export function useMakeOfferModalContext() {
 	const state = useMakeOfferModalState();
 	const { address } = useAccount();
 
-	// ============================================
-	// DATA FETCHING
-	// ============================================
-
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
@@ -61,7 +57,6 @@ export function useMakeOfferModalContext() {
 		collectionAddress: state.collectionAddress,
 	});
 
-	// For offers, native currency is not supported - only ERC-20 tokens
 	const currenciesQuery = useCurrencyList({
 		chainId: state.chainId,
 		includeNativeCurrency: false,
@@ -75,11 +70,6 @@ export function useMakeOfferModalContext() {
 
 	const { isWaaS } = useConnectorMetadata();
 
-	// ============================================
-	// DERIVED STATE
-	// ============================================
-
-	// Keep useMemo for array filtering - creates new array reference
 	const availableCurrencies = useMemo(() => {
 		if (!currenciesQuery.data) return [];
 		return filterCurrenciesForOrderbook(
@@ -89,7 +79,6 @@ export function useMakeOfferModalContext() {
 		);
 	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 
-	// Keep useMemo - depends on availableCurrencies and does array.find
 	const selectedCurrency = useMemo(() => {
 		if (state.currencyAddress) {
 			return (
@@ -101,7 +90,6 @@ export function useMakeOfferModalContext() {
 		return getDefaultCurrency(availableCurrencies, state.orderbookKind);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
-	// Fetch currency balance for the selected currency (for offer validation)
 	const currencyBalanceQuery = useTokenCurrencyBalance({
 		currencyAddress: selectedCurrency?.contractAddress as Address | undefined,
 		chainId: state.chainId,
@@ -111,34 +99,27 @@ export function useMakeOfferModalContext() {
 		},
 	});
 
-	// Expiry date calculation - no useMemo needed, Date creation is cheap
 	const expiryDate = new Date(
 		Date.now() + state.expiryDays * 24 * 60 * 60 * 1000,
 	);
 
-	// Price as Dnum - no useMemo needed, parseInput is cheap and no downstream memoized consumers
 	const priceDnum = parseInput(
 		state.priceInput,
 		selectedCurrency?.decimals || 18,
 	);
-	// Extract raw bigint value from Dnum tuple for contract calls and components
 	const priceRaw = priceDnum[0];
 
-	// Quantity as Dnum - no useMemo needed
 	const quantityDnum = parseInput(
 		state.quantityInput,
 		collectibleQuery.data?.decimals || 0,
 	);
-	// Extract raw bigint value from Dnum tuple
 	const quantityRaw = quantityDnum[0];
 
-	// Currency balance as Dnum - for validating user has enough currency for the offer
 	const balanceDnum =
 		currencyBalanceQuery.data?.value !== undefined && selectedCurrency?.decimals
 			? ([currencyBalanceQuery.data.value, selectedCurrency.decimals] as const)
 			: undefined;
 
-	// Lowest listing as Dnum - no useMemo needed
 	const lowestListingDnum =
 		lowestListingQuery.data?.priceAmount && selectedCurrency?.decimals
 			? ([
@@ -147,11 +128,6 @@ export function useMakeOfferModalContext() {
 				] as const)
 			: undefined;
 
-	// ============================================
-	// VALIDATION
-	// ============================================
-
-	// No useMemo needed - validateOfferForm is cheap and no downstream memoized consumers
 	const validation = validateOfferForm({
 		price: priceDnum,
 		quantity: quantityDnum,
@@ -161,10 +137,6 @@ export function useMakeOfferModalContext() {
 	});
 
 	const formIsValid = isFormValid(validation);
-
-	// ============================================
-	// TRANSACTION GENERATION
-	// ============================================
 
 	const transactionData = useGenerateOfferTransaction({
 		chainId: state.chainId,
@@ -191,17 +163,12 @@ export function useMakeOfferModalContext() {
 		currencyDecimals: selectedCurrency?.decimals ?? 18,
 	});
 
-	// ============================================
-	// STEPS
-	// ============================================
-
 	const waas = useSelectWaasFeeOptionsStore();
 	const [pendingFee] = useWaasFeeOptions();
 	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
 
 	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
 
-	// Fee step (WaaS only)
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
 
@@ -216,7 +183,6 @@ export function useMakeOfferModalContext() {
 		};
 	}
 
-	// Approval step (conditional)
 	if (transactionData.data?.approveStep) {
 		const approvalGuard = createApprovalGuard({
 			isFormValid: formIsValid,
@@ -255,7 +221,6 @@ export function useMakeOfferModalContext() {
 		};
 	}
 
-	// Offer step (always present)
 	const offerGuard = createFinalTransactionGuard({
 		isFormValid: formIsValid,
 		txReady: !!transactionData.data?.offerStep,
@@ -309,7 +274,6 @@ export function useMakeOfferModalContext() {
 		isOpen: state.isOpen,
 		close: state.closeModal,
 
-		// Item data - grouped under `item` to match Modal.tsx expectations
 		item: {
 			chainId: state.chainId,
 			collectionAddress: state.collectionAddress,
@@ -317,14 +281,12 @@ export function useMakeOfferModalContext() {
 			orderbookKind: state.orderbookKind,
 		},
 
-		// Keep flat access for backwards compatibility
 		tokenId: state.tokenId,
 		collectionAddress: state.collectionAddress,
 		chainId: state.chainId,
 		collectible: collectibleQuery.data,
 		collection: collectionQuery.data,
 
-		// Offer data
 		offer: {
 			price: {
 				input: state.priceInput,
@@ -338,7 +300,6 @@ export function useMakeOfferModalContext() {
 			expiry: expiryDate,
 		},
 
-		// Form controls - restructured to match Modal.tsx expectations
 		form: {
 			price: {
 				input: state.priceInput,
@@ -361,18 +322,15 @@ export function useMakeOfferModalContext() {
 			},
 		},
 
-		// Currencies
 		currencies: {
 			available: availableCurrencies,
 			selected: selectedCurrency,
 			select: state.updateCurrency,
 		},
 
-		// Steps and flow
 		steps,
 		flow,
 
-		// Loading states
 		loading: {
 			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
@@ -380,7 +338,6 @@ export function useMakeOfferModalContext() {
 			steps: transactionData.isLoading,
 		},
 
-		// Transaction hashes
 		transactions: {
 			approve:
 				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
