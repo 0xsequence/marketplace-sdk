@@ -1,5 +1,9 @@
 import { Button, Skeleton, Text } from '@0xsequence/design-system';
-import { ContractType, compareAddress } from '@0xsequence/marketplace-sdk';
+import {
+	ContractType,
+	compareAddress,
+	TransactionCrypto,
+} from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useListPrimarySaleItems,
@@ -7,6 +11,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
+import { TransactionSwapProvider } from '../../../../../../api/src/adapters/marketplace/marketplace.gen';
 
 interface ShopActionsProps {
 	contractType: ContractType | undefined;
@@ -24,7 +29,17 @@ export function ShopActions({
 	collectibleName,
 }: ShopActionsProps) {
 	const { address: accountAddress } = useAccount();
-	const { show: showBuyModal } = useBuyModal();
+	const { show: showBuyModal } = useBuyModal({
+		checkoutMode: {
+			mode: 'sequence-checkout',
+			options: {
+				crypto: TransactionCrypto.none,
+				swap: [TransactionSwapProvider.lifi],
+				nftCheckout: [],
+				onRamp: [],
+			},
+		},
+	});
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const saleConfig = marketplaceConfig?.shop?.collections?.find((c) =>
