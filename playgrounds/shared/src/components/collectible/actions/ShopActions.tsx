@@ -1,9 +1,5 @@
 import { Button, Skeleton, Text } from '@0xsequence/design-system';
-import {
-	ContractType,
-	compareAddress,
-	TransactionCrypto,
-} from '@0xsequence/marketplace-sdk';
+import { ContractType, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useListPrimarySaleItems,
