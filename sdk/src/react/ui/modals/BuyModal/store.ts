@@ -93,6 +93,7 @@ export type onSuccessCallback = ({
 	orderId?: string;
 }) => void;
 export type onErrorCallback = (error: Error) => void;
+type SubModalState = 'idle' | 'opening' | 'open' | 'closed';
 
 const initialContext: {
 	isOpen: boolean;
@@ -101,6 +102,9 @@ const initialContext: {
 	onError: onErrorCallback;
 	onSuccess: onSuccessCallback;
 	checkoutMode: CheckoutMode;
+	paymentModalState: SubModalState;
+	checkoutModalState: SubModalState;
+	quantity: number | undefined;
 } = {
 	isOpen: false,
 	props: null,
@@ -108,6 +112,9 @@ const initialContext: {
 	onError: () => {},
 	onSuccess: () => {},
 	checkoutMode: 'crypto',
+	paymentModalState: 'idle',
+	checkoutModalState: 'idle',
+	quantity: undefined,
 };
 
 export const buyModalStore = createStore({
@@ -155,6 +162,51 @@ export const buyModalStore = createStore({
 			...context,
 			isOpen: false,
 		}),
+
+		setQuantity: (context, event: { quantity: number }) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+
+		openPaymentModal: (context) => {
+			if (context.paymentModalState !== 'idle') {
+				return context; // Prevent duplicate opens
+			}
+			return {
+				...context,
+				paymentModalState: 'opening' as const,
+			};
+		},
+
+		paymentModalOpened: (context) => ({
+			...context,
+			paymentModalState: 'open' as const,
+		}),
+
+		paymentModalClosed: (context) => ({
+			...context,
+			paymentModalState: 'closed' as const,
+		}),
+
+		openCheckoutModal: (context) => {
+			if (context.checkoutModalState !== 'idle') {
+				return context;
+			}
+			return {
+				...context,
+				checkoutModalState: 'opening' as const,
+			};
+		},
+
+		checkoutModalOpened: (context) => ({
+			...context,
+			checkoutModalState: 'open' as const,
+		}),
+
+		checkoutModalClosed: (context) => ({
+			...context,
+			checkoutModalState: 'closed' as const,
+		}),
 	},
 });
 
@@ -182,3 +234,12 @@ export const useBuyAnalyticsId = () =>
 
 export const useCheckoutMode = () =>
 	useSelector(buyModalStore, (state) => state.context.checkoutMode);
+
+export const usePaymentModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.paymentModalState);
+
+export const useCheckoutModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.checkoutModalState);
+
+export const useQuantity = () =>
+	useSelector(buyModalStore, (state) => state.context.quantity);

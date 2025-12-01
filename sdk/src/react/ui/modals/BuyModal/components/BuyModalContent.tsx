@@ -5,7 +5,7 @@ import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
-import { SequenceCheckout } from './SequenceCheckout';
+import { SequenceCheckout } from './sequence-checkout/SequenceCheckoutRouter';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
@@ -24,6 +24,10 @@ export const BuyModalContent = () => {
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
+
+	if (useSequenceCheckoutModal) {
+		return <SequenceCheckout />;
+	}
 
 	return (
 		<Modal
@@ -78,8 +82,6 @@ export const BuyModalContent = () => {
 						onSuccess={handleTransactionSuccess}
 					/>
 				)}
-
-				{useSequenceCheckoutModal && <SequenceCheckout />}
 			</div>
 		</Modal>
 	);
