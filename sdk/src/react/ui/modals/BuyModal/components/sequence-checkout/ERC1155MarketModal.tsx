@@ -89,7 +89,7 @@ export const ERC1155MarketModal = ({
 			onClose={() => {
 				buyModalStore.send({ type: 'close' });
 			}}
-			title={'An error occurred while purchasing'}
+			title="Checkout"
 			primaryAction={{
 				label: 'Close',
 				onClick: () => {

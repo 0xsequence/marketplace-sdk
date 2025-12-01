@@ -77,8 +77,6 @@ export function MarketCard({
 		hasListing: !!lowestListing,
 	});
 
-	console.log('classNames', classNames);
-
 	return (
 		<MarketCardPresentation
 			tokenId={tokenId}
