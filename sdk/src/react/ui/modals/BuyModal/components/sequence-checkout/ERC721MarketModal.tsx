@@ -56,12 +56,6 @@ export const ERC721MarketModal = ({
 				buyModalStore.send({ type: 'close' });
 			}}
 			title="Checkout"
-			primaryAction={{
-				label: 'Close',
-				onClick: () => {
-					buyModalStore.send({ type: 'close' });
-				},
-			}}
 		>
 			{({ paymentModalParams }) => {
 				if (paymentModalParams) {

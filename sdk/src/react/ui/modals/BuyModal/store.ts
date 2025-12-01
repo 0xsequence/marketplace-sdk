@@ -146,6 +146,9 @@ export const buyModalStore = createStore({
 		close: (context) => ({
 			...context,
 			isOpen: false,
+			paymentModalState: 'idle' as const,
+			checkoutModalState: 'idle' as const,
+			quantity: undefined,
 		}),
 
 		setQuantity: (context, event: { quantity: number }) => ({
