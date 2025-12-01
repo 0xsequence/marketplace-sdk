@@ -19,7 +19,7 @@ export const ThemeProvider = ({
 
 	if (!shadowDom) {
 		return (
-			<SequenceThemeProvider theme={theme} root={root}>
+			<SequenceThemeProvider defaultTheme={theme} root={root}>
 				{children}
 			</SequenceThemeProvider>
 		);
