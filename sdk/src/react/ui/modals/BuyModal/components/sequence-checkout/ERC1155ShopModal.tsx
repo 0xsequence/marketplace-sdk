@@ -1,6 +1,7 @@
 'use client';
 
-import { Spinner } from '@0xsequence/design-system';
+import { useERC1155SaleContractCheckout } from '@0xsequence/checkout';
+import { Spinner, Text, WarningIcon } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { ActionModal } from '../../../_internal/components/baseModal';
@@ -12,7 +13,6 @@ import {
 	useQuantity,
 } from '../../store';
 import type { ShopData } from '../types';
-//import { LoadingModal } from '../../../../_internal/components/actionModal/LoadingModal';
 import { useERC1155ShopModalData } from './_hooks/useERC1155ShopModalData';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 
@@ -36,19 +36,19 @@ export const ERC1155ShopModal = ({
 		isShop && modalProps.quantityRemaining ? modalProps.quantityRemaining : 0n;
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
-	const { openCheckoutModal, isLoading, isError, isEnabled } =
-		useERC1155ShopModalData({
-			chainId,
-			salesContractAddress: shopData.salesContractAddress as Address,
-			collectionAddress,
-			items: shopData.items.map((item) => ({
-				...item,
-				tokenId: item.tokenId ?? 0n,
-				quantity: BigInt(quantity ?? 1) ?? 1n,
-			})),
-			checkoutOptions: shopData.checkoutOptions,
-			enabled: !!shopData.salesContractAddress && !!shopData.items,
-		});
+
+	const erc1155ShopModalData = useERC1155ShopModalData({
+		chainId,
+		salesContractAddress: shopData.salesContractAddress as Address,
+		collectionAddress,
+		items: shopData.items.map((item) => ({
+			...item,
+			tokenId: item.tokenId ?? 0n,
+			quantity: BigInt(quantity ?? 1) ?? 1n,
+		})),
+		checkoutOptions: shopData.checkoutOptions,
+		enabled: !!quantity && !!shopData.salesContractAddress && !!shopData.items,
+	});
 
 	if (!quantity) {
 		return (
@@ -70,61 +70,56 @@ export const ERC1155ShopModal = ({
 	return (
 		<ActionModal
 			type="buy"
-			queries={{}}
-			chainId={chainId}
+			queries={{ erc1155ShopModalData }}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Checkout"
-			externalError={
-				isError
-					? new Error('Checkout failed due to an error. Please try again.')
-					: undefined
-			}
+			chainId={chainId}
 		>
-			{() => {
-				if (isLoading) {
-					return (
-						<div className="flex h-24 items-center justify-center gap-4">
-							<Spinner size="lg" />
-							Loading checkout
-						</div>
-					);
-				}
-				return (
-					<ERC1155SaleContractCheckoutModalOpener
-						openCheckoutModal={openCheckoutModal}
-						isLoading={isLoading}
-						isError={isError}
-						isEnabled={isEnabled && quantity > 0}
-					/>
-				);
+			{({ erc1155ShopModalData }) => {
+				return <CheckoutModalOpener checkoutParams={erc1155ShopModalData} />;
 			}}
 		</ActionModal>
 	);
 };
 
-interface ERC1155SaleContractCheckoutModalOpenerProps {
-	openCheckoutModal: () => void;
-	isLoading: boolean;
-	isError: boolean;
-	isEnabled: boolean;
+interface CheckoutModalOpenerProps {
+	checkoutParams: ReturnType<typeof useERC1155ShopModalData>['data'];
 }
 
-const ERC1155SaleContractCheckoutModalOpener = ({
-	openCheckoutModal,
-	isLoading,
-	isError,
-	isEnabled,
-}: ERC1155SaleContractCheckoutModalOpenerProps) => {
+const CheckoutModalOpener = ({ checkoutParams }: CheckoutModalOpenerProps) => {
+	if (!checkoutParams) return null;
+
+	const { openCheckoutModal, isLoading, isError } =
+		useERC1155SaleContractCheckout(checkoutParams);
 	const checkoutModalState = useCheckoutModalState();
 
 	useEffect(() => {
-		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
-			console.log('opening checkout modal');
+		if (checkoutModalState === 'idle' && !isLoading && !isError) {
 			buyModalStore.send({ type: 'openCheckoutModal' });
 			openCheckoutModal();
 			buyModalStore.send({ type: 'checkoutModalOpened' });
 		}
-	}, [checkoutModalState, isLoading, isError, isEnabled, openCheckoutModal]);
+	}, [checkoutModalState, openCheckoutModal]);
+
+	if (isLoading) {
+		return (
+			<div className="flex h-24 items-center justify-center gap-4">
+				<Spinner size="lg" />
+				<Text className="text-text-80">Loading checkout modal...</Text>
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="flex h-24 items-center justify-center gap-4">
+				<WarningIcon size="lg" className="text-amber-600" />
+				<Text className="text-amber-600">
+					An error occurred while opening the checkout modal. Try again later.
+				</Text>
+			</div>
+		);
+	}
 
 	return null;
 };
