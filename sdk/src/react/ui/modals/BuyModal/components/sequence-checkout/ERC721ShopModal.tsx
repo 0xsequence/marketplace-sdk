@@ -6,7 +6,7 @@ import {
 } from '@0xsequence/checkout';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import { BuyModalErrorFactory } from '../../../../../../types/buyModalErrors';
+import { ActionModal } from '../../../_internal/components/baseModal';
 import { buyModalStore, usePaymentModalState } from '../../store';
 import type { ShopData } from '../types';
 import { useERC721ShopModalData } from './_hooks/useERC721ShopModalData';
@@ -24,11 +24,7 @@ export const ERC721ShopModal = ({
 }: ERC721ShopModalProps) => {
 	const quantity = Number(shopData.items[0]?.quantity ?? 1);
 
-	const {
-		data: erc721SalePaymentParams,
-		isLoading: isErc721PaymentParamsLoading,
-		isError: isErc721PaymentParamsError,
-	} = useERC721ShopModalData({
+	const erc721ShopModalData = useERC721ShopModalData({
 		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress: collectionAddress.toString(),
 		price: shopData.salePrice?.amount?.toString() || '0',
@@ -38,19 +34,19 @@ export const ERC721ShopModal = ({
 		quantity,
 	});
 
-	// Handle loading or error states
-	if (isErc721PaymentParamsLoading || !erc721SalePaymentParams) {
-		return null;
-	}
-
-	if (isErc721PaymentParamsError) {
-		throw BuyModalErrorFactory.contractError(
-			shopData.salesContractAddress,
-			'Failed to load ERC721 sale parameters',
-		);
-	}
-
-	return <PaymentModalOpener paymentModalParams={erc721SalePaymentParams} />;
+	return (
+		<ActionModal
+			type="buy"
+			queries={{ erc721ShopModalData }}
+			onClose={() => buyModalStore.send({ type: 'close' })}
+			title="Checkout"
+			chainId={chainId}
+		>
+			{({ erc721ShopModalData }) => {
+				return <PaymentModalOpener paymentModalParams={erc721ShopModalData} />;
+			}}
+		</ActionModal>
+	);
 };
 
 interface PaymentModalOpenerProps {
@@ -60,6 +56,8 @@ interface PaymentModalOpenerProps {
 const PaymentModalOpener = ({
 	paymentModalParams,
 }: PaymentModalOpenerProps) => {
+	if (!paymentModalParams) return null;
+
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const paymentModalState = usePaymentModalState();
 	const totalPrice =
