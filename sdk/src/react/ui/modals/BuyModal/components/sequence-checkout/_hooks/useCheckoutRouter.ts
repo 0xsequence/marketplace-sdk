@@ -1,4 +1,6 @@
+import { MarketplaceKind } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
+import { useOrders } from '../../../../../../hooks/data/orders/useOrders';
 import {
 	useCollectible,
 	useCollection,
@@ -24,7 +26,6 @@ export const useCheckoutRouter = () => {
 
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
-
 	const {
 		data: collection,
 		isLoading: collectionLoading,
@@ -55,6 +56,27 @@ export const useCheckoutRouter = () => {
 		},
 	});
 
+	const {
+		data: marketOrders,
+		isLoading: marketOrdersLoading,
+		isError: marketOrdersError,
+	} = useOrders({
+		chainId,
+		input: [
+			{
+				contractAddress: collectionAddress,
+				orderId: isMarketProps(props) ? props.orderId : '',
+				marketplace: isMarketProps(props)
+					? props.marketplace
+					: MarketplaceKind.sequence_marketplace_v2,
+			},
+		],
+		query: {
+			enabled: isMarketProps(props) && !!props.orderId,
+		},
+	});
+	const marketOrder = marketOrders?.orders[0];
+
 	const shopData = isShop
 		? {
 				salesContractAddress: props.salesContractAddress,
@@ -68,11 +90,15 @@ export const useCheckoutRouter = () => {
 		collection,
 		collectable,
 		currency,
-		// TODO: Fix this
-		order: null,
+		marketOrder,
 		address,
 		shopData,
-		isLoading: collectionLoading || collectableLoading || walletIsLoading,
-		isError: collectionError || collectableError || currencyError,
+		isLoading:
+			collectionLoading ||
+			collectableLoading ||
+			walletIsLoading ||
+			marketOrdersLoading,
+		isError:
+			collectionError || collectableError || currencyError || marketOrdersError,
 	};
 };

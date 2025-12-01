@@ -46,7 +46,7 @@ export const SequenceCheckout = () => {
 		collectable,
 		address,
 		//isLoading,
-		order,
+		marketOrder,
 		currency,
 		shopData,
 		//isError,
@@ -117,7 +117,7 @@ export const SequenceCheckout = () => {
 		}
 	} else {
 		if (collection?.type === 'ERC721') {
-			if (!collectable || !order || !address) {
+			if (!collectable || !marketOrder || !address) {
 				return (
 					<LoadingModal
 						isOpen={true}
@@ -130,14 +130,14 @@ export const SequenceCheckout = () => {
 			return (
 				<ERC721MarketModal
 					collectable={collectable}
-					order={order}
+					order={marketOrder}
 					address={address}
 					chainId={chainId}
 				/>
 			);
 		}
 		if (collection?.type === 'ERC1155') {
-			if (!collectable || !order || !address) {
+			if (!collectable || !marketOrder || !address) {
 				return (
 					<LoadingModal
 						isOpen={true}
@@ -150,7 +150,7 @@ export const SequenceCheckout = () => {
 			return (
 				<ERC1155MarketModal
 					collectable={collectable}
-					order={order}
+					order={marketOrder}
 					address={address}
 					chainId={chainId}
 				/>
