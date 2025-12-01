@@ -25,14 +25,24 @@ const generateOfferTransaction = async (
 	config: any,
 ) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const argsWithStringChainId = {
+	// Convert BigInt values to strings for JSON serialization
+	// The API expects string representations of large numbers
+	const serializedArgs = {
 		...args,
-		chainId: String(args.chainId),
-	} satisfies GenerateOfferTransactionRequest;
-
-	const steps = await marketplaceClient
-		.generateOfferTransaction(argsWithStringChainId)
-		.then((data) => data.steps);
+		chainId: args.chainId,
+		offer: args.offer
+			? {
+					...args.offer,
+					tokenId: args.offer.tokenId?.toString(),
+					quantity: args.offer.quantity?.toString(),
+					pricePerToken: args.offer.pricePerToken?.toString(),
+				}
+			: undefined,
+	};
+	const response = await marketplaceClient.generateOfferTransaction(
+		serializedArgs as GenerateOfferTransactionRequest,
+	);
+	const steps = response.steps;
 
 	if (steps.length === 0) {
 		throw new Error('No steps generated');
@@ -68,8 +78,21 @@ export const useGenerateOfferTransaction = (
 		!!orderbook &&
 		!!offer;
 
+	// Create a serializable query key - convert BigInt values to strings for JSON serialization
+	const serializableParams = {
+		...params,
+		offer: params.offer
+			? {
+					...params.offer,
+					tokenId: params.offer.tokenId?.toString(),
+					quantity: params.offer.quantity?.toString(),
+					pricePerToken: params.offer.pricePerToken?.toString(),
+				}
+			: undefined,
+	};
+
 	return useQuery({
-		queryKey: ['generateOfferTransaction', params, address],
+		queryKey: ['generateOfferTransaction', serializableParams, address],
 		queryFn: enabled
 			? () =>
 					generateOfferTransaction(

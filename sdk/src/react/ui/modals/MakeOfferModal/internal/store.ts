@@ -7,7 +7,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 };
@@ -24,7 +24,7 @@ const initialContext: MakeOfferModalState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	collectibleId: '',
+	tokenId: 0n,
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	priceInput: '',
 	currencyAddress: undefined,
@@ -80,7 +80,7 @@ export const useMakeOfferModal = () => {
 export const useMakeOfferModalState = () => {
 	const {
 		isOpen,
-		collectibleId,
+		tokenId,
 		collectionAddress,
 		chainId,
 		orderbookKind,
@@ -103,7 +103,7 @@ export const useMakeOfferModalState = () => {
 
 	return {
 		isOpen,
-		collectibleId,
+		tokenId,
 		collectionAddress,
 		chainId,
 		orderbookKind,

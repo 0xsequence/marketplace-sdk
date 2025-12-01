@@ -7,7 +7,7 @@ import { makeOfferModalStore } from '../internal/store';
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: String(TEST_COLLECTIBLE.tokenId),
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 describe('MakeOfferModal', () => {

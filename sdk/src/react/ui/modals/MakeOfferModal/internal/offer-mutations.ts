@@ -107,7 +107,7 @@ export const useOfferMutations = (
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
 				callbacks: state.callbacks,
 				collectionAddress: state.collectionAddress,
-				tokenId: BigInt(state.collectibleId),
+				tokenId: state.tokenId,
 				queriesToInvalidate: [
 					['collectible', 'market-highest-offer'],
 					['collectible', 'market-list-offers'],

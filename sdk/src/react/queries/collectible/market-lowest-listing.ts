@@ -33,7 +33,8 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 		{
 			chainId: params.chainId ?? 0,
 			collectionAddress: params.collectionAddress ?? '',
-			tokenId: params.tokenId ?? 0n,
+			// Convert BigInt to string for query key serialization (JSON.stringify doesn't support BigInt)
+			tokenId: params.tokenId?.toString() ?? '0',
 			filter: params.filter,
 		},
 	] as const;

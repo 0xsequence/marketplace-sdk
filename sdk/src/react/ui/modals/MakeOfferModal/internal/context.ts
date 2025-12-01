@@ -5,12 +5,12 @@ import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import { type ContractType, OfferType } from '../../../../_internal';
 import {
-	useCollectibleBalance,
 	useCollectibleMarketLowestListing,
 	useCollectibleMetadata,
 	useCollectionMetadata,
 	useConnectorMetadata,
 	useCurrencyList,
+	useTokenCurrencyBalance,
 } from '../../../../hooks';
 import {
 	selectWaasFeeOptionsStore,
@@ -30,7 +30,7 @@ import {
 	filterCurrenciesForOrderbook,
 	getDefaultCurrency,
 } from './helpers/currency';
-import { parseInput, toBigIntString } from './helpers/dnum-utils';
+import { parseInput } from './helpers/dnum-utils';
 import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
@@ -50,15 +50,10 @@ export function useMakeOfferModalContext() {
 	// DATA FETCHING
 	// ============================================
 
-	// Convert string tokenId to bigint for hooks that require it
-	const tokenIdBigInt = state.collectibleId
-		? BigInt(state.collectibleId)
-		: undefined;
-
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		tokenId: state.collectibleId,
+		tokenId: state.tokenId,
 	});
 
 	const collectionQuery = useCollectionMetadata({
@@ -66,21 +61,16 @@ export function useMakeOfferModalContext() {
 		collectionAddress: state.collectionAddress,
 	});
 
+	// For offers, native currency is not supported - only ERC-20 tokens
 	const currenciesQuery = useCurrencyList({
 		chainId: state.chainId,
+		includeNativeCurrency: false,
 	});
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		tokenId: tokenIdBigInt,
-	});
-
-	const balanceQuery = useCollectibleBalance({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-		tokenId: tokenIdBigInt,
-		userAddress: address,
+		tokenId: state.tokenId,
 	});
 
 	const { isWaaS } = useConnectorMetadata();
@@ -111,6 +101,16 @@ export function useMakeOfferModalContext() {
 		return getDefaultCurrency(availableCurrencies, state.orderbookKind);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
+	// Fetch currency balance for the selected currency (for offer validation)
+	const currencyBalanceQuery = useTokenCurrencyBalance({
+		currencyAddress: selectedCurrency?.contractAddress as Address | undefined,
+		chainId: state.chainId,
+		userAddress: address,
+		query: {
+			enabled: !!selectedCurrency?.contractAddress && !!address,
+		},
+	});
+
 	// Expiry date calculation - no useMemo needed, Date creation is cheap
 	const expiryDate = new Date(
 		Date.now() + state.expiryDays * 24 * 60 * 60 * 1000,
@@ -121,22 +121,21 @@ export function useMakeOfferModalContext() {
 		state.priceInput,
 		selectedCurrency?.decimals || 18,
 	);
-	const priceRaw = toBigIntString(priceDnum);
+	// Extract raw bigint value from Dnum tuple for contract calls and components
+	const priceRaw = priceDnum[0];
 
 	// Quantity as Dnum - no useMemo needed
 	const quantityDnum = parseInput(
 		state.quantityInput,
 		collectibleQuery.data?.decimals || 0,
 	);
-	const quantityRaw = toBigIntString(quantityDnum);
+	// Extract raw bigint value from Dnum tuple
+	const quantityRaw = quantityDnum[0];
 
-	// Balance as Dnum - no useMemo needed, tuple creation is trivial
+	// Currency balance as Dnum - for validating user has enough currency for the offer
 	const balanceDnum =
-		balanceQuery.data?.balance && selectedCurrency?.decimals
-			? ([
-					BigInt(balanceQuery.data.balance),
-					selectedCurrency.decimals,
-				] as const)
+		currencyBalanceQuery.data?.value !== undefined && selectedCurrency?.decimals
+			? ([currencyBalanceQuery.data.value, selectedCurrency.decimals] as const)
 			: undefined;
 
 	// Lowest listing as Dnum - no useMemo needed
@@ -174,10 +173,12 @@ export function useMakeOfferModalContext() {
 		orderbook: state.orderbookKind,
 		maker: address,
 		offer: {
-			tokenId: state.collectibleId,
+			tokenId: state.tokenId,
 			quantity: quantityRaw,
 			expiry: dateToUnixTime(expiryDate),
-			currencyAddress: selectedCurrency?.contractAddress || '',
+			currencyAddress:
+				selectedCurrency?.contractAddress ??
+				('0x0000000000000000000000000000000000000000' as Address),
 			pricePerToken: priceRaw,
 		},
 		additionalFees: [],
@@ -185,7 +186,7 @@ export function useMakeOfferModalContext() {
 	});
 
 	const { approve, makeOffer } = useOfferMutations(transactionData.data, {
-		priceRaw,
+		priceRaw: priceRaw.toString(),
 		currencyAddress: selectedCurrency?.contractAddress as Address,
 		currencyDecimals: selectedCurrency?.decimals ?? 18,
 	});
@@ -312,12 +313,12 @@ export function useMakeOfferModalContext() {
 		item: {
 			chainId: state.chainId,
 			collectionAddress: state.collectionAddress,
-			tokenId: state.collectibleId,
+			tokenId: state.tokenId,
 			orderbookKind: state.orderbookKind,
 		},
 
 		// Keep flat access for backwards compatibility
-		collectibleId: state.collectibleId,
+		tokenId: state.tokenId,
 		collectionAddress: state.collectionAddress,
 		chainId: state.chainId,
 		collectible: collectibleQuery.data,

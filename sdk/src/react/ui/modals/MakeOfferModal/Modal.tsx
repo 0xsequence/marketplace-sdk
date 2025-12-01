@@ -27,24 +27,27 @@ const Modal = () => {
 	}
 
 	const showApproveButton =
-		ctx.steps.approval && ctx.steps.approval.status !== 'complete';
+		ctx.steps.approval && ctx.steps.approval.status !== 'success';
 
+	// Approval button - renders as primary (on top) when approval is needed
 	const approveAction = showApproveButton
 		? {
 				label: 'Approve',
 				onClick: ctx.steps.approval?.execute || (() => {}),
 				loading: ctx.steps.approval?.isPending,
 				disabled: ctx.steps.approval?.isDisabled,
-				variant: 'ghost' as const,
 				testid: 'make-offer-approve-button',
 			}
 		: undefined;
 
+	// Offer button - renders as secondary (below) when approval is needed, primary otherwise
 	const offerAction = {
 		label: 'Make Offer',
 		onClick: ctx.steps.offer.execute,
-		loading: ctx.steps.offer.isPending && !showApproveButton,
+		loading: ctx.steps.offer.isPending,
 		disabled: ctx.steps.offer.isDisabled,
+		// Use ghost variant when approval step is visible, to make approval more prominent
+		variant: showApproveButton ? ('ghost' as const) : undefined,
 		testid: 'make-offer-button',
 	};
 
@@ -54,8 +57,10 @@ const Modal = () => {
 			onClose={ctx.close}
 			title="Make an offer"
 			type="offer"
-			primaryAction={offerAction}
-			secondaryAction={approveAction}
+			// When approval is needed: Approve is primary (top), Offer is secondary (bottom)
+			// When no approval: Offer is primary (top), no secondary
+			primaryAction={showApproveButton ? approveAction : offerAction}
+			secondaryAction={showApproveButton ? offerAction : undefined}
 			queries={{
 				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,
@@ -77,7 +82,7 @@ const Modal = () => {
 							<TokenPreview
 								chainId={ctx.item.chainId}
 								collectionAddress={ctx.item.collectionAddress}
-								collectibleId={ctx.item.tokenId}
+								tokenId={ctx.item.tokenId}
 								collectionName={collection.name}
 							/>
 
@@ -90,7 +95,7 @@ const Modal = () => {
 										currency: ctx.offer.price.currency,
 									}}
 									onPriceChange={(newPrice) => {
-										ctx.form.price.update(newPrice.amountRaw);
+										ctx.form.price.update(newPrice.amountRaw.toString());
 										if (newPrice.currency) {
 											ctx.currencies.select(
 												newPrice.currency.contractAddress as `0x${string}`,
