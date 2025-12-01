@@ -1,6 +1,10 @@
 'use client';
 
 import {
+	ErrorModal,
+	LoadingModal,
+} from '../../../_internal/components/baseModal';
+import {
 	buyModalStore,
 	isShopProps,
 	useBuyModalProps,
@@ -14,28 +18,6 @@ import { ERC721ShopModal } from './ERC721ShopModal';
 import { ERC1155MarketModal } from './ERC1155MarketModal';
 import { ERC1155ShopModal } from './ERC1155ShopModal';
 
-// TODO: Remove
-export const LoadingModal = ({
-	//isOpen,
-	chainId,
-	onClose,
-	title,
-}: {
-	isOpen: boolean;
-	chainId: number;
-	onClose: () => void;
-	title: string;
-}) => {
-	return (
-		<div>
-			<p className="text-text-80">Loading...</p>
-			<p className="text-text-80">Chain ID: {chainId}</p>
-			<p className="text-text-80">On Close: {onClose.toString()}</p>
-			<p className="text-text-80">Title: {title}</p>
-		</div>
-	);
-};
-
 export const SequenceCheckout = () => {
 	const modalProps = useBuyModalProps();
 	const chainId = modalProps.chainId;
@@ -45,43 +27,39 @@ export const SequenceCheckout = () => {
 		collection,
 		collectable,
 		address,
-		//isLoading,
+		isLoading,
 		marketOrder,
 		currency,
 		shopData,
-		//isError,
+		isError,
 	} = useCheckoutRouter();
 
-	/**
 	if (isError) {
 		return (
 			<ErrorModal
-				isOpen={true}
 				chainId={chainId}
+				error={new Error('Error occurred while loading payment options')}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading Error"
 			/>
 		);
 	}
-		 
 
 	if (isLoading || !collection) {
 		return (
 			<LoadingModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
 			/>
 		);
-	}*/
+	}
 
 	if (isShop) {
 		if (collection?.type === 'ERC721') {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
@@ -100,7 +78,6 @@ export const SequenceCheckout = () => {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
@@ -120,7 +97,6 @@ export const SequenceCheckout = () => {
 			if (!collectable || !marketOrder || !address) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
@@ -140,7 +116,6 @@ export const SequenceCheckout = () => {
 			if (!collectable || !marketOrder || !address) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
@@ -165,14 +140,19 @@ export const SequenceCheckout = () => {
 			} mode`,
 		),
 	);
-	/*
+
 	return (
 		<ErrorModal
-			isOpen={true}
 			chainId={chainId}
+			error={
+				new Error(
+					`Unsupported configuration: ${collection?.type} in ${
+						isShop ? 'shop' : 'market'
+					} mode`,
+				)
+			}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Unsupported Configuration"
 		/>
 	);
-	*/
 };

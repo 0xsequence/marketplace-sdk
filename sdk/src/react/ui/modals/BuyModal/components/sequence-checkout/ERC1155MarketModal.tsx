@@ -41,26 +41,25 @@ export const ERC1155MarketModal = ({
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining
 		: order?.quantityRemaining;
-	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
-
+	const paymentModalParams = usePaymentModalParams({
+		address,
+		quantity,
+		marketplace: order?.marketplace,
+		collectable,
+		priceCurrencyAddress: order?.priceCurrencyAddress,
+		enabled: true,
+	});
 	useEffect(() => {
 		if (modalProps.hideQuantitySelector && !quantity) {
-			const minQuantity = quantityDecimals > 0 ? 10 ** quantityDecimals : 1;
-
-			const autoQuantity = unlimitedSupply
-				? minQuantity
-				: Math.min(Number(quantityRemaining), minQuantity);
-
 			buyModalStore.send({
 				type: 'setQuantity',
-				quantity: autoQuantity,
+				quantity: 1,
 			});
 		}
 	}, [
 		modalProps.hideQuantitySelector,
 		quantity,
 		quantityDecimals,
-		unlimitedSupply,
 		quantityRemaining,
 	]);
 
@@ -71,42 +70,10 @@ export const ERC1155MarketModal = ({
 				cardType={cardType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
-				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
 			/>
 		);
 	}
-
-	if (!quantity) {
-		return null;
-	}
-
-	return (
-		<Modal
-			address={address}
-			quantity={quantity}
-			order={order}
-			collectable={collectable}
-		/>
-	);
-};
-
-interface ModalProps {
-	address: Address | undefined;
-	quantity: number;
-	order: Order;
-	collectable: TokenMetadata;
-}
-
-const Modal = ({ address, quantity, order, collectable }: ModalProps) => {
-	const paymentModalParams = usePaymentModalParams({
-		address,
-		quantity,
-		marketplace: order?.marketplace,
-		collectable,
-		priceCurrencyAddress: order?.priceCurrencyAddress,
-		enabled: true,
-	});
 
 	return (
 		<ActionModal

@@ -50,7 +50,21 @@ export const ERC1155ShopModal = ({
 		enabled: !!quantity && !!shopData.salesContractAddress && !!shopData.items,
 	});
 
-	if (!quantity) {
+	useEffect(() => {
+		if (modalProps.hideQuantitySelector && !quantity) {
+			buyModalStore.send({
+				type: 'setQuantity',
+				quantity: 1,
+			});
+		}
+	}, [
+		modalProps.hideQuantitySelector,
+		quantity,
+		quantityDecimals,
+		quantityRemaining,
+	]);
+
+	if (!quantity && !modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				salePrice={{
