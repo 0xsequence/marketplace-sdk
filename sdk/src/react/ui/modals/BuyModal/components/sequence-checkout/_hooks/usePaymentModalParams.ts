@@ -25,6 +25,7 @@ import { useMarketPlatformFee } from '../../../hooks/useMarketPlatformFee';
 import { useBuyModalContext } from '../../../internal/buyModalContext';
 import {
 	buyModalStore,
+	type CheckoutMode,
 	getSequenceCheckoutOptions,
 	isMarketProps,
 	useBuyAnalyticsId,
@@ -51,6 +52,7 @@ interface GetBuyCollectableParams {
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
 	onRampProvider: TransactionOnRampProvider | undefined;
+	checkoutMode: CheckoutMode;
 }
 
 export const getBuyCollectableParams = async ({
@@ -71,9 +73,9 @@ export const getBuyCollectableParams = async ({
 	nativeTokenAddress,
 	buyAnalyticsId,
 	onRampProvider,
+	checkoutMode,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const { checkoutMode } = useBuyModalContext();
 	const checkoutOptions = getSequenceCheckoutOptions(checkoutMode);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
 		chainId,
@@ -175,6 +177,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	} = args;
 
 	const buyModalProps = useBuyModalProps();
+	const { checkoutMode } = useBuyModalContext();
 	const {
 		chainId,
 		collectionAddress,
@@ -239,6 +242,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						nativeTokenAddress,
 						buyAnalyticsId,
 						onRampProvider,
+						checkoutMode,
 					})
 			: skipToken,
 		retry: false,
