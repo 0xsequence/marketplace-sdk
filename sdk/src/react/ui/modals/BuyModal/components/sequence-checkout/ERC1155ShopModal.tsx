@@ -39,32 +39,18 @@ export const ERC1155ShopModal = ({
 
 	const erc1155ShopModalData = useERC1155ShopModalData({
 		chainId,
-		salesContractAddress: shopData.salesContractAddress as Address,
+		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress,
 		items: shopData.items.map((item) => ({
 			...item,
-			tokenId: item.tokenId ?? 0n,
-			quantity: BigInt(quantity ?? 1) ?? 1n,
+			tokenId: item.tokenId!,
+			quantity: BigInt(quantity),
 		})),
 		checkoutOptions: shopData.checkoutOptions,
 		enabled: !!quantity && !!shopData.salesContractAddress && !!shopData.items,
 	});
 
-	useEffect(() => {
-		if (modalProps.hideQuantitySelector && !quantity) {
-			buyModalStore.send({
-				type: 'setQuantity',
-				quantity: 1,
-			});
-		}
-	}, [
-		modalProps.hideQuantitySelector,
-		quantity,
-		quantityDecimals,
-		quantityRemaining,
-	]);
-
-	if (!quantity && !modalProps.hideQuantitySelector) {
+	if (!modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				salePrice={{

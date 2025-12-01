@@ -92,7 +92,7 @@ const initialContext: {
 	onSuccess: onSuccessCallback;
 	paymentModalState: SubModalState;
 	checkoutModalState: SubModalState;
-	quantity: number | undefined;
+	quantity: number;
 } = {
 	isOpen: false,
 	props: null,
@@ -101,7 +101,7 @@ const initialContext: {
 	onSuccess: () => {},
 	paymentModalState: 'idle',
 	checkoutModalState: 'idle',
-	quantity: undefined,
+	quantity: 1,
 };
 
 export const buyModalStore = createStore({
@@ -148,7 +148,7 @@ export const buyModalStore = createStore({
 			isOpen: false,
 			paymentModalState: 'idle' as const,
 			checkoutModalState: 'idle' as const,
-			quantity: undefined,
+			quantity: 1,
 		}),
 
 		setQuantity: (context, event: { quantity: number }) => ({
