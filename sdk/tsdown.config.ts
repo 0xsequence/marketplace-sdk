@@ -1,8 +1,8 @@
-import preserveDirectives from 'rollup-preserve-directives';
 import { defineConfig } from 'tsdown';
 
 // @ts-expect-error - Js file
 import { generateStyles } from './compile-tailwind.js';
+import { preserveDirectives } from './preserve-directives.ts';
 
 const tailwindPlugin = () => {
 	return {
@@ -15,7 +15,12 @@ const tailwindPlugin = () => {
 
 export default defineConfig([
 	{
-		entry: ['src/**/index.ts', '!src/**/__tests__/**', '!src/**/*.test.*'],
+		entry: [
+			'src/**/index.ts',
+			'src/**/index.tsx',
+			'!src/**/__tests__/**',
+			'!src/**/*.test.*',
+		],
 		dts: true,
 		platform: 'neutral',
 		sourcemap: true,

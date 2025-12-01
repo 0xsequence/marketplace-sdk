@@ -6,7 +6,7 @@ import { selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFee
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { type SellStep, useSellModalContext } from './internal/context';
+import { useSellModalContext } from './internal/context';
 
 export function SellModal() {
 	const {
@@ -14,8 +14,8 @@ export function SellModal() {
 		collectionAddress,
 		chainId,
 		offer,
+		steps,
 		flow,
-		feeSelection,
 		error,
 		close,
 		isOpen,
@@ -26,17 +26,19 @@ export function SellModal() {
 		return null;
 	}
 
-	const approvalStep = flow.steps.find((s) => s.id === 'approve');
-	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
+	const approvalStep = steps.approval;
+	const sellStep = steps.sell;
+	const feeStep = steps.fee;
+
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
 	const approvalAction = showApprovalButton
 		? {
 				label: approvalStep.label,
 				actionName: approvalStep.label,
-				onClick: approvalStep.run,
+				onClick: approvalStep.execute,
 				loading: approvalStep.isPending,
-				disabled: !flow.nextStep || !!error || flow.isPending,
+				disabled: approvalStep.isDisabled || !!error || flow.isPending,
 				variant: 'secondary' as const,
 				testid: 'sell-modal-approve-button',
 			}
@@ -45,10 +47,10 @@ export function SellModal() {
 	const sellAction = {
 		label: sellStep.label,
 		actionName: sellStep.label,
-		onClick: sellStep.run,
+		onClick: sellStep.execute,
 		loading: sellStep.isPending && !showApprovalButton,
 		disabled:
-			!flow.nextStep || !!error || (showApprovalButton && flow.isPending),
+			sellStep.isDisabled || !!error || (showApprovalButton && flow.isPending),
 		testid: 'sell-modal-accept-button',
 	};
 
@@ -97,10 +99,10 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{feeSelection?.isSelecting && (
+					{feeStep?.isSelecting && (
 						<SelectWaasFeeOptions
 							chainId={chainId}
-							onCancel={feeSelection.cancel}
+							onCancel={feeStep.cancel}
 							titleOnConfirm="Accepting offer..."
 						/>
 					)}
