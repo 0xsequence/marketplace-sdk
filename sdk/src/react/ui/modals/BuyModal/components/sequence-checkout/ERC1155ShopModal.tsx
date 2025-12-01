@@ -1,11 +1,11 @@
 'use client';
 
-import type { CheckoutOptions } from '@0xsequence/api-client';
+import { Spinner } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
+import { ActionModal } from '../../../_internal/components/baseModal';
 import {
 	buyModalStore,
-	type CheckoutOptionsSalesContractProps,
 	isShopProps,
 	useBuyModalProps,
 	useCheckoutModalState,
@@ -15,7 +15,6 @@ import type { ShopData } from '../types';
 //import { LoadingModal } from '../../../../_internal/components/actionModal/LoadingModal';
 import { useERC1155ShopModalData } from './_hooks/useERC1155ShopModalData';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import { LoadingModal } from './SequenceCheckoutRouter';
 
 interface ERC1155ShopModalProps {
 	collectionAddress: Address;
@@ -37,6 +36,19 @@ export const ERC1155ShopModal = ({
 		isShop && modalProps.quantityRemaining ? modalProps.quantityRemaining : 0n;
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
+	const { openCheckoutModal, isLoading, isError, isEnabled } =
+		useERC1155ShopModalData({
+			chainId,
+			salesContractAddress: shopData.salesContractAddress as Address,
+			collectionAddress,
+			items: shopData.items.map((item) => ({
+				...item,
+				tokenId: item.tokenId ?? 0n,
+				quantity: BigInt(quantity ?? 1) ?? 1n,
+			})),
+			checkoutOptions: shopData.checkoutOptions,
+			enabled: !!shopData.salesContractAddress && !!shopData.items,
+		});
 
 	if (!quantity) {
 		return (
@@ -56,45 +68,54 @@ export const ERC1155ShopModal = ({
 	}
 
 	return (
-		<ERC1155SaleContractCheckoutModalOpener
+		<ActionModal
+			type="buy"
+			queries={{}}
 			chainId={chainId}
-			salesContractAddress={shopData.salesContractAddress as Address}
-			collectionAddress={collectionAddress}
-			items={shopData.items.map((item) => ({
-				...item,
-				tokenId: item.tokenId ?? 0n,
-				quantity: BigInt(quantity) ?? 1n,
-			}))}
-			checkoutOptions={shopData.checkoutOptions}
-			enabled={!!shopData.salesContractAddress && !!shopData.items}
-		/>
+			onClose={() => buyModalStore.send({ type: 'close' })}
+			title="Checkout"
+			externalError={
+				isError
+					? new Error('Checkout failed due to an error. Please try again.')
+					: undefined
+			}
+		>
+			{() => {
+				if (isLoading) {
+					return (
+						<div className="flex h-24 items-center justify-center gap-4">
+							<Spinner size="lg" />
+							Loading checkout
+						</div>
+					);
+				}
+				return (
+					<ERC1155SaleContractCheckoutModalOpener
+						openCheckoutModal={openCheckoutModal}
+						isLoading={isLoading}
+						isError={isError}
+						isEnabled={isEnabled && quantity > 0}
+					/>
+				);
+			}}
+		</ActionModal>
 	);
 };
 
-interface ERC1155SaleContractCheckoutModalOpenerProps
-	extends CheckoutOptionsSalesContractProps {
-	enabled: boolean;
-	checkoutOptions?: CheckoutOptions;
+interface ERC1155SaleContractCheckoutModalOpenerProps {
+	openCheckoutModal: () => void;
+	isLoading: boolean;
+	isError: boolean;
+	isEnabled: boolean;
 }
 
 const ERC1155SaleContractCheckoutModalOpener = ({
-	chainId,
-	salesContractAddress,
-	collectionAddress,
-	items,
-	checkoutOptions,
-	enabled,
+	openCheckoutModal,
+	isLoading,
+	isError,
+	isEnabled,
 }: ERC1155SaleContractCheckoutModalOpenerProps) => {
 	const checkoutModalState = useCheckoutModalState();
-	const { openCheckoutModal, isLoading, isError, isEnabled } =
-		useERC1155ShopModalData({
-			chainId,
-			salesContractAddress,
-			collectionAddress,
-			items,
-			checkoutOptions,
-			enabled,
-		});
 
 	useEffect(() => {
 		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
@@ -104,17 +125,6 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 			buyModalStore.send({ type: 'checkoutModalOpened' });
 		}
 	}, [checkoutModalState, isLoading, isError, isEnabled, openCheckoutModal]);
-
-	if (isLoading) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading payment options"
-			/>
-		);
-	}
 
 	return null;
 };

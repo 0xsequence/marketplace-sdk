@@ -7,7 +7,6 @@ import {
 } from '@0xsequence/checkout';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import { ErrorLogBox } from '../../../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../../../_internal/components/baseModal';
 import {
 	buyModalStore,
@@ -18,7 +17,6 @@ import {
 } from '../../store';
 import { usePaymentModalParams } from './_hooks/usePaymentModalParams';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import { LoadingModal } from './SequenceCheckoutRouter';
 
 interface ERC1155MarketModalProps {
 	collectable: TokenMetadata;
@@ -101,12 +99,7 @@ interface ModalProps {
 }
 
 const Modal = ({ address, quantity, order, collectable }: ModalProps) => {
-	const {
-		data: paymentModalParams,
-		isLoading: isPaymentModalParamsLoading,
-		isError: isPaymentModalParamsError,
-		error: paymentModalParamsError,
-	} = usePaymentModalParams({
+	const paymentModalParams = usePaymentModalParams({
 		address,
 		quantity,
 		marketplace: order?.marketplace,
@@ -115,60 +108,33 @@ const Modal = ({ address, quantity, order, collectable }: ModalProps) => {
 		enabled: true,
 	});
 
-	if (paymentModalParamsError) {
-		return (
-			<ActionModal
-				chainId={order.chainId}
-				type="buy"
-				queries={{}}
-				externalError={paymentModalParamsError}
-				onErrorDismiss={() => {
+	return (
+		<ActionModal
+			chainId={order.chainId}
+			type="buy"
+			queries={{ paymentModalParams }}
+			onErrorDismiss={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onErrorAction={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onClose={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			title={'An error occurred while purchasing'}
+			primaryAction={{
+				label: 'Close',
+				onClick: () => {
 					buyModalStore.send({ type: 'close' });
-				}}
-				onErrorAction={() => {
-					buyModalStore.send({ type: 'close' });
-				}}
-				onClose={() => {
-					buyModalStore.send({ type: 'close' });
-				}}
-				title={'An error occurred while purchasing'}
-				primaryAction={{
-					label: 'Close',
-					onClick: () => {
-						buyModalStore.send({ type: 'close' });
-					},
-				}}
-				children={() => {
-					return (
-						<ErrorLogBox
-							title={paymentModalParamsError.name}
-							message={paymentModalParamsError.message}
-							error={paymentModalParamsError}
-						/>
-					);
-				}}
-			/>
-		);
-	}
-
-	if (isPaymentModalParamsLoading || !paymentModalParams) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={order.chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading checkout"
-			/>
-		);
-	}
-
-	if (isPaymentModalParamsError) {
-		throw new Error(
-			'Failed to load payment parameters for ERC1155 marketplace purchase',
-		);
-	}
-
-	return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
+				},
+			}}
+		>
+			{({ paymentModalParams }) => {
+				return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
+			}}
+		</ActionModal>
+	);
 };
 
 interface PaymentModalOpenerProps {
