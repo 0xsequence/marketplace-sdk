@@ -44,7 +44,11 @@ export const useCheckoutRouter = () => {
 		},
 	});
 
-	const { data: currency, isError: currencyError } = useCurrency({
+	const {
+		data: currency,
+		isLoading: currencyLoading,
+		isError: currencyError,
+	} = useCurrency({
 		chainId,
 		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
 		query: {
@@ -93,7 +97,8 @@ export const useCheckoutRouter = () => {
 			collectionLoading ||
 			collectableLoading ||
 			walletIsLoading ||
-			marketOrdersLoading,
+			marketOrdersLoading ||
+			currencyLoading,
 		isError:
 			collectionError || collectableError || currencyError || marketOrdersError,
 	};

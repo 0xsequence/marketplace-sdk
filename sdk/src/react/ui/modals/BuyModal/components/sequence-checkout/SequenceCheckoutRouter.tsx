@@ -6,6 +6,7 @@ import {
 } from '../../../_internal/components/baseModal';
 import {
 	buyModalStore,
+	isMarketProps,
 	isShopProps,
 	useBuyModalProps,
 	useOnError,
@@ -22,6 +23,7 @@ export const SequenceCheckout = () => {
 	const modalProps = useBuyModalProps();
 	const chainId = modalProps.chainId;
 	const isShop = isShopProps(modalProps);
+	const isMarket = isMarketProps(modalProps);
 	const onError = useOnError();
 	const {
 		collection,
@@ -59,10 +61,17 @@ export const SequenceCheckout = () => {
 		if (collection?.type === 'ERC721') {
 			if (!shopData || !currency) {
 				return (
-					<LoadingModal
+					<ErrorModal
 						chainId={chainId}
+						error={
+							new Error(
+								shopData
+									? 'Currency information not available'
+									: 'Shop data is missing',
+							)
+						}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading payment options"
+						title="Configuration Error"
 					/>
 				);
 			}
@@ -77,10 +86,17 @@ export const SequenceCheckout = () => {
 		if (collection?.type === 'ERC1155') {
 			if (!shopData || !currency) {
 				return (
-					<LoadingModal
+					<ErrorModal
 						chainId={chainId}
+						error={
+							new Error(
+								shopData
+									? 'Currency information not available'
+									: 'Shop data is missing',
+							)
+						}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading payment options"
+						title="Configuration Error"
 					/>
 				);
 			}
@@ -92,14 +108,23 @@ export const SequenceCheckout = () => {
 				/>
 			);
 		}
-	} else {
+	}
+
+	if (isMarket) {
 		if (collection?.type === 'ERC721') {
 			if (!collectable || !marketOrder || !address) {
 				return (
-					<LoadingModal
+					<ErrorModal
 						chainId={chainId}
+						error={
+							new Error(
+								collectable
+									? 'Market order information not available'
+									: 'Collectable data is missing',
+							)
+						}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading payment options"
+						title="Configuration Error"
 					/>
 				);
 			}
@@ -115,10 +140,17 @@ export const SequenceCheckout = () => {
 		if (collection?.type === 'ERC1155') {
 			if (!collectable || !marketOrder || !address) {
 				return (
-					<LoadingModal
+					<ErrorModal
 						chainId={chainId}
+						error={
+							new Error(
+								collectable
+									? 'Market order information not available'
+									: 'Collectable data is missing',
+							)
+						}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading payment options"
+						title="Configuration Error"
 					/>
 				);
 			}
