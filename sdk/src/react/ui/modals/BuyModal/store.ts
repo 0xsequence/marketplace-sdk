@@ -1,4 +1,4 @@
-import type { CheckoutOptions } from '@0xsequence/api-client';
+import type { CheckoutOptions, Step } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
@@ -38,10 +38,14 @@ export type PaymentModalProps = {
 	tokenId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
+	customCreditCardProviderCallback?: (buyStep: Step) => void;
 };
 
 export type BuyModalBaseProps = {
 	chainId: number;
+	skipNativeBalanceCheck?: boolean;
+	nativeTokenAddress?: Address;
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	collectionAddress: Address;
 	cardType?: CardType;
 	successActionButtons?: ActionButton[];

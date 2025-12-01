@@ -10,7 +10,6 @@ import type { Address } from 'viem';
 import { ActionModal } from '../../../_internal/components/baseModal';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../../store';
 import { usePaymentModalParams } from './_hooks/usePaymentModalParams';
-import { useBuyModalContext } from '../../internal/buyModalContext';
 
 interface ERC721MarketModalProps {
 	collectable: TokenMetadata;
@@ -42,36 +41,36 @@ export const ERC721MarketModal = ({
 		enabled: true,
 	});
 
-		return (
-			<ActionModal
-				chainId={order.chainId}
-				type="buy"
-				queries={{ paymentModalParams }}
-				onErrorDismiss={() => {
+	return (
+		<ActionModal
+			chainId={order.chainId}
+			type="buy"
+			queries={{ paymentModalParams }}
+			onErrorDismiss={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onErrorAction={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onClose={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			title={'An error occurred while purchasing'}
+			primaryAction={{
+				label: 'Close',
+				onClick: () => {
 					buyModalStore.send({ type: 'close' });
-				}}
-				onErrorAction={() => {
-					buyModalStore.send({ type: 'close' });
-				}}
-				onClose={() => {
-					buyModalStore.send({ type: 'close' });
-				}}
-				title={'An error occurred while purchasing'}
-				primaryAction={{
-					label: 'Close',
-					onClick: () => {
-						buyModalStore.send({ type: 'close' });
-					},
-				}}
-			>
-				{({ paymentModalParams }) => {if (paymentModalParams) {	
+				},
+			}}
+		>
+			{({ paymentModalParams }) => {
+				if (paymentModalParams) {
 					return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
-				} else {
-					return null;
 				}
-				}}
-			</ActionModal>
-		);
+				return null;
+			}}
+		</ActionModal>
+	);
 };
 
 interface PaymentModalOpenerProps {

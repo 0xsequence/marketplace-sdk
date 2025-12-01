@@ -1,4 +1,4 @@
-import type { TokenMetadata } from '@0xsequence/api-client';
+import type { Step, TokenMetadata } from '@0xsequence/api-client';
 import type {
 	SelectPaymentSettings,
 	TransactionOnRampProvider,
@@ -22,8 +22,10 @@ import {
 import { useConfig } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../../../_internal/types';
 import { useMarketPlatformFee } from '../../../hooks/useMarketPlatformFee';
+import { useBuyModalContext } from '../../../internal/buyModalContext';
 import {
 	buyModalStore,
+	getSequenceCheckoutOptions,
 	isMarketProps,
 	useBuyAnalyticsId,
 	useBuyModalProps,
@@ -44,9 +46,9 @@ interface GetBuyCollectableParams {
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
-	//customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
+	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
-	//nativeTokenAddress: string | undefined;
+	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
 	onRampProvider: TransactionOnRampProvider | undefined;
 }
@@ -57,7 +59,7 @@ export const getBuyCollectableParams = async ({
 	tokenId,
 	callbacks,
 	priceCurrencyAddress,
-	//customCreditCardProviderCallback,
+	customCreditCardProviderCallback,
 	config,
 	address,
 	marketplace,
@@ -65,12 +67,14 @@ export const getBuyCollectableParams = async ({
 	quantity,
 	collectable,
 	fee,
-	//skipNativeBalanceCheck,
-	//nativeTokenAddress,
+	skipNativeBalanceCheck,
+	nativeTokenAddress,
 	buyAnalyticsId,
 	onRampProvider,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
+	const { checkoutMode } = useBuyModalContext();
+	const checkoutOptions = getSequenceCheckoutOptions(checkoutMode);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
 		chainId,
 		collectionAddress,
@@ -98,9 +102,9 @@ export const getBuyCollectableParams = async ({
 		throw new Error('Buy step not found');
 	}
 
-	//const creditCardProviders = customCreditCardProviderCallback
-	//	? ['custom']
-	//	: checkoutOptions.nftCheckout || [];
+	const creditCardProviders = customCreditCardProviderCallback
+		? ['custom']
+		: checkoutOptions?.nftCheckout || [];
 
 	return {
 		chain: chainId,
@@ -118,7 +122,7 @@ export const getBuyCollectableParams = async ({
 		txData: buyStep.data as Hex,
 		collectionAddress,
 		recipientAddress: address,
-		//creditCardProviders,
+		creditCardProviders,
 		onSuccess: (txHash?: string) => {
 			if (txHash) {
 				callbacks?.onSuccess?.({ hash: txHash as Hash });
@@ -138,14 +142,14 @@ export const getBuyCollectableParams = async ({
 			});
 			buyModalStore.send({ type: 'close' });
 		},
-		//skipNativeBalanceCheck,
-		//nativeTokenAddress,
-		//...(customCreditCardProviderCallback && {
-		//	customProviderCallback: () => {
-		//		customCreditCardProviderCallback(buyStep as Step);
-		//		buyModalStore.send({ type: 'close' });
-		//	},
-		//}),
+		skipNativeBalanceCheck,
+		nativeTokenAddress,
+		...(customCreditCardProviderCallback && {
+			customProviderCallback: () => {
+				customCreditCardProviderCallback(buyStep as Step);
+				buyModalStore.send({ type: 'close' });
+			},
+		}),
 		onRampProvider,
 		successActionButtons: callbacks?.successActionButtons,
 	} satisfies SelectPaymentSettings;
@@ -174,8 +178,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const {
 		chainId,
 		collectionAddress,
-		//skipNativeBalanceCheck,
-		//nativeTokenAddress,
+		skipNativeBalanceCheck,
+		nativeTokenAddress,
 		onRampProvider,
 	} = buyModalProps;
 
@@ -184,9 +188,9 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		? buyModalProps.tokenId
 		: undefined;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
-	//const customCreditCardProviderCallback = isMarketProps(buyModalProps)
-	//	? buyModalProps.customCreditCardProviderCallback
-	//	: undefined;
+	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
+		? buyModalProps.customCreditCardProviderCallback
+		: undefined;
 
 	const config = useConfig();
 	const fee = useMarketPlatformFee(
@@ -230,9 +234,9 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 							onError,
 							successActionButtons: buyModalProps.successActionButtons,
 						},
-						//customCreditCardProviderCallback,
-						skipNativeBalanceCheck: false,
-						//nativeTokenAddress,
+						customCreditCardProviderCallback,
+						skipNativeBalanceCheck,
+						nativeTokenAddress,
 						buyAnalyticsId,
 						onRampProvider,
 					})
