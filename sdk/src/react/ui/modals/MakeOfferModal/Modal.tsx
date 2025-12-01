@@ -135,7 +135,7 @@ const Modal = observer(() => {
 				)
 			: undefined;
 
-	const buyModal = useBuyModal({ callbacks });
+	const buyModal = useBuyModal(callbacks);
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
 		tokenId,

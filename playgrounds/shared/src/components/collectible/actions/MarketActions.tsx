@@ -34,12 +34,10 @@ export function MarketActionsCard({
 	const shouldShowBuyButton = !!lowestListing;
 
 	const { show: openBuyModal } = useBuyModal({
-		callbacks: {
-			onSuccess: ({ hash }) => {
-				toast.success(
-					`Your purchase was successful!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-				);
-			},
+		onSuccess: ({ hash }) => {
+			toast.success(
+				`Your purchase was successful!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
+			);
 		},
 	});
 	const { show: openMakeOfferModal } = useMakeOfferModal({

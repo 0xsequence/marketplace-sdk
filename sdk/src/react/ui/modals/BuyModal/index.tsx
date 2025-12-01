@@ -2,11 +2,7 @@ import { useAnalytics } from '../../../_internal/databeat';
 import type { ModalCallbacks } from '../_internal/types';
 import { type BuyModalProps, buyModalStore } from './store';
 
-type UseBuyModalProps = {
-	callbacks?: ModalCallbacks;
-};
-
-export const useBuyModal = ({ callbacks }: UseBuyModalProps = {}) => {
+export const useBuyModal = (callbacks?: ModalCallbacks) => {
 	const analyticsFn = useAnalytics();
 
 	return {
