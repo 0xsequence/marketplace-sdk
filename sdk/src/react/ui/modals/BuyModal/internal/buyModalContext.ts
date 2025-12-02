@@ -22,6 +22,7 @@ export function useBuyModalContext() {
 		useBuyTransaction(modalProps);
 	const {
 		collectible,
+		collection,
 		currencyAddress,
 		currency,
 		order,
@@ -107,6 +108,7 @@ export function useBuyModalContext() {
 		close: handleClose,
 		steps,
 		collectible,
+		collection,
 		currencyAddress,
 		currency,
 		order,

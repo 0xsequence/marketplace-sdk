@@ -1,5 +1,6 @@
 'use client';
 
+import type { ContractType } from '@0xsequence/api-client';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
@@ -17,6 +18,7 @@ export const BuyModalContent = () => {
 		buyStep,
 		isLoading,
 		useTrailsModal,
+		collection,
 		useCryptoPaymentModal,
 		useSequenceCheckoutModal,
 		formattedAmount,
@@ -26,7 +28,12 @@ export const BuyModalContent = () => {
 	} = useBuyModalContext();
 
 	if (useSequenceCheckoutModal) {
-		return <SequenceCheckoutNew steps={steps} />;
+		return (
+			<SequenceCheckoutNew
+				steps={steps}
+				contractType={collection?.type as ContractType}
+			/>
+		);
 	}
 
 	return (

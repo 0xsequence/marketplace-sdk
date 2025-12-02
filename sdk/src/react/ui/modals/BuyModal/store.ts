@@ -91,7 +91,6 @@ const initialContext: {
 	onError: onErrorCallback;
 	onSuccess: onSuccessCallback;
 	paymentModalState: SubModalState;
-	checkoutModalState: SubModalState;
 	quantity: number;
 } = {
 	isOpen: false,
@@ -100,7 +99,6 @@ const initialContext: {
 	onError: () => {},
 	onSuccess: () => {},
 	paymentModalState: 'idle',
-	checkoutModalState: 'idle',
 	quantity: 1,
 };
 
@@ -147,7 +145,6 @@ export const buyModalStore = createStore({
 			...context,
 			isOpen: false,
 			paymentModalState: 'idle' as const,
-			checkoutModalState: 'idle' as const,
 			quantity: 1,
 		}),
 
@@ -171,29 +168,9 @@ export const buyModalStore = createStore({
 			paymentModalState: 'open' as const,
 		}),
 
-		paymentModalClosed: (context) => ({
+		closePaymentModal: (context) => ({
 			...context,
 			paymentModalState: 'closed' as const,
-		}),
-
-		openCheckoutModal: (context) => {
-			if (context.checkoutModalState !== 'idle') {
-				return context;
-			}
-			return {
-				...context,
-				checkoutModalState: 'opening' as const,
-			};
-		},
-
-		checkoutModalOpened: (context) => ({
-			...context,
-			checkoutModalState: 'open' as const,
-		}),
-
-		checkoutModalClosed: (context) => ({
-			...context,
-			checkoutModalState: 'closed' as const,
 		}),
 	},
 });
@@ -222,9 +199,6 @@ export const useBuyAnalyticsId = () =>
 
 export const usePaymentModalState = () =>
 	useSelector(buyModalStore, (state) => state.context.paymentModalState);
-
-export const useCheckoutModalState = () =>
-	useSelector(buyModalStore, (state) => state.context.checkoutModalState);
 
 export const useQuantity = () =>
 	useSelector(buyModalStore, (state) => state.context.quantity);

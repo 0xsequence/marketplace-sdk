@@ -90,6 +90,8 @@ export const getBuyCollectableParams = async ({
 				}
 	) as Record<string, string>;
 
+	const totalPrice = BigInt(buyStep.price) * BigInt(quantity);
+
 	return {
 		chain: chainId,
 		collectibles: [
@@ -99,7 +101,7 @@ export const getBuyCollectableParams = async ({
 			},
 		],
 		currencyAddress: priceCurrencyAddress,
-		price: buyStep.price.toString(),
+		price: totalPrice.toString(),
 		targetContractAddress: buyStep.to,
 		approvedSpenderAddress,
 		txData: buyStep.data as Hex,
@@ -163,7 +165,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	// Extract Marketplace-specific properties using type guard
 	const tokenId = isMarketProps(buyModalProps)
 		? buyModalProps.tokenId
-		: undefined;
+		: buyModalProps.items[0].tokenId;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback

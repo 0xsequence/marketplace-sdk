@@ -38,19 +38,18 @@ export const ERC1155QuantityModal = ({
 	chainId,
 	cardType,
 }: ERC1155QuantityModalProps) => {
-	//const isOpen = useIsOpen();
-
 	const minQuantity = '1';
 	const [localQuantity, setLocalQuantity] = useState(minQuantity);
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	const maxQuantity: bigint = unlimitedSupply ? maxUint256 : quantityRemaining;
 
-	const handleBuyNow = () => {
+	const handleSetQuantity = () => {
 		buyModalStore.send({
 			type: 'setQuantity',
 			quantity: Number(localQuantity),
 		});
+		buyModalStore.send({ type: 'openPaymentModal' });
 	};
 
 	return (
@@ -63,7 +62,7 @@ export const ERC1155QuantityModal = ({
 			queries={{}}
 			primaryAction={{
 				label: 'Buy now',
-				onClick: handleBuyNow,
+				onClick: handleSetQuantity,
 				disabled: invalidQuantity,
 			}}
 			secondaryAction={{
@@ -87,13 +86,7 @@ export const ERC1155QuantityModal = ({
 						<TotalPrice
 							order={order}
 							quantityStr={localQuantity}
-							salePrice={{
-								// TODO: Fix this
-								amount: salePrice?.amount.toString() ?? '0',
-								currencyAddress:
-									salePrice?.currencyAddress ??
-									'0x0000000000000000000000000000000000000000',
-							}}
+							salePrice={salePrice}
 							chainId={chainId}
 							cardType={cardType}
 						/>
@@ -108,7 +101,7 @@ type TotalPriceProps = {
 	order?: Order;
 	quantityStr: string;
 	salePrice?: {
-		amount: string;
+		amount: bigint;
 		currencyAddress: Address;
 	};
 	chainId: number;

@@ -6,21 +6,35 @@ import {
 } from '@0xsequence/checkout';
 import { Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
-import type { Step } from '../../../../_internal';
+import { ContractType, type Step } from '../../../../_internal';
 import { useOrders } from '../../../../hooks/data/orders/useOrders';
 import { ActionModal } from '../../_internal/components/baseModal';
-import { isMarketProps, useBuyModalProps, useQuantity } from '../store';
+import {
+	buyModalStore,
+	isMarketProps,
+	isShopProps,
+	useBuyModalProps,
+	usePaymentModalState,
+	useQuantity,
+} from '../store';
 import { usePaymentModalParams } from './sequence-checkout/_hooks/usePaymentModalParamsNew';
+import { ERC1155QuantityModal } from './sequence-checkout/ERC1155QuantityModal';
 
 type SequenceCheckoutNewProps = {
 	steps: Step[] | undefined;
+	contractType: ContractType;
 };
 
-const SequenceCheckoutNew = ({ steps }: SequenceCheckoutNewProps) => {
+const SequenceCheckoutNew = ({
+	steps,
+	contractType,
+}: SequenceCheckoutNewProps) => {
 	const modalProps = useBuyModalProps();
 	const isMarket = isMarketProps(modalProps);
+	const isShop = isShopProps(modalProps);
+	const paymentModalState = usePaymentModalState();
 
-	const { chainId, collectionAddress } = modalProps;
+	const { chainId, collectionAddress, hideQuantitySelector } = modalProps;
 	const orderId = isMarket ? modalProps.orderId : '';
 	const marketplaceKind = isMarket ? modalProps.marketplace : undefined;
 
@@ -44,7 +58,7 @@ const SequenceCheckoutNew = ({ steps }: SequenceCheckoutNewProps) => {
 		? marketOrder?.priceCurrencyAddress
 		: modalProps.salePrice.currencyAddress;
 
-	const paymentModalParamsQuery = usePaymentModalParams({
+	const paymentModalParams = usePaymentModalParams({
 		quantity,
 		marketplaceKind,
 		priceCurrencyAddress,
@@ -52,36 +66,59 @@ const SequenceCheckoutNew = ({ steps }: SequenceCheckoutNewProps) => {
 		marketplaceType: isMarket ? 'market' : 'shop',
 	});
 
+       if (
+		!hideQuantitySelector &&
+		contractType === ContractType.ERC1155 &&
+		paymentModalState === 'idle'
+	) {
+		const quantityRemaining = isMarket
+			? marketOrder?.quantityRemaining
+			: modalProps.quantityRemaining;
+		const unlimitedSupply =
+			isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
+
+		return (
+			<ERC1155QuantityModal
+				order={marketOrder}
+				cardType={isMarket ? 'market' : 'shop'}
+				salePrice={isShop ? modalProps.salePrice : undefined}
+				quantityRemaining={quantityRemaining ?? 0n}
+				unlimitedSupply={unlimitedSupply}
+				chainId={chainId}
+			/>
+		);
+	}
+
+	if (paymentModalState === 'closed') {
+		return null;
+	}
+
 	return (
 		<ActionModal
 			onClose={() => {
-				close();
+				buyModalStore.send({ type: 'close' });
 			}}
 			type="buy"
 			chainId={chainId}
-			queries={{ paymentModalParamsQuery }}
-			title="Buy"
+			queries={{ paymentModalParams }}
+			title="Checkout"
 			onErrorDismiss={() => {
-				close();
+				buyModalStore.send({ type: 'close' });
 			}}
 			onErrorAction={() => {
-				close();
+				buyModalStore.send({ type: 'close' });
 			}}
 		>
-			{(paymentModalParamsData) => {
+			{({ paymentModalParams }) => {
 				if (!steps)
 					return (
 						<div className="flex h-24 items-center justify-center gap-4">
 							<Spinner size="lg" />
-							<Text className="pulse">Loading...</Text>
+							<Text className="pulse">Loading checkout</Text>
 						</div>
 					);
 
-				return (
-					<PaymentModalOpener
-						paymentModalParams={paymentModalParamsData.paymentModalParamsQuery}
-					/>
-				);
+				return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 			}}
 		</ActionModal>
 	);
@@ -93,12 +130,15 @@ const PaymentModalOpener = ({
 	paymentModalParams: SelectPaymentSettings;
 }) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
-	useEffect(() => {
+
+       useEffect(() => {
 		if (paymentModalParams) {
 			openSelectPaymentModal(paymentModalParams);
+			buyModalStore.send({ type: 'openPaymentModal' });
 		}
 	}, [paymentModalParams, openSelectPaymentModal]);
-	return null;
+
+       return null;
 };
 
 export default SequenceCheckoutNew;
