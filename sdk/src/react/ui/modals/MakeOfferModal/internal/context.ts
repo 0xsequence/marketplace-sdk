@@ -304,21 +304,35 @@ export function useMakeOfferModalContext() {
 			price: {
 				input: state.priceInput,
 				update: state.updatePriceInput,
+				touch: state.touchPriceInput,
+				isTouched: state.isPriceTouched,
 			},
 			quantity: {
 				input: state.quantityInput,
 				update: state.updateQuantityInput,
+				touch: state.touchQuantityInput,
+				isTouched: state.isQuantityTouched,
 				validation: validation.quantity,
 			},
 			expiry: {
 				update: state.updateExpiryDays,
 			},
 			isValid: formIsValid,
+			validation: {
+				price: validation.price,
+				quantity: validation.quantity,
+				balance: validation.balance,
+				openseaCriteria: validation.openseaCriteria,
+			},
 			errors: {
-				price: validation.price.error,
-				quantity: validation.quantity.error,
-				balance: validation.balance.error,
-				openseaCriteria: validation.openseaCriteria?.error,
+				price: state.isPriceTouched ? validation.price.error : undefined,
+				quantity: state.isQuantityTouched
+					? validation.quantity.error
+					: undefined,
+				balance: state.isPriceTouched ? validation.balance.error : undefined,
+				openseaCriteria: state.isPriceTouched
+					? validation.openseaCriteria?.error
+					: undefined,
 			},
 		},
 

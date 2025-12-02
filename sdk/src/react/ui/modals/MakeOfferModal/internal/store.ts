@@ -18,6 +18,8 @@ type MakeOfferModalState = OpenMakeOfferModalArgs & {
 	currencyAddress?: Address;
 	quantityInput: string;
 	expiryDays: number;
+	isPriceTouched: boolean;
+	isQuantityTouched: boolean;
 };
 
 const initialContext: MakeOfferModalState = {
@@ -31,6 +33,8 @@ const initialContext: MakeOfferModalState = {
 	quantityInput: '1',
 	expiryDays: 7,
 	callbacks: undefined,
+	isPriceTouched: false,
+	isQuantityTouched: false,
 };
 
 export const makeOfferModalStore = createStore({
@@ -43,12 +47,26 @@ export const makeOfferModalStore = createStore({
 			expiryDays: 7,
 			priceInput: '',
 			quantityInput: '1',
+			isPriceTouched: false,
+			isQuantityTouched: false,
 		}),
 		close: () => ({ ...initialContext }),
 
-		updatePrice: (context, event: { value: string }) => ({
+		updatePrice: (context, event: { value: string }) => {
+			const isBlurNormalization =
+				context.priceInput === '' && event.value === '0';
+			const valueChanged = context.priceInput !== event.value;
+			const shouldMarkTouched = valueChanged && !isBlurNormalization;
+
+			return {
+				...context,
+				priceInput: event.value,
+				isPriceTouched: shouldMarkTouched ? true : context.isPriceTouched,
+			};
+		},
+		touchPrice: (context) => ({
 			...context,
-			priceInput: event.value,
+			isPriceTouched: true,
 		}),
 		selectCurrency: (context, event: { address: Address }) => ({
 			...context,
@@ -57,6 +75,11 @@ export const makeOfferModalStore = createStore({
 		updateQuantity: (context, event: { value: string }) => ({
 			...context,
 			quantityInput: event.value,
+			isQuantityTouched: true,
+		}),
+		touchQuantity: (context) => ({
+			...context,
+			isQuantityTouched: true,
 		}),
 		updateExpiryDays: (context, event: { days: number }) => ({
 			...context,
@@ -88,15 +111,21 @@ export const useMakeOfferModalState = () => {
 		currencyAddress,
 		quantityInput,
 		expiryDays,
+		isPriceTouched,
+		isQuantityTouched,
 	} = useSelector(makeOfferModalStore, (state) => state.context);
 
 	const closeModal = () => makeOfferModalStore.send({ type: 'close' });
 	const updatePriceInput = (value: string) =>
 		makeOfferModalStore.send({ type: 'updatePrice', value });
+	const touchPriceInput = () =>
+		makeOfferModalStore.send({ type: 'touchPrice' });
 	const updateCurrency = (address: Address) =>
 		makeOfferModalStore.send({ type: 'selectCurrency', address });
 	const updateQuantityInput = (value: string) =>
 		makeOfferModalStore.send({ type: 'updateQuantity', value });
+	const touchQuantityInput = () =>
+		makeOfferModalStore.send({ type: 'touchQuantity' });
 	const updateExpiryDays = (days: number) =>
 		makeOfferModalStore.send({ type: 'updateExpiryDays', days });
 
@@ -111,10 +140,14 @@ export const useMakeOfferModalState = () => {
 		currencyAddress,
 		quantityInput,
 		expiryDays,
+		isPriceTouched,
+		isQuantityTouched,
 		closeModal,
 		updatePriceInput,
+		touchPriceInput,
 		updateCurrency,
 		updateQuantityInput,
+		touchQuantityInput,
 		updateExpiryDays,
 	};
 };

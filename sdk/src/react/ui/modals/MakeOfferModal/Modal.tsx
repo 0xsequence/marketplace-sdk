@@ -152,7 +152,10 @@ const Modal = () => {
 								/>
 							)}
 
-							{!ctx.form.isValid && (
+							{(ctx.form.errors.price ||
+								ctx.form.errors.quantity ||
+								ctx.form.errors.balance ||
+								ctx.form.errors.openseaCriteria) && (
 								<div className="mt-2 text-red-500 text-sm">
 									{ctx.form.errors.price ||
 										ctx.form.errors.quantity ||
