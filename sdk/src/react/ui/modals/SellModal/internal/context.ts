@@ -205,6 +205,31 @@ export function useSellModalContext() {
 			collection: collectionQuery,
 			currency: currencyQuery,
 		},
+
+		// Computed helpers for simpler consumption
+		get actions() {
+			const needsApproval =
+				this.steps.approval && this.steps.approval.status !== 'success';
+
+			return {
+				approve: needsApproval
+					? {
+							label: this.steps.approval?.label,
+							onClick: this.steps.approval?.execute || (() => {}),
+							loading: this.steps.approval?.isPending,
+							disabled: this.steps.approval?.isDisabled,
+							testid: 'sell-modal-approve-button',
+						}
+					: undefined,
+				sell: {
+					label: this.steps.sell.label,
+					onClick: this.steps.sell.execute,
+					loading: this.steps.sell.isPending,
+					disabled: this.steps.sell.isDisabled,
+					testid: 'sell-modal-accept-button',
+				},
+			};
+		},
 	};
 }
 

@@ -24,6 +24,10 @@ export {
 	useMakeOfferModal,
 	useMakeOfferModalContext,
 } from './modals/MakeOfferModal';
-export { useSellModal } from './modals/SellModal';
+export {
+	type SellModalContext,
+	useSellModal,
+	useSellModalContext,
+} from './modals/SellModal';
 export { useSuccessfulPurchaseModal } from './modals/SuccessfulPurchaseModal';
 export { useTransferModal } from './modals/TransferModal';
