@@ -68,6 +68,7 @@ export const ERC1155QuantityModal = ({
 			}}
 			secondaryAction={{
 				label: 'Cancel',
+				variant: "secondary",
 				onClick: () => buyModalStore.send({ type: 'close' }),
 			}}
 		>

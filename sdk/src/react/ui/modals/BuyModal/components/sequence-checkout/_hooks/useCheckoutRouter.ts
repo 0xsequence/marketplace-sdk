@@ -65,14 +65,13 @@ export const useCheckoutRouter = () => {
 		input: [
 			{
 				contractAddress: collectionAddress,
-				orderId: isMarketProps(props) ? props.orderId : '',
-				marketplace: isMarketProps(props)
-					? props.marketplace
-					: MarketplaceKind.sequence_marketplace_v2,
+				orderId: isMarket ? props.orderId : '',
+				marketplace: isMarket
+					? props.marketplace: MarketplaceKind.sequence_marketplace_v2,
 			},
 		],
 		query: {
-			enabled: isMarketProps(props) && !!props.orderId,
+			enabled: isMarket && !!props.orderId,
 		},
 	});
 	const marketOrder = marketOrders?.orders[0];

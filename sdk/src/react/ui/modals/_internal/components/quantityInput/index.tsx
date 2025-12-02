@@ -36,7 +36,7 @@ export default function QuantityInput({
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
 	const minIncrement = decimals > 0 ? `0.${'1'.padStart(decimals, '0')}` : '1';
 	const dnIncrement = dn.from(minIncrement, decimals);
-	const min = decimals > 0 ? minIncrement : '0';
+	const min = decimals > 0 ? minIncrement : '1';
 	const dnMin = dn.from(min, decimals);
 
 	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
