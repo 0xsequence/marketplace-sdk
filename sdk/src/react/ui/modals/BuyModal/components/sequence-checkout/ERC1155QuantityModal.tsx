@@ -1,7 +1,7 @@
 'use client';
 
 import type { Order } from '@0xsequence/api-client';
-import { Text, TokenImage } from '@0xsequence/design-system';
+import { Skeleton, Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
 import { maxUint256 } from 'viem';
@@ -118,18 +118,16 @@ const TotalPrice = ({
 	const isShop = cardType === 'shop';
 	const isMarket = cardType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const currencyAddress = order
+		? order.priceCurrencyAddress
+		: salePrice?.currencyAddress;
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
-		currencyAddress: (order
-			? order.priceCurrencyAddress
-			: salePrice?.currencyAddress) as Address,
+		currencyAddress,
 	});
 
 	let error: null | string = null;
 	let formattedPrice = '0';
-
-	// Convert quantity to bigint for multiplication
-	const quantityForCalculation = BigInt(quantityStr);
 
 	if (isMarket && currency && order) {
 		try {
@@ -142,8 +140,7 @@ const TotalPrice = ({
 			);
 			const marketplaceFeePercentage =
 				marketCollection?.feePercentage ?? DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const totalPriceRaw =
-				BigInt(order ? order.priceAmount : '0') * quantityForCalculation;
+			const totalPriceRaw = BigInt(order.priceAmount) * BigInt(quantityStr);
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
@@ -157,7 +154,7 @@ const TotalPrice = ({
 	}
 
 	if (isShop && salePrice && currency) {
-		const totalPriceRaw = BigInt(salePrice.amount) * quantityForCalculation;
+		const totalPriceRaw = BigInt(salePrice.amount) * BigInt(quantityStr);
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
 			currency.decimals,
@@ -178,9 +175,7 @@ const TotalPrice = ({
 
 			<div className="flex items-center gap-0.5">
 				{!currency || isCurrencyLoading ? (
-					<div className="flex items-center gap-2">
-						<Text className="font-body text-text-50 text-xs">Loading...</Text>
-					</div>
+					<Skeleton className="h-4 w-12" />
 				) : (
 					<>
 						{currency?.imageUrl && (

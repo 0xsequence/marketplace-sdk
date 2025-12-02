@@ -6,7 +6,7 @@ import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
-import SequenceCheckoutNew from './SequenceCheckoutNew';
+import SequenceCheckout from './sequence-checkout/SequenceCheckoutNew';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
@@ -29,7 +29,7 @@ export const BuyModalContent = () => {
 
 	if (useSequenceCheckoutModal) {
 		return (
-			<SequenceCheckoutNew
+			<SequenceCheckout
 				steps={steps}
 				contractType={collection?.type as ContractType}
 			/>

@@ -1,29 +1,17 @@
-import type { Step, TokenMetadata } from '@0xsequence/api-client';
+import type { Step } from '@0xsequence/api-client';
 import type {
 	SelectPaymentSettings,
 	TransactionOnRampProvider,
 } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address, Hash, Hex } from 'viem';
-import {
-	StepType,
-	WalletKind,
-} from '../../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
-import type {
-	AdditionalFee,
-	CheckoutMode,
-	MarketplaceKind,
-	SdkConfig,
-} from '../../../../../../../types';
-import { decodeERC20Approval } from '../../../../../../../utils/decode/erc20';
-import {
-	getMarketplaceClient,
-	getQueryClient,
-} from '../../../../../../_internal';
-import { useConfig } from '../../../../../hooks';
-import type { ModalCallbacks } from '../../../../_internal/types';
-import { useMarketPlatformFee } from '../../../hooks/useMarketPlatformFee';
-import { useBuyModalContext } from '../../../internal/buyModalContext';
+import { useAccount } from 'wagmi';
+import { StepType } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
+import type { CheckoutMode, MarketplaceKind } from '../../../../../../types';
+import { decodeERC20Approval } from '../../../../../../utils/decode/erc20';
+import { getQueryClient } from '../../../../../_internal';
+import type { ModalCallbacks } from '../../../_internal/types';
+import { useBuyModalContext } from '../../internal/buyModalContext';
 import {
 	buyModalStore,
 	isMarketProps,
@@ -31,19 +19,16 @@ import {
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
-} from '../../../store';
+} from '../../store';
 
 interface GetBuyCollectableParams {
-	chainId: number;
-	config: SdkConfig;
 	address: Address;
+	chainId: number;
 	collectionAddress: string;
 	tokenId: bigint | undefined;
-	marketplace: MarketplaceKind;
+	marketplaceKind: MarketplaceKind | undefined;
 	orderId: string;
 	quantity: number;
-	collectable: TokenMetadata;
-	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
 	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
@@ -52,49 +37,34 @@ interface GetBuyCollectableParams {
 	buyAnalyticsId: string;
 	onRampProvider: TransactionOnRampProvider | undefined;
 	checkoutMode: CheckoutMode;
+	steps: Step[] | undefined;
+	marketplaceType: 'market' | 'shop';
 }
 
 export const getBuyCollectableParams = async ({
+	address,
 	chainId,
 	collectionAddress,
 	tokenId,
 	callbacks,
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
-	config,
-	address,
-	marketplace,
+	marketplaceKind,
 	orderId,
 	quantity,
-	collectable,
-	fee,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
 	buyAnalyticsId,
 	onRampProvider,
 	checkoutMode,
+	steps,
+	marketplaceType,
 }: GetBuyCollectableParams) => {
-	const marketplaceClient = getMarketplaceClient(config);
 	const checkoutOptions =
 		typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
-	const { steps } = await marketplaceClient.generateBuyTransaction({
-		chainId,
-		collectionAddress,
-		buyer: address,
-		marketplace,
-		ordersData: [
-			{
-				orderId,
-				quantity: BigInt(quantity),
-				tokenId: BigInt(tokenId ?? 0),
-			},
-		],
-		additionalFees: [fee],
-		walletType: WalletKind.unknown,
-	});
 
-	const buyStep = steps.find((step) => step.id === StepType.buy);
-	const approveStep = steps.find((step) => step.id === StepType.tokenApproval);
+	const buyStep = steps?.find((step) => step.id === StepType.buy);
+	const approveStep = steps?.find((step) => step.id === StepType.tokenApproval);
 
 	const approvedSpenderAddress = approveStep
 		? decodeERC20Approval(approveStep.data as Hex).spender
@@ -108,17 +78,30 @@ export const getBuyCollectableParams = async ({
 		? ['custom']
 		: checkoutOptions?.nftCheckout || [];
 
+	const supplementaryAnalyticsInfo = (
+		marketplaceType === 'market'
+			? {
+					requestId: orderId,
+					...(marketplaceKind && { marketplaceKind }),
+					buyAnalyticsId,
+				}
+			: {
+					marketplaceType: 'shop',
+				}
+	) as Record<string, string>;
+
+	const totalPrice = BigInt(buyStep.price) * BigInt(quantity);
+
 	return {
 		chain: chainId,
 		collectibles: [
 			{
 				tokenId: tokenId?.toString() ?? '',
 				quantity: quantity.toString(),
-				decimals: collectable.decimals,
 			},
 		],
 		currencyAddress: priceCurrencyAddress,
-		price: buyStep.price.toString(),
+		price: totalPrice.toString(),
 		targetContractAddress: buyStep.to,
 		approvedSpenderAddress,
 		txData: buyStep.data as Hex,
@@ -130,12 +113,7 @@ export const getBuyCollectableParams = async ({
 				callbacks?.onSuccess?.({ hash: txHash as Hash });
 			}
 		},
-		supplementaryAnalyticsInfo: {
-			requestId: orderId,
-			marketplaceKind: marketplace,
-			buyAnalyticsId,
-			marketplaceType: 'market',
-		},
+		supplementaryAnalyticsInfo,
 		onError: callbacks?.onError,
 		onClose: () => {
 			const queryClient = getQueryClient();
@@ -158,22 +136,20 @@ export const getBuyCollectableParams = async ({
 };
 
 interface usePaymentModalParams {
-	address: Address | undefined;
 	quantity: number | undefined;
-	marketplace: MarketplaceKind | undefined;
-	collectable: TokenMetadata | undefined;
+	marketplaceKind: MarketplaceKind | undefined;
 	priceCurrencyAddress: string | undefined;
-	enabled: boolean;
+	steps: Step[] | undefined;
+	marketplaceType: 'market' | 'shop';
 }
 
 export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const {
-		address,
-		marketplace,
-		collectable,
+		marketplaceKind,
 		priceCurrencyAddress,
 		quantity,
-		enabled,
+		steps,
+		marketplaceType,
 	} = args;
 
 	const buyModalProps = useBuyModalProps();
@@ -189,48 +165,36 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	// Extract Marketplace-specific properties using type guard
 	const tokenId = isMarketProps(buyModalProps)
 		? buyModalProps.tokenId
-		: undefined;
+		: buyModalProps.items[0].tokenId;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 
-	const config = useConfig();
-	const fee = useMarketPlatformFee(
-		isMarketProps(buyModalProps)
-			? {
-					chainId,
-					collectionAddress,
-				}
-			: skipToken,
-	);
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 	const buyAnalyticsId = useBuyAnalyticsId();
+	const { address } = useAccount();
 
 	const queryEnabled =
 		!!address &&
-		!!marketplace &&
-		!!collectable &&
 		!!priceCurrencyAddress &&
 		!!quantity &&
-		enabled;
+		!!steps &&
+		(marketplaceType === 'market' ? !!marketplaceKind : true);
 
 	return useQuery({
-		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
+		queryKey: ['buyCollectableParams', buyModalProps, args],
 		queryFn: queryEnabled
 			? () =>
 					getBuyCollectableParams({
 						chainId,
-						config,
 						address,
 						collectionAddress,
 						tokenId,
-						marketplace,
+						marketplaceKind,
 						orderId,
 						quantity,
-						collectable,
-						fee,
 						priceCurrencyAddress,
 						callbacks: {
 							onSuccess,
@@ -243,6 +207,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						buyAnalyticsId,
 						onRampProvider,
 						checkoutMode,
+						steps,
+						marketplaceType,
 					})
 			: skipToken,
 		retry: false,
