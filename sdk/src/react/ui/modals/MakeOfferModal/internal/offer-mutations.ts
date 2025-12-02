@@ -60,12 +60,8 @@ export const useOfferMutations = (
 			if (!tx?.offerStep) throw new Error('No offer step available');
 			const res = await executeStepAndWait(tx.offerStep);
 
-			// Analytics tracking
 			if (currency) {
-				// Convert bigint string to number for raw value (smallest unit)
 				const currencyValueRaw = Number(params.priceRaw);
-
-				// Convert raw bigint to decimal using dnum for safe conversion
 				const priceDnum = fromBigIntString(
 					params.priceRaw,
 					params.currencyDecimals,

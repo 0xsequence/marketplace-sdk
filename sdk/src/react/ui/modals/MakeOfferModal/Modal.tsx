@@ -129,9 +129,7 @@ const Modal = () => {
 											amountRaw: ctx.offer.price.amountRaw,
 											currency: ctx.offer.price.currency,
 										}}
-										onBuyNow={() => {
-											console.log('Buy now clicked');
-										}}
+										onBuyNow={() => {}}
 									/>
 								)}
 

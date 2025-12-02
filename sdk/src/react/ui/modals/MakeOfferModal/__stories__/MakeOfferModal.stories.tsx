@@ -16,10 +16,6 @@ import {
 	standardWalletHandlers,
 } from './MakeOfferModal.mock-data';
 
-// ============================================================================
-// STORY TRIGGER COMPONENT
-// ============================================================================
-
 interface MakeOfferTriggerProps {
 	collectionAddress: `0x${string}`;
 	tokenId: bigint;
@@ -30,9 +26,6 @@ interface MakeOfferTriggerProps {
 	collectionName?: string;
 }
 
-/**
- * A trigger component that displays collectible info and opens the Make Offer modal
- */
 const MakeOfferTrigger = ({
 	collectionAddress,
 	tokenId,
@@ -43,12 +36,10 @@ const MakeOfferTrigger = ({
 	collectionName = 'Test Collection',
 }: MakeOfferTriggerProps) => {
 	const { show } = useMakeOfferModal({
-		onSuccess: ({ hash, orderId }) => {
-			console.log('Offer created successfully!', { hash, orderId });
+		onSuccess: ({ hash }) => {
 			alert(`Offer created! Hash: ${hash?.slice(0, 10)}...`);
 		},
 		onError: (error) => {
-			console.error('Offer failed:', error);
 			alert(`Offer failed: ${error.message}`);
 		},
 	});
@@ -64,7 +55,6 @@ const MakeOfferTrigger = ({
 
 	return (
 		<div className="flex max-w-md flex-col gap-4 p-4">
-			{/* Collectible Preview Card */}
 			<Card className="p-4">
 				<div className="flex gap-4">
 					<img
@@ -89,7 +79,6 @@ const MakeOfferTrigger = ({
 				</div>
 			</Card>
 
-			{/* Make Offer Button */}
 			<Button
 				variant="primary"
 				onClick={handleMakeOffer}
@@ -99,10 +88,8 @@ const MakeOfferTrigger = ({
 				Make Offer
 			</Button>
 
-			{/* The Modal (renders when open) */}
 			<MakeOfferModal />
 
-			{/* Instructions */}
 			<Card className="bg-white/5 p-4">
 				<Text variant="small" color="text50">
 					<strong>Testing Instructions:</strong>
@@ -123,10 +110,6 @@ const MakeOfferTrigger = ({
 		</div>
 	);
 };
-
-// ============================================================================
-// STORYBOOK META
-// ============================================================================
 
 const meta: Meta<typeof MakeOfferTrigger> = {
 	title: 'Modals/MakeOfferModal',
@@ -167,7 +150,6 @@ Use the Stories panel on the left to test:
 				`,
 			},
 		},
-		// Default MSW handlers
 		msw: {
 			handlers: standardWalletHandlers,
 		},
@@ -199,18 +181,11 @@ Use the Stories panel on the left to test:
 export default meta;
 type Story = StoryObj<typeof MakeOfferTrigger>;
 
-// ============================================================================
-// STORIES
-// ============================================================================
-
-/**
- * Default story - Standard EOA wallet that requires approval
- */
 export const Default: Story = {
 	name: 'EOA Wallet (with Approval)',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockTokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockTokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockTokenMetadata.name,
 		collectionName: 'Test NFT Collection',
@@ -230,30 +205,23 @@ export const Default: Story = {
 		const canvas = within(canvasElement);
 		const body = within(document.body);
 
-		// Wait for component to render
 		await new Promise((resolve) => setTimeout(resolve, 500));
 
-		// Click the trigger button
 		const triggerButton = canvas.getByTestId('make-offer-trigger');
 		await userEvent.click(triggerButton);
 
-		// Wait for modal to appear
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 
-		// Verify modal is open
 		const priceInput = body.getByText('Enter price');
 		await expect(priceInput).toBeInTheDocument();
 	},
 };
 
-/**
- * Sequence/WaaS wallet - No approval needed
- */
 export const SequenceWallet: Story = {
 	name: 'Sequence/WaaS Wallet (no Approval)',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockTokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockTokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockTokenMetadata.name,
 		collectionName: 'Test NFT Collection',
@@ -271,14 +239,11 @@ export const SequenceWallet: Story = {
 	},
 };
 
-/**
- * ERC1155 Collection - Shows quantity input
- */
 export const ERC1155Collection: Story = {
 	name: 'ERC1155 Collection (with Quantity)',
 	args: {
 		collectionAddress: MOCK_ERC1155_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockERC1155TokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockERC1155TokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockERC1155TokenMetadata.name,
 		collectionName: 'Test ERC1155 Collection',
@@ -305,21 +270,16 @@ export const ERC1155Collection: Story = {
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 
-		// For ERC1155, there should be a quantity input
-		// The exact text depends on implementation
 		const modal = body.getByText('Enter price');
 		await expect(modal).toBeInTheDocument();
 	},
 };
 
-/**
- * Insufficient balance scenario
- */
 export const InsufficientBalance: Story = {
 	name: 'Insufficient Balance',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockTokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockTokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockTokenMetadata.name,
 		collectionName: 'Test NFT Collection',
@@ -337,14 +297,11 @@ export const InsufficientBalance: Story = {
 	},
 };
 
-/**
- * Slow loading - for testing loading states
- */
 export const SlowLoading: Story = {
 	name: 'Slow Loading (2s delay)',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockTokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockTokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockTokenMetadata.name,
 		collectionName: 'Test NFT Collection',
@@ -362,14 +319,11 @@ export const SlowLoading: Story = {
 	},
 };
 
-/**
- * Interactive test story with play function
- */
 export const InteractiveTest: Story = {
 	name: 'Interactive Test',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
-		tokenId: BigInt(mockTokenMetadata.tokenId), // Convert string from mock data to bigint for the component
+		tokenId: BigInt(mockTokenMetadata.tokenId),
 		chainId: 1,
 		tokenName: mockTokenMetadata.name,
 		collectionName: 'Test NFT Collection',
@@ -389,28 +343,22 @@ export const InteractiveTest: Story = {
 		const canvas = within(canvasElement);
 		const body = within(document.body);
 
-		// Wait for initial render
 		await new Promise((resolve) => setTimeout(resolve, 500));
 
-		// Step 1: Click trigger to open modal
 		const triggerButton = canvas.getByTestId('make-offer-trigger');
 		await expect(triggerButton).toBeInTheDocument();
 		await userEvent.click(triggerButton);
 
-		// Step 2: Wait for modal to load
 		await new Promise((resolve) => setTimeout(resolve, 1500));
 
-		// Step 3: Verify modal elements are present
 		const priceLabel = body.getByText('Enter price');
 		await expect(priceLabel).toBeInTheDocument();
 
-		// Step 4: Find and interact with expiration (if visible)
 		const expirationText = body.queryByText(/Offer expires/i);
 		if (expirationText) {
 			await expect(expirationText).toBeInTheDocument();
 		}
 
-		// Step 5: Verify Make Offer button exists
 		const makeOfferButton = body.getByTestId('make-offer-button');
 		await expect(makeOfferButton).toBeInTheDocument();
 	},

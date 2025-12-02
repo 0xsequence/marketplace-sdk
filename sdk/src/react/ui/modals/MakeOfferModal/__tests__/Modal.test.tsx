@@ -15,17 +15,14 @@ describe('MakeOfferModal', () => {
 		vi.clearAllMocks();
 		vi.resetAllMocks();
 		vi.restoreAllMocks();
-		// Reset store state
 		makeOfferModalStore.send({ type: 'close' });
 	});
 
 	describe('Store and Hook', () => {
 		it('should open and close the modal via store', () => {
-			// Open modal
 			makeOfferModalStore.send({ type: 'open', ...defaultArgs });
 			expect(makeOfferModalStore.getSnapshot().context.isOpen).toBe(true);
 
-			// Close modal
 			makeOfferModalStore.send({ type: 'close' });
 			expect(makeOfferModalStore.getSnapshot().context.isOpen).toBe(false);
 		});
@@ -60,11 +57,4 @@ describe('MakeOfferModal', () => {
 			expect(makeOfferModalStore.getSnapshot().context.expiryDays).toBe(14);
 		});
 	});
-
-	// TODO: Add integration tests for:
-	// - Approval step visibility
-	// - Form validation display
-	// - Currency selection
-	// - Transaction flow
-	// These require mocking the React Query hooks used in useMakeOfferModalContext
 });

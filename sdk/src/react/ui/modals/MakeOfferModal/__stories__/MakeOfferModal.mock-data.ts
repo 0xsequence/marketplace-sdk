@@ -1,10 +1,3 @@
-/**
- * Mock data and MSW handlers for MakeOfferModal Storybook stories
- *
- * This module provides configurable mock data and handlers to test
- * different scenarios of the Make Offer flow.
- */
-
 import type {
 	Collection,
 	Currency,
@@ -25,10 +18,6 @@ import { delay, HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 
-// ============================================================================
-// MOCK ADDRESSES
-// ============================================================================
-
 export const MOCK_COLLECTION_ADDRESS =
 	'0x1234567890123456789012345678901234567890' as Address;
 export const MOCK_ERC1155_COLLECTION_ADDRESS =
@@ -38,11 +27,7 @@ export const USDC_ADDRESS =
 export const WETH_ADDRESS =
 	'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' as Address;
 
-// ============================================================================
-// MOCK CURRENCIES
-// ============================================================================
-
-export const mockCurrencies: Currency[] = [
+const mockCurrencies: Currency[] = [
 	{
 		chainId: 1,
 		contractAddress: USDC_ADDRESS,
@@ -78,8 +63,7 @@ export const mockCurrencies: Currency[] = [
 	},
 ];
 
-// Native ETH - not valid for offers (offers require ERC20)
-export const mockNativeCurrency: Currency = {
+const mockNativeCurrency: Currency = {
 	chainId: 1,
 	contractAddress: zeroAddress,
 	status: CurrencyStatus.active,
@@ -91,17 +75,13 @@ export const mockNativeCurrency: Currency = {
 	defaultChainCurrency: false,
 	nativeCurrency: true,
 	openseaListing: true,
-	openseaOffer: false, // Native currency cannot be used for offers
+	openseaOffer: false,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };
 
-// ============================================================================
-// MOCK TOKEN METADATA
-// ============================================================================
-
 export const mockTokenMetadata = {
-	tokenId: '1', // Use string for JSON serialization in MSW handlers
+	tokenId: '1',
 	name: 'Cool NFT #1',
 	description: 'A very cool NFT for testing the Make Offer flow',
 	image: 'https://picsum.photos/seed/nft1/400/400',
@@ -114,16 +94,12 @@ export const mockTokenMetadata = {
 
 export const mockERC1155TokenMetadata = {
 	...mockTokenMetadata,
-	tokenId: '42', // Use string for JSON serialization in MSW handlers
+	tokenId: '42',
 	name: 'Semi-Fungible Token #42',
 	description: 'An ERC1155 token with multiple copies',
 } as unknown as TokenMetadata;
 
-// ============================================================================
-// MOCK COLLECTION
-// ============================================================================
-
-export const mockCollection: Collection = {
+const mockCollection: Collection = {
 	status: CollectionStatus.active,
 	chainId: 1,
 	contractAddress: MOCK_COLLECTION_ADDRESS,
@@ -139,17 +115,13 @@ export const mockCollection: Collection = {
 	updatedAt: new Date().toISOString(),
 } as Collection;
 
-export const mockERC1155Collection: Collection = {
+const mockERC1155Collection: Collection = {
 	...mockCollection,
 	contractAddress: MOCK_ERC1155_COLLECTION_ADDRESS,
 	contractType: 'ERC1155',
 } as Collection;
 
-// ============================================================================
-// MOCK MARKETPLACE CONFIG
-// ============================================================================
-
-export const createMockMarketplaceConfig = (
+const createMockMarketplaceConfig = (
 	options: {
 		collectionAddress?: Address;
 		contractType?: 'ERC721' | 'ERC1155';
@@ -225,40 +197,25 @@ export const createMockMarketplaceConfig = (
 	} as unknown as LookupMarketplaceReturn;
 };
 
-// ============================================================================
-// MOCK STEPS (Transaction Steps)
-// ============================================================================
-
-export const createMockStep = (stepType: StepType): Step =>
+const createMockStep = (stepType: StepType): Step =>
 	({
 		id: stepType,
 		data: '0x1234567890abcdef',
 		to: MOCK_COLLECTION_ADDRESS,
-		value: '0', // Use string for JSON serialization in MSW handlers
-		price: '0', // Use string for JSON serialization in MSW handlers
+		value: '0',
+		price: '0',
 	}) as Step;
 
-export const createMockSteps = (stepTypes: StepType[]): Step[] =>
+const createMockSteps = (stepTypes: StepType[]): Step[] =>
 	stepTypes.map(createMockStep);
 
-// ============================================================================
-// MSW HANDLER FACTORIES
-// ============================================================================
-
-export type MockScenario = {
-	/** Whether the wallet needs approval (EOA wallets need it, Sequence/WaaS don't) */
+type MockScenario = {
 	needsApproval: boolean;
-	/** Delay in ms for API responses (to show loading states) */
 	responseDelay?: number;
-	/** Whether to simulate an error */
 	simulateError?: boolean;
-	/** Error message to show */
 	errorMessage?: string;
-	/** Collection type */
 	collectionType: 'ERC721' | 'ERC1155';
-	/** User's balance of the offer currency */
 	currencyBalance?: string;
-	/** Available currencies for offers */
 	currencies?: Currency[];
 };
 
@@ -267,16 +224,11 @@ const DEFAULT_SCENARIO: MockScenario = {
 	responseDelay: 100,
 	simulateError: false,
 	collectionType: 'ERC721',
-	currencyBalance: '1000000000', // 1000 USDC (6 decimals)
+	currencyBalance: '1000000000',
 	currencies: mockCurrencies,
 };
 
-/**
- * Creates MSW handlers for the Make Offer flow
- */
-export const createMakeOfferHandlers = (
-	scenario: Partial<MockScenario> = {},
-) => {
+const createMakeOfferHandlers = (scenario: Partial<MockScenario> = {}) => {
 	const config = { ...DEFAULT_SCENARIO, ...scenario };
 	const collectionAddress =
 		config.collectionType === 'ERC1155'
@@ -296,7 +248,6 @@ export const createMakeOfferHandlers = (
 	const currencies = config.currencies || mockCurrencies;
 
 	return [
-		// Marketplace Config
 		http.post('*/rpc/MarketplaceService/LookupMarketplace', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json(
@@ -308,7 +259,6 @@ export const createMakeOfferHandlers = (
 			);
 		}),
 
-		// List Currencies
 		http.post('*/rpc/Marketplace/ListCurrencies', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
@@ -316,7 +266,6 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Get Collectible
 		http.post('*/rpc/Marketplace/GetCollectible', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
@@ -324,7 +273,6 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Get Collection Detail
 		http.post('*/rpc/Marketplace/GetCollectionDetail', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
@@ -332,8 +280,6 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Generate Offer Transaction - KEY HANDLER
-		// Sequence/WaaS wallets don't need approval, EOA wallets do
 		http.post(
 			'*/rpc/Marketplace/GenerateOfferTransaction',
 			async ({ request }: { request: Request }) => {
@@ -352,12 +298,8 @@ export const createMakeOfferHandlers = (
 				}
 
 				const body = (await request.json()) as { walletType?: WalletKind };
-
-				// Sequence wallets (including WaaS/embedded) don't need approval
-				// WaaS is identified as 'sequence' wallet type
 				const isSequenceWallet = body?.walletType === WalletKind.sequence;
 
-				// If scenario says no approval OR it's a Sequence wallet, skip approval
 				const steps =
 					!config.needsApproval || isSequenceWallet
 						? createMockSteps([StepType.createOffer])
@@ -367,7 +309,6 @@ export const createMakeOfferHandlers = (
 			},
 		),
 
-		// Execute (submit the offer)
 		http.post('*/rpc/Marketplace/Execute', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 
@@ -387,7 +328,6 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Token Balances (for currency balance check)
 		http.post('*/rpc/Indexer/GetTokenBalances', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
@@ -409,7 +349,6 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Metadata endpoints
 		http.post('*/rpc/Metadata/GetContractInfo', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
@@ -442,16 +381,14 @@ export const createMakeOfferHandlers = (
 			});
 		}),
 
-		// Databeat analytics
 		http.post('*/rpc/Databeat/Tick', () => {
 			return HttpResponse.json({});
 		}),
 
-		// Lowest listing (for floor price comparison) - both endpoints for compatibility
 		http.post('*/rpc/Marketplace/GetCollectibleLowestListing', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
-				order: null, // No existing listing
+				order: null,
 			});
 		}),
 
@@ -460,22 +397,18 @@ export const createMakeOfferHandlers = (
 			async () => {
 				if (config.responseDelay) await delay(config.responseDelay);
 				return HttpResponse.json({
-					order: null, // No existing listing
+					order: null,
 				});
 			},
 		),
 
-		// Highest offer (for comparison)
 		http.post('*/rpc/Marketplace/GetCollectibleHighestOffer', async () => {
 			if (config.responseDelay) await delay(config.responseDelay);
 			return HttpResponse.json({
-				order: null, // No existing offers
+				order: null,
 			});
 		}),
 
-		// JSON-RPC handler for wagmi eth_call (balanceOf, decimals)
-		// This mocks the direct blockchain calls for ERC-20 balance checking
-		// Explicit pattern for localhost Anvil endpoints
 		http.post('http://127.0.0.1:8545/*', async ({ request }) => {
 			try {
 				const body = (await request.clone().json()) as {
@@ -484,9 +417,8 @@ export const createMakeOfferHandlers = (
 					id?: number;
 				};
 
-				// Only handle eth_call requests
 				if (body.method !== 'eth_call') {
-					return undefined; // Pass through to other handlers
+					return undefined;
 				}
 
 				const params = body.params as [{ to?: string; data?: string }, string];
@@ -495,13 +427,9 @@ export const createMakeOfferHandlers = (
 					return undefined;
 				}
 
-				// balanceOf selector: 0x70a08231
-				// decimals selector: 0x313ce567
 				const selector = callData.data.slice(0, 10).toLowerCase();
 
 				if (selector === '0x70a08231') {
-					// balanceOf - return mock balance
-					// Pad balance to 32 bytes (64 hex chars)
 					const balanceHex = BigInt(
 						config.currencyBalance || '1000000000',
 					).toString(16);
@@ -515,7 +443,6 @@ export const createMakeOfferHandlers = (
 				}
 
 				if (selector === '0x313ce567') {
-					// decimals - return 6 for USDC
 					return HttpResponse.json({
 						jsonrpc: '2.0',
 						id: body.id,
@@ -526,42 +453,33 @@ export const createMakeOfferHandlers = (
 
 				return undefined;
 			} catch {
-				return undefined; // Not JSON, pass through
+				return undefined;
 			}
 		}),
 	];
 };
 
-// ============================================================================
-// PRE-CONFIGURED SCENARIOS
-// ============================================================================
-
-/** Standard EOA wallet - requires approval step */
 export const standardWalletHandlers = createMakeOfferHandlers({
 	needsApproval: true,
 	collectionType: 'ERC721',
 });
 
-/** Sequence/WaaS wallet - no approval needed */
 export const sequenceWalletHandlers = createMakeOfferHandlers({
 	needsApproval: false,
 	collectionType: 'ERC721',
 });
 
-/** ERC1155 collection - shows quantity input */
 export const erc1155Handlers = createMakeOfferHandlers({
 	needsApproval: true,
 	collectionType: 'ERC1155',
 });
 
-/** Insufficient balance scenario */
 export const insufficientBalanceHandlers = createMakeOfferHandlers({
 	needsApproval: true,
 	collectionType: 'ERC721',
-	currencyBalance: '100', // Only 0.0001 USDC
+	currencyBalance: '100',
 });
 
-/** Error scenario */
 export const errorHandlers = createMakeOfferHandlers({
 	needsApproval: true,
 	collectionType: 'ERC721',
@@ -569,7 +487,6 @@ export const errorHandlers = createMakeOfferHandlers({
 	errorMessage: 'Insufficient liquidity for this offer',
 });
 
-/** Slow loading scenario (for testing loading states) */
 export const slowLoadingHandlers = createMakeOfferHandlers({
 	needsApproval: true,
 	collectionType: 'ERC721',
