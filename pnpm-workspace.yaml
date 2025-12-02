@@ -49,6 +49,7 @@ minimumReleaseAgeExclude:
   - '0xsequence'
   - sequence
   - 0xtrails
+  - '@0xtrails/*'
 
 onlyBuiltDependencies:
   - msw

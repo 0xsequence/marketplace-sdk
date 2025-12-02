@@ -60,7 +60,7 @@
 		}
 	},
 	"dependencies": {
-		"0xtrails": "^0.6.6",
+		"0xtrails": "^0.7",
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
 		"@tailwindcss/cli": "^4.1.17",
