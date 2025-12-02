@@ -67,7 +67,8 @@ export const useCheckoutRouter = () => {
 				contractAddress: collectionAddress,
 				orderId: isMarket ? props.orderId : '',
 				marketplace: isMarket
-					? props.marketplace: MarketplaceKind.sequence_marketplace_v2,
+					? props.marketplace
+					: MarketplaceKind.sequence_marketplace_v2,
 			},
 		],
 		query: {
