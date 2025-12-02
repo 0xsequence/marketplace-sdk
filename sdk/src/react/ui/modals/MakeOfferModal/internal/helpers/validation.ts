@@ -1,13 +1,3 @@
-/**
- * Validation utilities for MakeOfferModal
- * Pure functions for validating offer form inputs
- *
- * All functions in this module are:
- * - Pure (no side effects)
- * - Testable without React
- * - Type-safe with dnum
- */
-
 import { type Dnum, greaterThan } from 'dnum';
 import { isPositive } from './dnum-utils';
 
@@ -23,18 +13,6 @@ export type OfferValidation = {
 	openseaCriteria?: FieldValidation;
 };
 
-/**
- * Validate offer form inputs
- * Pure function - no React hooks, fully testable
- *
- * @example
- * validateOfferForm({
- *   price: [1000000000000000000n, 18],
- *   quantity: [1n, 0],
- *   balance: [2000000000000000000n, 18],
- * })
- * // Returns: { price: { isValid: true, error: null }, quantity: { isValid: true, error: null }, ... }
- */
 export function validateOfferForm({
 	price,
 	quantity,
@@ -92,14 +70,6 @@ export function validateOfferForm({
 	return validation;
 }
 
-/**
- * Check if entire form is valid
- * Pure function - no React hooks, fully testable
- *
- * @example
- * const validation = validateOfferForm({ ... });
- * isFormValid(validation) // true or false
- */
 export function isFormValid(validation: OfferValidation): boolean {
 	return (
 		validation.price.isValid &&
@@ -109,14 +79,6 @@ export function isFormValid(validation: OfferValidation): boolean {
 	);
 }
 
-/**
- * Get all validation errors as an array of error messages
- * Pure function - useful for displaying all errors at once
- *
- * @example
- * const errors = getValidationErrors(validation);
- * // Returns: ["Price must be greater than 0", "Insufficient balance"]
- */
 export function getValidationErrors(validation: OfferValidation): string[] {
 	const errors: string[] = [];
 
@@ -129,13 +91,6 @@ export function getValidationErrors(validation: OfferValidation): string[] {
 	return errors;
 }
 
-/**
- * Get a single combined error message if form is invalid
- * Pure function - useful for displaying a single error state
- *
- * @example
- * getFirstValidationError(validation) // "Price must be greater than 0"
- */
 export function getFirstValidationError(
 	validation: OfferValidation,
 ): string | null {
