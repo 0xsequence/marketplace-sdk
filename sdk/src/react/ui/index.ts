@@ -19,7 +19,11 @@ export { ShopCardPresentation } from './components/marketplace-collectible-card/
 export { Media } from './components/media/Media';
 export { useBuyModal } from './modals/BuyModal';
 export { useCreateListingModal } from './modals/CreateListingModal';
-export { useMakeOfferModal } from './modals/MakeOfferModal';
+export {
+	type MakeOfferModalContext,
+	useMakeOfferModal,
+	useMakeOfferModalContext,
+} from './modals/MakeOfferModal';
 export { useSellModal } from './modals/SellModal';
 export { useSuccessfulPurchaseModal } from './modals/SuccessfulPurchaseModal';
 export { useTransferModal } from './modals/TransferModal';

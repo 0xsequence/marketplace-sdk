@@ -26,36 +26,14 @@ const Modal = () => {
 		return null;
 	}
 
-	const showApproveButton =
-		ctx.steps.approval && ctx.steps.approval.status !== 'success';
-
-	const approveAction = showApproveButton
-		? {
-				label: 'Approve',
-				onClick: ctx.steps.approval?.execute || (() => {}),
-				loading: ctx.steps.approval?.isPending,
-				disabled: ctx.steps.approval?.isDisabled,
-				testid: 'make-offer-approve-button',
-			}
-		: undefined;
-
-	const offerAction = {
-		label: 'Make Offer',
-		onClick: ctx.steps.offer.execute,
-		loading: ctx.steps.offer.isPending,
-		disabled: ctx.steps.offer.isDisabled,
-		variant: showApproveButton ? ('ghost' as const) : undefined,
-		testid: 'make-offer-button',
-	};
-
 	return (
 		<ActionModal
 			chainId={ctx.item.chainId}
 			onClose={ctx.close}
 			title="Make an offer"
 			type="offer"
-			primaryAction={showApproveButton ? approveAction : offerAction}
-			secondaryAction={showApproveButton ? offerAction : undefined}
+			primaryAction={ctx.actions.approve ?? ctx.actions.offer}
+			secondaryAction={ctx.actions.approve ? ctx.actions.offer : undefined}
 			queries={{
 				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,
@@ -152,16 +130,8 @@ const Modal = () => {
 								/>
 							)}
 
-							{(ctx.form.errors.price ||
-								ctx.form.errors.quantity ||
-								ctx.form.errors.balance ||
-								ctx.form.errors.openseaCriteria) && (
-								<div className="mt-2 text-red-500 text-sm">
-									{ctx.form.errors.price ||
-										ctx.form.errors.quantity ||
-										ctx.form.errors.balance ||
-										ctx.form.errors.openseaCriteria}
-								</div>
+							{ctx.formError && (
+								<div className="mt-2 text-red-500 text-sm">{ctx.formError}</div>
 							)}
 						</>
 					)}

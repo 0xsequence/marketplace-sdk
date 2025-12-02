@@ -1585,6 +1585,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-white {
     background-color: var(--color-white);
   }
+  .bg-white\/5 {
+    background-color: color-mix(in srgb, #fff 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
+    }
+  }
   .bg-zinc-950 {
     background-color: var(--color-zinc-950);
   }

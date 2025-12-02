@@ -199,7 +199,7 @@ export function useMakeOfferModalContext() {
 				: undefined;
 
 		steps.approval = {
-			label: 'Approve TOKEN',
+			label: 'Approve',
 			status: approve.isSuccess
 				? 'success'
 				: approve.isPending
@@ -340,6 +340,7 @@ export function useMakeOfferModalContext() {
 			available: availableCurrencies,
 			selected: selectedCurrency,
 			select: state.updateCurrency,
+			isConfigured: availableCurrencies.length > 0,
 		},
 
 		steps,
@@ -367,6 +368,45 @@ export function useMakeOfferModalContext() {
 			collection: collectionQuery,
 			currencies: currenciesQuery,
 			lowestListing: lowestListingQuery,
+		},
+
+		// Computed helpers for simpler consumption
+		get formError() {
+			if (!this.currencies.isConfigured) {
+				return 'No ERC-20 currencies are configured for this marketplace';
+			}
+			return (
+				this.form.errors.price ||
+				this.form.errors.quantity ||
+				this.form.errors.balance ||
+				this.form.errors.openseaCriteria
+			);
+		},
+
+		get actions() {
+			const needsApproval =
+				this.steps.approval && this.steps.approval.status !== 'success';
+			const currenciesBlocked = !this.currencies.isConfigured;
+
+			return {
+				approve: needsApproval
+					? {
+							label: this.steps.approval?.label,
+							onClick: this.steps.approval?.execute || (() => {}),
+							loading: this.steps.approval?.isPending,
+							disabled: this.steps.approval?.isDisabled || currenciesBlocked,
+							testid: 'make-offer-approve-button',
+						}
+					: undefined,
+				offer: {
+					label: this.steps.offer.label,
+					onClick: this.steps.offer.execute,
+					loading: this.steps.offer.isPending,
+					disabled: this.steps.offer.isDisabled || currenciesBlocked,
+					variant: needsApproval ? ('ghost' as const) : undefined,
+					testid: 'make-offer-button',
+				},
+			};
 		},
 	};
 }

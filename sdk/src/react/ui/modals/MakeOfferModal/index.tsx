@@ -1,4 +1,10 @@
 import type { ModalCallbacks } from '../_internal/types';
+
+export {
+	type MakeOfferModalContext,
+	useMakeOfferModalContext,
+} from './internal/context';
+
 import {
 	makeOfferModalStore,
 	type OpenMakeOfferModalArgs,
