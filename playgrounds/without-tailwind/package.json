@@ -16,7 +16,7 @@
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
-		"@chakra-ui/react": "^3.29.0",
+		"@chakra-ui/react": "^3.30.0",
 		"@emotion/react": "^11.14.0",
 		"@tanstack/react-query": "catalog:",
 		"date-fns": "catalog:",
