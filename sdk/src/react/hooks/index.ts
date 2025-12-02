@@ -1,3 +1,5 @@
+'use client';
+
 // Backward compatible exports (deprecated hook names)
 export * from './_deprecated';
 export * from './checkout';

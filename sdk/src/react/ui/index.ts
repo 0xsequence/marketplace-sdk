@@ -1,3 +1,5 @@
+'use client';
+
 export * from '../providers/modal-provider';
 // Card helpers
 export { ActionButton } from './components/marketplace-collectible-card/ActionButton';
