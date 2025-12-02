@@ -25,21 +25,7 @@ const generateOfferTransaction = async (
 	config: any,
 ) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const serializedArgs = {
-		...args,
-		chainId: args.chainId,
-		offer: args.offer
-			? {
-					...args.offer,
-					tokenId: args.offer.tokenId?.toString(),
-					quantity: args.offer.quantity?.toString(),
-					pricePerToken: args.offer.pricePerToken?.toString(),
-				}
-			: undefined,
-	};
-	const response = await marketplaceClient.generateOfferTransaction(
-		serializedArgs as GenerateOfferTransactionRequest,
-	);
+	const response = await marketplaceClient.generateOfferTransaction(args);
 	const steps = response.steps;
 
 	if (steps.length === 0) {

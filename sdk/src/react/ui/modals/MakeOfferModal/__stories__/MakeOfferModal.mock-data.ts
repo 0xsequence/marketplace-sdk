@@ -202,8 +202,8 @@ const createMockStep = (stepType: StepType): Step =>
 		id: stepType,
 		data: '0x1234567890abcdef',
 		to: MOCK_COLLECTION_ADDRESS,
-		value: '0',
-		price: '0',
+		value: 0n,
+		price: 0n,
 	}) as Step;
 
 const createMockSteps = (stepTypes: StepType[]): Step[] =>
