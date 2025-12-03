@@ -7,8 +7,6 @@ import {
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
-import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useERC1155SalePaymentParams } from '../hooks/useERC1155SalePaymentParams';
 import {
 	buyModalStore,
@@ -48,11 +46,7 @@ export const ERC1155ShopModal = ({
 		? String(shopData.checkoutOptions.nftCheckout[0])
 		: undefined;
 
-	const {
-		data: erc1155SalePaymentParams,
-		isLoading: isErc1155PaymentParamsLoading,
-		isError: isErc1155PaymentParamsError,
-	} = useERC1155SalePaymentParams({
+	const { data: erc1155SalePaymentParams } = useERC1155SalePaymentParams({
 		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress: collection.address,
 		tokenId,
@@ -79,28 +73,6 @@ export const ERC1155ShopModal = ({
 		);
 	}
 
-	if (isErc1155PaymentParamsLoading || !erc1155SalePaymentParams) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading ERC1155 sale parameters"
-			/>
-		);
-	}
-
-	if (isErc1155PaymentParamsError) {
-		return (
-			<ErrorModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Failed to load ERC1155 sale parameters"
-			/>
-		);
-	}
-
 	return <PaymentModalOpener paymentModalParams={erc1155SalePaymentParams!} />;
 };
 
@@ -113,25 +85,24 @@ const PaymentModalOpener = ({
 }: PaymentModalOpenerProps) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const paymentModalState = usePaymentModalState();
-	const totalPrice =
-		BigInt(paymentModalParams.price) *
-		BigInt(paymentModalParams.collectibles[0].quantity);
 
 	useEffect(() => {
-		if (paymentModalState === 'idle') {
-			buyModalStore.send({ type: 'openPaymentModal' });
-			openSelectPaymentModal({
-				...paymentModalParams,
-				price: String(totalPrice),
-			});
-			buyModalStore.send({ type: 'paymentModalOpened' });
-		}
-	}, [
-		paymentModalState,
-		paymentModalParams,
-		openSelectPaymentModal,
-		totalPrice,
-	]);
+		if (paymentModalState !== 'idle') return;
+		if (!paymentModalParams) return;
+
+		const totalPrice =
+			BigInt(paymentModalParams.price) *
+			BigInt(paymentModalParams.collectibles[0].quantity);
+
+		buyModalStore.send({ type: 'openPaymentModal' });
+
+		openSelectPaymentModal({
+			...paymentModalParams,
+			price: String(totalPrice),
+		});
+
+		buyModalStore.send({ type: 'paymentModalOpened' });
+	}, [paymentModalState, paymentModalParams, openSelectPaymentModal]);
 
 	return null;
 };
