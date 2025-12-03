@@ -36,7 +36,7 @@ interface GetBuyCollectableParams {
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
 	onRampProvider: TransactionOnRampProvider | undefined;
-	checkoutMode: CheckoutMode;
+	checkoutMode: CheckoutMode | undefined;
 	steps: Step[] | undefined;
 	marketplaceType: 'market' | 'shop';
 }

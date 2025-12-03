@@ -43,7 +43,7 @@ export function useBuyModalContext() {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
-	let checkoutMode: "trails" | "sequence-checkout" | "crypto" | undefined;
+	let checkoutMode: CheckoutMode | undefined;
 
 	if (checkoutModeConfig === 'trails' && isChainSupported) {
 		checkoutMode = 'trails';
@@ -51,7 +51,10 @@ export function useBuyModalContext() {
 		typeof checkoutModeConfig === 'object' &&
 		checkoutModeConfig.mode === 'sequence-checkout'
 	) {
-		checkoutMode = 'sequence-checkout';
+		checkoutMode = {
+			mode: 'sequence-checkout',
+			options: checkoutModeConfig.options,
+		};
 	} else if (checkoutModeConfig === 'crypto' && isChainSupported) {
 		checkoutMode = 'crypto';
 	} else {

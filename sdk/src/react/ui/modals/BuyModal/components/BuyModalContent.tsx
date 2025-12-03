@@ -25,7 +25,10 @@ export const BuyModalContent = () => {
 		handleTransactionSuccess,
 	} = useBuyModalContext();
 
-	if (checkoutMode === 'sequence-checkout') {
+	if (
+		typeof checkoutMode === 'object' &&
+		checkoutMode.mode === 'sequence-checkout'
+	) {
 		return (
 			<SequenceCheckout
 				steps={steps}
