@@ -7,7 +7,8 @@ import {
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
-import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
+import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
+import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useERC1155SalePaymentParams } from '../hooks/useERC1155SalePaymentParams';
 import {
 	buyModalStore,
@@ -78,19 +79,29 @@ export const ERC1155ShopModal = ({
 		);
 	}
 
-	// Handle loading or error states
 	if (isErc1155PaymentParamsLoading || !erc1155SalePaymentParams) {
-		return null;
-	}
-
-	if (isErc1155PaymentParamsError) {
-		throw BuyModalErrorFactory.contractError(
-			shopData.salesContractAddress,
-			'Failed to load ERC1155 sale parameters',
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading ERC1155 sale parameters"
+			/>
 		);
 	}
 
-	return <PaymentModalOpener paymentModalParams={erc1155SalePaymentParams} />;
+	if (isErc1155PaymentParamsError) {
+		return (
+			<ErrorModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Failed to load ERC1155 sale parameters"
+			/>
+		);
+	}
+
+	return <PaymentModalOpener paymentModalParams={erc1155SalePaymentParams!} />;
 };
 
 interface PaymentModalOpenerProps {
