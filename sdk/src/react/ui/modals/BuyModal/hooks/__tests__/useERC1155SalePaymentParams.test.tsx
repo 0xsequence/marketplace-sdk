@@ -331,9 +331,7 @@ describe('useERC1155SalePaymentParams', () => {
 	});
 
 	it('should not fetch when quantity is not set', async () => {
-		const { useQuantity } = vi.mocked(
-			await import('../../store'),
-		);
+		const { useQuantity } = vi.mocked(await import('../../store'));
 		useQuantity.mockReturnValue(undefined as never);
 
 		const { result } = renderHook(() =>
@@ -380,4 +378,3 @@ describe('useERC1155SalePaymentParams', () => {
 		expect(result.current.data).toBeUndefined();
 	});
 });
-
