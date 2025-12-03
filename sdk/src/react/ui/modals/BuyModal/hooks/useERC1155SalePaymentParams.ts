@@ -175,7 +175,7 @@ interface UseERC1155SalePaymentParams {
 	tokenId: string | undefined;
 	price: string | undefined;
 	currencyAddress: string | undefined;
-	enabled: boolean;
+	enabled?: boolean;
 	checkoutProvider?: string;
 	chainId: number;
 }
@@ -189,7 +189,7 @@ export const useERC1155SalePaymentParams = (
 		tokenId,
 		price,
 		currencyAddress,
-		enabled,
+		enabled = true,
 		checkoutProvider,
 		chainId,
 	} = args;
@@ -218,19 +218,14 @@ export const useERC1155SalePaymentParams = (
 		!!salesContractAddress &&
 		!!collectionAddress &&
 		!!tokenId &&
-		!!price &&
+		price !== undefined &&
 		!!currencyAddress &&
 		!!quantity &&
 		!!abi &&
 		!isABILoading;
 
 	return useQuery({
-		queryKey: [
-			'erc1155SalePaymentParams',
-			args,
-			quantity,
-			version, // Include ABI version in query key
-		],
+		queryKey: ['erc1155SalePaymentParams', args, quantity, version],
 		queryFn:
 			queryEnabled && abi
 				? () =>
@@ -241,7 +236,7 @@ export const useERC1155SalePaymentParams = (
 							collectionAddress,
 							tokenId,
 							quantity,
-							price: BigInt(price),
+							price: BigInt(price!),
 							currencyAddress,
 							callbacks: {
 								onSuccess,

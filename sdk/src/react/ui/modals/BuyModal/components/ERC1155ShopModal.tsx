@@ -42,7 +42,7 @@ export const ERC1155ShopModal = ({
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
 
-	const tokenId = shopData.items[0]?.tokenId ?? '0';
+	const tokenId = shopData.items[0]?.tokenId;
 	const checkoutProvider = shopData.checkoutOptions?.nftCheckout?.[0]
 		? String(shopData.checkoutOptions.nftCheckout[0])
 		: undefined;
@@ -55,9 +55,8 @@ export const ERC1155ShopModal = ({
 		salesContractAddress: shopData.salesContractAddress,
 		collectionAddress: collection.address,
 		tokenId,
-		price: shopData.salePrice?.amount || '0',
-		currencyAddress: shopData.salePrice?.currencyAddress || '',
-		enabled: !!quantity,
+		price: shopData.salePrice?.amount,
+		currencyAddress: shopData.salePrice?.currencyAddress,
 		chainId,
 		checkoutProvider,
 	});
