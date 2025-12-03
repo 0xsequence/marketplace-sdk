@@ -8,13 +8,13 @@ import {
 	toHex,
 } from 'viem';
 import { useAccount } from 'wagmi';
-import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ContractType } from '../../../../../types';
-import { useSalesContractABI } from '../../../../hooks/contracts/useSalesContractABI';
+import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import {
 	getQueryClient,
 	type TransactionOnRampProvider,
 } from '../../../../_internal';
+import { useSalesContractABI } from '../../../../hooks/contracts/useSalesContractABI';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
@@ -121,6 +121,7 @@ export const getERC1155SalePaymentParams = async ({
 				{
 					quantity: quantity.toString(),
 					decimals: 0,
+					tokenId: tokenId,
 				},
 			],
 			currencyAddress,
@@ -179,7 +180,9 @@ interface UseERC1155SalePaymentParams {
 	chainId: number;
 }
 
-export const useERC1155SalePaymentParams = (args: UseERC1155SalePaymentParams) => {
+export const useERC1155SalePaymentParams = (
+	args: UseERC1155SalePaymentParams,
+) => {
 	const {
 		salesContractAddress,
 		collectionAddress,
@@ -198,7 +201,11 @@ export const useERC1155SalePaymentParams = (args: UseERC1155SalePaymentParams) =
 	const buyModalProps = useBuyModalProps();
 	const saleAnalyticsId = useBuyAnalyticsId();
 
-	const { abi, isLoading: isABILoading, version } = useSalesContractABI({
+	const {
+		abi,
+		isLoading: isABILoading,
+		version,
+	} = useSalesContractABI({
 		contractAddress: salesContractAddress as Address,
 		contractType: ContractType.ERC1155,
 		chainId,
@@ -224,31 +231,32 @@ export const useERC1155SalePaymentParams = (args: UseERC1155SalePaymentParams) =
 			quantity,
 			version, // Include ABI version in query key
 		],
-		queryFn: queryEnabled && abi
-			? () =>
-					getERC1155SalePaymentParams({
-						chainId,
-						address,
-						salesContractAddress,
-						collectionAddress,
-						tokenId,
-						quantity,
-						price: BigInt(price),
-						currencyAddress,
-						callbacks: {
-							onSuccess,
-							onError,
-						},
-						customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
-						skipNativeBalanceCheck: false, // Can be added as a prop if needed
-						nativeTokenAddress: undefined, // Can be added as a prop if needed
-						checkoutProvider,
-						successActionButtons: buyModalProps.successActionButtons,
-						onRampProvider: buyModalProps.onRampProvider,
-						saleAnalyticsId,
-						abi,
-					})
-			: skipToken,
+		queryFn:
+			queryEnabled && abi
+				? () =>
+						getERC1155SalePaymentParams({
+							chainId,
+							address,
+							salesContractAddress,
+							collectionAddress,
+							tokenId,
+							quantity,
+							price: BigInt(price),
+							currencyAddress,
+							callbacks: {
+								onSuccess,
+								onError,
+							},
+							customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
+							skipNativeBalanceCheck: false, // Can be added as a prop if needed
+							nativeTokenAddress: undefined, // Can be added as a prop if needed
+							checkoutProvider,
+							successActionButtons: buyModalProps.successActionButtons,
+							onRampProvider: buyModalProps.onRampProvider,
+							saleAnalyticsId,
+							abi,
+						})
+				: skipToken,
 		enabled: queryEnabled,
 	});
 };
