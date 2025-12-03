@@ -1,10 +1,11 @@
-import type {
-	ApiConfig,
-	CardType,
-	ContractType,
-	MarketplaceConfig,
-	OrderbookKind,
-	SdkConfig,
+import {
+	type ApiConfig,
+	type CardType,
+	type ContractType,
+	type MarketplaceConfig,
+	type OrderbookKind,
+	type SdkConfig,
+	TransactionCrypto,
 } from '@0xsequence/marketplace-sdk';
 import { createStore } from '@xstate/store';
 import type { Address } from 'viem';
@@ -68,7 +69,15 @@ export const defaultContext = {
 		projectId: DEFAULT_PROJECT_ID,
 		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		checkoutMode: 'sequence-checkout',
+		checkoutMode: {
+			mode: 'sequence-checkout',
+			options: {
+				crypto: TransactionCrypto.all,
+				swap: [],
+				nftCheckout: [],
+				onRamp: [],
+			},
+		},
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,

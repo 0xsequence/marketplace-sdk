@@ -16,7 +16,6 @@ export type ApiConfig = {
 export type CheckoutMode =
 	| 'crypto'
 	| 'trails'
-	| 'sequence-checkout'
 	| {
 			mode: 'sequence-checkout';
 			options: CheckoutOptions;

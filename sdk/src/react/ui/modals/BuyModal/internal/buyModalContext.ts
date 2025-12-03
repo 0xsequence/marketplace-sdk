@@ -13,7 +13,7 @@ import { useBuyModalProps, useOnSuccess } from '../store';
 export function useBuyModalContext() {
 	const config = useConfig();
 	const modalProps = useBuyModalProps();
-	const checkoutMode: CheckoutMode = config.checkoutMode ?? 'trails';
+	const checkoutModeConfig: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
 	const transactionStatusModal = useTransactionStatusModal();
@@ -43,17 +43,20 @@ export function useBuyModalContext() {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
-	const useTrailsModal =
-		checkoutMode === 'trails' && isChainSupported && buyStep && !isLoading;
-	const useCryptoPaymentModal =
-		(checkoutMode === 'crypto' ||
-			(checkoutMode === 'trails' && !isChainSupported)) &&
-		steps &&
-		!isLoading;
-	const useSequenceCheckoutModal =
-		(typeof checkoutMode === 'object' &&
-			checkoutMode.mode === 'sequence-checkout') ||
-		checkoutMode === 'sequence-checkout';
+	let checkoutMode: "trails" | "sequence-checkout" | "crypto" | undefined;
+
+	if (checkoutModeConfig === 'trails' && isChainSupported) {
+		checkoutMode = 'trails';
+	} else if (
+		typeof checkoutModeConfig === 'object' &&
+		checkoutModeConfig.mode === 'sequence-checkout'
+	) {
+		checkoutMode = 'sequence-checkout';
+	} else if (checkoutModeConfig === 'crypto' && isChainSupported) {
+		checkoutMode = 'crypto';
+	} else {
+		checkoutMode = undefined;
+	}
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -118,9 +121,6 @@ export function useBuyModalContext() {
 		isMarket,
 		buyStep,
 		isLoading,
-		useTrailsModal,
-		useCryptoPaymentModal,
-		useSequenceCheckoutModal,
 		checkoutMode,
 		formattedAmount,
 		handleTransactionSuccess,

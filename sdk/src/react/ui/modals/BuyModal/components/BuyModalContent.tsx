@@ -17,17 +17,15 @@ export const BuyModalContent = () => {
 		steps,
 		buyStep,
 		isLoading,
-		useTrailsModal,
 		collection,
-		useCryptoPaymentModal,
-		useSequenceCheckoutModal,
+		checkoutMode,
 		formattedAmount,
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
 
-	if (useSequenceCheckoutModal) {
+	if (checkoutMode === 'sequence-checkout') {
 		return (
 			<SequenceCheckout
 				steps={steps}
@@ -63,7 +61,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useTrailsModal && buyStep && (
+				{checkoutMode === 'trails' && buyStep && (
 					<div className="w-full">
 						<TrailsWidget
 							apiKey={config.projectAccessKey}
@@ -82,7 +80,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useCryptoPaymentModal && steps && (
+				{checkoutMode === 'crypto' && steps && (
 					<CryptoPaymentModal
 						chainId={modalProps.chainId}
 						steps={steps}
