@@ -2,17 +2,48 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "pnpm run --r --filter \"./packages/**\" build",
-		"check": "biome check --write",
-		"format": "biome format --write",
+		"build": "pnpm run --r --filter \"./sdk\" build",
 		"deps": "pnpx taze -r",
-		"dev:next": "pnpm --filter next-app dev",
-		"dev:react": "pnpm --filter react-vite dev",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"biome-check": "biome check . --unsafe --write",
+		"check": "pnpm run --recursive check",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint .",
+		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
+		"dev:react": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
+		"dev:alternative-wallets": "pnpm --filter sequence-marketplace-sdk-playground-alternative-wallets dev",
+		"eslint": "pnpm run --r --filter \"./sdk\" eslint",
+		"eslint:fix": "pnpm run --r --filter \"./sdk\" eslint:fix",
 		"preinstall": "pnpx only-allow pnpm",
-		"postinstall": "bash ./post-install.sh"
+		"postinstall": "bash ./post-install.sh",
+		"knip": "knip",
+		"test": "pnpm run --r --filter \"./sdk\" test",
+		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
+		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
-	"packageManager": "pnpm@9.14.4",
+	"packageManager": "pnpm@10.18.2",
 	"engines": {
-		"node": "22.x"
+		"node": "24.x"
+	},
+	"pnpm": {
+		"overrides": {
+			"@0xsequence/marketplace-sdk": "workspace:*"
+		},
+		"onlyBuiltDependencies": [
+			"msw",
+			"oxc-resolver"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@types/node": "^24.10.1",
+		"knip": "^5.69.1",
+		"lefthook": "^2.0.4",
+		"typescript": "catalog:"
+	},
+	"prepare": "lefthook install",
+	"dependencies": {
+		"@babel/core": "^7.28.5"
 	}
 }
