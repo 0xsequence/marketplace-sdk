@@ -3,16 +3,16 @@ packages:
   - playgrounds/*
 
 catalog:
-  0xsequence: ^2.3.33
-  '@0xsequence/api': ^2.3.35
-  '@0xsequence/checkout': ^5.4.2
-  '@0xsequence/connect': ^5.4.2
+  0xsequence: ^2.3.37
+  '@0xsequence/api': ^2.3.37
+  '@0xsequence/checkout': ^5.4.6
+  '@0xsequence/connect': ^5.4.6
   '@0xsequence/design-system': ^2.2.5
-  '@0xsequence/hooks': ^5.4.2
-  '@0xsequence/indexer': ^2.3.35
-  '@0xsequence/metadata': ^2.3.35
-  '@0xsequence/network': ^2.3.35
-  '@0xsequence/wallet-widget': ^5.4.2
+  '@0xsequence/hooks': ^5.4.6
+  '@0xsequence/indexer': ^2.3.37
+  '@0xsequence/metadata': ^2.3.37
+  '@0xsequence/network': ^2.3.37
+  '@0xsequence/wallet-widget': ^5.4.6
   '@arethetypeswrong/cli': ^0.18.2
   '@biomejs/biome': ^2.3.5
   '@changesets/cli': ^2.29.7
@@ -45,7 +45,7 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - '@0xsequence/*'
-  - sequence
+  - 0xsequence
 
 onlyBuiltDependencies:
   - msw
