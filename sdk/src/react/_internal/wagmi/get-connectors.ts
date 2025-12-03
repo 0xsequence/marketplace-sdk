@@ -9,6 +9,7 @@ import {
 	getConnectWallets,
 	google,
 	googleWaas,
+	metaMask,
 	type SequenceOptions,
 	sequence,
 	twitch,
@@ -51,7 +52,7 @@ function commonConnectors(
 	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
 ) {
-	const wallets = [];
+	const wallets: Wallet[] = [];
 	const { title: appName } = marketplaceConfig.settings;
 	const walletOptions = marketplaceConfig.settings.walletOptions;
 	const walletConnectProjectId = sdkConfig.walletConnectProjectId;
@@ -71,6 +72,16 @@ function commonConnectors(
 		wallets.push(
 			walletConnect({
 				projectId: walletConnectProjectId,
+			}),
+		);
+	}
+
+	if (walletOptions.connectors.includes('metamask')) {
+		wallets.push(
+			metaMask({
+				dappMetadata: {
+					name: appName,
+				},
 			}),
 		);
 	}
