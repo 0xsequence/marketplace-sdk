@@ -5,7 +5,7 @@ import {
 	type CheckoutOptions,
 	TransactionCrypto,
 } from '../../../../../_internal';
-import { useERC1155Checkout } from '../useERC1155Checkout';
+import { useERC1155SalePaymentParams } from '../useERC1155SalePaymentParams';
 
 // Mock @0xsequence/checkout
 vi.mock('@0xsequence/checkout', () => ({
@@ -88,7 +88,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		const { result } = renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -160,7 +160,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		const { result } = renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -181,7 +181,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		const { result } = renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -203,7 +203,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -233,7 +233,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -265,7 +265,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 137, // Polygon
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -290,7 +290,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -313,7 +313,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		const { result } = renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -338,7 +338,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
@@ -377,7 +377,7 @@ describe('useERC1155Checkout', () => {
 		mockUseERC1155SaleContractCheckout.mockReturnValue(mockCheckout);
 
 		renderHook(() =>
-			useERC1155Checkout({
+			useERC1155SalePaymentParams({
 				chainId: 1,
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',

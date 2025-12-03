@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionCrypto } from '../../../../_internal';
 import type { DatabeatAnalytics } from '../../../../_internal/databeat';
 import { ERC1155ShopModal } from '../components/ERC1155ShopModal';
-import * as useERC1155CheckoutModule from '../hooks/useERC1155Checkout';
+import * as useERC1155CheckoutModule from '../hooks/useERC1155SalePaymentParams';
 import { buyModalStore } from '../store';
 
 // Mock the checkout hook
