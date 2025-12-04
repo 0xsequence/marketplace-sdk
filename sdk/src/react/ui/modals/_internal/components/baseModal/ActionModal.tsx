@@ -218,7 +218,8 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 			<AnimatedHeightWrapper>
 				<MultiQueryWrapper queries={queries} type={type}>
 					{(data, error, refetchFailedQueries) => {
-						const modalInitializationError = externalError || error;
+						const externalErrorExceptUserRejection = externalError?.message.includes('User rejected the request') ? undefined : externalError;
+						const modalInitializationError = externalErrorExceptUserRejection || error;
 
 						return (
 							<>
@@ -305,7 +306,7 @@ function CtaActions({
 							},
 						})
 					}
-					variant={cta.variant || (index === 0 ? 'primary' : 'ghost')}
+					variant={cta.variant || (index === 0 ? 'primary' : 'secondary')}
 					disabled={cta.disabled || cta.loading}
 					size="lg"
 					data-testid={cta.testid}
