@@ -215,7 +215,9 @@ export function useMakeOfferModalContext() {
 			result: approveTransactionHash
 				? { type: 'transaction', hash: approveTransactionHash }
 				: null,
-			execute: async () => approve.mutate(),
+			execute: async () => {
+			await approve.mutateAsync();
+		},
 			reset: () => approve.reset(),
 		};
 	}
@@ -256,14 +258,14 @@ export function useMakeOfferModalContext() {
 			: makeOffer.data?.type === 'signature'
 				? { type: 'signature', orderId: makeOffer.data.orderId ?? '' }
 				: null,
-		execute: async () => makeOffer.mutate(),
+		execute: async () => {
+			await makeOffer.mutateAsync();
+		},
 	};
 
 	const flow = computeFlowState(steps);
 
 	const error =
-		approve.error ||
-		makeOffer.error ||
 		transactionData.error ||
 		collectibleQuery.error ||
 		collectionQuery.error ||
