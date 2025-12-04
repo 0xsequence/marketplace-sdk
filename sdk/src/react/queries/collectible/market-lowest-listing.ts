@@ -30,7 +30,7 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 		{
 			chainId: params.chainId ?? 0,
 			collectionAddress: params.collectionAddress ?? '',
-			tokenId: params.tokenId?.toString() ?? '0',
+			tokenId: params.tokenId ?? 0n,
 			filter: params.filter,
 		},
 	] as const;
