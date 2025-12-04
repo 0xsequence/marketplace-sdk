@@ -53,9 +53,9 @@ const Modal = () => {
 					{currencies.length > 0 && (
 						<>
 							<TokenPreview
-								chainId={ctx.item.chainId}
-								collectionAddress={ctx.item.collectionAddress}
-								tokenId={ctx.item.tokenId}
+								chainId={collection.chainId}
+								collectionAddress={collection.address}
+								tokenId={collectible?.tokenId}
 								collectionName={collection.name}
 							/>
 

@@ -30,11 +30,11 @@ import {
 	filterCurrenciesForOrderbook,
 	getDefaultCurrency,
 } from './helpers/currency';
-import { parseInput } from './helpers/dnum-utils';
 import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
 import { useGenerateOfferTransaction } from './use-generate-offer-transaction';
+import { Dnum } from 'dnum';
 
 export type MakeOfferModalSteps = {
 	fee?: FeeStep;
@@ -99,21 +99,19 @@ export function useMakeOfferModalContext() {
 		},
 	});
 
-	const expiryDate = new Date(
-		Date.now() + state.expiryDays * 24 * 60 * 60 * 1000,
+	const expiryDate = useMemo(
+		() => new Date(Date.now() + state.expiryDays * 24 * 60 * 60 * 1000),
+		[state.expiryDays],
 	);
 
-	const priceDnum = parseInput(
-		state.priceInput,
-		selectedCurrency?.decimals || 18,
-	);
+	const priceDnum = [
+		state.priceInput ? BigInt(state.priceInput) : 0n,
+		selectedCurrency?.decimals!,
+	] as Dnum;
 	const priceRaw = priceDnum[0];
 
-	const quantityDnum = parseInput(
-		state.quantityInput,
-		collectibleQuery.data?.decimals || 0,
-	);
-	const quantityRaw = quantityDnum[0];
+	const quantityDnum = [BigInt(state.quantityInput), 0] as Dnum;
+	const quantityRaw = BigInt(state.quantityInput);
 
 	const balanceDnum =
 		currencyBalanceQuery.data?.value !== undefined && selectedCurrency?.decimals
@@ -155,6 +153,7 @@ export function useMakeOfferModalContext() {
 		},
 		additionalFees: [],
 		offerType: OfferType.item,
+		hasSufficientBalance: validation.balance.isValid,
 	});
 
 	const { approve, makeOffer } = useOfferMutations(transactionData.data, {
@@ -165,7 +164,7 @@ export function useMakeOfferModalContext() {
 
 	const waas = useSelectWaasFeeOptionsStore();
 	const [pendingFee] = useWaasFeeOptions();
-	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
+	const isSponsored = pendingFee?.options?.length === 0;
 
 	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
 

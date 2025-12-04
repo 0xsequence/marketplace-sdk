@@ -17,6 +17,7 @@ import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetad
 type UseGenerateOfferTransactionArgs = ValuesOptional<
 	Omit<GenerateOfferTransactionRequest, 'chainId'> & {
 		chainId: number;
+		hasSufficientBalance?: boolean;
 	}
 >;
 
@@ -52,6 +53,7 @@ export const useGenerateOfferTransaction = (
 		orderbook,
 		offer,
 		additionalFees,
+		hasSufficientBalance,
 	} = params;
 
 	const enabled =
@@ -60,7 +62,10 @@ export const useGenerateOfferTransaction = (
 		!!address &&
 		!!contractType &&
 		!!orderbook &&
-		!!offer;
+		!!offer &&
+		!!offer.pricePerToken &&
+		offer.pricePerToken > 0n &&
+		hasSufficientBalance !== false;
 
 	const serializableParams = {
 		...params,
