@@ -1,17 +1,18 @@
 'use client';
 
+import {
+	type SelectPaymentSettings,
+	useSelectPaymentModal,
+} from '@0xsequence/checkout';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
-import type { CheckoutOptions } from '../../../../_internal';
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
-import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
+import { useERC1155SalePaymentParams } from '../hooks/useERC1155SalePaymentParams';
 import {
 	buyModalStore,
-	type CheckoutOptionsSalesContractProps,
 	isShopProps,
 	useBuyModalProps,
-	useCheckoutModalState,
+	usePaymentModalState,
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
@@ -40,6 +41,21 @@ export const ERC1155ShopModal = ({
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
 
+	const tokenId = shopData.items[0]?.tokenId;
+	const checkoutProvider = shopData.checkoutOptions?.nftCheckout?.[0]
+		? String(shopData.checkoutOptions.nftCheckout[0])
+		: undefined;
+
+	const { data: erc1155SalePaymentParams } = useERC1155SalePaymentParams({
+		salesContractAddress: shopData.salesContractAddress,
+		collectionAddress: collection.address,
+		tokenId,
+		price: shopData.salePrice?.amount,
+		currencyAddress: shopData.salePrice?.currencyAddress,
+		chainId,
+		checkoutProvider,
+	});
+
 	if (!quantity) {
 		return (
 			<ERC1155QuantityModal
@@ -57,68 +73,36 @@ export const ERC1155ShopModal = ({
 		);
 	}
 
-	return (
-		<ERC1155SaleContractCheckoutModalOpener
-			chainId={chainId}
-			salesContractAddress={shopData.salesContractAddress as Address}
-			collectionAddress={collection.address as Address}
-			items={shopData.items.map((item) => ({
-				...item,
-				tokenId: item.tokenId ?? '0',
-				quantity: quantity.toString() ?? '1',
-			}))}
-			checkoutOptions={shopData.checkoutOptions}
-			enabled={!!shopData.salesContractAddress && !!shopData.items}
-		/>
-	);
+	return <PaymentModalOpener paymentModalParams={erc1155SalePaymentParams!} />;
 };
 
-interface ERC1155SaleContractCheckoutModalOpenerProps
-	extends CheckoutOptionsSalesContractProps {
-	enabled: boolean;
-	checkoutOptions?: CheckoutOptions;
+interface PaymentModalOpenerProps {
+	paymentModalParams: SelectPaymentSettings;
 }
 
-const ERC1155SaleContractCheckoutModalOpener = ({
-	chainId,
-	salesContractAddress,
-	collectionAddress,
-	items,
-	checkoutOptions,
-	enabled,
-	customProviderCallback,
-}: ERC1155SaleContractCheckoutModalOpenerProps) => {
-	const checkoutModalState = useCheckoutModalState();
-
-	const { openCheckoutModal, isLoading, isError, isEnabled } =
-		useERC1155Checkout({
-			chainId,
-			salesContractAddress,
-			collectionAddress,
-			items,
-			checkoutOptions,
-			customProviderCallback,
-			enabled,
-		});
+const PaymentModalOpener = ({
+	paymentModalParams,
+}: PaymentModalOpenerProps) => {
+	const { openSelectPaymentModal } = useSelectPaymentModal();
+	const paymentModalState = usePaymentModalState();
 
 	useEffect(() => {
-		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
-			buyModalStore.send({ type: 'openCheckoutModal' });
-			openCheckoutModal();
-			buyModalStore.send({ type: 'checkoutModalOpened' });
-		}
-	}, [checkoutModalState, isLoading, isError, isEnabled, openCheckoutModal]);
+		if (paymentModalState !== 'idle') return;
+		if (!paymentModalParams) return;
 
-	if (isLoading) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading payment options"
-			/>
-		);
-	}
+		const totalPrice =
+			BigInt(paymentModalParams.price) *
+			BigInt(paymentModalParams.collectibles[0].quantity);
+
+		buyModalStore.send({ type: 'openPaymentModal' });
+
+		openSelectPaymentModal({
+			...paymentModalParams,
+			price: String(totalPrice),
+		});
+
+		buyModalStore.send({ type: 'paymentModalOpened' });
+	}, [paymentModalState, paymentModalParams, openSelectPaymentModal]);
 
 	return null;
 };
