@@ -10,8 +10,8 @@ import { useConnectorMetadata } from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
-import { useExecuteBundledTransactions } from '../components/hook/useExecuteBundledTransactions';
 import { useBuyModalData } from '../hooks/useBuyModalData';
+import { useExecuteBundledTransactions } from '../hooks/useExecuteBundledTransactions';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 
 type CryptoPaymentModalReturn = {

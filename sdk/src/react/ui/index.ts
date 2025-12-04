@@ -1,5 +1,6 @@
 'use client';
 
+export type { CheckoutMode } from '../../types';
 export * from '../providers/modal-provider';
 // Card helpers
 export { ActionButton } from './components/marketplace-collectible-card/ActionButton';

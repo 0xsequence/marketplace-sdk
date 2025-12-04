@@ -1,4 +1,6 @@
 // import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
 //import { marketplaceApiURL } from '../_internal';
@@ -27,7 +29,7 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 	return (
 		<>
 			{children}
-			{/* <SequenceCheckoutProvider> */}
+
 			<ShadowRoot
 				enabled={shadowDom ?? true}
 				customCSS={experimentalShadowDomCssOverride}
@@ -36,13 +38,14 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 				<MakeOfferModal />
 				<TransferModal />
 				<SellModal />
-				<BuyModal />
+				<SequenceCheckoutProvider>
+					<BuyModal />
+				</SequenceCheckoutProvider>
 				<SuccessfulPurchaseModal />
 				{/* Helper modals */}
 				<SwitchChainErrorModal />
 				<TransactionStatusModal />
 			</ShadowRoot>
-			{/* </SequenceCheckoutProvider> */}
 		</>
 	);
 });

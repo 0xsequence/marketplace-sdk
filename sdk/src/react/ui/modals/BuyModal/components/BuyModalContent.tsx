@@ -1,10 +1,12 @@
 'use client';
 
+import type { ContractType } from '@0xsequence/api-client';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
+import SequenceCheckout from './sequence-checkout/SequenceCheckoutNew';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
@@ -15,13 +17,25 @@ export const BuyModalContent = () => {
 		steps,
 		buyStep,
 		isLoading,
-		useTrailsModal,
-		useCryptoPaymentModal,
+		collection,
+		checkoutMode,
 		formattedAmount,
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
+
+	if (
+		typeof checkoutMode === 'object' &&
+		checkoutMode.mode === 'sequence-checkout'
+	) {
+		return (
+			<SequenceCheckout
+				steps={steps}
+				contractType={collection?.type as ContractType}
+			/>
+		);
+	}
 
 	return (
 		<Modal
@@ -50,7 +64,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useTrailsModal && buyStep && (
+				{checkoutMode === 'trails' && buyStep && (
 					<div className="w-full">
 						<TrailsWidget
 							apiKey={config.projectAccessKey}
@@ -69,7 +83,7 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{useCryptoPaymentModal && steps && (
+				{checkoutMode === 'crypto' && steps && (
 					<CryptoPaymentModal
 						chainId={modalProps.chainId}
 						steps={steps}

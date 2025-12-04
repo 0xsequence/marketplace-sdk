@@ -65,6 +65,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-orange-900: oklch(40.8% 0.123 38.172);
     --color-amber-300: oklch(87.9% 0.169 91.605);
     --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-yellow-100: oklch(97.3% 0.071 103.193);
     --color-yellow-300: oklch(90.5% 0.182 98.111);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
@@ -996,6 +997,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .max-w-md {
     max-width: var(--container-md);
+  }
+  .max-w-sm {
+    max-width: var(--container-sm);
   }
   .max-w-xs {
     max-width: var(--container-xs);
@@ -1947,6 +1951,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-amber-500 {
     color: var(--color-amber-500);
+  }
+  .text-amber-600 {
+    color: var(--color-amber-600);
   }
   .text-background-primary {
     color: var(--seq-color-background-primary);
@@ -3509,6 +3516,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       border-bottom-left-radius: var(--radius-2xl);
     }
   }
+  .md\:p-12 {
+    @media (width >= 48rem) {
+      padding: calc(var(--spacing) * 12);
+    }
+  }
   .lg\:h-auto\! {
     @media (width >= 64rem) {
       height: auto !important;
@@ -3694,6 +3706,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     & svg:not([class*='size-']) {
       width: calc(var(--spacing) * 4);
       height: calc(var(--spacing) * 4);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-9 {
+    & svg:not([class*='size-']) {
+      width: calc(var(--spacing) * 9);
+      height: calc(var(--spacing) * 9);
     }
   }
   .\[\&_svg\:not\(\[class\*\=\'text-\'\]\)\]\:text-muted {

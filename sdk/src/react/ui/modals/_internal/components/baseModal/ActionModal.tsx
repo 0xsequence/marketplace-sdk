@@ -68,8 +68,8 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 				: type === 'offer'
 					? 'Preparing offer data...'
 					: type === 'sell'
-						? 'Preparing sell data...'
-						: 'Preparing purchase data...';
+						? 'Preparing sale data...'
+						: 'Preparing checkout data...';
 
 		return (
 			<div
