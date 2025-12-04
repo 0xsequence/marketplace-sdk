@@ -119,7 +119,9 @@ export function buildQueryOptions<
 	params: WithOptionalParams<TParams>,
 ) {
 	// Check if all required params are present
-	const requiredParamsValid = config.requiredParams.every((key) => key in params && params[key] !== undefined);
+	const requiredParamsValid = config.requiredParams.every(
+		(key) => key in params && params[key] !== undefined,
+	);
 
 	// Run custom validation if provided
 	const customValid = config.customValidation
@@ -165,7 +167,9 @@ export function buildInfiniteQueryOptions<
 	params: WithOptionalInfiniteParams<TParams>,
 ) {
 	// Check if all required params are present
-	const requiredParamsValid = config.requiredParams.every((key) => key in params && params[key] !== undefined);
+	const requiredParamsValid = config.requiredParams.every(
+		(key) => key in params && params[key] !== undefined,
+	);
 
 	// Run custom validation if provided
 	const customValid = config.customValidation

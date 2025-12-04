@@ -1,4 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
+import type { Dnum } from 'dnum';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -34,7 +35,6 @@ import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
 import { useGenerateOfferTransaction } from './use-generate-offer-transaction';
-import { Dnum } from 'dnum';
 
 export type MakeOfferModalSteps = {
 	fee?: FeeStep;

@@ -1,3 +1,5 @@
+'use client';
+
 import { OrderbookKind } from '@0xsequence/api-client';
 import { Button, Card, Text } from '@0xsequence/design-system';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -94,13 +96,13 @@ const MakeOfferTrigger = ({
 				<Text variant="small" color="text50">
 					<strong>Testing Instructions:</strong>
 					<br />
-					1. Click "Make Offer" to open the modal
+					1. Click &quot;Make Offer&quot; to open the modal
 					<br />
-					2. Enter a price (e.g., "10" USDC)
+					2. Enter a price (e.g., &quot;10&quot; USDC)
 					<br />
 					3. Adjust expiration if desired
 					<br />
-					4. Click "Approve" (if shown) then "Make Offer"
+					4. Click &quot;Approve&quot; (if shown) then &quot;Make Offer&quot;
 					<br />
 					<br />
 					<strong>Wallet Type:</strong> Use the connector selector in the top
@@ -276,7 +278,6 @@ export const ERC1155Collection: Story = {
 };
 
 export const InsufficientBalance: Story = {
-	name: 'Insufficient Balance',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
 		tokenId: BigInt(mockTokenMetadata.tokenId),
@@ -320,7 +321,6 @@ export const SlowLoading: Story = {
 };
 
 export const InteractiveTest: Story = {
-	name: 'Interactive Test',
 	args: {
 		collectionAddress: MOCK_COLLECTION_ADDRESS,
 		tokenId: BigInt(mockTokenMetadata.tokenId),

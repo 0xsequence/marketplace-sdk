@@ -218,8 +218,12 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 			<AnimatedHeightWrapper>
 				<MultiQueryWrapper queries={queries} type={type}>
 					{(data, error, refetchFailedQueries) => {
-						const externalErrorExceptUserRejection = externalError?.message.includes('User rejected the request') ? undefined : externalError;
-						const modalInitializationError = externalErrorExceptUserRejection || error;
+						const externalErrorExceptUserRejection =
+							externalError?.message.includes('User rejected the request')
+								? undefined
+								: externalError;
+						const modalInitializationError =
+							externalErrorExceptUserRejection || error;
 
 						return (
 							<>
