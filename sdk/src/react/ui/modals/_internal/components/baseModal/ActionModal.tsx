@@ -218,8 +218,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 			<AnimatedHeightWrapper>
 				<MultiQueryWrapper queries={queries} type={type}>
 					{(data, error, refetchFailedQueries) => {
-						const modalInitializationError =
-							externalError || error;
+						const modalInitializationError = externalError || error;
 
 						return (
 							<>
@@ -301,7 +300,6 @@ function CtaActions({
 									}
 									onActionError(undefined);
 								} catch (error: unknown) {
-									console.log("action error", error);
 									onActionError(error as Error);
 								}
 							},

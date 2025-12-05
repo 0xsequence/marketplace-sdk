@@ -75,6 +75,11 @@ const Modal = () => {
 											);
 										}
 									}}
+									onCurrencyChange={(newCurrency) => {
+										ctx.currencies.select(
+											newCurrency.contractAddress as `0x${string}`,
+										);
+									}}
 									includeNativeCurrency={false}
 									orderbookKind={ctx.item.orderbookKind}
 									modalType="offer"

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import { type ContractType, OfferType } from '../../../../_internal';
+import type { ContractType } from '../../../../_internal';
 import {
 	useCollectibleMarketLowestListing,
 	useCollectibleMetadata,
@@ -32,9 +32,9 @@ import {
 	getDefaultCurrency,
 } from './helpers/currency';
 import { isFormValid, validateOfferForm } from './helpers/validation';
+import { getSpenderAddressForOffer, useERC20Allowance } from './hooks';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
-import { useGenerateOfferTransaction } from './use-generate-offer-transaction';
 
 export type MakeOfferModalSteps = {
 	fee?: FeeStep;
@@ -136,12 +136,33 @@ export function useMakeOfferModalContext() {
 
 	const formIsValid = isFormValid(validation);
 
-	const transactionData = useGenerateOfferTransaction({
+	// Get the spender address for the selected orderbook
+	const spenderAddress = getSpenderAddressForOffer(state.orderbookKind);
+
+	const allowanceQuery = useERC20Allowance({
+		tokenAddress: selectedCurrency?.contractAddress as Address | undefined,
+		spenderAddress,
+		chainId: state.chainId,
+		enabled:
+			!!selectedCurrency?.contractAddress &&
+			!!address &&
+			!!spenderAddress &&
+			state.isOpen,
+	});
+
+	const totalPriceNeeded = priceRaw * quantityRaw;
+
+	const needsApproval = useMemo(() => {
+		if (allowanceQuery.allowance === undefined) return true;
+
+		return allowanceQuery.allowance < totalPriceNeeded;
+	}, [allowanceQuery.allowance, totalPriceNeeded]);
+
+	const { approve, makeOffer } = useOfferMutations({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		contractType: collectionQuery.data?.type as ContractType,
-		orderbook: state.orderbookKind,
-		maker: address,
+		contractType: collectionQuery.data?.type as ContractType | undefined,
+		orderbookKind: state.orderbookKind,
 		offer: {
 			tokenId: state.tokenId,
 			quantity: quantityRaw,
@@ -151,15 +172,8 @@ export function useMakeOfferModalContext() {
 				('0x0000000000000000000000000000000000000000' as Address),
 			pricePerToken: priceRaw,
 		},
-		additionalFees: [],
-		offerType: OfferType.item,
-		hasSufficientBalance: validation.balance.isValid,
-	});
-
-	const { approve, makeOffer } = useOfferMutations(transactionData.data, {
-		priceRaw: priceRaw.toString(),
-		currencyAddress: selectedCurrency?.contractAddress as Address,
 		currencyDecimals: selectedCurrency?.decimals ?? 18,
+		needsApproval,
 	});
 
 	const waas = useSelectWaasFeeOptionsStore();
@@ -182,20 +196,19 @@ export function useMakeOfferModalContext() {
 		};
 	}
 
-	if (transactionData.data?.approveStep) {
+	const approveData = approve.data;
+	const approveTransactionHash =
+		approveData && 'type' in approveData && approveData.type === 'transaction'
+			? approveData.hash
+			: undefined;
+
+	if (needsApproval && !approve.isSuccess) {
 		const approvalGuard = createApprovalGuard({
 			isFormValid: formIsValid,
-			txReady: !!transactionData.data?.approveStep,
+			txReady: true,
 			walletConnected: !!address,
 		});
 		const guardResult = approvalGuard();
-
-		const approveTransactionHash =
-			approve.data &&
-			'type' in approve.data &&
-			approve.data.type === 'transaction'
-				? approve.data.hash
-				: undefined;
 
 		steps.approval = {
 			label: 'Approve',
@@ -216,18 +229,18 @@ export function useMakeOfferModalContext() {
 				? { type: 'transaction', hash: approveTransactionHash }
 				: null,
 			execute: async () => {
-			await approve.mutateAsync();
-		},
+				await approve.mutateAsync();
+			},
 			reset: () => approve.reset(),
 		};
 	}
 
 	const offerGuard = createFinalTransactionGuard({
 		isFormValid: formIsValid,
-		txReady: !!transactionData.data?.offerStep,
+		txReady: true,
 		walletConnected: !!address,
-		requiresApproval: !!transactionData.data?.approveStep,
-		approvalComplete: approve.isSuccess || !transactionData.data?.approveStep,
+		requiresApproval: needsApproval && !approve.isSuccess,
+		approvalComplete: approve.isSuccess || !needsApproval,
 	});
 	const offerGuardResult = offerGuard();
 
@@ -266,7 +279,7 @@ export function useMakeOfferModalContext() {
 	const flow = computeFlowState(steps);
 
 	const error =
-		transactionData.error ||
+		allowanceQuery.error ||
 		collectibleQuery.error ||
 		collectionQuery.error ||
 		currenciesQuery.error;
@@ -351,7 +364,7 @@ export function useMakeOfferModalContext() {
 			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
 			currencies: currenciesQuery.isLoading,
-			steps: transactionData.isLoading,
+			allowance: allowanceQuery.isLoading,
 		},
 
 		transactions: {
@@ -385,12 +398,12 @@ export function useMakeOfferModalContext() {
 		},
 
 		get actions() {
-			const needsApproval =
+			const needsApprovalAction =
 				this.steps.approval && this.steps.approval.status !== 'success';
 			const currenciesBlocked = !this.currencies.isConfigured;
 
 			return {
-				approve: needsApproval
+				approve: needsApprovalAction
 					? {
 							label: this.steps.approval?.label,
 							onClick: this.steps.approval?.execute || (() => {}),
@@ -404,7 +417,7 @@ export function useMakeOfferModalContext() {
 					onClick: this.steps.offer.execute,
 					loading: this.steps.offer.isPending,
 					disabled: this.steps.offer.isDisabled || currenciesBlocked,
-					variant: needsApproval ? ('ghost' as const) : undefined,
+					variant: needsApprovalAction ? ('ghost' as const) : undefined,
 					testid: 'make-offer-button',
 				},
 			};
