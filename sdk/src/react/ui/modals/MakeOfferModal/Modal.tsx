@@ -32,8 +32,18 @@ const Modal = () => {
 			onClose={ctx.close}
 			title="Make an offer"
 			type="offer"
-			primaryAction={ctx.actions.approve ?? ctx.actions.offer}
-			secondaryAction={ctx.actions.approve ? ctx.actions.offer : undefined}
+			primaryAction={
+				ctx.steps.fee?.isSelecting
+					? undefined
+					: (ctx.actions.approve ?? ctx.actions.offer)
+			}
+			secondaryAction={
+				ctx.steps.fee?.isSelecting
+					? undefined
+					: ctx.actions.approve
+						? ctx.actions.offer
+						: undefined
+			}
 			queries={{
 				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,

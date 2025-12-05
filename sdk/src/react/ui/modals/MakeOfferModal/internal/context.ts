@@ -1,6 +1,5 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Dnum } from 'dnum';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
@@ -9,14 +8,13 @@ import {
 	useCollectibleMarketLowestListing,
 	useCollectibleMetadata,
 	useCollectionMetadata,
+	useConfig,
 	useConnectorMetadata,
 	useCurrencyList,
 	useTokenCurrencyBalance,
 } from '../../../../hooks';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../../_internal/components/selectWaasFeeOptions/store';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
 	createApprovalGuard,
@@ -45,6 +43,7 @@ export type MakeOfferModalSteps = {
 export function useMakeOfferModalContext() {
 	const state = useMakeOfferModalState();
 	const { address } = useAccount();
+	const config = useConfig();
 
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
@@ -177,8 +176,19 @@ export function useMakeOfferModalContext() {
 	});
 
 	const waas = useSelectWaasFeeOptionsStore();
-	const [pendingFee] = useWaasFeeOptions();
-	const isSponsored = pendingFee?.options?.length === 0;
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(state.chainId, config);
+	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+
+	useEffect(() => {
+		if (
+			!isSponsored &&
+			!waas.isVisible &&
+			!!pendingFeeOptionConfirmation?.options
+		) {
+			waas.show();
+		}
+	}, [pendingFeeOptionConfirmation?.options, isSponsored, waas.isVisible]);
 
 	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
 
@@ -191,8 +201,8 @@ export function useMakeOfferModalContext() {
 			isSponsored,
 			isSelecting: waas.isVisible,
 			selectedOption: waas.selectedFeeOption,
-			show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
-			cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
+			show: () => waas.show(),
+			cancel: () => waas.hide(),
 		};
 	}
 
@@ -284,9 +294,17 @@ export function useMakeOfferModalContext() {
 		collectionQuery.error ||
 		currenciesQuery.error;
 
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation.id);
+		}
+		waas.hide();
+		state.closeModal();
+	};
+
 	return {
 		isOpen: state.isOpen,
-		close: state.closeModal,
+		close: handleClose,
 
 		item: {
 			chainId: state.chainId,
