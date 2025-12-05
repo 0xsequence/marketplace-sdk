@@ -61,7 +61,7 @@ describe('useCurrencyComparePrices', () => {
 		// 1 ETH vs 1 USDC = 2000 vs 1 = 199900% difference
 		expect(result.current.data).toEqual({
 			percentageDifference: 199900,
-			percentageDifferenceFormatted: '199900.00',
+			percentageDifferenceFormatted: '199,900.00',
 			status: 'above',
 		});
 	});

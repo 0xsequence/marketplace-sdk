@@ -1,5 +1,56 @@
 # @0xsequence/marketplace-sdk
 
+## 1.2.1
+
+### Patch Changes
+
+
+## 1.2.1
+
+### ✨ Improvements
+
+- **MetaMask Connector Support**: Added native MetaMask connector support, can be enabled from Sequence Builder, useful for environments that do not support walletDiscovery (EIP-6963)
+- **Transfer Modal Prefetching**: `useTransferModal` now supports prefetching balances based on collectible details via the new `prefetch` option
+- **ERC1155 Shop Checkout Refactor**: Major refactor of the ERC1155 shop checkout flow to improve error handling and loading states
+
+
+### 🔧 Internal Improvements
+
+- Upgraded Sequence packages and workspace dependencies to latest versions
+- Disabled flanky filename hash generation in tsdown build config
+- Updated and expanded test coverage for ERC1155 sale payment
+
+## 1.2.0
+
+### Minor Changes
+
+- ## ✨ New Features & Improvements
+
+  - Integrated with web-sdk's 5.4 new Transak implementation to support updated Transak API requirements
+  - Added `useCollectionActiveListingsCurrencies` and `useCollectionActiveOffersCurrencies` hooks for fetching active currencies used in offer/listings
+  - Added `useGetPrimarySaleItem` hook and query for fetching individual primary sale items
+  - Added price filter functionality with new components, badges, and state management
+  - Integrated `lowestListing` directly from collectible data in `MarketCard` and `ShopCard` components, saving additional queries
+  - Fixed large percentage differences now display with comma separators (e.g., "199,900.00%" instead of "199900.00%") for better readability
+  - Improved OpenSea currency support by fetching supported currencies directly from API instead of hardcoded constants
+  - Added ENS contract addresses to wagmi chain configurations
+
+  ## 🐛 Bug Fixes
+
+  - Fixed error handling in MakeOfferModal to show clear error messages when no ERC-20 tokens are configured for a collection
+  - Implemented OpenSea decimal validation for offers
+  - Fixed calendar date selection: 'Today' now sets time to end of day (23:59:59.999) to prevent order errors
+  - Added loading modal while fetching payment parameters to prevent user actions during checkout flow
+
+  ## 🔧 Internal Improvements
+
+  - Removed support for multiple checkout providers to simplify the checkout flow
+  - Removed all LAOS network references, LAOS721 handling, and related configuration
+  - Refactored PriceInput component to use `currencyDecimals` directly
+  - Upgraded all workspace dependencies to latest versions
+  - Expanded test coverage for currency endpoints and filtering functionality
+  - Enhanced TypeScript types and improved type inference across the SDK
+
 ## 1.1.1
 
 ### ✨ Improvements
@@ -91,7 +142,7 @@
   - Fixed collectible card image opacity issues
   - Improved media display with object-contain for collectible cards
 
-### ⚠️ Breaking Changes
+### ! Breaking Changes
 
 By default, the SDK now uses shadow DOM for all modals. To disable this, you can set the `useShadowDOM` flag to `false` in the `SdkConfig`. Other components (media, collectible card etc) are rendered to the document body and requires Tailwind.
 `useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging api-client
@@ -198,7 +249,7 @@ See the [Alternative Wallet Integration Playground](https://github.com/0xsequenc
 
 ### Patch Changes
 
-**⚠️ Breaking Changes **
+**! Breaking Changes **
 
 **Hook Parameter Type Updates**
 
@@ -379,7 +430,7 @@ const handleBuyClick = () => {
 - All existing hooks preserved: `useListMarketItems`, `useCollectibleDetails`, etc.
 - Zero migration required for current Market implementations
 
-### 🖼️ New `Media` component – render any type of collectible file
+### 🖼 New `Media` component – render any type of collectible file
 
 This update adds a new `Media` component that can display **images**, **videos**, **3D models**, or **HTML iframes**, depending on the file type.
 

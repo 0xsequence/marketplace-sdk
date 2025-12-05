@@ -27,6 +27,7 @@ export default defineConfig([
 		format: ['esm'],
 		outDir: 'dist',
 		clean: true,
+		hash: false,
 		plugins: [tailwindPlugin(), preserveDirectives()],
 		loader: {
 			'.png': 'dataurl',
