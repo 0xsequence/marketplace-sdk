@@ -64,7 +64,12 @@ export function listTokenMetadataQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchListTokenMetadata,
-			customValidation: (p) => !!p.tokenIds && p.tokenIds.length > 0,
+			customValidation: (p) =>
+				!!p.chainId &&
+				p.chainId > 0 &&
+				!!p.tokenIds &&
+				p.tokenIds.length > 0 &&
+				!!p.contractAddress,
 		},
 		params,
 	);

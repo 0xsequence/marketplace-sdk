@@ -49,8 +49,9 @@ export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getTokenRangesQueryKey,
-			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			requiredParams: ['chainId', 'collectionAddress', 'config'],
 			fetcher: fetchGetTokenRanges,
+			customValidation: (p) => !!p.chainId && p.chainId > 0,
 		},
 		params,
 	);
