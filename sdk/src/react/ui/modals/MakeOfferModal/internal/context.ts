@@ -399,7 +399,9 @@ export function useMakeOfferModalContext() {
 
 		get actions() {
 			const needsApprovalAction =
-				this.steps.approval && this.steps.approval.status !== 'success' && priceRaw > 0n;
+				this.steps.approval &&
+				this.steps.approval.status !== 'success' &&
+				priceRaw > 0n;
 			const currenciesBlocked = !this.currencies.isConfigured;
 
 			return {
