@@ -67,7 +67,7 @@ export function useMakeOfferModalContext() {
 		tokenId: state.tokenId,
 	});
 
-	const { isWaaS } = useConnectorMetadata();
+	const { isWaaS, isSequence } = useConnectorMetadata();
 
 	const availableCurrencies = useMemo(() => {
 		if (!currenciesQuery.data) return [];
@@ -146,12 +146,14 @@ export function useMakeOfferModalContext() {
 			!!selectedCurrency?.contractAddress &&
 			!!address &&
 			!!spenderAddress &&
-			state.isOpen,
+			state.isOpen &&
+			!isSequence
 	});
 
 	const totalPriceNeeded = priceRaw * quantityRaw;
 
 	const needsApproval = useMemo(() => {
+		if (isSequence) return false;
 		if (allowanceQuery.allowance === undefined) return true;
 
 		return allowanceQuery.allowance < totalPriceNeeded;
