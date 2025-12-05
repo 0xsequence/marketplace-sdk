@@ -28,7 +28,7 @@ import {
 import {
 	isFormValid,
 	validateOfferForm,
-} from '../../_internal/helpers/validation';
+} from './helpers/validation';
 import type {
 	ApprovalStep,
 	FeeStep,
