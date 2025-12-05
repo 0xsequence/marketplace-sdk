@@ -1,5 +1,5 @@
 import { type Dnum, greaterThan } from 'dnum';
-import { isPositive } from './dnum-utils';
+import { isPositive } from '../../../_internal/helpers/dnum-utils';
 
 export type FieldValidation = {
 	isValid: boolean;

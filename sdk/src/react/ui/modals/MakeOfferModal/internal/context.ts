@@ -16,21 +16,24 @@ import {
 } from '../../../../hooks';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
+import {
+	filterCurrenciesForOrderbook,
+	getDefaultCurrency,
+} from '../../_internal/helpers/currency';
 import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
 	createApprovalGuard,
 	createFinalTransactionGuard,
 } from '../../_internal/helpers/step-guards';
+import {
+	isFormValid,
+	validateOfferForm,
+} from '../../_internal/helpers/validation';
 import type {
 	ApprovalStep,
 	FeeStep,
 	TransactionStep,
 } from '../../_internal/types/steps';
-import {
-	filterCurrenciesForOrderbook,
-	getDefaultCurrency,
-} from './helpers/currency';
-import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useERC20Allowance } from './hooks';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
@@ -87,7 +90,11 @@ export function useMakeOfferModalContext() {
 				) || null
 			);
 		}
-		return getDefaultCurrency(availableCurrencies, state.orderbookKind);
+		return getDefaultCurrency(
+			availableCurrencies,
+			state.orderbookKind,
+			'offer',
+		);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
 	const currencyBalanceQuery = useTokenCurrencyBalance({

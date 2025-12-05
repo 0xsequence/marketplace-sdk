@@ -25,7 +25,7 @@ import {
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { fromBigIntString } from './helpers/dnum-utils';
+import { fromBigIntString } from '../../_internal/helpers/dnum-utils';
 import { useMakeOfferModalState } from './store';
 
 export type ProcessStepResult =

@@ -24,7 +24,7 @@ import {
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { fromBigIntString } from './helpers/dnum-utils';
+import { fromBigIntString } from '../../_internal/helpers/dnum-utils';
 import { useCollectibleApproval } from './hooks/use-collectible-approval';
 import { useCreateListingModalState } from './store';
 

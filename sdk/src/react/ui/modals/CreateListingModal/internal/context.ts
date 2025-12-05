@@ -14,6 +14,10 @@ import {
 } from '../../../../hooks';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
+import {
+	filterCurrenciesForOrderbook,
+	getDefaultCurrency,
+} from '../../_internal/helpers/currency';
 import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
 	createApprovalGuard,
@@ -24,10 +28,6 @@ import type {
 	FeeStep,
 	TransactionStep,
 } from '../../_internal/types/steps';
-import {
-	filterCurrenciesForOrderbook,
-	getDefaultCurrency,
-} from './helpers/currency';
 import { isFormValid, validateListingForm } from './helpers/validation';
 import { useListingMutations } from './listing-mutations';
 import { useCreateListingModalState } from './store';
@@ -88,7 +88,11 @@ export function useCreateListingModalContext() {
 				) || null
 			);
 		}
-		return getDefaultCurrency(availableCurrencies, state.orderbookKind);
+		return getDefaultCurrency(
+			availableCurrencies,
+			state.orderbookKind,
+			'listing',
+		);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
 	const expiryDate = useMemo(
