@@ -25,15 +25,12 @@ import {
 	createApprovalGuard,
 	createFinalTransactionGuard,
 } from '../../_internal/helpers/step-guards';
-import {
-	isFormValid,
-	validateOfferForm,
-} from './helpers/validation';
 import type {
 	ApprovalStep,
 	FeeStep,
 	TransactionStep,
 } from '../../_internal/types/steps';
+import { isFormValid, validateOfferForm } from './helpers/validation';
 import { useERC20Allowance } from './hooks';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
