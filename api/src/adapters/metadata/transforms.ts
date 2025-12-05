@@ -191,7 +191,6 @@ export function toRefreshTokenMetadataArgs(
 		chainID: toMetadataChainId(normalized.chainId),
 		contractAddress,
 		tokenIDs: transformOptionalArray(normalized.tokenIds, toApiTokenId),
-		refreshAll: normalized.refreshAll,
 	};
 }
 

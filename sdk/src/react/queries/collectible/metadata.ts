@@ -63,6 +63,7 @@ export function collectibleQueryOptions(params: CollectibleQueryOptions) {
 				'config',
 			] as const,
 			fetcher: fetchCollectible,
+			customValidation: (p) => !!p.chainId && p.chainId > 0,
 		},
 		params,
 	);

@@ -10,9 +10,6 @@ import {
 export type LowestListingQueryOptions =
 	SdkQueryParams<GetLowestPriceListingForCollectibleRequest>;
 
-/**
- * Fetches the lowest listing for a collectible from the marketplace API
- */
 export async function fetchLowestListing(
 	params: WithRequired<
 		LowestListingQueryOptions,

@@ -111,7 +111,9 @@ export function MarketActionsCard({
 						variant="secondary"
 						onClick={() =>
 							openMakeOfferModal({
-								...hooksProps,
+								collectionAddress,
+								chainId,
+								tokenId,
 								orderbookKind,
 							})
 						}

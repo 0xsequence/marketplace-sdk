@@ -305,7 +305,7 @@ function CtaActions({
 							},
 						})
 					}
-					variant={cta.variant || (index === 0 ? 'primary' : 'ghost')}
+					variant={cta.variant || (index === 0 ? 'primary' : 'secondary')}
 					disabled={cta.disabled || cta.loading}
 					size="lg"
 					data-testid={cta.testid}
