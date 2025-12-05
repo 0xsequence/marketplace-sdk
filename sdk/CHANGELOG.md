@@ -1,11 +1,31 @@
 # @0xsequence/marketplace-sdk
 
+## 1.2.1
+
+### Patch Changes
+
+
+## 1.2.1
+
+### ✨ Improvements
+
+- **MetaMask Connector Support**: Added native MetaMask connector support, can be enabled from Sequence Builder, useful for environments that do not support walletDiscovery (EIP-6963)
+- **Transfer Modal Prefetching**: `useTransferModal` now supports prefetching balances based on collectible details via the new `prefetch` option
+- **ERC1155 Shop Checkout Refactor**: Major refactor of the ERC1155 shop checkout flow to improve error handling and loading states
+
+
+### 🔧 Internal Improvements
+
+- Upgraded Sequence packages and workspace dependencies to latest versions
+- Disabled flanky filename hash generation in tsdown build config
+- Updated and expanded test coverage for ERC1155 sale payment
+
 ## 1.2.0
 
 ### Minor Changes
 
 - ## ✨ New Features & Improvements
-o
+
   - Integrated with web-sdk's 5.4 new Transak implementation to support updated Transak API requirements
   - Added `useCollectionActiveListingsCurrencies` and `useCollectionActiveOffersCurrencies` hooks for fetching active currencies used in offer/listings
   - Added `useGetPrimarySaleItem` hook and query for fetching individual primary sale items
