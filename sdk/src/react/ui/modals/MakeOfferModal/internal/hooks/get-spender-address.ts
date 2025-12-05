@@ -29,6 +29,8 @@ export function getSpenderAddressForOffer(
 			return SEQUENCE_MARKET_V2_ADDRESS as Address;
 		case OrderbookKind.opensea:
 			return OPENSEA_SEAPORT_CONDUIT_ADDRESS;
+		case OrderbookKind.magic_eden:
+			return MAGICEDEN_CONDUIT_ADDRESS;
 		default:
 			// Default to v2 for unknown orderbooks
 			return SEQUENCE_MARKET_V2_ADDRESS as Address;
