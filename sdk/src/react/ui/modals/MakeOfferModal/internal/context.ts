@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
+import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
 import type { ContractType } from '../../../../_internal';
 import {
 	useCollectibleMarketLowestListing,
@@ -30,7 +31,7 @@ import {
 	getDefaultCurrency,
 } from './helpers/currency';
 import { isFormValid, validateOfferForm } from './helpers/validation';
-import { getSpenderAddressForOffer, useERC20Allowance } from './hooks';
+import { useERC20Allowance } from './hooks';
 import { useOfferMutations } from './offer-mutations';
 import { useMakeOfferModalState } from './store';
 
@@ -136,7 +137,7 @@ export function useMakeOfferModalContext() {
 	const formIsValid = isFormValid(validation);
 
 	// Get the spender address for the selected orderbook
-	const spenderAddress = getSpenderAddressForOffer(state.orderbookKind);
+	const spenderAddress = getConduitAddressForOrderbook(state.orderbookKind);
 
 	const allowanceQuery = useERC20Allowance({
 		tokenAddress: selectedCurrency?.contractAddress as Address | undefined,
@@ -147,7 +148,7 @@ export function useMakeOfferModalContext() {
 			!!address &&
 			!!spenderAddress &&
 			state.isOpen &&
-			!isSequence
+			!isSequence,
 	});
 
 	const totalPriceNeeded = priceRaw * quantityRaw;

@@ -5,6 +5,7 @@ import { encodeFunctionData, maxUint256 } from 'viem';
 import { useAccount } from 'wagmi';
 import { OrderbookKind } from '../../../../../types';
 import { ERC20_ABI } from '../../../../../utils/abi';
+import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
 import {
 	type ContractType,
 	type CreateReq,
@@ -25,7 +26,6 @@ import {
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { fromBigIntString } from './helpers/dnum-utils';
-import { getSpenderAddressForOffer } from './hooks';
 import { useMakeOfferModalState } from './store';
 
 export type ProcessStepResult =
@@ -88,7 +88,7 @@ export const useOfferMutations = ({
 	 * This approves max uint256 for the marketplace contract to spend the user's tokens.
 	 */
 	function createApprovalStep(): Step {
-		const spenderAddress = getSpenderAddressForOffer(orderbookKind);
+		const spenderAddress = getConduitAddressForOrderbook(orderbookKind);
 		if (!spenderAddress) {
 			throw new Error(`Unknown orderbook kind: ${orderbookKind}`);
 		}

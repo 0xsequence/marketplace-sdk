@@ -2,8 +2,8 @@ import type { Address } from 'viem';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,
-} from '../../../../../../consts';
-import { OrderbookKind } from '../../../../../../types';
+} from '../consts';
+import { OrderbookKind } from '../types';
 
 /**
  * OpenSea Conduit address
@@ -19,7 +19,7 @@ export const OPENSEA_SEAPORT_CONDUIT_ADDRESS =
 export const MAGICEDEN_CONDUIT_ADDRESS =
 	'0x2052f8A2Ff46283B30084e5d84c89A2fdBE7f74b' as Address;
 
-export function getSpenderAddressForOffer(
+export function getConduitAddressForOrderbook(
 	orderbookKind: OrderbookKind | undefined,
 ): Address | undefined {
 	switch (orderbookKind) {
