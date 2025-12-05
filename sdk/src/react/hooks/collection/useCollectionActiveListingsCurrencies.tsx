@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Optional } from '../../../_internal';
+import type { Optional } from '../../_internal';
 import {
 	type CollectionActiveListingsCurrenciesQueryOptions,
 	collectionActiveListingsCurrenciesQueryOptions,
 	type FetchCollectionActiveListingsCurrenciesParams,
-} from '../../../queries/collections/activeListingsCurrencies';
-import { useConfig } from '../../config/useConfig';
+} from '../../queries/collection/activeListingsCurrencies';
+import { useConfig } from '../config/useConfig';
 
 export type UseCollectionActiveListingsCurrenciesParams = Optional<
 	CollectionActiveListingsCurrenciesQueryOptions,

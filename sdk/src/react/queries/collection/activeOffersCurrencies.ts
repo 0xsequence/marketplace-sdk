@@ -1,84 +1,58 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Currency } from '@0xsequence/api-client';
 import {
-	collectionKeys,
-	type GetCollectionActiveOffersCurrenciesArgs,
-	type GetCollectionActiveOffersCurrenciesReturn,
+	buildQueryOptions,
 	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchCollectionActiveOffersCurrenciesParams
-	extends Omit<
-		GetCollectionActiveOffersCurrenciesArgs,
-		'contractAddress' | 'chainId'
-	> {
-	collectionAddress: string;
+export interface FetchCollectionActiveOffersCurrenciesParams {
 	chainId: number;
-	config: SdkConfig;
+	collectionAddress: string;
 }
+
+export type CollectionActiveOffersCurrenciesQueryOptions =
+	SdkQueryParams<FetchCollectionActiveOffersCurrenciesParams>;
 
 /**
  * Fetches the active offers currencies for a collection from the marketplace API
  */
 export async function fetchCollectionActiveOffersCurrencies(
-	params: FetchCollectionActiveOffersCurrenciesParams,
-): Promise<GetCollectionActiveOffersCurrenciesReturn['currencies']> {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+	params: WithRequired<
+		CollectionActiveOffersCurrenciesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+): Promise<Currency[]> {
+	const { collectionAddress, chainId, config } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectionActiveOffersCurrenciesArgs = {
+	const result = await marketplaceClient.getCollectionActiveOffersCurrencies({
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
-		...additionalApiParams,
-	};
-
-	const result =
-		await marketplaceClient.getCollectionActiveOffersCurrencies(apiArgs);
+	});
 	return result.currencies;
 }
-
-export type CollectionActiveOffersCurrenciesQueryOptions =
-	ValuesOptional<FetchCollectionActiveOffersCurrenciesParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getCollectionActiveOffersCurrenciesQueryKey(
 	params: CollectionActiveOffersCurrenciesQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
+	return createCollectionQueryKey('active-offers-currencies', {
+		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCollectionActiveOffersCurrenciesArgs>;
-
-	return [...collectionKeys.activeOffersCurrencies, apiArgs] as const;
+	});
 }
 
 export function collectionActiveOffersCurrenciesQueryOptions(
 	params: CollectionActiveOffersCurrenciesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionActiveOffersCurrenciesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchCollectionActiveOffersCurrencies,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionActiveOffersCurrenciesQueryKey(params),
-		queryFn: () =>
-			fetchCollectionActiveOffersCurrencies({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

@@ -45,7 +45,9 @@ export const useTransferModal = (args?: UseTransferModalArgs) => {
 	useListBalances({
 		chainId: args?.prefetch?.chainId ?? 0,
 		contractAddress: args?.prefetch?.collectionAddress,
-		tokenId: args?.prefetch?.collectibleId,
+		tokenId: args?.prefetch?.collectibleId
+			? BigInt(args.prefetch.collectibleId)
+			: undefined,
 		accountAddress,
 		query: { enabled: !!accountAddress && !!args?.prefetch },
 	});
