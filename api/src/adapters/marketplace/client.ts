@@ -447,6 +447,12 @@ export class MarketplaceClient {
 	public readonly listCurrencies: (
 		req: ListCurrenciesRequest,
 	) => Promise<ListCurrenciesResponse>;
+	public readonly getCollectionActiveListingsCurrencies: (
+		req: Gen.GetCollectionActiveListingsCurrenciesRequest,
+	) => Promise<ListCurrenciesResponse>;
+	public readonly getCollectionActiveOffersCurrencies: (
+		req: Gen.GetCollectionActiveOffersCurrenciesRequest,
+	) => Promise<ListCurrenciesResponse>;
 
 	// Collectible methods (chainId + optional tokenId)
 	public readonly getCollectible: (
@@ -593,6 +599,22 @@ export class MarketplaceClient {
 				chainId: chainIdToString(req.chainId),
 			}),
 			(res: Gen.ListCurrenciesResponse) => ({
+				...res,
+				currencies: toCurrencies(res.currencies),
+			}),
+		);
+		this.getCollectionActiveListingsCurrencies = wrapBothTransform(
+			(req) => this.client.getCollectionActiveListingsCurrencies(req),
+			(req: Gen.GetCollectionActiveListingsCurrenciesRequest) => req,
+			(res: Gen.GetCollectionActiveListingsCurrenciesResponse) => ({
+				...res,
+				currencies: toCurrencies(res.currencies),
+			}),
+		);
+		this.getCollectionActiveOffersCurrencies = wrapBothTransform(
+			(req) => this.client.getCollectionActiveOffersCurrencies(req),
+			(req: Gen.GetCollectionActiveOffersCurrenciesRequest) => req,
+			(res: Gen.GetCollectionActiveOffersCurrenciesResponse) => ({
 				...res,
 				currencies: toCurrencies(res.currencies),
 			}),

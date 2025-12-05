@@ -1,7 +1,7 @@
 import { Button, Separator, Skeleton, Text } from '@0xsequence/design-system';
 import {
+	useCollectionActiveListingsCurrencies,
 	useFilterState,
-	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import { useEffect, useState } from 'react';
 import { type Address, formatUnits, parseUnits } from 'viem';
@@ -14,8 +14,8 @@ export function PriceFilter({
 	chainId: number;
 	collectionAddress: Address;
 }) {
-	const { data: currencies, isLoading: currenciesLoading } =
-		useMarketCurrencies({
+	const { data: listingCurrencies, isLoading: listingCurrenciesLoading } =
+		useCollectionActiveListingsCurrencies({
 			chainId,
 			collectionAddress,
 		});
@@ -29,17 +29,21 @@ export function PriceFilter({
 
 	// Initialize selected currency when currencies load
 	useEffect(() => {
-		if (currencies && currencies.length > 0 && !selectedCurrency) {
-			setSelectedCurrency(currencies[0].contractAddress);
+		if (
+			listingCurrencies &&
+			listingCurrencies.length > 0 &&
+			!selectedCurrency
+		) {
+			setSelectedCurrency(listingCurrencies[0].contractAddress);
 		}
-	}, [currencies, selectedCurrency]);
+	}, [listingCurrencies, selectedCurrency]);
 
 	// Load existing price filter if it exists
 	useEffect(() => {
-		if (selectedCurrency && currencies) {
+		if (selectedCurrency && listingCurrencies) {
 			const existingFilter = getPriceFilter(selectedCurrency);
 			if (existingFilter) {
-				const selectedCurrencyData = currencies.find(
+				const selectedCurrencyData = listingCurrencies.find(
 					(c) => c.contractAddress === selectedCurrency,
 				);
 				const decimals = selectedCurrencyData?.decimals || 0;
@@ -59,7 +63,7 @@ export function PriceFilter({
 				setMaxPrice('');
 			}
 		}
-	}, [selectedCurrency, currencies, getPriceFilter]);
+	}, [selectedCurrency, listingCurrencies, getPriceFilter]);
 
 	const validatePrices = (min: string, max: string): string => {
 		if (min && max) {
@@ -100,8 +104,8 @@ export function PriceFilter({
 
 		setValidationError('');
 
-		if (selectedCurrency && currencies) {
-			const selectedCurrencyData = currencies.find(
+		if (selectedCurrency && listingCurrencies) {
+			const selectedCurrencyData = listingCurrencies.find(
 				(c) => c.contractAddress === selectedCurrency,
 			);
 			const decimals = selectedCurrencyData?.decimals || 0;
@@ -136,18 +140,18 @@ export function PriceFilter({
 		setValidationError('');
 	};
 
-	if (currenciesLoading) {
+	if (listingCurrenciesLoading) {
 		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
-	if (currencies && currencies.length > 0) {
+	if (listingCurrencies && listingCurrencies.length > 0) {
 		return (
 			<>
 				<div>
 					<div className="flex items-center justify-between">
 						<Text className="font-bold text-xs">Select currency</Text>
 						<CustomSelect
-							items={currencies.map((currency) => ({
+							items={listingCurrencies.map((currency) => ({
 								value: currency.contractAddress,
 								content: (
 									<div className="flex items-center gap-2">
@@ -161,18 +165,18 @@ export function PriceFilter({
 								),
 							}))}
 							defaultValue={
-								currencies.length > 0
+								listingCurrencies.length > 0
 									? {
-											value: currencies[0].contractAddress,
+											value: listingCurrencies[0].contractAddress,
 											content: (
 												<div className="flex items-center gap-2">
 													<img
-														src={currencies[0].imageUrl}
-														alt={currencies[0].symbol}
+														src={listingCurrencies[0].imageUrl}
+														alt={listingCurrencies[0].symbol}
 														className="h-4 w-4 rounded-full"
 													/>
 													<Text className="font-bold text-xs">
-														{currencies[0].symbol}
+														{listingCurrencies[0].symbol}
 													</Text>
 												</div>
 											),
