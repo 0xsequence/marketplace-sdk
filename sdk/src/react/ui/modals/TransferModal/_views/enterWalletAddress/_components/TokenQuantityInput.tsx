@@ -16,13 +16,8 @@ const TokenQuantityInput = ({
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	let insufficientBalance = true;
-	if (balanceAmount !== undefined && modalState.quantity) {
-		try {
-			const quantityBigInt = BigInt(modalState.quantity);
-			insufficientBalance = quantityBigInt > balanceAmount;
-		} catch (_e) {
-			insufficientBalance = true;
-		}
+	if (balanceAmount !== undefined && modalState.quantity !== undefined) {
+		insufficientBalance = modalState.quantity > balanceAmount;
 	}
 
 	return (
