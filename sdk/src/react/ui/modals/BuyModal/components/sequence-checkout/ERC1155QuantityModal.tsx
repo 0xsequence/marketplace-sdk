@@ -38,8 +38,8 @@ export const ERC1155QuantityModal = ({
 	chainId,
 	cardType,
 }: ERC1155QuantityModalProps) => {
-	const minQuantity = '1';
-	const [localQuantity, setLocalQuantity] = useState(minQuantity);
+	const minQuantity = 1n;
+	const [quantity, setQuantity] = useState<bigint>(minQuantity);
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	const maxQuantity: bigint = unlimitedSupply ? maxUint256 : quantityRemaining;
@@ -47,7 +47,7 @@ export const ERC1155QuantityModal = ({
 	const handleSetQuantity = () => {
 		buyModalStore.send({
 			type: 'setQuantity',
-			quantity: Number(localQuantity),
+			quantity: Number(quantity),
 		});
 		buyModalStore.send({ type: 'openPaymentModal' });
 	};
@@ -75,17 +75,17 @@ export const ERC1155QuantityModal = ({
 				return (
 					<div className="flex w-full flex-col gap-4">
 						<QuantityInput
-							quantity={localQuantity}
+							quantity={quantity}
 							invalidQuantity={invalidQuantity}
-							onQuantityChange={setLocalQuantity}
+							onQuantityChange={setQuantity}
 							onInvalidQuantityChange={setInvalidQuantity}
 							decimals={0}
-							maxQuantity={maxQuantity.toString()}
+							maxQuantity={maxQuantity}
 						/>
 
 						<TotalPrice
 							order={order}
-							quantityStr={localQuantity}
+							quantity={quantity}
 							salePrice={salePrice}
 							chainId={chainId}
 							cardType={cardType}
@@ -99,7 +99,7 @@ export const ERC1155QuantityModal = ({
 
 type TotalPriceProps = {
 	order?: Order;
-	quantityStr: string;
+	quantity: bigint;
 	salePrice?: {
 		amount: bigint;
 		currencyAddress: Address;
@@ -110,7 +110,7 @@ type TotalPriceProps = {
 
 const TotalPrice = ({
 	order,
-	quantityStr,
+	quantity,
 	salePrice,
 	chainId,
 	cardType,
@@ -140,7 +140,7 @@ const TotalPrice = ({
 			);
 			const marketplaceFeePercentage =
 				marketCollection?.feePercentage ?? DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const totalPriceRaw = BigInt(order.priceAmount) * BigInt(quantityStr);
+			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
@@ -154,7 +154,7 @@ const TotalPrice = ({
 	}
 
 	if (isShop && salePrice && currency) {
-		const totalPriceRaw = BigInt(salePrice.amount) * BigInt(quantityStr);
+		const totalPriceRaw = BigInt(salePrice.amount) * quantity;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
 			currency.decimals,

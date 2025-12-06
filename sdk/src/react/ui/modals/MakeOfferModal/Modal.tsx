@@ -99,14 +99,14 @@ const Modal = () => {
 
 							{collection.type === 'ERC1155' && (
 								<QuantityInput
-									quantity={ctx.form.quantity.input}
+									quantity={ctx.offer.quantity.parsed}
 									invalidQuantity={!ctx.form.quantity.validation.isValid}
 									onQuantityChange={(quantity) =>
-										ctx.form.quantity.update(quantity)
+										ctx.form.quantity.update(quantity.toString())
 									}
 									onInvalidQuantityChange={() => {}}
 									decimals={collectible.decimals || 0}
-									maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+									maxQuantity={BigInt(Number.MAX_SAFE_INTEGER)}
 									disabled={ctx.flow.isPending}
 								/>
 							)}

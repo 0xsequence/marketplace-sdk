@@ -70,7 +70,7 @@ export function MarketActionsCard({
 		prefetch: {
 			collectionAddress,
 			chainId,
-			collectibleId: tokenId.toString(),
+			tokenId,
 		},
 	});
 
