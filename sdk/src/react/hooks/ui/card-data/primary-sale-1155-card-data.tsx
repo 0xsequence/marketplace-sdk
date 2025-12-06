@@ -4,7 +4,6 @@ import { useReadContract } from 'wagmi';
 import { ContractType } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 
-import { useCollectionMetadata } from '../../collection/metadata';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
 interface UsePrimarySale1155CardDataProps {
@@ -29,15 +28,6 @@ export function usePrimarySale1155CardData({
 		enabled,
 	});
 
-	const { data: collection, isLoading: collectionLoading } =
-		useCollectionMetadata({
-			chainId,
-			collectionAddress: contractAddress,
-			query: {
-				enabled,
-			},
-		});
-
 	const { data: paymentToken, isLoading: paymentTokenLoading } =
 		useReadContract({
 			chainId,
@@ -49,7 +39,7 @@ export function usePrimarySale1155CardData({
 			},
 		});
 
-	const isLoading = versionLoading || collectionLoading || paymentTokenLoading;
+	const isLoading = versionLoading || paymentTokenLoading;
 
 	const collectibleCards = primarySaleItemsWithMetadata.map((item) => {
 		const { metadata, primarySaleItem: saleData } = item;
@@ -75,7 +65,6 @@ export function usePrimarySale1155CardData({
 			salesContractAddress,
 			salePrice,
 			quantityInitial: supply,
-			quantityDecimals: collection?.decimals || 0,
 			quantityRemaining: supply,
 			unlimitedSupply,
 			saleStartsAt: saleData?.startDate?.toString(),

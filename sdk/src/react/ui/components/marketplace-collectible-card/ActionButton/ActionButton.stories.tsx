@@ -247,7 +247,6 @@ export const ShopBuyAction: Story = {
 			currencyAddress:
 				'0x0000000000000000000000000000000000000000' as `0x${string}`,
 		},
-		quantityDecimals: 0,
 		quantityRemaining: 100n,
 		unlimitedSupply: false,
 		onCannotPerformAction: fn(),

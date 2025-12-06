@@ -110,7 +110,7 @@ export function useMakeOfferModalContext() {
 
 	const priceDnum = [
 		state.priceInput ? BigInt(state.priceInput) : 0n,
-		selectedCurrency?.decimals!,
+		selectedCurrency?.decimals ?? 0,
 	] as Dnum;
 	const priceRaw = priceDnum[0];
 

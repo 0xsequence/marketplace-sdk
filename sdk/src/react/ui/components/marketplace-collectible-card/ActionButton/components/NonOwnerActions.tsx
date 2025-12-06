@@ -13,7 +13,6 @@ type NonOwnerActionsBaseProps = {
 	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
-	quantityDecimals?: number;
 	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
@@ -53,7 +52,6 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		tokenId,
 		collectionAddress,
 		chainId,
-		quantityDecimals,
 		quantityRemaining,
 		unlimitedSupply,
 		cardType,
@@ -89,7 +87,6 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							amount: salePrice.amount,
 							currencyAddress: salePrice.currencyAddress,
 						},
-						quantityDecimals: quantityDecimals ?? 0,
 						quantityRemaining: quantityRemaining ?? 0n,
 						unlimitedSupply,
 						hideQuantitySelector,

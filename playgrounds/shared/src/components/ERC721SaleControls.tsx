@@ -65,7 +65,6 @@ export function ERC721SaleControls({
 			collectionAddress,
 			salesContractAddress,
 			cardType: 'shop',
-			quantityDecimals: 0,
 			quantityRemaining: quantityRemaining ?? 0n,
 			items: [
 				{

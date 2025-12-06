@@ -19,7 +19,7 @@ type CreateListingState = BaseModalState & {
 		amountRaw: bigint;
 		currency: Currency;
 	};
-	quantity: string;
+	quantity: bigint;
 	invalidQuantity: boolean;
 	expiry: Date;
 	steps: TransactionSteps;
@@ -88,7 +88,7 @@ const initialState: CreateListingState = {
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: { ...listingPrice },
-	quantity: '1',
+	quantity: 1n,
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,

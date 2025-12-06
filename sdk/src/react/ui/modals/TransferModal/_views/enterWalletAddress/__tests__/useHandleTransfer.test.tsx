@@ -49,7 +49,7 @@ describe('useHandleTransfer', () => {
 		collectionAddress:
 			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
 		tokenId: 123n,
-		quantity: '2',
+		quantity: 2n,
 		chainId: 1,
 		transferIsProcessing: false,
 		view: 'enterReceiverAddress',
@@ -149,7 +149,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '5',
+				quantity: 5n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -331,7 +331,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1',
+				quantity: 1n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -363,7 +363,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1000000',
+				quantity: 1000000n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -387,7 +387,7 @@ describe('useHandleTransfer', () => {
 			const fullState = {
 				...defaultModalState,
 				tokenId: 999n,
-				quantity: '10',
+				quantity: 10n,
 				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
 			};
 

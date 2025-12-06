@@ -37,7 +37,6 @@ export function ShopCard({
 	salesContractAddress,
 	tokenMetadata,
 	salePrice,
-	quantityDecimals,
 	quantityInitial,
 	quantityRemaining,
 	unlimitedSupply,
@@ -94,7 +93,6 @@ export function ShopCard({
 			shopState={shopState}
 			cardType={cardType as CardType}
 			salesContractAddress={salesContractAddress}
-			quantityDecimals={quantityDecimals}
 			quantityRemaining={quantityRemaining}
 			unlimitedSupply={unlimitedSupply}
 			hideQuantitySelector={hideQuantitySelector}

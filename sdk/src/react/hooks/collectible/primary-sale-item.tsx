@@ -1,16 +1,16 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-  type PrimarySaleItemQueryOptions,
-  primarySaleItemQueryOptions,
+	type PrimarySaleItemQueryOptions,
+	primarySaleItemQueryOptions,
 } from '../../queries/collectible/primary-sale-item';
 import { useConfig } from '../config/useConfig';
-import { useQuery } from '@tanstack/react-query';
 
 export type UsePrimarySaleItemParams = Optional<
-  PrimarySaleItemQueryOptions,
-  'config'
+	PrimarySaleItemQueryOptions,
+	'config'
 >;
 
 /**
@@ -50,18 +50,18 @@ export type UsePrimarySaleItemParams = Optional<
  * ```
  */
 export function usePrimarySaleItem(params: UsePrimarySaleItemParams) {
-  const defaultConfig = useConfig();
+	const defaultConfig = useConfig();
 
-  const { config = defaultConfig, ...rest } = params;
+	const { config = defaultConfig, ...rest } = params;
 
-  const queryOptions = primarySaleItemQueryOptions({
-    config,
-    ...rest,
-  });
+	const queryOptions = primarySaleItemQueryOptions({
+		config,
+		...rest,
+	});
 
-  return useQuery({
-    ...queryOptions,
-  });
+	return useQuery({
+		...queryOptions,
+	});
 }
 
 export { primarySaleItemQueryOptions };
