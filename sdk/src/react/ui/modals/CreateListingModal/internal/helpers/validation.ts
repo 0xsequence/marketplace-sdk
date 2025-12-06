@@ -6,30 +6,24 @@ export type FieldValidation = {
 	error: string | null;
 };
 
-export type OfferValidation = {
+export type ListingValidation = {
 	price: FieldValidation;
 	quantity: FieldValidation;
-	balance: FieldValidation;
-	openseaCriteria?: FieldValidation;
+	balance?: FieldValidation;
 };
 
-export function validateOfferForm({
+export function validateListingForm({
 	price,
 	quantity,
 	balance,
-	lowestListing,
-	orderbookKind,
 }: {
 	price: Dnum;
 	quantity: Dnum;
 	balance?: Dnum;
-	lowestListing?: Dnum;
-	orderbookKind?: string;
-}): OfferValidation {
-	const validation: OfferValidation = {
+}): ListingValidation {
+	const validation: ListingValidation = {
 		price: { isValid: true, error: null },
 		quantity: { isValid: true, error: null },
-		balance: { isValid: true, error: null },
 	};
 
 	// Price validation
@@ -48,51 +42,37 @@ export function validateOfferForm({
 		};
 	}
 
-	// Balance validation
-	if (balance && greaterThan(price, balance)) {
+	// Balance validation (for ERC1155)
+	if (balance && greaterThan(quantity, balance)) {
 		validation.balance = {
 			isValid: false,
-			error: 'Insufficient balance for this offer',
-		};
-	}
-
-	// OpenSea specific validation
-	if (orderbookKind === 'opensea' && lowestListing) {
-		const meetsMinimum = greaterThan(price, lowestListing);
-		validation.openseaCriteria = {
-			isValid: meetsMinimum,
-			error: meetsMinimum
-				? null
-				: 'Offer must be higher than lowest listing for OpenSea',
+			error: 'Insufficient balance for this quantity',
 		};
 	}
 
 	return validation;
 }
 
-export function isFormValid(validation: OfferValidation): boolean {
+export function isFormValid(validation: ListingValidation): boolean {
 	return (
 		validation.price.isValid &&
 		validation.quantity.isValid &&
-		validation.balance.isValid &&
-		(validation.openseaCriteria?.isValid ?? true)
+		(validation.balance?.isValid ?? true)
 	);
 }
 
-export function getValidationErrors(validation: OfferValidation): string[] {
+export function getValidationErrors(validation: ListingValidation): string[] {
 	const errors: string[] = [];
 
 	if (validation.price.error) errors.push(validation.price.error);
 	if (validation.quantity.error) errors.push(validation.quantity.error);
-	if (validation.balance.error) errors.push(validation.balance.error);
-	if (validation.openseaCriteria?.error)
-		errors.push(validation.openseaCriteria.error);
+	if (validation.balance?.error) errors.push(validation.balance.error);
 
 	return errors;
 }
 
 export function getFirstValidationError(
-	validation: OfferValidation,
+	validation: ListingValidation,
 ): string | null {
 	const errors = getValidationErrors(validation);
 	return errors.length > 0 ? errors[0] : null;

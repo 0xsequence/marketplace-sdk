@@ -3,16 +3,14 @@ import { useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
 import type { ContractType } from '../../../../_internal';
 import {
-	useCollectibleMarketLowestListing,
+	useCollectibleBalance,
 	useCollectibleMetadata,
 	useCollectionMetadata,
 	useConfig,
 	useConnectorMetadata,
 	useCurrencyList,
-	useTokenCurrencyBalance,
 } from '../../../../hooks';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
@@ -30,19 +28,18 @@ import type {
 	FeeStep,
 	TransactionStep,
 } from '../../_internal/types/steps';
-import { isFormValid, validateOfferForm } from './helpers/validation';
-import { useERC20Allowance } from './hooks';
-import { useOfferMutations } from './offer-mutations';
-import { useMakeOfferModalState } from './store';
+import { isFormValid, validateListingForm } from './helpers/validation';
+import { useListingMutations } from './listing-mutations';
+import { useCreateListingModalState } from './store';
 
-export type MakeOfferModalSteps = {
+export type CreateListingModalSteps = {
 	fee?: FeeStep;
 	approval?: ApprovalStep;
-	offer: TransactionStep;
+	listing: TransactionStep;
 };
 
-export function useMakeOfferModalContext() {
-	const state = useMakeOfferModalState();
+export function useCreateListingModalContext() {
+	const state = useCreateListingModalState();
 	const { address } = useAccount();
 	const config = useConfig();
 
@@ -59,13 +56,17 @@ export function useMakeOfferModalContext() {
 
 	const currenciesQuery = useCurrencyList({
 		chainId: state.chainId,
-		includeNativeCurrency: false,
+		includeNativeCurrency: true,
 	});
 
-	const lowestListingQuery = useCollectibleMarketLowestListing({
+	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		tokenId: state.tokenId,
+		userAddress: address ?? undefined,
+		query: {
+			enabled: !!address && collectionQuery.data?.type === 'ERC1155',
+		},
 	});
 
 	const { isWaaS, isSequence } = useConnectorMetadata();
@@ -90,97 +91,93 @@ export function useMakeOfferModalContext() {
 		return getDefaultCurrency(
 			availableCurrencies,
 			state.orderbookKind,
-			'offer',
+			'listing',
 		);
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
-
-	const currencyBalanceQuery = useTokenCurrencyBalance({
-		currencyAddress: selectedCurrency?.contractAddress as Address | undefined,
-		chainId: state.chainId,
-		userAddress: address,
-		query: {
-			enabled: !!selectedCurrency?.contractAddress && !!address,
-		},
-	});
 
 	const expiryDate = useMemo(
 		() => new Date(Date.now() + state.expiryDays * 24 * 60 * 60 * 1000),
 		[state.expiryDays],
 	);
 
-	const priceDnum = [
-		state.priceInput ? BigInt(state.priceInput) : 0n,
-		selectedCurrency?.decimals!,
-	] as Dnum;
+	const priceDnum: Dnum = useMemo(() => {
+		if (!state.priceInput || state.priceInput === '') {
+			return [0n, selectedCurrency?.decimals ?? 18];
+		}
+		try {
+			return [
+				BigInt(state.priceInput),
+				selectedCurrency?.decimals ?? 18,
+			] as Dnum;
+		} catch {
+			return [0n, selectedCurrency?.decimals ?? 18];
+		}
+	}, [state.priceInput, selectedCurrency?.decimals]);
 	const priceRaw = priceDnum[0];
 
-	const quantityDnum = [BigInt(state.quantityInput), 0] as Dnum;
-	const quantityRaw = BigInt(state.quantityInput);
+	const quantityDnum: Dnum = useMemo(() => {
+		if (!state.quantityInput || state.quantityInput === '') {
+			return [0n, collectibleQuery.data?.decimals ?? 0];
+		}
+		try {
+			return [
+				BigInt(state.quantityInput),
+				collectibleQuery.data?.decimals ?? 0,
+			] as Dnum;
+		} catch {
+			return [0n, collectibleQuery.data?.decimals ?? 0];
+		}
+	}, [state.quantityInput, collectibleQuery.data?.decimals]);
+	const quantityRaw = quantityDnum[0];
 
-	const balanceDnum =
-		currencyBalanceQuery.data?.value !== undefined && selectedCurrency?.decimals
-			? ([currencyBalanceQuery.data.value, selectedCurrency.decimals] as const)
-			: undefined;
+	const balanceDnum: Dnum | undefined = useMemo(() => {
+		if (
+			collectibleBalanceQuery.data?.balance !== undefined &&
+			collectibleQuery.data?.decimals !== undefined
+		) {
+			return [
+				BigInt(collectibleBalanceQuery.data.balance),
+				collectibleQuery.data.decimals,
+			];
+		}
+		return undefined;
+	}, [collectibleBalanceQuery.data?.balance, collectibleQuery.data?.decimals]);
 
-	const lowestListingDnum =
-		lowestListingQuery.data?.priceAmount && selectedCurrency?.decimals
-			? ([
-					BigInt(lowestListingQuery.data.priceAmount),
-					selectedCurrency.decimals,
-				] as const)
-			: undefined;
-
-	const validation = validateOfferForm({
-		price: priceDnum,
-		quantity: quantityDnum,
-		balance: balanceDnum,
-		lowestListing: lowestListingDnum,
-		orderbookKind: state.orderbookKind,
-	});
+	const validation = useMemo(
+		() =>
+			validateListingForm({
+				price: priceDnum,
+				quantity: quantityDnum,
+				balance: balanceDnum,
+			}),
+		[priceDnum, quantityDnum, balanceDnum],
+	);
 
 	const formIsValid = isFormValid(validation);
 
-	// Get the spender address for the selected orderbook
-	const spenderAddress = getConduitAddressForOrderbook(state.orderbookKind);
-
-	const allowanceQuery = useERC20Allowance({
-		tokenAddress: selectedCurrency?.contractAddress as Address | undefined,
-		spenderAddress,
-		chainId: state.chainId,
-		enabled:
-			!!selectedCurrency?.contractAddress &&
-			!!address &&
-			!!spenderAddress &&
-			state.isOpen &&
-			!isSequence,
-	});
-
-	const totalPriceNeeded = priceRaw * quantityRaw;
-
-	const needsApproval = useMemo(() => {
-		if (isSequence) return false;
-		if (allowanceQuery.allowance === undefined) return true;
-
-		return allowanceQuery.allowance < totalPriceNeeded;
-	}, [allowanceQuery.allowance, totalPriceNeeded]);
-
-	const { approve, makeOffer } = useOfferMutations({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-		contractType: collectionQuery.data?.type as ContractType | undefined,
-		orderbookKind: state.orderbookKind,
-		offer: {
-			tokenId: state.tokenId,
-			quantity: quantityRaw,
-			expiry: dateToUnixTime(expiryDate),
-			currencyAddress:
-				selectedCurrency?.contractAddress ??
-				('0x0000000000000000000000000000000000000000' as Address),
-			pricePerToken: priceRaw,
-		},
-		currencyDecimals: selectedCurrency?.decimals ?? 18,
-		needsApproval,
-	});
+	const { approve, createListing, needsApproval, nftApprovalQuery } =
+		useListingMutations({
+			chainId: state.chainId,
+			collectionAddress: state.collectionAddress,
+			contractType: collectionQuery.data?.type as ContractType | undefined,
+			orderbookKind: state.orderbookKind,
+			listing: {
+				tokenId: state.tokenId,
+				quantity: quantityRaw,
+				expiry: dateToUnixTime(expiryDate).toString(),
+				currencyAddress:
+					selectedCurrency?.contractAddress ??
+					('0x0000000000000000000000000000000000000000' as Address),
+				pricePerToken: priceRaw,
+			},
+			currencyDecimals: selectedCurrency?.decimals ?? 18,
+			nftApprovalEnabled:
+				!!address &&
+				!!collectionQuery.data?.type &&
+				!!state.orderbookKind &&
+				state.isOpen &&
+				!isSequence,
+		});
 
 	const waas = useSelectWaasFeeOptionsStore();
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
@@ -197,7 +194,7 @@ export function useMakeOfferModalContext() {
 		}
 	}, [pendingFeeOptionConfirmation?.options, isSponsored, waas.isVisible]);
 
-	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
+	const steps: CreateListingModalSteps = {} as CreateListingModalSteps;
 
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
@@ -252,54 +249,52 @@ export function useMakeOfferModalContext() {
 		};
 	}
 
-	const offerGuard = createFinalTransactionGuard({
+	const listingGuard = createFinalTransactionGuard({
 		isFormValid: formIsValid,
 		txReady: true,
 		walletConnected: !!address,
 		requiresApproval: needsApproval && !approve.isSuccess,
 		approvalComplete: approve.isSuccess || !needsApproval,
 	});
-	const offerGuardResult = offerGuard();
+	const listingGuardResult = listingGuard();
 
-	const offerTransactionHash =
-		makeOffer.data &&
-		'type' in makeOffer.data &&
-		makeOffer.data.type === 'transaction'
-			? makeOffer.data.hash
-			: undefined;
+	const listingData = createListing.data;
+	const listingTransactionHash = listingData?.hash;
+	const listingOrderId = listingData?.orderId;
 
-	steps.offer = {
-		label: 'Make Offer',
-		status: makeOffer.isSuccess
+	steps.listing = {
+		label: 'Create Listing',
+		status: createListing.isSuccess
 			? 'success'
-			: makeOffer.isPending
+			: createListing.isPending
 				? 'pending'
-				: makeOffer.error
+				: createListing.error
 					? 'error'
 					: 'idle',
-		isPending: makeOffer.isPending,
-		isSuccess: makeOffer.isSuccess,
-		isDisabled: !offerGuardResult.canProceed,
-		disabledReason: offerGuardResult.error?.message || null,
-		error: makeOffer.error,
-		canExecute: offerGuardResult.canProceed,
-		result: offerTransactionHash
-			? { type: 'transaction', hash: offerTransactionHash }
-			: makeOffer.data?.type === 'signature'
-				? { type: 'signature', orderId: makeOffer.data.orderId ?? '' }
+		isPending: createListing.isPending,
+		isSuccess: createListing.isSuccess,
+		isDisabled: !listingGuardResult.canProceed,
+		disabledReason: listingGuardResult.error?.message || null,
+		error: createListing.error,
+		canExecute: listingGuardResult.canProceed,
+		result: listingTransactionHash
+			? { type: 'transaction', hash: listingTransactionHash }
+			: listingOrderId
+				? { type: 'signature', orderId: listingOrderId }
 				: null,
 		execute: async () => {
-			await makeOffer.mutateAsync();
+			await createListing.mutateAsync();
 		},
 	};
 
 	const flow = computeFlowState(steps);
 
 	const error =
-		allowanceQuery.error ||
+		nftApprovalQuery.error ||
 		collectibleQuery.error ||
 		collectionQuery.error ||
-		currenciesQuery.error;
+		currenciesQuery.error ||
+		collectibleBalanceQuery.error;
 
 	const handleClose = () => {
 		if (pendingFeeOptionConfirmation?.id) {
@@ -320,13 +315,7 @@ export function useMakeOfferModalContext() {
 			orderbookKind: state.orderbookKind,
 		},
 
-		tokenId: state.tokenId,
-		collectionAddress: state.collectionAddress,
-		chainId: state.chainId,
-		collectible: collectibleQuery.data,
-		collection: collectionQuery.data,
-
-		offer: {
+		listing: {
 			price: {
 				input: state.priceInput,
 				amountRaw: priceRaw,
@@ -361,16 +350,14 @@ export function useMakeOfferModalContext() {
 				price: validation.price,
 				quantity: validation.quantity,
 				balance: validation.balance,
-				openseaCriteria: validation.openseaCriteria,
 			},
 			errors: {
 				price: state.isPriceTouched ? validation.price.error : undefined,
 				quantity: state.isQuantityTouched
 					? validation.quantity.error
 					: undefined,
-				balance: state.isPriceTouched ? validation.balance.error : undefined,
-				openseaCriteria: state.isPriceTouched
-					? validation.openseaCriteria?.error
+				balance: state.isQuantityTouched
+					? validation.balance?.error
 					: undefined,
 			},
 		},
@@ -389,16 +376,13 @@ export function useMakeOfferModalContext() {
 			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
 			currencies: currenciesQuery.isLoading,
-			allowance: allowanceQuery.isLoading,
+			collectibleBalance: collectibleBalanceQuery.isLoading,
+			nftApproval: nftApprovalQuery.isLoading,
 		},
 
 		transactions: {
-			approve:
-				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
-			offer:
-				makeOffer.data?.type === 'transaction'
-					? makeOffer.data.hash
-					: undefined,
+			approve: approveTransactionHash,
+			listing: listingTransactionHash,
 		},
 
 		error,
@@ -406,7 +390,7 @@ export function useMakeOfferModalContext() {
 			collectible: collectibleQuery,
 			collection: collectionQuery,
 			currencies: currenciesQuery,
-			lowestListing: lowestListingQuery,
+			collectibleBalance: collectibleBalanceQuery,
 		},
 
 		// Computed helpers for simpler consumption
@@ -417,16 +401,13 @@ export function useMakeOfferModalContext() {
 			return (
 				this.form.errors.price ||
 				this.form.errors.quantity ||
-				this.form.errors.balance ||
-				this.form.errors.openseaCriteria
+				this.form.errors.balance
 			);
 		},
 
 		get actions() {
 			const needsApprovalAction =
-				this.steps.approval &&
-				this.steps.approval.status !== 'success' &&
-				priceRaw > 0n;
+				this.steps.approval && this.steps.approval.status !== 'success';
 			const currenciesBlocked = !this.currencies.isConfigured;
 
 			return {
@@ -436,20 +417,22 @@ export function useMakeOfferModalContext() {
 							onClick: this.steps.approval?.execute || (() => {}),
 							loading: this.steps.approval?.isPending,
 							disabled: this.steps.approval?.isDisabled || currenciesBlocked,
-							testid: 'make-offer-approve-button',
+							testid: 'create-listing-approve-button',
 						}
 					: undefined,
-				offer: {
-					label: this.steps.offer.label,
-					onClick: this.steps.offer.execute,
-					loading: this.steps.offer.isPending,
-					disabled: this.steps.offer.isDisabled || currenciesBlocked,
+				listing: {
+					label: this.steps.listing.label,
+					onClick: this.steps.listing.execute,
+					loading: this.steps.listing.isPending,
+					disabled: this.steps.listing.isDisabled || currenciesBlocked,
 					variant: needsApprovalAction ? ('ghost' as const) : undefined,
-					testid: 'make-offer-button',
+					testid: 'create-listing-submit-button',
 				},
 			};
 		},
 	};
 }
 
-export type MakeOfferModalContext = ReturnType<typeof useMakeOfferModalContext>;
+export type CreateListingModalContext = ReturnType<
+	typeof useCreateListingModalContext
+>;
