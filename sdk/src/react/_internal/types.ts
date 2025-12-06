@@ -98,20 +98,20 @@ export type ApiArgs<T> = ValuesOptional<Omit<T, 'config' | 'query'>>;
 /**
  * Wraps API request types with SDK-specific requirements
  * - Adds config and query fields
- * - Makes all fields optional except config
+ * - Makes all fields optional including config (hooks use useConfig() as default)
  * - Works with standard queries
  */
 export type SdkQueryParams<TApiRequest, TQuery = StandardQueryOptions> = {
 	[K in keyof TApiRequest]?: TApiRequest[K];
 } & {
-	config: SdkConfig;
+	config?: SdkConfig;
 	query?: TQuery;
 };
 
 /**
  * Wraps API request types with SDK-specific requirements for infinite queries
  * - Adds config and query fields
- * - Makes all fields optional except config
+ * - Makes all fields optional including config (hooks use useConfig() as default)
  */
 export type SdkInfiniteQueryParams<TApiRequest> = SdkQueryParams<
 	TApiRequest,
