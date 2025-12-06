@@ -3,7 +3,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchListCollectiblesParams,
 	type ListCollectiblesQueryOptions,
 	listCollectiblesQueryOptions,
 } from '../../queries/collectible/market-list';
@@ -74,7 +73,7 @@ export function useCollectibleMarketList(
 
 export { listCollectiblesQueryOptions };
 
-export type { FetchListCollectiblesParams, ListCollectiblesQueryOptions };
+export type { ListCollectiblesQueryOptions };
 
 // Legacy export for backward compatibility during migration
 export type UseListCollectiblesParams = UseCollectibleMarketListParams;

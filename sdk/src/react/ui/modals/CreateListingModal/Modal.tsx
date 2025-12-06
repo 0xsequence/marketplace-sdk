@@ -1,8 +1,8 @@
 'use client';
 
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import type { Currency } from '@0xsequence/api-client';
+import { useSelector } from '@xstate/store/react';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -11,188 +11,160 @@ import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useCreateListingModalContext } from './internal/context';
-import { useCreateListingModal } from './internal/store';
+import { createListingModalStore } from './internal/store';
 
-export function CreateListingModal() {
-	const { isOpen } = useCreateListingModal();
+export const CreateListingModal = () => {
+	const isOpen = useSelector(
+		createListingModalStore,
+		(state) => state.context.isOpen,
+	);
+	return isOpen ? <Modal /> : null;
+};
 
-	if (!isOpen) return null;
-
-	return <Modal />;
-}
-
-function Modal() {
+const Modal = () => {
 	const ctx = useCreateListingModalContext();
 
-	const showApprovalButton =
-		ctx.steps.approve && ctx.steps.approve.status === 'idle';
-
-	const ctas = [
-		...(showApprovalButton && ctx.steps.approve
-			? [
-					{
-						label: 'Approve Token',
-						onClick: ctx.steps.approve.execute,
-						pending: ctx.steps.approve.isPending,
-						disabled:
-							ctx.steps.approve.isDisabled ||
-							!ctx.nextStep ||
-							!!ctx.error ||
-							ctx.isPending,
-						variant: 'glass' as const,
-						testid: 'create-listing-approve-button',
-					},
-				]
-			: []),
-		{
-			label: 'Create Listing',
-			onClick: ctx.steps.list.execute,
-			pending: ctx.steps.list.isPending && !showApprovalButton,
-			disabled:
-				ctx.steps.list.isDisabled ||
-				!ctx.nextStep ||
-				!!ctx.error ||
-				(showApprovalButton && ctx.isPending),
-			testid: 'create-listing-submit-button',
-		},
-	];
-
-	// Error states
-	if ((ctx.error && !ctx.isLoading) || ctx.currencies.available.length === 0) {
-		return (
-			<ErrorModal
-				isOpen={ctx.isOpen}
-				chainId={Number(ctx.item.chainId)}
-				onClose={ctx.close}
-				title="List item for sale"
-				message={
-					ctx.currencies.available.length === 0
-						? 'No currencies configured for this marketplace'
-						: undefined
-				}
-			/>
-		);
+	if (!ctx.isOpen) {
+		return null;
 	}
 
 	return (
 		<ActionModal
-			isOpen={ctx.isOpen}
-			chainId={Number(ctx.item.chainId)}
+			chainId={ctx.item.chainId}
 			onClose={ctx.close}
 			title="List item for sale"
-			ctas={ctas}
-			modalLoading={ctx.isLoading}
-			spinnerContainerClassname="h-[220px]"
-			hideCtas={ctx.steps.fee?.isSelecting}
+			type="listing"
+			primaryAction={
+				ctx.steps.fee?.isSelecting
+					? undefined
+					: (ctx.actions.approve ?? ctx.actions.listing)
+			}
+			secondaryAction={
+				ctx.steps.fee?.isSelecting
+					? undefined
+					: ctx.actions.approve
+						? ctx.actions.listing
+						: undefined
+			}
+			queries={{
+				collectible: ctx.queries.collectible,
+				collection: ctx.queries.collection,
+				currencies: ctx.queries.currencies,
+				collectibleBalance: ctx.queries.collectibleBalance,
+			}}
+			externalError={ctx.error}
 		>
-			<TokenPreview
-				collectionName={ctx.item.collection?.name}
-				collectionAddress={ctx.item.collectionAddress}
-				collectibleId={ctx.item.tokenId}
-				chainId={ctx.item.chainId}
-			/>
+			{({ collectible, collection, currencies, collectibleBalance }) => (
+				<>
+					{currencies.length === 0 && (
+						<div className="text-center text-gray-400">
+							No ERC-20s are configured for the marketplace, contact the
+							marketplace owners
+						</div>
+					)}
 
-			{ctx.steps.approve?.invalidated && (
-				<div className="mb-4 rounded-lg bg-yellow-50 p-3 dark:bg-yellow-900/20">
-					<p className="text-sm text-yellow-800 dark:text-yellow-200">
-						⚠️ You've changed the listing details. Token approval will need to be
-						redone.
-					</p>
-				</div>
-			)}
+					{currencies.length > 0 && (
+						<>
+							<TokenPreview
+								collectionName={collection?.name}
+								collectionAddress={ctx.item.collectionAddress}
+								tokenId={ctx.item.tokenId}
+								chainId={ctx.item.chainId}
+							/>
 
-			<div className="flex w-full flex-col gap-1">
-				<PriceInput
-					chainId={ctx.item.chainId}
-					collectionAddress={ctx.item.collectionAddress}
-					price={{
-						amountRaw: ctx.listing.price.amountRaw,
-						currency: ctx.currencies.selected,
-					}}
-					availableCurrencies={ctx.currencies.available}
-					onPriceChange={(newPrice) => {
-						ctx.listing.price.update(newPrice.amountRaw);
-					}}
-					onCurrencyChange={ctx.currencies.select}
-					disabled={ctx.steps.fee?.isSelecting}
-					modalType="listing"
-				/>
+							{ctx.listing.price.currency && (
+								<PriceInput
+									chainId={ctx.item.chainId}
+									collectionAddress={ctx.item.collectionAddress}
+									price={{
+										amountRaw: ctx.listing.price.amountRaw,
+										currency: ctx.listing.price.currency,
+									}}
+									onPriceChange={(newPrice) => {
+										ctx.form.price.update(newPrice.amountRaw.toString());
+										if (newPrice.currency) {
+											ctx.currencies.select(
+												newPrice.currency.contractAddress as `0x${string}`,
+											);
+										}
+									}}
+									onCurrencyChange={(newCurrency) => {
+										ctx.currencies.select(
+											newCurrency.contractAddress as `0x${string}`,
+										);
+									}}
+									includeNativeCurrency={true}
+									orderbookKind={ctx.item.orderbookKind}
+									modalType="listing"
+									disabled={ctx.flow.isPending}
+								/>
+							)}
 
-				{ctx.listing.price.amountRaw !== '0' && (
-					<FloorPriceText
-						tokenId={ctx.item.tokenId}
-						chainId={ctx.item.chainId}
-						collectionAddress={ctx.item.collectionAddress}
-						price={{
-							amountRaw: ctx.listing.price.amountRaw,
-							currency: ctx.currencies.selected,
-						}}
-					/>
-				)}
-			</div>
+							{ctx.form.isValid && ctx.listing.price.currency && (
+								<FloorPriceText
+									tokenId={ctx.item.tokenId}
+									chainId={ctx.item.chainId}
+									collectionAddress={ctx.item.collectionAddress}
+									price={{
+										amountRaw: ctx.listing.price.amountRaw,
+										currency: ctx.listing.price.currency,
+									}}
+								/>
+							)}
 
-			{ctx.item.collection?.type === 'ERC1155' && ctx.item.balance && (
-				<QuantityInput
-					quantity={ctx.listing.quantity.input}
-					invalidQuantity={!!ctx.listing.quantity.error}
-					onQuantityChange={(quantity) => ctx.listing.quantity.update(quantity)}
-					onInvalidQuantityChange={() => {
-						// Validation is now automatic - no need to manually set invalid state
-					}}
-					decimals={ctx.item.collectible?.decimals || 0}
-					maxQuantity={ctx.item.balanceWithDecimals.toString()}
-					disabled={ctx.steps.fee?.isSelecting}
-				/>
-			)}
+							{collection?.type === 'ERC1155' &&
+								collectibleBalance?.balance && (
+									<QuantityInput
+										quantity={ctx.listing.quantity.parsed}
+										invalidQuantity={!ctx.form.quantity.validation.isValid}
+										onQuantityChange={(quantity) =>
+											ctx.form.quantity.update(quantity.toString())
+										}
+										onInvalidQuantityChange={() => {}}
+										decimals={collectible?.decimals || 0}
+										maxQuantity={BigInt(collectibleBalance.balance)}
+										disabled={ctx.flow.isPending}
+									/>
+								)}
 
-			<ExpirationDateSelect
-				date={ctx.listing.expiry.date}
-				onDateChange={(date) => {
-					// Calculate days from now
-					const days = Math.ceil(
-						(date.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-					);
-					ctx.listing.expiry.update(days > 0 ? days : 7);
-				}}
-				disabled={ctx.steps.fee?.isSelecting}
-			/>
+							<ExpirationDateSelect
+								date={ctx.listing.expiry}
+								onDateChange={(date) => {
+									const days = Math.ceil(
+										(date.getTime() - Date.now()) / (24 * 60 * 60 * 1000),
+									);
+									ctx.form.expiry.update(days);
+								}}
+								disabled={ctx.flow.isPending}
+							/>
 
-			<TransactionDetails
-				collectibleId={ctx.item.tokenId}
-				collectionAddress={ctx.item.collectionAddress}
-				chainId={ctx.item.chainId}
-				price={{
-					amountRaw: ctx.listing.price.amountRaw,
-					currency: ctx.currencies.selected,
-				}}
-				currencyImageUrl={ctx.currencies.selected.imageUrl}
-				includeMarketplaceFee={false}
-			/>
+							<TransactionDetails
+								tokenId={ctx.item.tokenId}
+								collectionAddress={ctx.item.collectionAddress}
+								chainId={ctx.item.chainId}
+								price={{
+									amountRaw: ctx.listing.price.amountRaw,
+									currency: ctx.listing.price.currency as Currency,
+								}}
+								currencyImageUrl={ctx.listing.price.currency?.imageUrl}
+								includeMarketplaceFee={false}
+							/>
 
-			{ctx.steps.fee?.isSelecting && (
-				<SelectWaasFeeOptions
-					chainId={Number(ctx.item.chainId)}
-					onCancel={ctx.steps.fee.cancel}
-					titleOnConfirm="Processing listing..."
-				/>
-			)}
+							{ctx.steps.fee?.isSelecting && (
+								<SelectWaasFeeOptions
+									chainId={ctx.item.chainId}
+									onCancel={ctx.steps.fee.cancel}
+									titleOnConfirm="Creating listing..."
+								/>
+							)}
 
-			{ctx.isPending && !ctx.steps.fee?.isSelecting && (
-				<div className="flex items-center justify-center gap-2 rounded-lg bg-gray-50 px-4 py-3 text-gray-600 text-sm dark:bg-gray-800 dark:text-gray-300">
-					<div className="h-4 w-4 animate-pulse rounded-full bg-blue-500" />
-					{ctx.nextStep === 'approve' &&
-						'Confirm the token approval in your wallet'}
-					{ctx.nextStep === 'list' && 'Confirm the listing in your wallet'}
-				</div>
-			)}
-
-			{ctx.error && (
-				<ErrorLogBox
-					title="An error occurred while listing"
-					message="Please try again"
-					error={ctx.error as Error}
-				/>
+							{ctx.formError && (
+								<div className="mt-2 text-red-500 text-sm">{ctx.formError}</div>
+							)}
+						</>
+					)}
+				</>
 			)}
 		</ActionModal>
 	);
-}
+};

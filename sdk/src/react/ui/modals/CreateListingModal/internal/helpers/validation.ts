@@ -1,116 +1,79 @@
-import type { Dnum } from 'dnum';
-import type { Currency } from '../../../../../_internal';
-import { greaterThan, isPositive, isZero } from './dnum-utils';
+import { type Dnum, greaterThan } from 'dnum';
+import { isPositive } from '../../../_internal/helpers/dnum-utils';
 
 export type FieldValidation = {
 	isValid: boolean;
 	error: string | null;
 };
 
-export type FormValidation = {
+export type ListingValidation = {
 	price: FieldValidation;
 	quantity: FieldValidation;
-	currency: FieldValidation;
-	expiry: FieldValidation;
+	balance?: FieldValidation;
 };
 
-/**
- * Validate listing form fields
- * Pure function - no React hooks, fully testable
- *
- * Now uses dnum for safe decimal comparisons without precision loss
- */
-export function validateListingForm(params: {
+export function validateListingForm({
+	price,
+	quantity,
+	balance,
+}: {
 	price: Dnum;
 	quantity: Dnum;
-	selectedCurrency: Currency | null;
-	expiryDate: Date;
 	balance?: Dnum;
-}): FormValidation {
-	// Price validation - must be > 0
-	const priceValidation: FieldValidation = {
-		isValid: isPositive(params.price),
-		error:
-			isZero(params.price) || !isPositive(params.price)
-				? 'Enter a price greater than 0'
-				: null,
+}): ListingValidation {
+	const validation: ListingValidation = {
+		price: { isValid: true, error: null },
+		quantity: { isValid: true, error: null },
 	};
 
-	// Quantity validation - must be > 0 and <= balance
-	const quantityValidation: FieldValidation = (() => {
-		if (isZero(params.quantity) || !isPositive(params.quantity)) {
-			return {
-				isValid: false,
-				error: 'Enter a quantity greater than 0',
-			};
-		}
-
-		// Check balance if provided - quantity must not exceed balance
-		if (params.balance) {
-			try {
-				if (greaterThan(params.quantity, params.balance)) {
-					return {
-						isValid: false,
-						error: 'Insufficient balance',
-					};
-				}
-			} catch {
-				return {
-					isValid: false,
-					error: 'Invalid quantity format',
-				};
-			}
-		}
-
-		return {
-			isValid: true,
-			error: null,
+	// Price validation
+	if (!isPositive(price)) {
+		validation.price = {
+			isValid: false,
+			error: 'Price must be greater than 0',
 		};
-	})();
+	}
 
-	// Currency validation
-	const currencyValidation: FieldValidation = {
-		isValid: !!params.selectedCurrency?.contractAddress,
-		error: !params.selectedCurrency?.contractAddress
-			? 'Select a currency'
-			: null,
-	};
+	// Quantity validation
+	if (!isPositive(quantity)) {
+		validation.quantity = {
+			isValid: false,
+			error: 'Quantity must be greater than 0',
+		};
+	}
 
-	// Expiry validation
-	const expiryValidation: FieldValidation = {
-		isValid: params.expiryDate > new Date(),
-		error:
-			params.expiryDate <= new Date() ? 'Expiry must be in the future' : null,
-	};
+	// Balance validation (for ERC1155)
+	if (balance && greaterThan(quantity, balance)) {
+		validation.balance = {
+			isValid: false,
+			error: 'Insufficient balance for this quantity',
+		};
+	}
 
-	return {
-		price: priceValidation,
-		quantity: quantityValidation,
-		currency: currencyValidation,
-		expiry: expiryValidation,
-	};
+	return validation;
 }
 
-/**
- * Check if entire form is valid
- * Pure function - no React hooks, fully testable
- */
-export function isFormValid(validation: FormValidation): boolean {
-	return Object.values(validation).every((v) => v.isValid);
-}
-
-/**
- * Get validation errors as a map
- * Pure function - no React hooks, fully testable
- */
-export function getValidationErrors(
-	validation: FormValidation,
-): Record<string, string | null> {
-	return Object.entries(validation).reduce(
-		(acc, [key, val]) => ({
-			...acc,
-			[key]: val.error,
-		}),
-		{},
+export function isFormValid(validation: ListingValidation): boolean {
+	return (
+		validation.price.isValid &&
+		validation.quantity.isValid &&
+		(validation.balance?.isValid ?? true)
 	);
+}
+
+export function getValidationErrors(validation: ListingValidation): string[] {
+	const errors: string[] = [];
+
+	if (validation.price.error) errors.push(validation.price.error);
+	if (validation.quantity.error) errors.push(validation.quantity.error);
+	if (validation.balance?.error) errors.push(validation.balance.error);
+
+	return errors;
+}
+
+export function getFirstValidationError(
+	validation: ListingValidation,
+): string | null {
+	const errors = getValidationErrors(validation);
+	return errors.length > 0 ? errors[0] : null;
 }

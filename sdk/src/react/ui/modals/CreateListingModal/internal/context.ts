@@ -1,598 +1,435 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
-import { addDays } from 'date-fns/addDays';
 import type { Dnum } from 'dnum';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import type { ContractType, Currency } from '../../../../_internal';
+import type { ContractType } from '../../../../_internal';
 import {
-	useBalanceOfCollectible,
-	useCollectible,
-	useCollection,
+	useCollectibleBalance,
+	useCollectibleMetadata,
+	useCollectionMetadata,
+	useConfig,
 	useConnectorMetadata,
-	useMarketCurrencies,
-	useMarketplaceConfig,
+	useCurrencyList,
 } from '../../../../hooks';
-
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../../_internal/components/selectWaasFeeOptions/store';
-// Import pure helper functions
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import {
 	filterCurrenciesForOrderbook,
 	getDefaultCurrency,
-} from './helpers/currency';
+} from '../../_internal/helpers/currency';
+import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
-	fromWeiString,
-	parseInput,
-	toNumber,
-	toWeiString,
-} from './helpers/dnum-utils';
-import {
-	type ApprovalDependencies,
-	isApprovalInvalidated as checkApprovalInvalidated,
-	getInvalidationReason,
-} from './helpers/invalidation';
-import {
-	computeStepDisabledState,
-	createApproveStepGuard,
-	createFormStepGuard,
-	createListStepGuard,
-	type GuardResult,
-} from './helpers/step-guards';
-import {
-	isFormValid as checkFormValid,
-	type FormValidation,
-	getValidationErrors,
-	validateListingForm,
-} from './helpers/validation';
+	createApprovalGuard,
+	createFinalTransactionGuard,
+} from '../../_internal/helpers/step-guards';
+import type {
+	ApprovalStep,
+	FeeStep,
+	TransactionStep,
+} from '../../_internal/types/steps';
+import { isFormValid, validateListingForm } from './helpers/validation';
 import { useListingMutations } from './listing-mutations';
-import { createListingModalStore, useCreateListingModalState } from './store';
-import { useGenerateListingTransaction } from './use-generate-listing-transaction';
+import { useCreateListingModalState } from './store';
 
-export type ListingStepId = 'form' | 'waasFee' | 'approve' | 'list';
-
-export type Step = {
-	id: ListingStepId;
-	label: string;
-	description?: string;
-	status: string;
-	isPending: boolean;
-	isSuccess: boolean;
-	isError: boolean;
-	isDisabled?: boolean;
-	disabledReason?: string | null;
-	isInvalidated?: boolean;
-	invalidationReason?: string | null;
-	validationErrors?: Record<string, string | null> | null;
-	guard: () => GuardResult; // NEW: Step guard function
-	run: () => Promise<unknown>; // Can return void or ProcessStepResult
+export type CreateListingModalSteps = {
+	fee?: FeeStep;
+	approval?: ApprovalStep;
+	listing: TransactionStep;
 };
-
-export type ListStep = Step & { id: 'list' };
-export type ListingSteps = [...Step[], ListStep];
 
 export function useCreateListingModalContext() {
 	const state = useCreateListingModalState();
 	const { address } = useAccount();
-	const { isWaaS } = useConnectorMetadata();
+	const config = useConfig();
 
-	// Data fetching
-	const {
-		data: collectible,
-		isLoading: collectibleIsLoading,
-		error: collectibleError,
-	} = useCollectible({
+	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		collectibleId: state.collectibleId,
+		tokenId: state.tokenId,
 	});
 
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		error: collectionError,
-	} = useCollection({
+	const collectionQuery = useCollectionMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 	});
 
-	const {
-		data: allCurrencies,
-		isLoading: currenciesLoading,
-		error: currenciesError,
-	} = useMarketCurrencies({
+	const currenciesQuery = useCurrencyList({
 		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
 		includeNativeCurrency: true,
 	});
 
-	const { data: balance } = useBalanceOfCollectible({
+	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
-		collectableId: state.collectibleId,
+		tokenId: state.tokenId,
 		userAddress: address ?? undefined,
+		query: {
+			enabled: !!address && collectionQuery.data?.type === 'ERC1155',
+		},
 	});
 
-	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const { isWaaS, isSequence } = useConnectorMetadata();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === state.collectionAddress,
-	);
-
-	const orderbookKind =
-		state.orderbookKind || collectionConfig?.destinationMarketplace;
-
-	// Convert balance to Dnum for consistent handling
-	const balanceDnum: Dnum | undefined = useMemo(() => {
-		if (!balance?.balance || !collectible?.decimals) return undefined;
-		return fromWeiString(balance.balance, collectible.decimals);
-	}, [balance?.balance, collectible?.decimals]);
-
-	const balanceWithDecimals = balanceDnum ? toNumber(balanceDnum) : 0;
-
-	// DERIVE: Filter currencies using pure function
-	const availableCurrencies = useMemo(
-		() =>
-			filterCurrenciesForOrderbook(
-				allCurrencies || [],
-				orderbookKind,
-				state.chainId,
-			),
-		[allCurrencies, orderbookKind, state.chainId],
-	);
-
-	// DERIVE: Selected currency (from user selection OR default)
-	const selectedCurrency = useMemo(() => {
-		// If user explicitly selected, find it
-		if (state.currencyAddress) {
-			const found = availableCurrencies.find(
-				(c) =>
-					c.contractAddress.toLowerCase() ===
-					state.currencyAddress?.toLowerCase(),
-			);
-			if (found) return found;
-		}
-
-		// Otherwise, derive default
-		return (
-			getDefaultCurrency(availableCurrencies, orderbookKind) || ({} as Currency)
+	const availableCurrencies = useMemo(() => {
+		if (!currenciesQuery.data) return [];
+		return filterCurrenciesForOrderbook(
+			currenciesQuery.data,
+			state.orderbookKind,
+			state.chainId,
 		);
-	}, [state.currencyAddress, availableCurrencies, orderbookKind]);
+	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 
-	// DERIVE: Expiry date from days
+	const selectedCurrency = useMemo(() => {
+		if (state.currencyAddress) {
+			return (
+				availableCurrencies.find(
+					(c) => c.contractAddress === state.currencyAddress,
+				) || null
+			);
+		}
+		return getDefaultCurrency(
+			availableCurrencies,
+			state.orderbookKind,
+			'listing',
+		);
+	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
+
 	const expiryDate = useMemo(
-		() => addDays(new Date(), state.expiryDays),
+		() => new Date(Date.now() + state.expiryDays * 24 * 60 * 60 * 1000),
 		[state.expiryDays],
 	);
 
-	// DERIVE: Price as Dnum (safe decimal handling)
-	const priceDnum: Dnum = useMemo(
-		() => parseInput(state.priceInput, selectedCurrency?.decimals ?? 18),
-		[state.priceInput, selectedCurrency?.decimals],
-	);
+	const priceDnum: Dnum = useMemo(() => {
+		if (!state.priceInput || state.priceInput === '') {
+			return [0n, selectedCurrency?.decimals ?? 18];
+		}
+		try {
+			return [
+				BigInt(state.priceInput),
+				selectedCurrency?.decimals ?? 18,
+			] as Dnum;
+		} catch {
+			return [0n, selectedCurrency?.decimals ?? 18];
+		}
+	}, [state.priceInput, selectedCurrency?.decimals]);
+	const priceRaw = priceDnum[0];
 
-	// DERIVE: Price in wei (for smart contract calls)
-	const priceInWei = useMemo(() => toWeiString(priceDnum), [priceDnum]);
+	const quantityDnum: Dnum = useMemo(() => {
+		if (!state.quantityInput || state.quantityInput === '') {
+			return [0n, collectibleQuery.data?.decimals ?? 0];
+		}
+		try {
+			return [
+				BigInt(state.quantityInput),
+				collectibleQuery.data?.decimals ?? 0,
+			] as Dnum;
+		} catch {
+			return [0n, collectibleQuery.data?.decimals ?? 0];
+		}
+	}, [state.quantityInput, collectibleQuery.data?.decimals]);
+	const quantityRaw = quantityDnum[0];
 
-	// DERIVE: Quantity as Dnum (safe decimal handling)
-	const quantityDnum: Dnum = useMemo(
-		() => parseInput(state.quantityInput, collectible?.decimals ?? 0),
-		[state.quantityInput, collectible?.decimals],
-	);
+	const balanceDnum: Dnum | undefined = useMemo(() => {
+		if (
+			collectibleBalanceQuery.data?.balance !== undefined &&
+			collectibleQuery.data?.decimals !== undefined
+		) {
+			return [
+				BigInt(collectibleBalanceQuery.data.balance),
+				collectibleQuery.data.decimals,
+			];
+		}
+		return undefined;
+	}, [collectibleBalanceQuery.data?.balance, collectibleQuery.data?.decimals]);
 
-	// DERIVE: Quantity in smallest unit (for smart contract calls)
-	const quantityInSmallestUnit = useMemo(
-		() => toWeiString(quantityDnum),
-		[quantityDnum],
-	);
-
-	// VALIDATE: Using pure function with Dnum values
-	const validation: FormValidation = useMemo(
+	const validation = useMemo(
 		() =>
 			validateListingForm({
 				price: priceDnum,
 				quantity: quantityDnum,
-				selectedCurrency,
-				expiryDate,
 				balance: balanceDnum,
 			}),
-		[priceDnum, quantityDnum, selectedCurrency, expiryDate, balanceDnum],
+		[priceDnum, quantityDnum, balanceDnum],
 	);
 
-	const isFormValid = checkFormValid(validation);
-	const validationErrors = getValidationErrors(validation);
+	const formIsValid = isFormValid(validation);
 
-	// Transaction generation (only when form is valid)
-	const listingSteps = useGenerateListingTransaction({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-		contractType: collection?.type as ContractType,
-		orderbook: orderbookKind,
-		owner: address,
-		listing: {
-			tokenId: state.collectibleId,
-			quantity: quantityInSmallestUnit,
-			expiry: dateToUnixTime(expiryDate),
-			currencyAddress: selectedCurrency.contractAddress || '',
-			pricePerToken: priceInWei,
-		},
-		additionalFees: [],
-	});
-
-	// Mutations (pass derived price/currency data)
-	const { approve, list } = useListingMutations(listingSteps.data, {
-		priceInWei,
-		currencyAddress: selectedCurrency.contractAddress as Address,
-		currencyDecimals: selectedCurrency.decimals ?? 18,
-	});
-
-	// WaaS integration
-	const waas = useSelectWaasFeeOptionsStore();
-	const [pendingFee] = useWaasFeeOptions();
-	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
-
-	// Invalidation tracking (using pure functions)
-	const approvalDependencies: ApprovalDependencies = useMemo(
-		() => ({
-			currency: selectedCurrency.contractAddress as Address | undefined,
+	const { approve, createListing, needsApproval, nftApprovalQuery } =
+		useListingMutations({
+			chainId: state.chainId,
 			collectionAddress: state.collectionAddress,
-		}),
-		[selectedCurrency.contractAddress, state.collectionAddress],
-	);
+			contractType: collectionQuery.data?.type as ContractType | undefined,
+			orderbookKind: state.orderbookKind,
+			listing: {
+				tokenId: state.tokenId,
+				quantity: quantityRaw,
+				expiry: dateToUnixTime(expiryDate).toString(),
+				currencyAddress:
+					selectedCurrency?.contractAddress ??
+					('0x0000000000000000000000000000000000000000' as Address),
+				pricePerToken: priceRaw,
+			},
+			currencyDecimals: selectedCurrency?.decimals ?? 18,
+			nftApprovalEnabled:
+				!!address &&
+				!!collectionQuery.data?.type &&
+				!!state.orderbookKind &&
+				state.isOpen &&
+				!isSequence,
+		});
 
-	const prevApprovalDeps = useRef(approvalDependencies);
+	const waas = useSelectWaasFeeOptionsStore();
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(state.chainId, config);
+	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
 
-	// Detect if approval-critical fields changed
-	const isApprovalInvalidated = useMemo(
-		() =>
-			checkApprovalInvalidated(
-				prevApprovalDeps.current,
-				approvalDependencies,
-				approve.isSuccess,
-			),
-		[approvalDependencies, approve.isSuccess],
-	);
-
-	const invalidationReason = useMemo(
-		() =>
-			isApprovalInvalidated
-				? getInvalidationReason(prevApprovalDeps.current, approvalDependencies)
-				: null,
-		[isApprovalInvalidated, approvalDependencies],
-	);
-
-	// Reset approval if invalidated
 	useEffect(() => {
-		if (isApprovalInvalidated) {
-			console.log(
-				'[CreateListingModal] Approval invalidated - currency changed',
-			);
-			approve.reset();
-			prevApprovalDeps.current = approvalDependencies;
+		if (
+			!isSponsored &&
+			!waas.isVisible &&
+			!!pendingFeeOptionConfirmation?.options
+		) {
+			waas.show();
 		}
-	}, [isApprovalInvalidated, approve, approvalDependencies]);
+	}, [pendingFeeOptionConfirmation?.options, isSponsored, waas.isVisible]);
 
-	// Step orchestration (ALWAYS show steps, gate with disabled states)
-	const steps: Step[] = [];
+	const steps: CreateListingModalSteps = {} as CreateListingModalSteps;
 
-	// Step 1: Form (always visible)
-	const formStepGuard = createFormStepGuard({
-		isFormValid,
-		validationErrors,
-	});
-
-	steps.push({
-		id: 'form' satisfies ListingStepId,
-		label: 'Set Listing Details',
-		description: 'Price, quantity, and expiry',
-		status: isFormValid ? 'success' : 'idle',
-		isPending: false,
-		isSuccess: isFormValid,
-		isError: false,
-		isDisabled: false,
-		validationErrors: !isFormValid ? validationErrors : null,
-		guard: formStepGuard,
-		run: async () => {
-			const guardResult = formStepGuard();
-			if (!guardResult.canProceed) {
-				throw new Error(guardResult.reason || 'Form validation failed');
-			}
-		},
-	});
-
-	// Step 2: WaaS fee selection if needed
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
-		steps.push({
-			id: 'waasFee' satisfies ListingStepId,
+
+		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'success' : 'idle',
-			isPending: false,
-			isSuccess: feeSelected,
-			isError: false,
-			guard: () => ({ canProceed: true }),
-			run: () => {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-				return Promise.resolve();
-			},
-		});
+			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			isSponsored,
+			isSelecting: waas.isVisible,
+			selectedOption: waas.selectedFeeOption,
+			show: () => waas.show(),
+			cancel: () => waas.hide(),
+		};
 	}
 
-	// Step 3: Approve (ALWAYS show if approval is/was needed, gate with disabled state)
-	const requiresApproval = listingSteps.data?.approveStep;
-	if (requiresApproval || !isFormValid || approve.isSuccess) {
-		const approveDisabledState = computeStepDisabledState('approve', {
-			isFormValid,
-			txReady: !!listingSteps.data?.approveStep,
-			requiresApproval: !!requiresApproval,
-			approvalComplete: approve.isSuccess,
+	const approveData = approve.data;
+	const approveTransactionHash =
+		approveData && 'type' in approveData && approveData.type === 'transaction'
+			? approveData.hash
+			: undefined;
+
+	if (needsApproval && !approve.isSuccess) {
+		const approvalGuard = createApprovalGuard({
+			isFormValid: formIsValid,
+			txReady: true,
 			walletConnected: !!address,
 		});
+		const guardResult = approvalGuard();
 
-		const approveStepGuard = createApproveStepGuard({
-			isFormValid,
-			txReady: !!listingSteps.data?.approveStep,
-			walletConnected: !!address,
-		});
-
-		steps.push({
-			id: 'approve' satisfies ListingStepId,
-			label: 'Approve Token',
-			description: 'Allow marketplace to access your tokens',
+		steps.approval = {
+			label: 'Approve',
 			status: approve.isSuccess
 				? 'success'
 				: approve.isPending
 					? 'pending'
-					: 'idle',
+					: approve.error
+						? 'error'
+						: 'idle',
 			isPending: approve.isPending,
 			isSuccess: approve.isSuccess,
-			isError: !!approve.error,
-			isDisabled: approveDisabledState.isDisabled,
-			disabledReason: approveDisabledState.disabledReason,
-			isInvalidated: isApprovalInvalidated,
-			invalidationReason,
-			guard: approveStepGuard,
-			run: async () => {
-				const guardResult = approveStepGuard();
-				if (!guardResult.canProceed) {
-					throw new Error(guardResult.reason || 'Cannot approve at this time');
-				}
-				return approve.mutateAsync();
+			isDisabled: !guardResult.canProceed,
+			disabledReason: guardResult.error?.message || null,
+			error: approve.error,
+			canExecute: guardResult.canProceed,
+			result: approveTransactionHash
+				? { type: 'transaction', hash: approveTransactionHash }
+				: null,
+			execute: async () => {
+				await approve.mutateAsync();
 			},
-		});
+			reset: () => approve.reset(),
+		};
 	}
 
-	// Step 4: List (ALWAYS show, gate with disabled state)
-	const listDisabledState = computeStepDisabledState('list', {
-		isFormValid,
-		txReady: !!listingSteps.data?.listStep,
-		requiresApproval: !!requiresApproval,
-		approvalComplete: approve.isSuccess,
+	const listingGuard = createFinalTransactionGuard({
+		isFormValid: formIsValid,
+		txReady: true,
 		walletConnected: !!address,
+		requiresApproval: needsApproval && !approve.isSuccess,
+		approvalComplete: approve.isSuccess || !needsApproval,
 	});
+	const listingGuardResult = listingGuard();
 
-	const listStepGuard = createListStepGuard({
-		isFormValid,
-		txReady: !!listingSteps.data?.listStep,
-		requiresApproval: !!requiresApproval,
-		approvalComplete: approve.isSuccess,
-		walletConnected: !!address,
-		isApprovalInvalidated,
-	});
+	const listingData = createListing.data;
+	const listingTransactionHash = listingData?.hash;
+	const listingOrderId = listingData?.orderId;
 
-	steps.push({
-		id: 'list' satisfies ListingStepId,
+	steps.listing = {
 		label: 'Create Listing',
-		description: 'Sign transaction to create your listing',
-		status: list.status,
-		isPending: list.isPending,
-		isSuccess: list.isSuccess,
-		isError: !!list.error,
-		isDisabled: listDisabledState.isDisabled,
-		disabledReason: listDisabledState.disabledReason,
-		guard: listStepGuard,
-		run: async () => {
-			const guardResult = listStepGuard();
-			if (!guardResult.canProceed) {
-				throw new Error(guardResult.reason || 'Cannot list at this time');
-			}
-			return list.mutateAsync();
-		},
-	});
-
-	// Computed state
-	const isPending =
-		approve.isPending || list.isPending || listingSteps.isLoading;
-
-	const error =
-		approve.error ||
-		list.error ||
-		listingSteps.error ||
-		collectibleError ||
-		collectionError ||
-		currenciesError;
-
-	// Find approve and list steps from the steps array
-	const approveStepFromArray = steps.find((s) => s.id === 'approve');
-	const listStepFromArray = steps.find((s) => s.id === 'list')!;
-
-	// Build steps object with clear named properties
-	const feeStep =
-		isWaaS && waas.isVisible
-			? {
-					status: (waas.selectedFeeOption || isSponsored
-						? 'complete'
-						: 'idle') as 'idle' | 'complete',
-					isSponsored,
-					isSelecting: waas.isVisible,
-					selectedOption: waas.selectedFeeOption,
-					cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
-				}
-			: undefined;
-
-	const approveStep = approveStepFromArray
-		? {
-				status: (approveStepFromArray.isSuccess
-					? 'complete'
-					: approveStepFromArray.isPending
-						? 'pending'
-						: approveStepFromArray.isError
-							? 'error'
-							: 'idle') as 'idle' | 'pending' | 'complete' | 'error',
-				canExecute: !approveStepFromArray.isDisabled && isFormValid,
-				isPending: approveStepFromArray.isPending,
-				isComplete: approveStepFromArray.isSuccess,
-				isDisabled: approveStepFromArray.isDisabled,
-				disabledReason: approveStepFromArray.disabledReason,
-				error: approveStepFromArray.isError
-					? (new Error('Approval failed') as Error)
-					: null,
-				txHash: approve.data?.type === 'transaction' ? approve.data.hash : null,
-				invalidated: isApprovalInvalidated,
-				invalidationReason: approveStepFromArray.invalidationReason || null,
-				execute: async () => {
-					await approveStepFromArray.run();
-				},
-			}
-		: undefined;
-
-	const listStepObj = {
-		status: (listStepFromArray.isSuccess
-			? 'complete'
-			: listStepFromArray.isPending
+		status: createListing.isSuccess
+			? 'success'
+			: createListing.isPending
 				? 'pending'
-				: listStepFromArray.isError
+				: createListing.error
 					? 'error'
-					: 'idle') as 'idle' | 'pending' | 'complete' | 'error',
-		canExecute:
-			!listStepFromArray.isDisabled &&
-			isFormValid &&
-			(!approveStepFromArray || approveStepFromArray.isSuccess),
-		isPending: listStepFromArray.isPending,
-		isComplete: listStepFromArray.isSuccess,
-		isDisabled: listStepFromArray.isDisabled,
-		disabledReason: listStepFromArray.disabledReason,
-		error: listStepFromArray.isError
-			? (new Error('Listing failed') as Error)
-			: null,
-		txHash: list.data?.type === 'transaction' ? list.data.hash : null,
-		orderId: null, // TODO: Get from transaction result
+					: 'idle',
+		isPending: createListing.isPending,
+		isSuccess: createListing.isSuccess,
+		isDisabled: !listingGuardResult.canProceed,
+		disabledReason: listingGuardResult.error?.message || null,
+		error: createListing.error,
+		canExecute: listingGuardResult.canProceed,
+		result: listingTransactionHash
+			? { type: 'transaction', hash: listingTransactionHash }
+			: listingOrderId
+				? { type: 'signature', orderId: listingOrderId }
+				: null,
 		execute: async () => {
-			await listStepFromArray.run();
+			await createListing.mutateAsync();
 		},
 	};
 
-	// Determine current and next steps
-	const formStepStatus = isFormValid
-		? ('complete' as const)
-		: ('idle' as const);
-	let currentStep: 'form' | 'fee' | 'approve' | 'list' = 'form';
-	let nextStepValue: 'fee' | 'approve' | 'list' | null = null;
+	const flow = computeFlowState(steps);
 
-	if (!isFormValid) {
-		currentStep = 'form';
-		nextStepValue = null;
-	} else if (feeStep && feeStep.status !== 'complete') {
-		currentStep = 'fee';
-		nextStepValue = 'fee';
-	} else if (approveStep && !approveStep.isComplete) {
-		currentStep = 'approve';
-		nextStepValue = 'approve';
-	} else if (!listStepObj.isComplete) {
-		currentStep = 'list';
-		nextStepValue = 'list';
-	} else {
-		currentStep = 'list';
-		nextStepValue = null;
-	}
+	const error =
+		nftApprovalQuery.error ||
+		collectibleQuery.error ||
+		collectionQuery.error ||
+		currenciesQuery.error ||
+		collectibleBalanceQuery.error;
 
-	// Calculate progress
-	const totalProgressSteps = 1 + (feeStep ? 1 : 0) + (approveStep ? 1 : 0) + 1; // form + fee? + approve? + list
-	let completedProgressSteps = 0;
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation.id);
+		}
+		waas.hide();
+		state.closeModal();
+	};
 
-	if (formStepStatus === 'complete') completedProgressSteps++;
-	if (feeStep && feeStep.status === 'complete') completedProgressSteps++;
-	if (approveStep?.isComplete) completedProgressSteps++;
-	if (listStepObj.isComplete) completedProgressSteps++;
-
-	const progressPercent = Math.round(
-		(completedProgressSteps / totalProgressSteps) * 100,
-	);
-
-	// FLAT API
 	return {
-		// Modal state
 		isOpen: state.isOpen,
-		close: state.closeModal,
+		close: handleClose,
 
-		// Item data
 		item: {
-			tokenId: state.collectibleId,
-			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
-			collectible: collectible,
-			collection: collection,
-			balance: balance,
-			balanceWithDecimals,
+			collectionAddress: state.collectionAddress,
+			tokenId: state.tokenId,
+			orderbookKind: state.orderbookKind,
 		},
 
-		// Listing configuration (simplified, matching plan structure)
 		listing: {
 			price: {
 				input: state.priceInput,
-				amountRaw: priceInWei,
-				dnum: priceDnum,
-				error: validation.price.error,
-				update: (value: string) =>
-					createListingModalStore.send({ type: 'updatePrice', value }),
+				amountRaw: priceRaw,
+				currency: selectedCurrency,
 			},
 			quantity: {
 				input: state.quantityInput,
-				amountRaw: quantityInSmallestUnit,
-				dnum: quantityDnum,
-				error: validation.quantity.error,
-				update: (value: string) =>
-					createListingModalStore.send({ type: 'updateQuantity', value }),
+				parsed: quantityRaw,
+			},
+			expiry: expiryDate,
+		},
+
+		form: {
+			price: {
+				input: state.priceInput,
+				update: state.updatePriceInput,
+				touch: state.touchPriceInput,
+				isTouched: state.isPriceTouched,
+			},
+			quantity: {
+				input: state.quantityInput,
+				update: state.updateQuantityInput,
+				touch: state.touchQuantityInput,
+				isTouched: state.isQuantityTouched,
+				validation: validation.quantity,
 			},
 			expiry: {
-				days: state.expiryDays,
-				date: expiryDate,
-				update: (days: number) =>
-					createListingModalStore.send({ type: 'updateExpiryDays', days }),
+				update: state.updateExpiryDays,
+			},
+			isValid: formIsValid,
+			validation: {
+				price: validation.price,
+				quantity: validation.quantity,
+				balance: validation.balance,
+			},
+			errors: {
+				price: state.isPriceTouched ? validation.price.error : undefined,
+				quantity: state.isQuantityTouched
+					? validation.quantity.error
+					: undefined,
+				balance: state.isQuantityTouched
+					? validation.balance?.error
+					: undefined,
 			},
 		},
 
-		// Currencies (flat)
 		currencies: {
-			all: allCurrencies || [],
 			available: availableCurrencies,
 			selected: selectedCurrency,
-			select: (currency: Currency) => {
-				createListingModalStore.send({
-					type: 'selectCurrency',
-					address: currency.contractAddress as Address,
-				});
-			},
+			select: state.updateCurrency,
+			isConfigured: availableCurrencies.length > 0,
 		},
 
-		// Steps (named properties for obvious flow)
-		steps: {
-			fee: feeStep,
-			approve: approveStep,
-			list: listStepObj,
+		steps,
+		flow,
+
+		loading: {
+			collectible: collectibleQuery.isLoading,
+			collection: collectionQuery.isLoading,
+			currencies: currenciesQuery.isLoading,
+			collectibleBalance: collectibleBalanceQuery.isLoading,
+			nftApproval: nftApprovalQuery.isLoading,
 		},
 
-		// Global state (flat, top level)
-		isLoading: collectibleIsLoading || collectionIsLoading || currenciesLoading,
-		isPending,
-		isComplete: listStepObj.isComplete,
-		currentStep,
-		nextStep: nextStepValue,
-		progress: progressPercent,
+		transactions: {
+			approve: approveTransactionHash,
+			listing: listingTransactionHash,
+		},
+
 		error,
+		queries: {
+			collectible: collectibleQuery,
+			collection: collectionQuery,
+			currencies: currenciesQuery,
+			collectibleBalance: collectibleBalanceQuery,
+		},
+
+		// Computed helpers for simpler consumption
+		get formError() {
+			if (!this.currencies.isConfigured) {
+				return 'No ERC-20 currencies are configured for this marketplace';
+			}
+			return (
+				this.form.errors.price ||
+				this.form.errors.quantity ||
+				this.form.errors.balance
+			);
+		},
+
+		get actions() {
+			const needsApprovalAction =
+				this.steps.approval && this.steps.approval.status !== 'success';
+			const currenciesBlocked = !this.currencies.isConfigured;
+
+			return {
+				approve: needsApprovalAction
+					? {
+							label: this.steps.approval?.label,
+							onClick: this.steps.approval?.execute || (() => {}),
+							loading: this.steps.approval?.isPending,
+							disabled: this.steps.approval?.isDisabled || currenciesBlocked,
+							testid: 'create-listing-approve-button',
+						}
+					: undefined,
+				listing: {
+					label: this.steps.listing.label,
+					onClick: this.steps.listing.execute,
+					loading: this.steps.listing.isPending,
+					disabled: this.steps.listing.isDisabled || currenciesBlocked,
+					variant: needsApprovalAction ? ('ghost' as const) : undefined,
+					testid: 'create-listing-submit-button',
+				},
+			};
+		},
 	};
 }
 

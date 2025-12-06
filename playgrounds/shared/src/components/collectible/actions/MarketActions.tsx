@@ -1,11 +1,12 @@
 import {
 	AddIcon,
-	ButtonPreset,
+	Button,
 	Card,
 	CartIcon,
 	SendIcon,
 	Text,
 } from '@0xsequence/design-system';
+import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -14,21 +15,20 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { toast } from 'sonner';
 import type { Address } from 'viem';
-import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
 export function MarketActionsCard({
 	lowestListing,
 	orderbookKind,
 	collectionAddress,
 	chainId,
-	collectibleId,
+	tokenId,
 	isOwner,
 }: {
 	lowestListing: Order | undefined | null;
 	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	isOwner: boolean;
 }) {
 	const shouldShowBuyButton = !!lowestListing;
@@ -66,12 +66,18 @@ export function MarketActionsCard({
 		},
 	});
 
-	const { show: openTransferModal } = useTransferModal();
+	const { show: openTransferModal } = useTransferModal({
+		prefetch: {
+			collectionAddress,
+			chainId,
+			tokenId,
+		},
+	});
 
 	const hooksProps = {
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 	};
 
 	return (
@@ -86,38 +92,42 @@ export function MarketActionsCard({
 						<Text variant="small" color="text80">
 							Current Price: ${lowestListing?.priceUSDFormatted}
 						</Text>
-						<ButtonPreset
+						<Button
 							variant="primary"
 							onClick={() =>
 								openBuyModal({
 									collectionAddress,
 									chainId,
-									collectibleId,
+									tokenId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
 								})
 							}
-							leftIcon={CartIcon}
 							disabled={isOwner}
-							label="Buy Now"
 							className="w-full"
-						/>
+						>
+							<CartIcon />
+							Buy Now
+						</Button>
 					</div>
 				)}
 
 				{!isOwner && (
-					<ButtonPreset
+					<Button
 						variant="secondary"
 						onClick={() =>
 							openMakeOfferModal({
-								...hooksProps,
+								collectionAddress,
+								chainId,
+								tokenId,
 								orderbookKind,
 							})
 						}
-						leftIcon={AddIcon}
-						label="Make Offer"
 						className="w-full"
-					/>
+					>
+						<AddIcon />
+						Make Offer
+					</Button>
 				)}
 
 				{isOwner && (
@@ -126,7 +136,7 @@ export function MarketActionsCard({
 							Owner Actions
 						</Text>
 						<div className="flex flex-row gap-2">
-							<ButtonPreset
+							<Button
 								variant="secondary"
 								onClick={() =>
 									openCreateListingModal({
@@ -134,23 +144,25 @@ export function MarketActionsCard({
 										orderbookKind,
 									})
 								}
-								rightIcon={AddIcon}
-								label="Create Listing"
 								className="w-full"
-							/>
-							<ButtonPreset
+							>
+								Create Listing
+								<AddIcon />
+							</Button>
+							<Button
 								variant="secondary"
 								onClick={() =>
 									openTransferModal({
 										collectionAddress,
 										chainId,
-										collectibleId,
+										tokenId,
 									})
 								}
-								rightIcon={SendIcon}
-								label="Transfer"
 								className="w-full"
-							/>
+							>
+								Transfer
+								<SendIcon />
+							</Button>
 						</div>
 					</div>
 				)}

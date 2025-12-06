@@ -1,10 +1,10 @@
+import type { Step } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types/index';
 import {
 	type GenerateSellTransactionRequest,
 	getMarketplaceClient,
 } from '../../_internal';
-import type { Step } from '../../_internal/api/marketplace.gen';
 import { useConfig } from '../config/useConfig';
 
 interface UseGenerateSellTransactionRequest {
@@ -20,14 +20,10 @@ type GenerateSellTransactionRequestWithNumberChainId = Omit<
 export const generateSellTransaction = async (
 	args: GenerateSellTransactionRequestWithNumberChainId,
 	config: SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const argsWithStringChainId = {
-		...args,
-		chainId: String(args.chainId),
-	} satisfies GenerateSellTransactionRequest;
 	return marketplaceClient
-		.generateSellTransaction(argsWithStringChainId)
+		.generateSellTransaction(args)
 		.then((data) => data.steps);
 };
 
@@ -37,7 +33,12 @@ export const useGenerateSellTransaction = (
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
-		onSuccess: params.onSuccess,
+		onSuccess: (data) => {
+			// Only pass the data (steps) to the user's onSuccess callback to maintain backwards compatibility
+			if (params.onSuccess) {
+				params.onSuccess(data);
+			}
+		},
 		mutationFn: (
 			args: Omit<GenerateSellTransactionRequestWithNumberChainId, 'chainId'>,
 		) => generateSellTransaction({ ...args, chainId: params.chainId }, config),

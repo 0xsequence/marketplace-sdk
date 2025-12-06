@@ -32,11 +32,14 @@ const SelectWaasFeeOptions = ({
 		insufficientBalance,
 		feeOptionsConfirmed,
 		handleConfirmFeeOption,
+		rejectPendingFeeOption,
 	} = useWaasFeeOptionManager(chainId);
 
-	console.log('pendingFeeOptionConfirmation', pendingFeeOptionConfirmation);
-
 	const handleCancelFeeOption = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
 		hide();
 		onCancel?.();
 	};
@@ -79,6 +82,7 @@ const SelectWaasFeeOptions = ({
 						}
 						selectedFeeOption={selectedFeeOption}
 						onSelectedFeeOptionChange={setSelectedFeeOption}
+						currencyBalance={currencyBalance}
 					/>
 				</div>
 			)}
@@ -86,7 +90,7 @@ const SelectWaasFeeOptions = ({
 			<div className="flex w-full items-start justify-between">
 				{!feeOptionsConfirmed &&
 					(!pendingFeeOptionConfirmation || currencyBalanceLoading) && (
-						<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
+						<Skeleton className="h-4 w-2/3 animate-shimmer rounded-xl" />
 					)}
 
 				{(feeOptionsConfirmed ||

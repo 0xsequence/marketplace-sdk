@@ -1,22 +1,17 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Address, Hex } from 'viem';
-import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 
 import { TransactionType } from '../../../../../_internal/types';
-import { useCollectionDetail, useTransferTokens } from '../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../hooks/config/useConnectorMetadata';
+import { useCollectionDetail, useTransferTokens } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModalStore, useModalState } from '../../store';
 
 const useHandleTransfer = () => {
-	const {
-		receiverAddress,
-		collectionAddress,
-		collectibleId,
-		quantity,
-		chainId,
-	} = useModalState();
+	const { receiverAddress, collectionAddress, tokenId, quantity, chainId } =
+		useModalState();
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -32,9 +27,10 @@ const useHandleTransfer = () => {
 
 	const getHash = async (): Promise<Hex> => {
 		const baseParams = {
+			// receiverAddress is validated by isAddress() in WalletAddressInput before transfer is enabled
 			receiverAddress: receiverAddress as Address,
 			collectionAddress,
-			tokenId: collectibleId,
+			tokenId,
 			chainId,
 		};
 
@@ -49,7 +45,7 @@ const useHandleTransfer = () => {
 		return await transferTokensAsync({
 			...baseParams,
 			contractType: ContractType.ERC1155,
-			quantity: String(quantity),
+			quantity: quantity.toString(),
 		});
 	};
 
@@ -75,7 +71,7 @@ const useHandleTransfer = () => {
 				hash,
 				collectionAddress,
 				chainId,
-				collectibleId,
+				tokenId,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
 					['token', 'balances'],

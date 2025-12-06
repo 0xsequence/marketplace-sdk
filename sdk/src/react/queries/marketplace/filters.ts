@@ -1,32 +1,32 @@
-import type {
-	GetTokenMetadataPropertyFiltersArgs,
-	PropertyFilter,
-} from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
-import { FilterCondition, type SdkConfig } from '../../../types';
+import type { PropertyFilter } from '@0xsequence/api-client';
+import type { Address } from 'viem';
+import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
+	buildQueryOptions,
 	getMetadataClient,
 	getQueryClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from './config';
+import { createMarketplaceQueryKey } from './queryKeys';
 
 export interface FetchFiltersParams {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	showAllFilters?: boolean;
 	excludePropertyValues?: boolean;
-	config: SdkConfig;
 }
 
 /**
  * Fetches collection filters from the Metadata API with optional marketplace filtering
  */
 export async function fetchFilters(
-	params: FetchFiltersParams,
+	params: WithRequired<
+		FiltersQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ): Promise<PropertyFilter[]> {
 	const {
 		chainId,
@@ -38,14 +38,14 @@ export async function fetchFilters(
 
 	const metadataClient = getMetadataClient(config);
 
-	const filters = await metadataClient
-		.getTokenMetadataPropertyFilters({
-			chainID: chainId.toString(),
-			contractAddress: collectionAddress,
-			excludeProperties: [],
-			excludePropertyValues,
-		})
-		.then((resp) => resp.filters);
+	const result = await metadataClient.getTokenMetadataPropertyFilters({
+		chainId,
+		collectionAddress,
+		excludeProperties: [],
+		excludePropertyValues,
+	});
+
+	const filters = result.filters as PropertyFilter[];
 
 	if (showAllFilters) return filters;
 
@@ -106,47 +106,29 @@ export async function fetchFilters(
 	return sortedFilters;
 }
 
-export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
-	query?: StandardQueryOptions;
-};
+export type FiltersQueryOptions = SdkQueryParams<FetchFiltersParams>;
 
 export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	const apiArgs = {
-		chainID: String(params.chainId),
-		contractAddress: params.collectionAddress,
+		chainId: params.chainId,
+		collectionAddress: params.collectionAddress,
 		excludeProperties: undefined,
 		excludePropertyValues: params.excludePropertyValues,
-	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
+	};
 
-	return [
-		'filters',
-		apiArgs,
-		{ showAllFilters: params.showAllFilters },
-	] as const;
+	return createMarketplaceQueryKey('filters', {
+		...apiArgs,
+		showAllFilters: params.showAllFilters,
+	});
 }
 
 export function filtersQueryOptions(params: FiltersQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.collectionAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getFiltersQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchFilters,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getFiltersQueryKey(params),
-		queryFn: () =>
-			fetchFilters({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				showAllFilters: params.showAllFilters,
-				excludePropertyValues: params.excludePropertyValues,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

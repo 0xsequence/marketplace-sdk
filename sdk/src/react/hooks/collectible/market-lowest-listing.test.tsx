@@ -1,19 +1,19 @@
+import * as marketplaceGen from '@0xsequence/api-client';
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockMarketplaceEndpoint, mockOrder } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockMarketplaceEndpoint,
-	mockOrder,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import * as marketplaceGen from '../../_internal/api/marketplace.gen';
 import { useCollectibleMarketLowestListing } from './market-lowest-listing';
 
 describe('useCollectibleMarketLowestListing', () => {
 	const defaultArgs = {
 		chainId: 1,
-		collectionAddress: zeroAddress as `0x${string}`,
-		tokenId: '1',
+		collectionAddress: zeroAddress,
+		tokenId: 1n,
 	};
 
 	it('should fetch lowest listing data successfully', async () => {
@@ -77,7 +77,7 @@ describe('useCollectibleMarketLowestListing', () => {
 			...defaultArgs,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-			tokenId: '2',
+			tokenId: 2n,
 		};
 
 		rerender(() => useCollectibleMarketLowestListing(newArgs));

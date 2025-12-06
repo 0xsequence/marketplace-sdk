@@ -1,31 +1,33 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	CollectiblesFilter,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
-} from '../../_internal/api/marketplace.gen';
-import type { StandardQueryOptions } from '../../types/query';
+} from '@0xsequence/api-client';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchCountOfCollectablesParams {
-	chainId: number;
-	collectionAddress: string;
-	config: SdkConfig;
+export interface FetchCountOfCollectablesParams
+	extends GetCountOfAllCollectiblesRequest {
 	filter?: CollectiblesFilter;
 	side?: OrderSide;
 }
+
+export type CountOfCollectablesQueryOptions =
+	SdkQueryParams<FetchCountOfCollectablesParams>;
 
 /**
  * Fetches count of collectibles from the marketplace API
  */
 export async function fetchCountOfCollectables(
-	params: FetchCountOfCollectablesParams,
+	params: WithRequired<
+		CountOfCollectablesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
 ) {
 	const { collectionAddress, chainId, config, filter, side } = params;
 
@@ -33,8 +35,8 @@ export async function fetchCountOfCollectables(
 
 	if (filter && side) {
 		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
-			contractAddress: collectionAddress,
-			chainId: String(chainId),
+			collectionAddress,
+			chainId,
 			filter,
 			side,
 		};
@@ -44,18 +46,13 @@ export async function fetchCountOfCollectables(
 	}
 
 	const apiArgs: GetCountOfAllCollectiblesRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		collectionAddress,
+		chainId,
 	};
 
 	const result = await client.getCountOfAllCollectibles(apiArgs);
 	return result.count;
 }
-
-export type CountOfCollectablesQueryOptions =
-	ValuesOptional<FetchCountOfCollectablesParams> & {
-		query?: StandardQueryOptions;
-	};
 
 /**
  * Query key structure: [resource, operation, params]
@@ -64,49 +61,27 @@ export type CountOfCollectablesQueryOptions =
 export function getCountOfCollectablesQueryKey(
 	params: CountOfCollectablesQueryOptions,
 ) {
-	if (params.filter && params.side) {
-		const apiArgs = {
-			chainId: String(params.chainId),
-			contractAddress: params.collectionAddress,
+	return [
+		'collectible',
+		'market-count',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
 			filter: params.filter,
 			side: params.side,
-		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesRequest>;
-
-		return ['collectible', 'market-count', apiArgs] as const;
-	}
-
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesRequest>;
-
-	return ['collectible', 'market-count', apiArgs] as const;
+		},
+	] as const;
 }
 
 export function countOfCollectablesQueryOptions(
 	params: CountOfCollectablesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCountOfCollectablesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchCountOfCollectables,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCountOfCollectablesQueryKey(params),
-		queryFn: () =>
-			fetchCountOfCollectables({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				filter: params.filter,
-				side: params.side,
-			}),
-		...params.query,
-		enabled,
-	});
 }

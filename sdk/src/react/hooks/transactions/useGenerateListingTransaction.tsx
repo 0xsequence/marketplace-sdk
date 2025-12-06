@@ -37,15 +37,15 @@ type GenerateListingTransactionRequestWithNumberChainId = Omit<
 export const generateListingTransaction = async (
 	params: GenerateListingTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
-		chainId: String(params.chainId),
+		chainId: params.chainId,
 		listing: {
 			...params.listing,
 			expiry: dateToUnixTime(params.listing.expiry),
 		},
-	} satisfies GenerateListingTransactionRequest;
+	};
 	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };
@@ -56,7 +56,12 @@ export const useGenerateListingTransaction = (
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
-		onSuccess: params.onSuccess,
+		onSuccess: (data) => {
+			// Only pass the data (steps) to the user's onSuccess callback to maintain backwards compatibility
+			if (params.onSuccess) {
+				params.onSuccess(data);
+			}
+		},
 		mutationFn: (
 			args: Omit<GenerateListingTransactionRequestWithNumberChainId, 'chainId'>,
 		) =>

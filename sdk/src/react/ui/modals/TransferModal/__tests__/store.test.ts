@@ -16,7 +16,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.isOpen).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toBe(1n);
 			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.hash).toBeUndefined();
 			expect(state.context.onSuccess).toBeUndefined();
@@ -27,7 +27,7 @@ describe('TransferModal Store', () => {
 	describe('Open Action', () => {
 		const mockOpenArgs: ShowTransferModalArgs = {
 			collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-			collectibleId: '123',
+			tokenId: 123n,
 			chainId: 1,
 		};
 
@@ -40,7 +40,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.collectionAddress).toBe(
 				mockOpenArgs.collectionAddress,
 			);
-			expect(state.context.collectibleId).toBe(mockOpenArgs.collectibleId);
+			expect(state.context.tokenId).toBe(mockOpenArgs.tokenId);
 			expect(state.context.chainId).toBe(mockOpenArgs.chainId);
 		});
 
@@ -65,7 +65,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: 5n,
 			});
 
 			// Then open modal
@@ -74,7 +74,7 @@ describe('TransferModal Store', () => {
 			const state = transferModalStore.getSnapshot();
 
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toBe(1n);
 			expect(state.context.hash).toBeUndefined();
 		});
 	});
@@ -83,7 +83,7 @@ describe('TransferModal Store', () => {
 		it('should reset all state when closing', () => {
 			const mockOpenArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -92,7 +92,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: 5n,
 			});
 			transferModalStore.send({ type: 'startTransfer' });
 
@@ -103,7 +103,7 @@ describe('TransferModal Store', () => {
 
 			expect(state.context.isOpen).toBe(false);
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toBe(1n);
 			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.onSuccess).toBeUndefined();
@@ -127,11 +127,11 @@ describe('TransferModal Store', () => {
 		it('should update quantity', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '10',
+				quantity: 10n,
 			});
 
 			const state = transferModalStore.getSnapshot();
-			expect(state.context.quantity).toBe('10');
+			expect(state.context.quantity).toBe(10n);
 		});
 
 		it('should update both receiver address and quantity', () => {
@@ -140,12 +140,12 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: newAddress,
-				quantity: '5',
+				quantity: 5n,
 			});
 
 			const state = transferModalStore.getSnapshot();
 			expect(state.context.receiverAddress).toBe(newAddress);
-			expect(state.context.quantity).toBe('5');
+			expect(state.context.quantity).toBe(5n);
 		});
 
 		it('should only update provided fields', () => {
@@ -153,18 +153,18 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: 5n,
 			});
 
 			// Update only quantity
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '10',
+				quantity: 10n,
 			});
 
 			const state = transferModalStore.getSnapshot();
 			expect(state.context.receiverAddress).toBe('0x123');
-			expect(state.context.quantity).toBe('10');
+			expect(state.context.quantity).toBe(10n);
 		});
 	});
 
@@ -198,7 +198,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onSuccess },
 			});
@@ -214,7 +214,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 			});
 
@@ -244,7 +244,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onError },
 			});
@@ -261,7 +261,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'open',
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 			});
 
@@ -276,7 +276,7 @@ describe('TransferModal Store', () => {
 		it('should handle complete transfer flow', () => {
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -292,7 +292,7 @@ describe('TransferModal Store', () => {
 			// 3. Update quantity (for ERC1155)
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '3',
+				quantity: 3n,
 			});
 
 			// 4. Start transfer
@@ -320,7 +320,7 @@ describe('TransferModal Store', () => {
 		it('should handle transfer failure flow', () => {
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 			};
 
@@ -329,7 +329,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0xabc',
-				quantity: '1',
+				quantity: 1n,
 			});
 
 			transferModalStore.send({ type: 'startTransfer' });
@@ -350,7 +350,7 @@ describe('TransferModal Store', () => {
 
 			const mockArgs: ShowTransferModalArgs = {
 				collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
-				collectibleId: '123',
+				tokenId: 123n,
 				chainId: 1,
 				callbacks: { onSuccess, onError },
 			};

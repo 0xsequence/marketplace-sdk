@@ -1,4 +1,7 @@
-import type { LookupMarketplaceReturn } from '../react/_internal/api/builder.gen';
+import type {
+	CheckoutOptions,
+	LookupMarketplaceReturn,
+} from '@0xsequence/api-client';
 import type { DatabeatAnalytics } from '../react/_internal/databeat';
 import type { MarketplaceConfig } from './types';
 
@@ -10,12 +13,21 @@ export type ApiConfig = {
 	accessKey?: string;
 };
 
+export type CheckoutMode =
+	| 'crypto'
+	| 'trails'
+	| {
+			mode: 'sequence-checkout';
+			options: CheckoutOptions;
+	  };
+
 export type SdkConfig = {
 	projectAccessKey: string;
 	projectId: string;
 	walletConnectProjectId?: string;
 	shadowDom?: boolean;
 	experimentalShadowDomCssOverride?: string;
+	checkoutMode?: CheckoutMode | undefined;
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		overrides?: {

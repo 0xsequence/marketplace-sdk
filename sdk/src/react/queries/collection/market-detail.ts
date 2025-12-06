@@ -1,79 +1,51 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { GetCollectionDetailRequest } from '@0xsequence/api-client';
 import {
+	buildQueryOptions,
 	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { GetCollectionDetailRequest } from '../../_internal/api/marketplace.gen';
 
-import type { StandardQueryOptions } from '../../types/query';
-
-export interface FetchMarketCollectionDetailParams
-	extends Omit<GetCollectionDetailRequest, 'chainId' | 'contractAddress'> {
-	chainId: number;
-	collectionAddress: string;
-	config: SdkConfig;
-}
+export type MarketCollectionDetailQueryOptions =
+	SdkQueryParams<GetCollectionDetailRequest>;
 
 /**
  * Fetches collection details from the marketplace API
  */
 export async function fetchMarketCollectionDetail(
-	params: FetchMarketCollectionDetailParams,
+	params: WithRequired<
+		MarketCollectionDetailQueryOptions,
+		'collectionAddress' | 'chainId' | 'config'
+	>,
 ) {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
-
+	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-
-	const apiArgs: GetCollectionDetailRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		...additionalApiParams,
-	};
-
-	const result = await marketplaceClient.getCollectionDetail(apiArgs);
+	const result = await marketplaceClient.getCollectionDetail(apiParams);
 	return result.collection;
 }
-
-export type MarketCollectionDetailQueryOptions =
-	ValuesOptional<FetchMarketCollectionDetailParams> & {
-		query?: StandardQueryOptions;
-	};
 
 export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCollectionDetailRequest>;
-
-	return ['collection', 'market-detail', apiArgs] as const;
+	return [
+		'collection',
+		'market-detail',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+		},
+	] as const;
 }
 
 export function collectionMarketDetailQueryOptions(
 	params: MarketCollectionDetailQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionMarketDetailQueryKey,
+			requiredParams: ['collectionAddress', 'chainId', 'config'] as const,
+			fetcher: fetchMarketCollectionDetail,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectionMarketDetailQueryKey(params),
-		queryFn: () =>
-			fetchMarketCollectionDetail({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

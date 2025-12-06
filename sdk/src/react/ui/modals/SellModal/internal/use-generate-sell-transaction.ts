@@ -28,7 +28,7 @@ const generateSellTransaction = async (
 	const marketplaceClient = getMarketplaceClient(config);
 	const argsWithStringChainId = {
 		...args,
-		chainId: String(args.chainId),
+		chainId: args.chainId,
 	} satisfies GenerateSellTransactionRequest;
 	const steps = await marketplaceClient
 		.generateSellTransaction(argsWithStringChainId)

@@ -1,12 +1,12 @@
+import * as marketplaceGen from '@0xsequence/api-client';
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockMarketplaceEndpoint, mockOrder } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockMarketplaceEndpoint,
-	mockOrder,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import * as marketplaceGen from '../../_internal/api/marketplace.gen';
 import type { UseCollectibleMarketListingsParams } from './market-listings';
 import { useCollectibleMarketListings } from './market-listings';
 
@@ -14,7 +14,7 @@ describe('useCollectibleMarketListings', () => {
 	const defaultArgs: UseCollectibleMarketListingsParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		collectibleId: '1',
+		tokenId: 1n,
 		page: {
 			page: 1,
 			pageSize: 10,
@@ -77,7 +77,7 @@ describe('useCollectibleMarketListings', () => {
 		// Change args and rerender
 		const newArgs = {
 			...defaultArgs,
-			collectibleId: '2',
+			tokenId: 2n,
 		};
 
 		rerender(() => useCollectibleMarketListings(newArgs));

@@ -1,26 +1,28 @@
+import {
+	ContractType,
+	IndexerMocks,
+	MarketplaceMocks,
+	OrderbookKind,
+	PropertyType,
+} from '@0xsequence/api-client';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
 import { renderHook, server, waitFor } from '../../../../../test';
 import * as types from '../../../../types';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../../_internal/api/__mocks__/marketplace.msw';
-import { PropertyType } from '../../../_internal/api/marketplace.gen';
 import { useMarketCardData } from './market-card-data';
 
 describe('useMarketCardData', () => {
 	const defaultProps = {
 		collectionAddress: zeroAddress,
 		chainId: 1,
-		orderbookKind: types.OrderbookKind.sequence_marketplace_v2,
-		collectionType: types.ContractType.ERC721,
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType: ContractType.ERC721,
 	};
 
 	beforeEach(() => {
@@ -164,8 +166,8 @@ describe('useMarketCardData', () => {
 		});
 
 		// Simulate clicking the collectible
-		result.current.collectibleCards[0].onCollectibleClick?.('1');
-		expect(onCollectibleClick).toHaveBeenCalledWith('1');
+		result.current.collectibleCards[0].onCollectibleClick?.(1n);
+		expect(onCollectibleClick).toHaveBeenCalledWith(1n);
 	});
 
 	it('should handle cannot perform action callback', async () => {
@@ -255,7 +257,7 @@ describe('useMarketCardData', () => {
 					collectibles: [
 						{
 							...mockCollectibleOrder,
-							metadata: { ...mockCollectibleOrder.metadata, tokenId: '2' },
+							metadata: { ...mockCollectibleOrder.metadata, tokenId: 2n },
 						},
 					],
 				});

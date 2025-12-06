@@ -1,11 +1,11 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
+
+const { mockCurrencies, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { renderHook, server, waitFor } from '../../../../test';
 import { USDC_ADDRESS } from '../../../../test/const';
-import {
-	mockCurrencies,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrency as useCurrencyDetail } from './currency';
 
 describe('useCurrency', () => {
@@ -29,7 +29,7 @@ describe('useCurrency', () => {
 		// Verify the data matches our mock
 		expect(result.current.data).toEqual(
 			mockCurrencies.find(
-				(currency) =>
+				(currency: { contractAddress: string }) =>
 					currency.contractAddress.toLowerCase() ===
 					defaultArgs.currencyAddress.toLowerCase(),
 			),

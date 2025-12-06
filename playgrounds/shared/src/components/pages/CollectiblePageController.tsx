@@ -13,7 +13,6 @@ import {
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
-import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
 import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
@@ -45,7 +44,7 @@ export interface CollectiblePageControllerProps {
 	onCollectionClick: () => void;
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	tokenId: bigint;
 }
 
 export function CollectiblePageController({
@@ -55,7 +54,7 @@ export function CollectiblePageController({
 	onCollectionClick,
 	chainId,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 }: CollectiblePageControllerProps) {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collectionConfig = marketplaceConfig?.market.collections.find(
@@ -75,14 +74,14 @@ export function CollectiblePageController({
 		{
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		},
 	);
 
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress,
 		chainId,
-		tokenId: collectibleId,
+		tokenId,
 		query: {
 			enabled: !isShop,
 		},
@@ -91,7 +90,7 @@ export function CollectiblePageController({
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
 		chainId,
-		collectableId: collectibleId,
+		tokenId,
 		userAddress: accountAddress,
 	});
 
@@ -129,7 +128,7 @@ export function CollectiblePageController({
 				{showFullLayout ? (
 					<CollectibleDetails
 						name={collectible?.name}
-						id={collectibleId}
+						id={tokenId}
 						balance={Number(balance?.balance)}
 						chainId={chainId}
 						collection={collection}
@@ -139,7 +138,7 @@ export function CollectiblePageController({
 					<div className="flex flex-col gap-1">
 						<CollectibleDetails
 							name={collectible?.name}
-							id={collectibleId.toString()}
+							id={tokenId}
 							balance={Number(balance?.balance)}
 							chainId={chainId}
 							collection={collection}
@@ -153,7 +152,7 @@ export function CollectiblePageController({
 				isOwner={!!balance?.balance}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
-				collectibleId={collectibleId}
+				tokenId={tokenId}
 				orderbookKind={orderbookKindInternal || orderbookKind}
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
@@ -164,7 +163,7 @@ export function CollectiblePageController({
 				<ListingsTable
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					collectibleId={collectibleId.toString()}
+					tokenId={tokenId}
 				/>
 			)}
 
@@ -172,15 +171,7 @@ export function CollectiblePageController({
 				<OffersTable
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					collectibleId={collectibleId.toString()}
-				/>
-			)}
-
-			{!isShop && (
-				<ActivitiesTable
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
+					tokenId={tokenId}
 				/>
 			)}
 		</div>

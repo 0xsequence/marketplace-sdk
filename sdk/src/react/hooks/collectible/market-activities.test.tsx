@@ -1,11 +1,11 @@
+import { MarketplaceMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockActivity,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockActivity, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import type { UseListCollectibleActivitiesParams } from './market-activities';
 import { useCollectibleMarketActivities } from './market-activities';
 
@@ -13,7 +13,7 @@ describe('useCollectibleMarketActivities', () => {
 	const defaultArgs: UseListCollectibleActivitiesParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
-		tokenId: '1',
+		tokenId: 1n,
 		page: 1,
 		pageSize: 10,
 		query: {
@@ -100,7 +100,7 @@ describe('useCollectibleMarketActivities', () => {
 		// Change args and rerender
 		currentArgs = {
 			chainId: 1,
-			tokenId: '2',
+			tokenId: 2n,
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
 			page: 1,

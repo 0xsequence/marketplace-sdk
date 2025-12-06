@@ -43,46 +43,80 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --color-red-50: oklch(97.1% 0.013 17.38);
     --color-red-100: oklch(93.6% 0.032 17.717);
+    --color-red-200: oklch(88.5% 0.062 18.334);
     --color-red-300: oklch(80.8% 0.114 19.571);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-700: oklch(50.5% 0.213 27.518);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
-    --color-yellow-50: oklch(98.7% 0.026 102.212);
-    --color-yellow-200: oklch(94.5% 0.129 101.54);
-    --color-yellow-800: oklch(47.6% 0.114 61.907);
+    --color-orange-300: oklch(83.7% 0.128 66.29);
+    --color-orange-400: oklch(75% 0.183 55.934);
+    --color-orange-500: oklch(70.5% 0.213 47.604);
+    --color-orange-900: oklch(40.8% 0.123 38.172);
+    --color-amber-300: oklch(87.9% 0.169 91.605);
+    --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-amber-600: oklch(66.6% 0.179 58.318);
+    --color-yellow-100: oklch(97.3% 0.071 103.193);
+    --color-yellow-300: oklch(90.5% 0.182 98.111);
+    --color-yellow-400: oklch(85.2% 0.199 91.936);
+    --color-yellow-500: oklch(79.5% 0.184 86.047);
+    --color-yellow-600: oklch(68.1% 0.162 75.834);
+    --color-yellow-700: oklch(55.4% 0.135 66.442);
     --color-yellow-900: oklch(42.1% 0.095 57.708);
-    --color-green-50: oklch(98.2% 0.018 155.826);
-    --color-green-300: oklch(87.1% 0.15 154.449);
+    --color-yellow-950: oklch(28.6% 0.066 53.813);
+    --color-green-200: oklch(92.5% 0.084 155.995);
+    --color-green-400: oklch(79.2% 0.209 151.711);
     --color-green-500: oklch(72.3% 0.219 149.579);
+    --color-green-600: oklch(62.7% 0.194 149.214);
     --color-green-700: oklch(52.7% 0.154 150.069);
     --color-green-900: oklch(39.3% 0.095 152.535);
+    --color-green-950: oklch(26.6% 0.065 152.934);
+    --color-blue-300: oklch(80.9% 0.105 251.813);
+    --color-blue-400: oklch(70.7% 0.165 254.624);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-900: oklch(37.9% 0.146 265.522);
+    --color-indigo-200: oklch(87% 0.065 274.039);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
+    --color-indigo-500: oklch(58.5% 0.233 277.117);
+    --color-indigo-600: oklch(51.1% 0.262 276.966);
+    --color-indigo-700: oklch(45.7% 0.24 277.023);
+    --color-indigo-900: oklch(35.9% 0.144 278.697);
+    --color-indigo-950: oklch(25.7% 0.09 281.288);
     --color-violet-400: oklch(70.2% 0.183 293.541);
     --color-violet-500: oklch(60.6% 0.25 292.717);
     --color-violet-600: oklch(54.1% 0.281 293.009);
     --color-violet-700: oklch(49.1% 0.27 292.581);
+    --color-slate-50: oklch(98.4% 0.003 247.858);
+    --color-slate-100: oklch(96.8% 0.007 247.896);
+    --color-slate-200: oklch(92.9% 0.013 255.508);
+    --color-slate-300: oklch(86.9% 0.022 252.894);
+    --color-slate-400: oklch(70.4% 0.04 256.788);
+    --color-slate-500: oklch(55.4% 0.046 257.417);
+    --color-slate-800: oklch(27.9% 0.041 260.031);
+    --color-slate-950: oklch(12.9% 0.042 264.695);
     --color-gray-50: oklch(98.5% 0.002 247.839);
-    --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
     --color-gray-800: oklch(27.8% 0.033 256.848);
-    --color-gray-900: oklch(21% 0.034 264.665);
+    --color-zinc-500: oklch(55.2% 0.016 285.938);
+    --color-zinc-600: oklch(44.2% 0.017 285.786);
+    --color-zinc-700: oklch(37% 0.013 285.805);
+    --color-zinc-800: oklch(27.4% 0.006 286.033);
+    --color-zinc-900: oklch(21% 0.006 285.885);
+    --color-zinc-950: oklch(14.1% 0.005 285.823);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -121,6 +155,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
@@ -133,6 +168,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --default-font-family: var(--font-sans);
     --default-mono-font-family: "Roboto", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --color-primary: var(--seq-color-primary);
     --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-border-focus: hsla(247, 100%, 75%, 1);
     --color-border-base: hsla(0, 0%, 31%, 1);
@@ -375,6 +411,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
+  .right-2 {
+    right: calc(var(--spacing) * 2);
+  }
   .right-4 {
     right: calc(var(--spacing) * 4);
   }
@@ -429,11 +468,37 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .order-456 {
     order: 456;
   }
+  .order-789 {
+    order: 789;
+  }
   .order-first {
     order: -9999;
   }
   .order-last {
     order: 9999;
+  }
+  .grid-stack {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    grid-template-rows: repeat(1, minmax(0, 1fr));
+    :is(& > *) {
+      grid-column-start: 1;
+    }
+    :is(& > *) {
+      grid-row-start: 1;
+    }
+  }
+  .col-start-2 {
+    grid-column-start: 2;
+  }
+  .col-start-3 {
+    grid-column-start: 3;
+  }
+  .col-end-4 {
+    grid-column-end: 4;
+  }
+  .row-start-3 {
+    grid-row-start: 3;
   }
   .container {
     width: 100%;
@@ -579,6 +644,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .ml-10 {
     margin-left: calc(var(--spacing) * 10);
   }
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
   .block {
     display: block;
   }
@@ -612,9 +683,21 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
+  .size-2 {
+    width: calc(var(--spacing) * 2);
+    height: calc(var(--spacing) * 2);
+  }
+  .size-2\.5 {
+    width: calc(var(--spacing) * 2.5);
+    height: calc(var(--spacing) * 2.5);
+  }
   .size-3 {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
+  }
+  .size-3\.5 {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
   .size-4 {
     width: calc(var(--spacing) * 4);
@@ -655,6 +738,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .size-16 {
     width: calc(var(--spacing) * 16);
     height: calc(var(--spacing) * 16);
+  }
+  .size-full {
+    width: 100%;
+    height: 100%;
+  }
+  .h-\(--radix-select-trigger-height\) {
+    height: var(--radix-select-trigger-height);
   }
   .h-1 {
     height: calc(var(--spacing) * 1);
@@ -731,6 +821,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[64px\] {
     height: 64px;
   }
+  .h-\[84px\] {
+    height: 84px;
+  }
+  .h-\[98px\] {
+    height: 98px;
+  }
   .h-\[150px\] {
     height: 150px;
   }
@@ -755,6 +851,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .max-h-\(--radix-dropdown-menu-content-available-height\) {
     max-height: var(--radix-dropdown-menu-content-available-height);
   }
+  .max-h-\(--radix-select-content-available-height\) {
+    max-height: var(--radix-select-content-available-height);
+  }
   .max-h-64 {
     max-height: calc(var(--spacing) * 64);
   }
@@ -764,14 +863,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .max-h-\[240px\] {
     max-height: 240px;
   }
-  .max-h-\[360px\] {
-    max-height: 360px;
-  }
   .max-h-\[calc\(100dvh-80px\)\] {
     max-height: calc(100dvh - 80px);
   }
   .max-h-full {
     max-height: 100%;
+  }
+  .min-h-4 {
+    min-height: calc(var(--spacing) * 4);
   }
   .min-h-16 {
     min-height: calc(var(--spacing) * 16);
@@ -851,6 +950,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
+  }
+  .w-32 {
+    width: calc(var(--spacing) * 32);
+  }
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
@@ -868,6 +973,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .w-\[46px\] {
     width: 46px;
+  }
+  .w-\[84px\] {
+    width: 84px;
   }
   .w-\[100px\] {
     width: 100px;
@@ -914,8 +1022,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .max-w-md {
     max-width: var(--container-md);
   }
+  .max-w-sm {
+    max-width: var(--container-sm);
+  }
   .max-w-xs {
     max-width: var(--container-xs);
+  }
+  .min-w-\(--radix-select-trigger-width\) {
+    min-width: var(--radix-select-trigger-width);
   }
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
@@ -943,9 +1057,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .min-w-\[8rem\] {
     min-width: 8rem;
-  }
-  .min-w-\[var\(--radix-select-trigger-width\)\] {
-    min-width: var(--radix-select-trigger-width);
   }
   .min-w-full {
     min-width: 100%;
@@ -980,6 +1091,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .origin-\(--radix-popover-content-transform-origin\) {
     transform-origin: var(--radix-popover-content-transform-origin);
   }
+  .origin-\(--radix-select-content-transform-origin\) {
+    transform-origin: var(--radix-select-content-transform-origin);
+  }
   .origin-\(--radix-tooltip-content-transform-origin\) {
     transform-origin: var(--radix-tooltip-content-transform-origin);
   }
@@ -995,6 +1109,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .translate-x-0 {
     --tw-translate-x: calc(var(--spacing) * 0);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .translate-x-16 {
+    --tw-translate-x: calc(var(--spacing) * 16);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .translate-x-\[-50\%\] {
@@ -1014,6 +1132,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .animate-in {
+    animation: enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none);
   }
   .animate-pulse {
     animation: var(--animate-pulse);
@@ -1045,6 +1166,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .resize-y {
     resize: vertical;
   }
+  .scroll-my-1 {
+    scroll-margin-block: calc(var(--spacing) * 1);
+  }
   .list-disc {
     list-style-type: disc;
   }
@@ -1059,6 +1183,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .grid-cols-5 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .grid-cols-\[auto_1fr_auto\] {
+    grid-template-columns: auto 1fr auto;
   }
   .grid-cols-\[repeat\(auto-fill\,minmax\(150px\,1fr\)\)\] {
     grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
@@ -1104,6 +1231,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .justify-start {
     justify-content: flex-start;
+  }
+  .justify-items-start {
+    justify-items: start;
   }
   .gap-0 {
     gap: calc(var(--spacing) * 0);
@@ -1159,6 +1289,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
+  .gap-y-2 {
+    row-gap: calc(var(--spacing) * 2);
+  }
   .self-center {
     align-self: center;
   }
@@ -1175,6 +1308,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .overflow-auto {
     overflow: auto;
+  }
+  .overflow-clip {
+    overflow: clip;
   }
   .overflow-hidden {
     overflow: hidden;
@@ -1208,6 +1344,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
+  }
+  .rounded-3xl {
+    border-radius: var(--radius-3xl);
   }
   .rounded-\[12px\] {
     border-radius: 12px;
@@ -1301,6 +1440,21 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-border-style: solid;
     border-style: solid;
   }
+  .border-\(--alert-border\) {
+    border-color: var(--alert-border);
+  }
+  .border-\(--callout-header\) {
+    border-color: var(--callout-header);
+  }
+  .border-amber-500 {
+    border-color: var(--color-amber-500);
+  }
+  .border-amber-500\/30 {
+    border-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-amber-500) 30%, transparent);
+    }
+  }
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
@@ -1321,6 +1475,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .border-border-normal {
     border-color: var(--seq-color-border-normal);
+  }
+  .border-current {
+    border-color: currentcolor;
   }
   .border-orange-900 {
     border-color: var(--color-orange-900);
@@ -1343,6 +1500,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-b-transparent {
     border-bottom-color: transparent;
   }
+  .bg-\(--alert-background\) {
+    background-color: var(--alert-background);
+  }
+  .bg-\(--callout-content\) {
+    background-color: var(--callout-content);
+  }
+  .bg-\(--callout-header\) {
+    background-color: var(--callout-header);
+  }
   .bg-\[\#2b0000\] {
     background-color: #2b0000;
   }
@@ -1355,6 +1521,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-\[hsla\(247\,100\%\,75\%\,0\.3\)\] {
     background-color: hsla(247,100%,75%,0.3);
   }
+  .bg-amber-500 {
+    background-color: var(--color-amber-500);
+  }
+  .bg-amber-500\/10 {
+    background-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
+    }
+  }
   .bg-background-active {
     background-color: var(--seq-color-background-active);
   }
@@ -1363,6 +1538,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-background-inverse {
     background-color: var(--seq-color-background-inverse);
+  }
+  .bg-background-inverse\/20 {
+    background-color: var(--seq-color-background-inverse);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--seq-color-background-inverse) 20%, transparent);
+    }
   }
   .bg-background-muted {
     background-color: var(--seq-color-background-muted);
@@ -1397,12 +1578,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-gray-50 {
     background-color: var(--color-gray-50);
   }
-  .bg-gray-50 {
-    background-color: var(--color-gray-50);
-  }
-  .bg-green-50 {
-    background-color: var(--color-green-50);
-  }
   .bg-green-500 {
     background-color: var(--color-green-500);
   }
@@ -1418,8 +1593,20 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-positive {
     background-color: var(--seq-color-positive);
   }
-  .bg-red-50 {
-    background-color: var(--color-red-50);
+  .bg-primary {
+    background-color: var(--seq-color-primary);
+  }
+  .bg-primary\/20 {
+    background-color: var(--seq-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--seq-color-primary) 20%, transparent);
+    }
+  }
+  .bg-primary\/50 {
+    background-color: var(--seq-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--seq-color-primary) 50%, transparent);
+    }
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -1442,8 +1629,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-white {
     background-color: var(--color-white);
   }
-  .bg-yellow-50 {
-    background-color: var(--color-yellow-50);
+  .bg-white\/5 {
+    background-color: color-mix(in srgb, #fff 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
+    }
+  }
+  .bg-zinc-950 {
+    background-color: var(--color-zinc-950);
   }
   .bg-gradient-primary {
     background-image: var(--seq-color-gradient-primary);
@@ -1474,6 +1667,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .fill-primary {
     fill: var(--seq-color-primary);
+  }
+  .stroke-2 {
+    stroke-width: 2;
   }
   .object-contain {
     object-fit: contain;
@@ -1556,6 +1752,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
   }
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
+  }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
   }
@@ -1588,6 +1787,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .pr-4 {
     padding-right: calc(var(--spacing) * 4);
+  }
+  .pr-8 {
+    padding-right: calc(var(--spacing) * 8);
   }
   .pb-0 {
     padding-bottom: calc(var(--spacing) * 0);
@@ -1628,33 +1830,25 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-center {
     text-align: center;
   }
+  .text-end {
+    text-align: end;
+  }
   .text-left {
     text-align: left;
   }
   .text-right {
     text-align: right;
   }
-  .type-normal {
+  .text-large {
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-leading: calc(var(--spacing) * 5);
-    line-height: calc(var(--spacing) * 5);
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    --tw-tracking: var(--tracking-wide);
-    letter-spacing: var(--tracking-wide);
-  }
-  .type-small {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-leading: calc(var(--spacing) * 4);
-    line-height: calc(var(--spacing) * 4);
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    --tw-tracking: var(--tracking-wide);
-    letter-spacing: var(--tracking-wide);
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+    --tw-leading: calc(var(--spacing) * 7);
+    line-height: calc(var(--spacing) * 7);
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+    --tw-tracking: var(--tracking-normal);
+    letter-spacing: var(--tracking-normal);
   }
   .font-body {
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -1795,8 +1989,20 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .whitespace-pre-wrap {
     white-space: pre-wrap;
   }
+  .text-\(--alert-accent\) {
+    color: var(--alert-accent);
+  }
+  .text-\(--callout-accent\) {
+    color: var(--callout-accent);
+  }
+  .text-amber-300 {
+    color: var(--color-amber-300);
+  }
   .text-amber-500 {
     color: var(--color-amber-500);
+  }
+  .text-amber-600 {
+    color: var(--color-amber-600);
   }
   .text-background-primary {
     color: var(--seq-color-background-primary);
@@ -1837,12 +2043,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-gray-600 {
     color: var(--color-gray-600);
   }
-  .text-gray-900 {
-    color: var(--color-gray-900);
-  }
-  .text-green-700 {
-    color: var(--color-green-700);
-  }
   .text-indigo-400 {
     color: var(--color-indigo-400);
   }
@@ -1876,6 +2076,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-primary {
     color: var(--seq-color-primary);
   }
+  .text-primary\/80 {
+    color: var(--seq-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--seq-color-primary) 80%, transparent);
+    }
+  }
   .text-red-100 {
     color: var(--color-red-100);
   }
@@ -1887,9 +2093,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-red-500 {
     color: var(--color-red-500);
-  }
-  .text-red-700 {
-    color: var(--color-red-700);
   }
   .text-secondary {
     color: var(--seq-color-secondary);
@@ -1912,8 +2115,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-white {
     color: var(--color-white);
   }
-  .text-yellow-800 {
-    color: var(--color-yellow-800);
+  .text-yellow-300 {
+    color: var(--color-yellow-300);
+  }
+  .text-yellow-400 {
+    color: var(--color-yellow-400);
+  }
+  .text-yellow-500 {
+    color: var(--color-yellow-500);
   }
   .capitalize {
     text-transform: capitalize;
@@ -1980,6 +2189,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .ring-black {
+    --tw-ring-color: var(--color-black);
+  }
   .ring-border-focus {
     --tw-ring-color: var(--color-border-focus);
   }
@@ -2042,6 +2254,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+  .transition-\[translate\,opacity\] {
+    transition-property: translate,opacity;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
   .transition-all {
     transition-property: all;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -2070,6 +2287,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .transition-none {
     transition-property: none;
   }
+  .duration-\(--duration\) {
+    --tw-duration: var(--duration);
+    transition-duration: var(--duration);
+  }
   .duration-100 {
     --tw-duration: 100ms;
     transition-duration: 100ms;
@@ -2078,9 +2299,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-duration: 200ms;
     transition-duration: 200ms;
   }
+  .duration-300 {
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+  }
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
+  }
+  .ease-linear {
+    --tw-ease: linear;
+    transition-timing-function: linear;
   }
   .ease-out {
     --tw-ease: var(--ease-out);
@@ -2105,6 +2334,78 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-enter-scale: calc(95*1%);
     --tw-enter-scale: .95;
   }
+  .\[--alert-accent\:var\(--color-green-700\)\] {
+    --alert-accent: var(--color-green-700);
+  }
+  .\[--alert-accent\:var\(--color-indigo-700\)\] {
+    --alert-accent: var(--color-indigo-700);
+  }
+  .\[--alert-accent\:var\(--color-red-700\)\] {
+    --alert-accent: var(--color-red-700);
+  }
+  .\[--alert-accent\:var\(--color-yellow-700\)\] {
+    --alert-accent: var(--color-yellow-700);
+  }
+  .\[--alert-background\:var\(--color-green-200\)\] {
+    --alert-background: var(--color-green-200);
+  }
+  .\[--alert-background\:var\(--color-indigo-200\)\] {
+    --alert-background: var(--color-indigo-200);
+  }
+  .\[--alert-background\:var\(--color-red-200\)\] {
+    --alert-background: var(--color-red-200);
+  }
+  .\[--alert-background\:var\(--color-yellow-100\)\] {
+    --alert-background: var(--color-yellow-100);
+  }
+  .\[--alert-border\:var\(--color-green-500\)\] {
+    --alert-border: var(--color-green-500);
+  }
+  .\[--alert-border\:var\(--color-indigo-500\)\] {
+    --alert-border: var(--color-indigo-500);
+  }
+  .\[--alert-border\:var\(--color-red-500\)\] {
+    --alert-border: var(--color-red-500);
+  }
+  .\[--alert-border\:var\(--color-yellow-500\)\] {
+    --alert-border: var(--color-yellow-500);
+  }
+  .\[--callout-accent\:var\(--color-green-700\)\] {
+    --callout-accent: var(--color-green-700);
+  }
+  .\[--callout-accent\:var\(--color-indigo-700\)\] {
+    --callout-accent: var(--color-indigo-700);
+  }
+  .\[--callout-accent\:var\(--color-red-700\)\] {
+    --callout-accent: var(--color-red-700);
+  }
+  .\[--callout-accent\:var\(--color-yellow-700\)\] {
+    --callout-accent: var(--color-yellow-700);
+  }
+  .\[--callout-content\:var\(--color-green-200\)\] {
+    --callout-content: var(--color-green-200);
+  }
+  .\[--callout-content\:var\(--color-indigo-200\)\] {
+    --callout-content: var(--color-indigo-200);
+  }
+  .\[--callout-content\:var\(--color-red-200\)\] {
+    --callout-content: var(--color-red-200);
+  }
+  .\[--callout-content\:var\(--color-yellow-100\)\] {
+    --callout-content: var(--color-yellow-100);
+  }
+  .\[--callout-header\:var\(--color-green-500\)\] {
+    --callout-header: var(--color-green-500);
+  }
+  .\[--callout-header\:var\(--color-indigo-500\)\] {
+    --callout-header: var(--color-indigo-500);
+  }
+  .\[--callout-header\:var\(--color-red-500\)\] {
+    --callout-header: var(--color-red-500);
+  }
+  .\[--callout-header\:var\(--color-yellow-500\)\] {
+    --callout-header: var(--color-yellow-500);
+  }
   .paused {
     animation-play-state: paused;
   }
@@ -2113,6 +2414,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .running {
     animation-play-state: running;
+  }
+  .not-in-data-current\:duration-1 {
+    &:not(:where(*[data-current]) *) {
+      --tw-duration: 1ms;
+      transition-duration: 1ms;
+    }
   }
   .group-focus-within\/input-group\:opacity-0 {
     &:is(:where(.group\/input-group):focus-within *) {
@@ -2485,6 +2792,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       margin-top: calc(var(--spacing) * 0);
     }
   }
+  .focus-within\:ring-2 {
+    &:focus-within {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
   .hover\:animate-bell-ring {
     &:hover {
       @media (hover: hover) {
@@ -2520,6 +2833,16 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:bg-background-inverse\/15 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--seq-color-background-inverse);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--seq-color-background-inverse) 15%, transparent);
+        }
+      }
+    }
+  }
   .hover\:bg-destructive\/80 {
     &:hover {
       @media (hover: hover) {
@@ -2537,16 +2860,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .hover\:bg-primary\/15 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--seq-color-primary);
-        @supports (color: color-mix(in lab, red, red)) {
-          background-color: color-mix(in oklab, var(--seq-color-primary) 15%, transparent);
-        }
-      }
-    }
-  }
   .hover\:bg-primary\/80 {
     &:hover {
       @media (hover: hover) {
@@ -2561,6 +2874,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-300);
+      }
+    }
+  }
+  .hover\:text-primary {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--seq-color-primary);
       }
     }
   }
@@ -2632,6 +2952,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .focus\:bg-background-hover {
+    &:focus {
+      background-color: var(--seq-color-background-hover);
+    }
+  }
   .focus\:outline-hidden {
     &:focus {
       --tw-outline-style: none;
@@ -2640,12 +2965,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
         outline: 2px solid transparent;
         outline-offset: 2px;
       }
-    }
-  }
-  .focus\:outline-none {
-    &:focus {
-      --tw-outline-style: none;
-      outline-style: none;
     }
   }
   .focus-visible\:border-border-focus {
@@ -2723,9 +3042,35 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       opacity: 100%;
     }
   }
+  .inert\:absolute {
+    &:is([inert], [inert] *) {
+      position: absolute;
+    }
+  }
+  .inert\:z-0 {
+    &:is([inert], [inert] *) {
+      z-index: 0;
+    }
+  }
+  .inert\:overflow-clip {
+    &:is([inert], [inert] *) {
+      overflow: clip;
+    }
+  }
   .inert\:opacity-0 {
     &:is([inert], [inert] *) {
       opacity: 0%;
+    }
+  }
+  .in-data-current\:translate-x-6 {
+    :where(*[data-current]) & {
+      --tw-translate-x: calc(var(--spacing) * 6);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .in-data-current\:opacity-100 {
+    :where(*[data-current]) & {
+      opacity: 100%;
     }
   }
   .has-data-\[state\=checked\]\:border-primary {
@@ -2864,6 +3209,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       outline-color: var(--seq-color-destructive);
     }
   }
+  .data-auto-advance\:data-current\:w-6 {
+    &[data-auto-advance] {
+      &[data-current] {
+        width: calc(var(--spacing) * 6);
+      }
+    }
+  }
   .data-disabled\:pointer-events-none {
     &[data-disabled] {
       pointer-events: none;
@@ -2879,9 +3231,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       color: var(--seq-color-muted);
     }
   }
-  .data-disabled\:opacity-50 {
+  .data-disabled\:text-primary\/50 {
     &[data-disabled] {
-      opacity: 50%;
+      color: var(--seq-color-primary);
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--seq-color-primary) 50%, transparent);
+      }
     }
   }
   .data-disabled\:opacity-80 {
@@ -2889,17 +3244,86 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       opacity: 80%;
     }
   }
-  .data-highlighted\:bg-background-active\/33 {
-    &[data-highlighted] {
-      background-color: var(--seq-color-background-active);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--seq-color-background-active) 33%, transparent);
-      }
+  .data-entered\:translate-x-0 {
+    &[data-entered] {
+      --tw-translate-x: calc(var(--spacing) * 0);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .data-entered\:opacity-100 {
+    &[data-entered] {
+      opacity: 100%;
+    }
+  }
+  .data-entering\:translate-x-0 {
+    &[data-entering] {
+      --tw-translate-x: calc(var(--spacing) * 0);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .data-entering\:opacity-100 {
+    &[data-entering] {
+      opacity: 100%;
+    }
+  }
+  .data-exited\:translate-x-16 {
+    &[data-exited] {
+      --tw-translate-x: calc(var(--spacing) * 16);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .data-exited\:opacity-0 {
+    &[data-exited] {
+      opacity: 0%;
+    }
+  }
+  .data-exited\:transition-none\! {
+    &[data-exited] {
+      transition-property: none !important;
+    }
+  }
+  .data-exiting\:-translate-x-16 {
+    &[data-exiting] {
+      --tw-translate-x: calc(var(--spacing) * -16);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .data-exiting\:opacity-0 {
+    &[data-exiting] {
+      opacity: 0%;
     }
   }
   .data-highlighted\:bg-background-hover {
     &[data-highlighted] {
       background-color: var(--seq-color-background-hover);
+    }
+  }
+  .data-ltr\:data-exited\:-translate-x-16 {
+    &[data-ltr] {
+      &[data-exited] {
+        --tw-translate-x: calc(var(--spacing) * -16);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+    }
+  }
+  .data-ltr\:data-exiting\:translate-x-16 {
+    &[data-ltr] {
+      &[data-exiting] {
+        --tw-translate-x: calc(var(--spacing) * 16);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+    }
+  }
+  .data-pause\:translate-x-0 {
+    &[data-pause] {
+      --tw-translate-x: calc(var(--spacing) * 0);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .data-pause\:duration-300 {
+    &[data-pause] {
+      --tw-duration: 300ms;
+      transition-duration: 300ms;
     }
   }
   .data-\[disabled\]\:pointer-events-none {
@@ -2910,6 +3334,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .data-\[disabled\]\:opacity-50 {
     &[data-disabled] {
       opacity: 50%;
+    }
+  }
+  .data-\[inset\]\:pl-8 {
+    &[data-inset] {
+      padding-left: calc(var(--spacing) * 8);
     }
   }
   .data-\[invalid\=true\]\:text-destructive {
@@ -2937,9 +3366,26 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       width: 1px;
     }
   }
+  .data-\[placeholder\]\:text-muted {
+    &[data-placeholder] {
+      color: var(--seq-color-muted);
+    }
+  }
+  .data-\[side\=bottom\]\:translate-y-1 {
+    &[data-side="bottom"] {
+      --tw-translate-y: calc(var(--spacing) * 1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
   .data-\[side\=bottom\]\:slide-in-from-top-2 {
     &[data-side="bottom"] {
       --tw-enter-translate-y: calc(2*var(--spacing)*-1);
+    }
+  }
+  .data-\[side\=left\]\:-translate-x-1 {
+    &[data-side="left"] {
+      --tw-translate-x: calc(var(--spacing) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .data-\[side\=left\]\:slide-in-from-right-2 {
@@ -2947,9 +3393,21 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       --tw-enter-translate-x: calc(2*var(--spacing));
     }
   }
+  .data-\[side\=right\]\:translate-x-1 {
+    &[data-side="right"] {
+      --tw-translate-x: calc(var(--spacing) * 1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
   .data-\[side\=right\]\:slide-in-from-left-2 {
     &[data-side="right"] {
       --tw-enter-translate-x: calc(2*var(--spacing)*-1);
+    }
+  }
+  .data-\[side\=top\]\:-translate-y-1 {
+    &[data-side="top"] {
+      --tw-translate-y: calc(var(--spacing) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .data-\[side\=top\]\:slide-in-from-bottom-2 {
@@ -2957,9 +3415,50 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       --tw-enter-translate-y: calc(2*var(--spacing));
     }
   }
+  .data-\[size\=default\]\:h-13 {
+    &[data-size="default"] {
+      height: calc(var(--spacing) * 13);
+    }
+  }
+  .data-\[size\=sm\]\:h-8 {
+    &[data-size="sm"] {
+      height: calc(var(--spacing) * 8);
+    }
+  }
   .data-\[slot\=checkbox-group\]\:gap-3 {
     &[data-slot="checkbox-group"] {
       gap: calc(var(--spacing) * 3);
+    }
+  }
+  .\*\:data-\[slot\=select-value\]\:line-clamp-1 {
+    :is(& > *) {
+      &[data-slot="select-value"] {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
+    }
+  }
+  .\*\:data-\[slot\=select-value\]\:flex {
+    :is(& > *) {
+      &[data-slot="select-value"] {
+        display: flex;
+      }
+    }
+  }
+  .\*\:data-\[slot\=select-value\]\:items-center {
+    :is(& > *) {
+      &[data-slot="select-value"] {
+        align-items: center;
+      }
+    }
+  }
+  .\*\:data-\[slot\=select-value\]\:gap-2 {
+    :is(& > *) {
+      &[data-slot="select-value"] {
+        gap: calc(var(--spacing) * 2);
+      }
     }
   }
   .data-\[state\=active\]\:border-border-focus {
@@ -2986,11 +3485,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .data-\[state\=checked\]\:border-transparent\! {
     &[data-state="checked"] {
       border-color: transparent !important;
-    }
-  }
-  .data-\[state\=checked\]\:bg-background-active {
-    &[data-state="checked"] {
-      background-color: var(--seq-color-background-active);
     }
   }
   .data-\[state\=checked\]\:bg-white {
@@ -3119,7 +3613,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       animation: swipe-out 200ms ease-out;
     }
   }
-  .data-\[swipe\=move\]\:translate-x-\[var\(--radix-toast-swipe-move-x\)\] {
+  .data-\[swipe\=move\]\:translate-x-\(--radix-toast-swipe-move-x\) {
     &[data-swipe="move"] {
       --tw-translate-x: var(--radix-toast-swipe-move-x);
       translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -3128,6 +3622,31 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .nth-last-2\:-mt-1 {
     &:nth-last-child(2) {
       margin-top: calc(var(--spacing) * -1);
+    }
+  }
+  .sm\:col-start-3 {
+    @media (width >= 40rem) {
+      grid-column-start: 3;
+    }
+  }
+  .sm\:col-end-3 {
+    @media (width >= 40rem) {
+      grid-column-end: 3;
+    }
+  }
+  .sm\:row-start-1 {
+    @media (width >= 40rem) {
+      grid-row-start: 1;
+    }
+  }
+  .sm\:row-end-3 {
+    @media (width >= 40rem) {
+      grid-row-end: 3;
+    }
+  }
+  .sm\:mt-0 {
+    @media (width >= 40rem) {
+      margin-top: calc(var(--spacing) * 0);
     }
   }
   .sm\:inline-flex {
@@ -3148,6 +3667,16 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .sm\:flex-row {
     @media (width >= 40rem) {
       flex-direction: row;
+    }
+  }
+  .sm\:items-center {
+    @media (width >= 40rem) {
+      align-items: center;
+    }
+  }
+  .sm\:justify-between {
+    @media (width >= 40rem) {
+      justify-content: space-between;
     }
   }
   .sm\:justify-end {
@@ -3191,66 +3720,207 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       border-bottom-left-radius: var(--radius-2xl);
     }
   }
+  .md\:p-12 {
+    @media (width >= 48rem) {
+      padding: calc(var(--spacing) * 12);
+    }
+  }
   .lg\:h-auto\! {
     @media (width >= 64rem) {
       height: auto !important;
     }
   }
-  .dark\:bg-gray-800 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-800);
+  .\@md\/field-group\:flex-row {
+    @container field-group (width >= 28rem) {
+      flex-direction: row;
     }
   }
-  .dark\:bg-red-900\/20 {
-    @media (prefers-color-scheme: dark) {
-      background-color: color-mix(in srgb, oklch(39.6% 0.141 25.723) 20%, transparent);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--color-red-900) 20%, transparent);
+  .\@md\/field-group\:items-center {
+    @container field-group (width >= 28rem) {
+      align-items: center;
+    }
+  }
+  .\@md\/field-group\:has-\[\>\[data-slot\=field-content\]\]\:items-start {
+    @container field-group (width >= 28rem) {
+      &:has(>[data-slot=field-content]) {
+        align-items: flex-start;
       }
     }
   }
-  .dark\:bg-yellow-900\/20 {
-    @media (prefers-color-scheme: dark) {
-      background-color: color-mix(in srgb, oklch(42.1% 0.095 57.708) 20%, transparent);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--color-yellow-900) 20%, transparent);
-      }
+  .dark\:\[--alert-accent\:var\(--color-green-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-accent: var(--color-green-400);
     }
   }
-  .dark\:text-gray-300 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-gray-300);
+  .dark\:\[--alert-accent\:var\(--color-indigo-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-accent: var(--color-indigo-400);
     }
   }
-  .dark\:text-red-300 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-red-300);
+  .dark\:\[--alert-accent\:var\(--color-red-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-accent: var(--color-red-400);
     }
   }
-  .dark\:text-yellow-200 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-yellow-200);
+  .dark\:\[--alert-accent\:var\(--color-yellow-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-accent: var(--color-yellow-400);
     }
   }
-  .\[\&\:focus\]\:rounded-\[10px\] {
-    &:focus {
-      border-radius: 10px;
+  .dark\:\[--alert-background\:var\(--color-green-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-background: var(--color-green-950);
     }
   }
-  .\[\&\:focus\]\:outline-\[3px\] {
-    &:focus {
-      outline-style: var(--tw-outline-style);
-      outline-width: 3px;
+  .dark\:\[--alert-background\:var\(--color-indigo-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-background: var(--color-indigo-950);
     }
   }
-  .\[\&\:focus\]\:outline-offset-\[-3px\] {
-    &:focus {
-      outline-offset: -3px;
+  .dark\:\[--alert-background\:var\(--color-red-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-background: var(--color-red-950);
     }
   }
-  .\[\&\:focus\]\:outline-black {
-    &:focus {
-      outline-color: var(--color-black);
+  .dark\:\[--alert-background\:var\(--color-yellow-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-background: var(--color-yellow-950);
+    }
+  }
+  .dark\:\[--alert-border\:var\(--color-green-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-border: var(--color-green-900);
+    }
+  }
+  .dark\:\[--alert-border\:var\(--color-indigo-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-border: var(--color-indigo-900);
+    }
+  }
+  .dark\:\[--alert-border\:var\(--color-red-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-border: var(--color-red-900);
+    }
+  }
+  .dark\:\[--alert-border\:var\(--color-yellow-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --alert-border: var(--color-yellow-900);
+    }
+  }
+  .dark\:\[--callout-accent\:var\(--color-green-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-accent: var(--color-green-400);
+    }
+  }
+  .dark\:\[--callout-accent\:var\(--color-indigo-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-accent: var(--color-indigo-400);
+    }
+  }
+  .dark\:\[--callout-accent\:var\(--color-red-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-accent: var(--color-red-400);
+    }
+  }
+  .dark\:\[--callout-accent\:var\(--color-yellow-400\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-accent: var(--color-yellow-400);
+    }
+  }
+  .dark\:\[--callout-content\:var\(--color-green-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-content: var(--color-green-950);
+    }
+  }
+  .dark\:\[--callout-content\:var\(--color-indigo-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-content: var(--color-indigo-950);
+    }
+  }
+  .dark\:\[--callout-content\:var\(--color-red-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-content: var(--color-red-950);
+    }
+  }
+  .dark\:\[--callout-content\:var\(--color-yellow-950\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-content: var(--color-yellow-950);
+    }
+  }
+  .dark\:\[--callout-header\:var\(--color-green-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-header: var(--color-green-900);
+    }
+  }
+  .dark\:\[--callout-header\:var\(--color-indigo-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-header: var(--color-indigo-900);
+    }
+  }
+  .dark\:\[--callout-header\:var\(--color-red-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-header: var(--color-red-900);
+    }
+  }
+  .dark\:\[--callout-header\:var\(--color-yellow-900\)\] {
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+      --callout-header: var(--color-yellow-900);
+    }
+  }
+  .\[\&_\[data-slot\=alert-button\]\]\:text-\(--alert-accent\) {
+    & [data-slot=alert-button] {
+      color: var(--alert-accent);
+    }
+  }
+  .\[\&_span\]\:size-\[12px\] {
+    & span {
+      width: 12px;
+      height: 12px;
+    }
+  }
+  .\[\&_span\]\:size-\[18px\] {
+    & span {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  .\[\&_svg\]\:pointer-events-none {
+    & svg {
+      pointer-events: none;
+    }
+  }
+  .\[\&_svg\]\:shrink-0 {
+    & svg {
+      flex-shrink: 0;
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\"size-\"\]\)\]\:size-4 {
+    & svg:not([class*="size-"]) {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\"size-\"\]\)\]\:size-5 {
+    & svg:not([class*="size-"]) {
+      width: calc(var(--spacing) * 5);
+      height: calc(var(--spacing) * 5);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-4 {
+    & svg:not([class*='size-']) {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-9 {
+    & svg:not([class*='size-']) {
+      width: calc(var(--spacing) * 9);
+      height: calc(var(--spacing) * 9);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\'text-\'\]\)\]\:text-muted {
+    & svg:not([class*='text-']) {
+      color: var(--seq-color-muted);
     }
   }
   .\[\&\:has\(\:disabled\)\]\:cursor-default {
@@ -3276,6 +3946,33 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\.border-t\]\:pt-3 {
     &:is(.border-t) {
       padding-top: calc(var(--spacing) * 3);
+    }
+  }
+  .\*\:\[span\]\:last\:flex {
+    :is(& > *) {
+      &:is(span) {
+        &:last-child {
+          display: flex;
+        }
+      }
+    }
+  }
+  .\*\:\[span\]\:last\:items-center {
+    :is(& > *) {
+      &:is(span) {
+        &:last-child {
+          align-items: center;
+        }
+      }
+    }
+  }
+  .\*\:\[span\]\:last\:gap-2 {
+    :is(& > *) {
+      &:is(span) {
+        &:last-child {
+          gap: calc(var(--spacing) * 2);
+        }
+      }
     }
   }
   .\[\&\>\*\]\:w-full {
@@ -3492,19 +4189,19 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       display: none;
     }
   }
-  .\[\&\>svg\]\:stroke-2 {
+  .\[\&\>svg\]\:mr-2 {
     &>svg {
-      stroke-width: 2;
+      margin-right: calc(var(--spacing) * 2);
     }
   }
-  .\[\&\>svg\]\:stroke-\[calc\(24\/16\*2px\)\] {
+  .\[\&\>svg\]\:self-start {
     &>svg {
-      stroke-width: calc(24 / 16 * 2px);
+      align-self: flex-start;
     }
   }
-  .\[\&\>svg\]\:stroke-\[calc\(24\/32\*2px\)\] {
+  .\[\&\>svg\]\:text-\(--alert-accent\) {
     &>svg {
-      stroke-width: calc(24 / 32 * 2px);
+      color: var(--alert-accent);
     }
   }
   .\[\[data-variant\=legend\]\+\&\]\:-mt-1\.5 {
@@ -3520,7 +4217,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 :root, [data-theme=dark] {
   --seq-color-positive: var(--color-green-500);
   --seq-color-negative: var(--color-red-500);
-  --seq-color-info: var(--color-blue-500);
+  --seq-color-info: var(--color-indigo-500);
   --seq-color-warning: var(--color-yellow-500);
   --seq-color-destructive: var(--color-red-500);
   --seq-color-primary: white;
@@ -3575,8 +4272,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 [data-theme=light] {
   --seq-color-positive: var(--color-green-600);
   --seq-color-negative: var(--color-red-600);
-  --seq-color-info: var(--color-blue-600);
-  --seq-color-warning: var(--color-yellow-600);
+  --seq-color-info: var(--color-indigo-600);
+  --seq-color-warning: var(--color-yellow-500);
   --seq-color-destructive: var(--color-red-600);
   --seq-color-primary: var(--color-slate-800);
   --seq-color-secondary: var(--color-slate-800);
@@ -3585,7 +4282,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --seq-color-background-primary: var(--color-slate-50);
   --seq-color-background-secondary: white;
   --seq-color-background-muted: var(--color-slate-100);
-  --seq-color-background-inverse: black;
+  --seq-color-background-inverse: var(--color-slate-950);
   --seq-color-background-overlay: color-mix( in oklab, oklch(86.9% 0.022 252.894) 80%, transparent );
   @supports (color: color-mix(in lab, red, red)) {
     --seq-color-background-overlay: color-mix( in oklab, var(--color-slate-300) 80%, transparent );
@@ -3629,6 +4326,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 }
 :root {
   --base-unit: 16;
+  color: var(--color-primary);
 }
 .rdp-root {
   --rdp-accent-color: blue;
@@ -4285,6 +4983,20 @@ video::-webkit-media-controls {
 @keyframes pulse {
   50% {
     opacity: 0.5;
+  }
+}
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity,1);
+    transform: translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0)scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1))rotate(var(--tw-enter-rotate,0));
+    filter: blur(var(--tw-enter-blur,0));
+  }
+}
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity,1);
+    transform: translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0)scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1))rotate(var(--tw-exit-rotate,0));
+    filter: blur(var(--tw-exit-blur,0));
   }
 }
 @keyframes skeleton {

@@ -1,23 +1,16 @@
+import type { Builder } from '@0xsequence/api-client';
 import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { ContractType, OrderbookKind, SdkConfig } from '../../../types';
-import type {
-	MarketCollection,
-	MarketPage,
-	MarketplaceConfig,
-	ShopCollection,
-	ShopPage,
-} from '../../../types/new-marketplace-types';
+import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { getBuilderClient } from '../../_internal';
-import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
 import { persistentQueryMeta } from '../../_internal/query-meta';
+import { createMarketplaceQueryKey } from './queryKeys';
 
 export const fetchMarketplaceConfig = async ({
 	config,
 	prefetchedMarketplaceSettings,
 }: {
 	config: SdkConfig;
-	prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
+	prefetchedMarketplaceSettings?: Builder.LookupMarketplaceReturn;
 }): Promise<MarketplaceConfig> => {
 	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
 
@@ -30,46 +23,23 @@ export const fetchMarketplaceConfig = async ({
 		builderMarketplaceConfig = response;
 	}
 
-	const marketCollections = (
-		builderMarketplaceConfig.marketCollections ?? []
-	).map((collection) => {
-		return {
-			...collection,
-			contractType: collection.contractType as ContractType,
-			destinationMarketplace:
-				collection.destinationMarketplace as OrderbookKind,
-			itemsAddress: collection.itemsAddress as Address,
-			cardType: 'market',
-		} satisfies MarketCollection;
-	});
+	if (!builderMarketplaceConfig) {
+		throw new Error('Failed to fetch marketplace config');
+	}
 
-	const shopCollections = (builderMarketplaceConfig.shopCollections ?? []).map(
-		(collection) => {
-			return {
-				...collection,
-				itemsAddress: collection.itemsAddress as Address,
-				saleAddress: collection.saleAddress as Address,
-				cardType: 'shop',
-			} satisfies ShopCollection;
-		},
-	);
+	// The API wrapper's toLookupMarketplaceReturn transform already:
+	// 1. Nests collections within market.collections and shop.collections
+	// 2. Adds marketplaceCollectionType discriminator to each collection
+	// 3. Returns correctly typed MarketPage and ShopPage interfaces
+	// No transformation or type casting needed here!
+	const { market, shop, settings } = builderMarketplaceConfig.marketplace;
 
-	const market = {
-		...builderMarketplaceConfig.marketplace.market,
-		collections: marketCollections,
-	} satisfies MarketPage;
-
-	const shop = {
-		...builderMarketplaceConfig.marketplace.shop,
-		collections: shopCollections ?? [],
-	} satisfies ShopPage;
-
-	let marketplaceConfig = {
+	let marketplaceConfig: MarketplaceConfig = {
 		projectId: Number(config.projectId),
-		settings: builderMarketplaceConfig.marketplace.settings,
+		settings,
 		market,
 		shop,
-	} satisfies MarketplaceConfig;
+	};
 
 	if (config._internal?.overrides?.marketplaceConfig) {
 		const overrides = config._internal.overrides.marketplaceConfig;
@@ -79,14 +49,12 @@ export const fetchMarketplaceConfig = async ({
 			market: {
 				...marketplaceConfig.market,
 				...overrides.market,
-				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.market?.collections ?? marketplaceConfig.market.collections,
 			},
 			shop: {
 				...marketplaceConfig.shop,
 				...overrides.shop,
-				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.shop?.collections ?? marketplaceConfig.shop.collections,
 			},
@@ -101,7 +69,7 @@ export const marketplaceConfigOptions = (config: SdkConfig) => {
 		config._internal?.prefetchedMarketplaceSettings;
 
 	return queryOptions({
-		queryKey: ['config', 'marketplace'],
+		queryKey: createMarketplaceQueryKey('config', {}),
 		queryFn: () =>
 			fetchMarketplaceConfig({
 				config,

@@ -16,7 +16,7 @@ import useTransactionStatus from './hooks/useTransactionStatus';
 import {
 	transactionStatusModalStore,
 	useIsOpen,
-	useTransactionModalState,
+	useTransactionStatusModalState,
 } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
@@ -27,7 +27,7 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: string[];
@@ -76,16 +76,16 @@ function TransactionStatusModalContent() {
 		price,
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 		callbacks,
 		queriesToInvalidate,
-	} = useTransactionModalState();
+	} = useTransactionStatusModalState();
 
 	const { data: collectible, isLoading: collectibleLoading } =
 		useCollectibleDetail({
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);

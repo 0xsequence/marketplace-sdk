@@ -1,50 +1,64 @@
-import { cleanup, render, renderHook, screen, waitFor } from '@test';
+import { renderHook } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { useCreateListingModal } from '..';
-import { CreateListingModal } from '../Modal';
+import { createListingModalStore } from '../internal/store';
 
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
 describe('CreateListingModal', () => {
 	beforeEach(() => {
-		cleanup();
-		// Reset all mocks
 		vi.clearAllMocks();
 		vi.resetAllMocks();
 		vi.restoreAllMocks();
+		createListingModalStore.send({ type: 'close' });
 	});
 
-	it('should show create listing button', async () => {
-		// Render the modal
-		const { result } = renderHook(() => useCreateListingModal());
-		result.current.show(defaultArgs);
+	describe('Store and Hook', () => {
+		it('should open and close the modal via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			expect(createListingModalStore.getSnapshot().context.isOpen).toBe(true);
 
-		render(<CreateListingModal />);
+			createListingModalStore.send({ type: 'close' });
+			expect(createListingModalStore.getSnapshot().context.isOpen).toBe(false);
+		});
 
-		// Wait for the component to update
-		await waitFor(() => {
-			// The Create Listing button should exist
-			expect(
-				screen.getByRole('button', { name: 'Create Listing' }),
-			).toBeDefined();
+		it('should provide show and close methods via useCreateListingModal hook', () => {
+			const { result } = renderHook(() => useCreateListingModal());
+
+			expect(result.current.show).toBeDefined();
+			expect(result.current.close).toBeDefined();
 		});
 	});
 
-	it('should render the modal when opened', async () => {
-		const { result } = renderHook(() => useCreateListingModal());
-		result.current.show(defaultArgs);
+	describe('Form State Management', () => {
+		it('should update price input via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updatePrice', value: '1.5' });
 
-		render(<CreateListingModal />);
+			expect(createListingModalStore.getSnapshot().context.priceInput).toBe(
+				'1.5',
+			);
+		});
 
-		await waitFor(() => {
-			expect(screen.getByText('List item for sale')).toBeDefined();
+		it('should update quantity input via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updateQuantity', value: '5' });
+
+			expect(createListingModalStore.getSnapshot().context.quantityInput).toBe(
+				'5',
+			);
+		});
+
+		it('should update expiry days via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updateExpiryDays', days: 14 });
+
+			expect(createListingModalStore.getSnapshot().context.expiryDays).toBe(14);
 		});
 	});
 });

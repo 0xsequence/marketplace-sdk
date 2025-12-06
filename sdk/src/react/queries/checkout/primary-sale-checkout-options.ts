@@ -1,33 +1,37 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractRequest,
 	CheckoutOptionsSalesContractResponse,
-} from '../../_internal/api/marketplace.gen';
-import type { StandardQueryOptions } from '../../types/query';
+} from '@0xsequence/api-client';
+import type { Address } from 'viem';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
 
-export interface FetchPrimarySaleCheckoutOptionsParams
-	extends Omit<CheckoutOptionsSalesContractRequest, 'chainId' | 'wallet'> {
+export interface FetchPrimarySaleCheckoutOptionsParams {
 	chainId: number;
 	walletAddress: Address;
-	contractAddress: string;
-	collectionAddress: string;
-	items: Array<CheckoutOptionsItem>;
-	config: SdkConfig;
+	contractAddress: Address;
+	collectionAddress: Address;
+	items: CheckoutOptionsItem[];
 }
 
 /**
  * Fetches checkout options for primary sales contract from the Marketplace API
  */
 export async function fetchPrimarySaleCheckoutOptions(
-	params: FetchPrimarySaleCheckoutOptionsParams,
+	params: WithRequired<
+		PrimarySaleCheckoutOptionsQueryOptions,
+		| 'chainId'
+		| 'walletAddress'
+		| 'contractAddress'
+		| 'collectionAddress'
+		| 'items'
+		| 'config'
+	>,
 ): Promise<CheckoutOptionsSalesContractResponse> {
 	const {
 		chainId,
@@ -41,7 +45,7 @@ export async function fetchPrimarySaleCheckoutOptions(
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsSalesContractRequest = {
-		chainId: String(chainId),
+		chainId,
 		wallet: walletAddress,
 		contractAddress,
 		collectionAddress,
@@ -53,55 +57,41 @@ export async function fetchPrimarySaleCheckoutOptions(
 }
 
 export type PrimarySaleCheckoutOptionsQueryOptions =
-	ValuesOptional<FetchPrimarySaleCheckoutOptionsParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<FetchPrimarySaleCheckoutOptionsParams>;
 
 export function getPrimarySaleCheckoutOptionsQueryKey(
 	params: PrimarySaleCheckoutOptionsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		wallet: params.walletAddress,
-		contractAddress: params.contractAddress,
-		collectionAddress: params.collectionAddress,
-		items: params.items,
-	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractRequest>;
-
-	return ['checkout', 'primary-sale-checkout-options', apiArgs] as const;
+	return [
+		'checkout',
+		'primary-sale',
+		{
+			chainId: params.chainId ?? 0,
+			walletAddress: params.walletAddress ?? '0x',
+			contractAddress: params.contractAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
+			items: params.items ?? [],
+		},
+	] as const;
 }
 
 export function primarySaleCheckoutOptionsQueryOptions(
 	params: PrimarySaleCheckoutOptionsQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.walletAddress &&
-			params.contractAddress &&
-			params.collectionAddress &&
-			params.items?.length &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getPrimarySaleCheckoutOptionsQueryKey,
+			requiredParams: [
+				'chainId',
+				'walletAddress',
+				'contractAddress',
+				'collectionAddress',
+				'items',
+				'config',
+			] as const,
+			fetcher: fetchPrimarySaleCheckoutOptions,
+			customValidation: (params) => (params.items?.length ?? 0) > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getPrimarySaleCheckoutOptionsQueryKey(params),
-		queryFn: () =>
-			fetchPrimarySaleCheckoutOptions({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				walletAddress: params.walletAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				contractAddress: params.contractAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				items: params.items!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

@@ -1,84 +1,64 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Order } from '@0xsequence/api-client';
 import {
-	type GetCollectibleLowestListingRequest,
-	type GetCollectibleLowestListingResponse,
+	buildQueryOptions,
+	type GetLowestPriceListingForCollectibleRequest,
 	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
-
-export interface FetchLowestListingParams
-	extends Omit<
-		GetCollectibleLowestListingRequest,
-		'contractAddress' | 'chainId'
-	> {
-	collectionAddress: string;
-	chainId: number;
-	config: SdkConfig;
-}
-
-/**
- * Fetches the lowest listing for a collectible from the marketplace API
- */
-export async function fetchLowestListing(
-	params: FetchLowestListingParams,
-): Promise<GetCollectibleLowestListingResponse['order'] | null> {
-	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
-
-	const marketplaceClient = getMarketplaceClient(config);
-
-	const apiArgs: GetCollectibleLowestListingRequest = {
-		contractAddress: collectionAddress,
-		chainId: String(chainId),
-		...additionalApiParams,
-	};
-
-	const result =
-		await marketplaceClient.getLowestPriceListingForCollectible(apiArgs);
-	return result.order || null;
-}
 
 export type LowestListingQueryOptions =
-	ValuesOptional<FetchLowestListingParams> & {
-		query?: StandardQueryOptions;
-	};
+	SdkQueryParams<GetLowestPriceListingForCollectibleRequest>;
 
-export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
-		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCollectibleLowestListingRequest>;
-
-	return ['collectible', 'market-lowest-listing', apiArgs] as const;
+export async function fetchLowestListing(
+	params: WithRequired<
+		LowestListingQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
+): Promise<Order | undefined> {
+	const { config, ...apiParams } = params;
+	const marketplaceClient = getMarketplaceClient(config);
+	const result =
+		await marketplaceClient.getLowestPriceListingForCollectible(apiParams);
+	return result.order;
 }
 
-export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.chainId &&
-			params.tokenId &&
-			params.config &&
-			(params.query?.enabled ?? true),
-	);
+export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
+	return [
+		'collectible',
+		'market-lowest-listing',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			filter: params.filter,
+		},
+	] as const;
+}
 
-	return queryOptions({
-		queryKey: getLowestListingQueryKey(params),
-		queryFn: () =>
-			fetchLowestListing({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
+export function lowestListingQueryOptions(
+	params: LowestListingQueryOptions,
+): ReturnType<
+	typeof buildQueryOptions<
+		WithRequired<
+			LowestListingQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>,
+		Order | undefined,
+		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
+	>
+> {
+	return buildQueryOptions(
+		{
+			getQueryKey: getLowestListingQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchLowestListing,
+		},
+		params,
+	);
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Text } from '@0xsequence/design-system';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import {
 	useCollectibleMarketLowestListing,
@@ -17,13 +17,13 @@ export default function FloorPriceText({
 }: {
 	chainId: number;
 	collectionAddress: Hex;
-	tokenId: string;
+	tokenId: bigint;
 	price: Price;
 	onBuyNow?: () => void;
 }) {
 	const { data: listing, isLoading: listingLoading } =
 		useCollectibleMarketLowestListing({
-			tokenId: tokenId,
+			tokenId,
 			chainId,
 			collectionAddress,
 			filter: {
@@ -37,20 +37,20 @@ export default function FloorPriceText({
 	const { data: priceComparison, isLoading: comparisonLoading } =
 		useCurrencyComparePrices({
 			chainId,
-			priceAmountRaw: price.amountRaw || '0',
-			priceCurrencyAddress: price.currency.contractAddress as Address,
-			compareToPriceAmountRaw: floorPriceRaw || '0',
-			compareToPriceCurrencyAddress: (listing?.priceCurrencyAddress ||
-				price.currency.contractAddress) as Address,
+			priceAmountRaw: price.amountRaw?.toString() || '0',
+			priceCurrencyAddress: price.currency.contractAddress,
+			compareToPriceAmountRaw: floorPriceRaw?.toString() || '0',
+			compareToPriceCurrencyAddress:
+				listing?.priceCurrencyAddress || price.currency.contractAddress,
 			query: {
-				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
+				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== 0n,
 			},
 		});
 
 	if (
 		!floorPriceRaw ||
 		listingLoading ||
-		price.amountRaw === '0' ||
+		price.amountRaw === 0n ||
 		comparisonLoading
 	) {
 		return null;
@@ -72,7 +72,7 @@ export default function FloorPriceText({
 	}
 
 	return (
-		<div className="flex w-full items-center justify-between gap-2">
+		<div className="flex w-full flex-wrap items-center justify-between gap-2">
 			<Text className="text-left font-body font-medium text-muted text-xs">
 				{floorPriceDifferenceText}
 			</Text>

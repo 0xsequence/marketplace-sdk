@@ -1,16 +1,13 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContractType } from '../../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
 import type { CollectionType } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
-import {
-	useCollectionDetail,
-	useTransferTokens,
-} from '../../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../../hooks/config/useConnectorMetadata';
+import { useCollectionDetail, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
 import {
 	type TransferModalState,
@@ -22,7 +19,15 @@ import useHandleTransfer from '../useHandleTransfer';
 // Mock dependencies
 vi.mock('@0xsequence/connect');
 vi.mock('../../../../../../hooks/config/useConnectorMetadata');
-vi.mock('../../../../../../hooks');
+vi.mock('../../../../../hooks', async (importOriginal) => {
+	const actual =
+		(await importOriginal()) as typeof import('../../../../../hooks');
+	return {
+		...actual,
+		useCollectionDetail: vi.fn(),
+		useTransferTokens: vi.fn(),
+	};
+});
 vi.mock('../../../../_internal/components/transactionStatusModal');
 vi.mock('../../../store');
 
@@ -43,8 +48,8 @@ describe('useHandleTransfer', () => {
 		receiverAddress: '0x1234567890123456789012345678901234567890',
 		collectionAddress:
 			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
-		collectibleId: '123',
-		quantity: '2',
+		tokenId: 123n,
+		quantity: 2n,
 		chainId: 1,
 		transferIsProcessing: false,
 		view: 'enterReceiverAddress',
@@ -104,7 +109,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: defaultModalState.receiverAddress,
 				collectionAddress: defaultModalState.collectionAddress,
-				tokenId: defaultModalState.collectibleId,
+				tokenId: defaultModalState.tokenId,
 				chainId: defaultModalState.chainId,
 				contractType: ContractType.ERC721,
 			});
@@ -119,7 +124,7 @@ describe('useHandleTransfer', () => {
 				hash: mockHash,
 				collectionAddress: defaultModalState.collectionAddress,
 				chainId: defaultModalState.chainId,
-				collectibleId: defaultModalState.collectibleId,
+				tokenId: defaultModalState.tokenId,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
 					['token', 'balances'],
@@ -144,7 +149,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '5',
+				quantity: 5n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -156,7 +161,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: erc1155State.receiverAddress,
 				collectionAddress: erc1155State.collectionAddress,
-				tokenId: erc1155State.collectibleId,
+				tokenId: erc1155State.tokenId,
 				chainId: erc1155State.chainId,
 				contractType: ContractType.ERC1155,
 				quantity: '5',
@@ -326,7 +331,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1',
+				quantity: 1n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -358,7 +363,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1000000',
+				quantity: 1000000n,
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -381,8 +386,8 @@ describe('useHandleTransfer', () => {
 
 			const fullState = {
 				...defaultModalState,
-				collectibleId: '999',
-				quantity: '10',
+				tokenId: 999n,
+				quantity: 10n,
 				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
 			};
 
@@ -395,7 +400,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
 				receiverAddress: fullState.receiverAddress,
 				collectionAddress: fullState.collectionAddress,
-				tokenId: fullState.collectibleId,
+				tokenId: fullState.tokenId,
 				chainId: fullState.chainId,
 				contractType: ContractType.ERC721,
 			});

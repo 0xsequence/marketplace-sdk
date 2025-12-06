@@ -7,24 +7,17 @@ import { transferModalStore, useModalState } from '../../../store';
 
 const TokenQuantityInput = ({
 	balanceAmount,
-	collection,
 	isProcessingWithWaaS,
 }: {
 	balanceAmount?: bigint;
-	collection?: { decimals?: number };
 	isProcessingWithWaaS: boolean;
 }) => {
 	const modalState = useModalState();
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	let insufficientBalance = true;
-	if (balanceAmount !== undefined && modalState.quantity) {
-		try {
-			const quantityBigInt = BigInt(modalState.quantity);
-			insufficientBalance = quantityBigInt > balanceAmount;
-		} catch (_e) {
-			insufficientBalance = true;
-		}
+	if (balanceAmount !== undefined && modalState.quantity !== undefined) {
+		insufficientBalance = modalState.quantity > balanceAmount;
 	}
 
 	return (
@@ -41,8 +34,7 @@ const TokenQuantityInput = ({
 					transferModalStore.send({ type: 'updateTransferDetails', quantity })
 				}
 				onInvalidQuantityChange={setInvalidQuantity}
-				decimals={collection?.decimals || 0}
-				maxQuantity={balanceAmount ? String(balanceAmount) : '0'}
+				maxQuantity={balanceAmount ? balanceAmount : 0n}
 				className="[&>label>div>div>div>input]:text-sm [&>label>div>div>div]:h-13 [&>label>div>div>div]:rounded-xl [&>label>div>div>span]:text-sm [&>label>div>div>span]:text-text-80 [&>label]:gap-1"
 			/>
 

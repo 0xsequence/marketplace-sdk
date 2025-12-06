@@ -24,7 +24,7 @@ const EnterWalletAddressView = () => {
 	const { address: connectedAddress } = useAccount();
 	const {
 		collectionAddress,
-		collectibleId,
+		tokenId,
 		chainId,
 		quantity,
 		receiverAddress,
@@ -52,12 +52,12 @@ const EnterWalletAddressView = () => {
 	const { data: tokenBalance } = useTokenBalances({
 		chainId,
 		contractAddress: collectionAddress,
-		tokenId: collectibleId,
+		tokenId,
 		accountAddress: connectedAddress,
 		query: { enabled: !!connectedAddress },
 	});
 
-	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
+	const balanceAmount = tokenBalance?.pages[0]?.balances[0]?.balance;
 
 	let insufficientBalance = true;
 	if (balanceAmount !== undefined && quantity) {
@@ -118,7 +118,6 @@ const EnterWalletAddressView = () => {
 				{showQuantityInput && (
 					<TokenQuantityInput
 						balanceAmount={balanceAmount ? BigInt(balanceAmount) : undefined}
-						collection={collection}
 						isProcessingWithWaaS={isProcessingWithWaaS ?? false}
 					/>
 				)}

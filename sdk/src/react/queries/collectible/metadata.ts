@@ -1,84 +1,70 @@
-import type { GetTokenMetadataArgs } from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
+import type { Address, GetTokenMetadataArgs } from '@0xsequence/api-client';
 import {
+	buildQueryOptions,
 	getMetadataClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
+import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchCollectibleParams
-	extends Omit<
-		GetTokenMetadataArgs,
-		'chainID' | 'contractAddress' | 'tokenIDs'
-	> {
+export interface FetchCollectibleParams {
 	chainId: number;
-	collectionAddress: string;
-	collectibleId: string;
-	config: SdkConfig;
+	collectionAddress: Address;
+	tokenId: bigint;
 }
+
+export type CollectibleQueryOptions = SdkQueryParams<FetchCollectibleParams>;
 
 /**
  * Fetches collectible metadata from the metadata API
  */
-export async function fetchCollectible(params: FetchCollectibleParams) {
-	const { collectionAddress, collectibleId, chainId, config } = params;
+export async function fetchCollectible(
+	params: WithRequired<
+		CollectibleQueryOptions,
+		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+	>,
+) {
+	const { tokenId, chainId, collectionAddress, config } = params;
 
 	const metadataClient = getMetadataClient(config);
 
 	const apiArgs: GetTokenMetadataArgs = {
+		chainId,
 		contractAddress: collectionAddress,
-		chainID: String(chainId),
-		tokenIDs: [collectibleId],
+		tokenIds: [tokenId],
 	};
 
 	const result = await metadataClient.getTokenMetadata(apiArgs);
 	return result.tokenMetadata[0];
 }
 
-export type CollectibleQueryOptions = ValuesOptional<FetchCollectibleParams> & {
-	query?: StandardQueryOptions;
-};
-
 /**
  * Query key structure: [resource, operation, params]
- * @example ['collectible', 'metadata', { chainID, contractAddress, tokenIDs }]
+ * @example ['collectible', 'metadata', { chainId, contractAddress, tokenIds }]
  */
 export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
 	const apiArgs = {
-		chainID: String(params.chainId),
+		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
-		// biome-ignore lint/style/noNonNullAssertion: Dont need to validate here
-		tokenIDs: [params.collectibleId!],
-	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
+		tokenIds: params.tokenId !== undefined ? [params.tokenId] : [],
+	};
 
-	return ['collectible', 'metadata', apiArgs] as const;
+	return createCollectibleQueryKey('metadata', apiArgs);
 }
 
 export function collectibleQueryOptions(params: CollectibleQueryOptions) {
-	const enabled = Boolean(
-		params.collectionAddress &&
-			params.collectibleId &&
-			params.chainId &&
-			params.config &&
-			(params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectibleQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'tokenId',
+				'config',
+			] as const,
+			fetcher: fetchCollectible,
+			customValidation: (p) => !!p.chainId && p.chainId > 0,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getCollectibleQueryKey(params),
-		queryFn: () =>
-			fetchCollectible({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectibleId: params.collectibleId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-			}),
-		...params.query,
-		enabled,
-	});
 }

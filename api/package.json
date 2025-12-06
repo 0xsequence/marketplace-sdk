@@ -1,0 +1,50 @@
+{
+	"name": "@0xsequence/api-client",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		},
+		"./types": {
+			"types": "./src/types/index.ts",
+			"default": "./src/types/index.ts"
+		},
+		"./mocks/metadata": {
+			"types": "./src/__mocks__/metadata.msw.ts",
+			"default": "./src/__mocks__/metadata.msw.ts"
+		},
+		"./mocks/indexer": {
+			"types": "./src/__mocks__/indexer.msw.ts",
+			"default": "./src/__mocks__/indexer.msw.ts"
+		},
+		"./mocks/builder": {
+			"types": "./src/__mocks__/builder.msw.ts",
+			"default": "./src/__mocks__/builder.msw.ts"
+		},
+		"./mocks/marketplace": {
+			"types": "./src/__mocks__/marketplace.msw.ts",
+			"default": "./src/__mocks__/marketplace.msw.ts"
+		}
+	},
+	"scripts": {
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"format": "biome format --write ."
+	},
+	"dependencies": {
+		"viem": "catalog:"
+	},
+	"peerDependencies": {
+		"@0xsequence/indexer": "catalog:",
+		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/network": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"msw": "^2.12.1",
+		"typescript": "catalog:"
+	}
+}

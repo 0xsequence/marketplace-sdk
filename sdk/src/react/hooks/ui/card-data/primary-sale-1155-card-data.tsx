@@ -1,19 +1,13 @@
-import type { Address } from 'viem';
+import type { CollectiblePrimarySaleItem } from '@0xsequence/api-client';
+import { type Address, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
-import {
-	ContractType,
-	type PrimarySaleItem,
-	type TokenMetadata,
-} from '../../../_internal';
+import { ContractType } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
-import { useCollectionMetadata } from '../../collection/metadata';
+
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
 interface UsePrimarySale1155CardDataProps {
-	primarySaleItemsWithMetadata: Array<{
-		metadata: TokenMetadata;
-		primarySaleItem: PrimarySaleItem;
-	}>;
+	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
@@ -34,15 +28,6 @@ export function usePrimarySale1155CardData({
 		enabled,
 	});
 
-	const { data: collection, isLoading: collectionLoading } =
-		useCollectionMetadata({
-			chainId,
-			collectionAddress: contractAddress,
-			query: {
-				enabled,
-			},
-		});
-
 	const { data: paymentToken, isLoading: paymentTokenLoading } =
 		useReadContract({
 			chainId,
@@ -54,32 +39,32 @@ export function usePrimarySale1155CardData({
 			},
 		});
 
-	const isLoading = versionLoading || collectionLoading || paymentTokenLoading;
+	const isLoading = versionLoading || paymentTokenLoading;
 
 	const collectibleCards = primarySaleItemsWithMetadata.map((item) => {
 		const { metadata, primarySaleItem: saleData } = item;
 
 		const salePrice = {
-			amount: saleData?.priceAmount?.toString() || '',
-			currencyAddress: (saleData?.currencyAddress ||
-				paymentToken ||
-				'0x') as Address,
+			amount: saleData?.priceAmount || 0n,
+			currencyAddress: saleData?.currencyAddress || paymentToken || zeroAddress,
 		};
 
-		const supply = saleData?.supply?.toString();
+		const supply = saleData?.supply;
 		const unlimitedSupply = saleData?.unlimitedSupply;
 
 		return {
-			collectibleId: metadata.tokenId,
+			tokenId: metadata.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,
-			tokenMetadata: metadata,
+			tokenMetadata: {
+				...metadata,
+				source: '', // Add source field required by metadata API types
+			},
 			cardLoading: isLoading,
-			salesContractAddress: salesContractAddress,
+			salesContractAddress,
 			salePrice,
 			quantityInitial: supply,
-			quantityDecimals: collection?.decimals || 0,
 			quantityRemaining: supply,
 			unlimitedSupply,
 			saleStartsAt: saleData?.startDate?.toString(),

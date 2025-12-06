@@ -1,12 +1,12 @@
+import { IndexerMocks } from '@0xsequence/api-client';
+
+const { mockIndexerEndpoint, mockTokenBalanceNormalized } = IndexerMocks;
+
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
 import { useCollectionBalanceDetails } from './balance-details';
 
 describe('useCollectionBalanceDetails', () => {
@@ -32,9 +32,11 @@ describe('useCollectionBalanceDetails', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
+		// Verify the data matches our mock (normalized with BigInt)
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.balances[0]).toEqual(mockTokenBalance);
+		expect(result.current.data?.balances[0]).toEqual(
+			mockTokenBalanceNormalized,
+		);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -115,7 +117,10 @@ describe('useCollectionBalanceDetails', () => {
 
 		expect(result.current.data?.balances).toHaveLength(2);
 		expect(result.current.data?.balances).toEqual(
-			expect.arrayContaining([mockTokenBalance, mockTokenBalance]),
+			expect.arrayContaining([
+				mockTokenBalanceNormalized,
+				mockTokenBalanceNormalized,
+			]),
 		);
 	});
 

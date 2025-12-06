@@ -1,4 +1,4 @@
-import type { Order } from '../../../../../sdk/src';
+import type { Order } from '@0xsequence/marketplace-sdk';
 import { Table } from '../Table';
 import OrdersTableBody from './_components/Body';
 import OrdersTableFooter from './_components/Footer';
@@ -7,7 +7,7 @@ import OrdersTableBodySkeleton from './_components/Skeletons';
 
 type OrdersTableProps = {
 	chainId: number;
-	tokenId: string;
+	tokenId: bigint;
 	orders: Order[] | undefined;
 	ordersCount: number | undefined;
 	ordersCountLoading: boolean;
@@ -16,7 +16,6 @@ type OrdersTableProps = {
 	onPageChange: (page: number) => void;
 	onPageSizeChange: (pageSize: number) => void;
 	isLoading: boolean;
-	decimals: number;
 };
 
 const OrdersTable = (props: OrdersTableProps) => {
@@ -30,7 +29,6 @@ const OrdersTable = (props: OrdersTableProps) => {
 		onPageChange,
 		onPageSizeChange,
 		isLoading,
-		decimals,
 	} = props;
 	const totalItems =
 		ordersCount !== undefined && ordersCount !== null
@@ -52,13 +50,7 @@ const OrdersTable = (props: OrdersTableProps) => {
 					/>
 				)}
 
-				{!isLoading && (
-					<OrdersTableBody
-						orders={orders}
-						tokenId={tokenId}
-						decimals={decimals}
-					/>
-				)}
+				{!isLoading && <OrdersTableBody orders={orders} tokenId={tokenId} />}
 
 				<OrdersTableFooter
 					page={page}

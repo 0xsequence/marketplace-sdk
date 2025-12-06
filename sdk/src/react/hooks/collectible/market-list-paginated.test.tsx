@@ -1,13 +1,12 @@
+import { MarketplaceMocks, OrderSide } from '@0xsequence/api-client';
+
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { OrderSide } from '../../_internal/api/marketplace.gen';
 import type { UseListCollectiblesPaginatedParams } from './market-list-paginated';
 import { useCollectibleMarketListPaginated } from './market-list-paginated';
 
@@ -82,7 +81,7 @@ describe('useCollectibleMarketListPaginated', () => {
 			...mockCollectibleOrder,
 			metadata: {
 				...mockCollectibleOrder.metadata,
-				tokenId: '2',
+				tokenId: 2n,
 			},
 		};
 
@@ -114,7 +113,7 @@ describe('useCollectibleMarketListPaginated', () => {
 		});
 
 		// Verify the data for page 2
-		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe('2');
+		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe(2n);
 		expect(result.current.data?.page).toEqual({
 			page: 2,
 			pageSize: 20,
@@ -154,7 +153,7 @@ describe('useCollectibleMarketListPaginated', () => {
 			...mockCollectibleOrder,
 			metadata: {
 				...mockCollectibleOrder.metadata,
-				tokenId: '2',
+				tokenId: 2n,
 			},
 		};
 
@@ -175,7 +174,7 @@ describe('useCollectibleMarketListPaginated', () => {
 		});
 
 		// Verify new data
-		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe('2');
+		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe(2n);
 	});
 
 	it('should not fetch when enabled is false', async () => {

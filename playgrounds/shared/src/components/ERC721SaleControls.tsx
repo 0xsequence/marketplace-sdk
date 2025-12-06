@@ -1,5 +1,5 @@
 import {
-	ButtonPreset,
+	Button,
 	CartIcon,
 	Progress,
 	Skeleton,
@@ -23,7 +23,7 @@ interface ERC721SaleControlsProps {
 	tokenIds: string[];
 	isLoading: boolean;
 	salePrice?: {
-		amount?: string;
+		amount?: bigint;
 		currencyAddress?: Address;
 	};
 }
@@ -65,15 +65,14 @@ export function ERC721SaleControls({
 			collectionAddress,
 			salesContractAddress,
 			cardType: 'shop',
-			quantityDecimals: 0,
-			quantityRemaining: quantityRemaining ? Number(quantityRemaining) : 0,
+			quantityRemaining: quantityRemaining ?? 0n,
 			items: [
 				{
-					quantity: quantity.toString(),
+					quantity: BigInt(quantity),
 				},
 			],
 			salePrice: {
-				amount: salePrice?.amount || '0',
+				amount: salePrice?.amount || 0n,
 				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
 			},
 		});
@@ -145,19 +144,18 @@ export function ERC721SaleControls({
 					disabled={Number(quantityRemaining) === 0}
 				/>
 
-				<ButtonPreset
+				<Button
 					variant="primary"
-					label={
-						address
-							? Number(quantityRemaining) === 0
-								? 'Sold out'
-								: 'Buy'
-							: 'Connect wallet'
-					}
-					leftIcon={address ? CartIcon : WalletIcon}
 					onClick={address ? handleBuy : () => openConnectModal()}
 					disabled={Number(quantityRemaining) === 0}
-				/>
+				>
+					{address ? <CartIcon /> : <WalletIcon />}
+					{address
+						? Number(quantityRemaining) === 0
+							? 'Sold out'
+							: 'Buy'
+						: 'Connect wallet'}
+				</Button>
 
 				<Text variant="small" className="text-text-50">
 					(Total:{' '}

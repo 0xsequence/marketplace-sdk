@@ -3,8 +3,10 @@
 @import "react-day-picker/style.css";
 @import "../react/ui/modals/_internal/components/calendarDropdown/overrides.css";
 
+/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind CSS v4 custom at-rule */
 @source "../";
 
+/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind CSS v4 custom at-rule */
 @theme {
 	/* Border Colors */
 	--color-border-base: hsla(0, 0%, 31%, 1);

@@ -1,14 +1,14 @@
+import { IndexerMocks } from '@0xsequence/api-client';
+
+const { mockIndexerEndpoint, mockIndexerHandler, mockTokenBalance } =
+	IndexerMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
-import {
-	mockIndexerEndpoint,
-	mockIndexerHandler,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
 import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
 
 describe('useAutoSelectFeeOption', () => {
@@ -69,6 +69,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '2000000000000000000', // 2 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,
@@ -116,6 +117,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '500000000000000000', // 0.5 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,
@@ -159,6 +161,7 @@ describe('useAutoSelectFeeOption', () => {
 				],
 				nativeBalances: [
 					{
+						accountAddress: mockTokenBalance.accountAddress,
 						balance: '500000000000000000', // 0.5 ETH
 						blockHash: '0x1234',
 						blockNumber: 1234567,

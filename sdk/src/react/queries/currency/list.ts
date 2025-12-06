@@ -1,37 +1,37 @@
-import { queryOptions } from '@tanstack/react-query';
+import type { Currency } from '@0xsequence/api-client';
 import { type Address, zeroAddress } from 'viem';
-import type { SdkConfig } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
+	buildQueryOptions,
 	getMarketplaceClient,
 	getQueryClient,
-	type ListCurrenciesRequest,
-	type QueryKeyArgs,
-	type ValuesOptional,
+	type SdkQueryParams,
+	type WithRequired,
 } from '../../_internal';
-import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from '../marketplace/config';
 
 export interface FetchMarketCurrenciesParams {
 	chainId: number;
 	includeNativeCurrency?: boolean;
 	collectionAddress?: Address;
-	config: SdkConfig;
 }
+
+export type MarketCurrenciesQueryOptions =
+	SdkQueryParams<FetchMarketCurrenciesParams>;
 
 /**
  * Fetches supported currencies for a marketplace
  */
 export async function fetchMarketCurrencies(
-	params: FetchMarketCurrenciesParams,
-) {
+	params: WithRequired<MarketCurrenciesQueryOptions, 'chainId' | 'config'>,
+): Promise<Currency[]> {
 	const { chainId, includeNativeCurrency, collectionAddress, config } = params;
 	const includeNativeCurrencyOption = includeNativeCurrency ?? true;
 	const marketplaceClient = getMarketplaceClient(config);
 
 	let currencies = await marketplaceClient
 		.listCurrencies({
-			chainId: String(chainId),
+			chainId,
 		})
 		.then((resp) =>
 			resp.currencies.map((currency) => ({
@@ -66,23 +66,14 @@ export async function fetchMarketCurrencies(
 	return currencies;
 }
 
-export type MarketCurrenciesQueryOptions =
-	ValuesOptional<FetchMarketCurrenciesParams> & {
-		query?: StandardQueryOptions;
-	};
-
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-	} satisfies QueryKeyArgs<ListCurrenciesRequest>;
-
 	return [
 		'currency',
 		'list',
-		apiArgs,
 		{
+			chainId: params.chainId,
 			includeNativeCurrency: params.includeNativeCurrency,
 			collectionAddress: params.collectionAddress,
 		},
@@ -92,22 +83,12 @@ export function getMarketCurrenciesQueryKey(
 export function marketCurrenciesQueryOptions(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const enabled = Boolean(
-		params.chainId && params.config && (params.query?.enabled ?? true),
+	return buildQueryOptions(
+		{
+			getQueryKey: getMarketCurrenciesQueryKey,
+			requiredParams: ['chainId', 'config'] as const,
+			fetcher: fetchMarketCurrencies,
+		},
+		params,
 	);
-
-	return queryOptions({
-		queryKey: getMarketCurrenciesQueryKey(params),
-		queryFn: () =>
-			fetchMarketCurrencies({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				includeNativeCurrency: params.includeNativeCurrency,
-				collectionAddress: params.collectionAddress,
-			}),
-		...params.query,
-		enabled,
-	});
 }

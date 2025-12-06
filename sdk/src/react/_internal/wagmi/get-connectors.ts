@@ -1,3 +1,4 @@
+import { MarketplaceWalletType } from '@0xsequence/api-client';
 import {
 	apple,
 	appleWaas,
@@ -9,6 +10,7 @@ import {
 	getConnectWallets,
 	google,
 	googleWaas,
+	metaMask,
 	type SequenceOptions,
 	sequence,
 	twitch,
@@ -17,10 +19,8 @@ import {
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
-import type { Env, SdkConfig } from '../../../types/index';
-import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
+import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
-import { MarketplaceWalletType } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getConnectors({
@@ -51,7 +51,7 @@ function commonConnectors(
 	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
 ) {
-	const wallets = [];
+	const wallets: Wallet[] = [];
 	const { title: appName } = marketplaceConfig.settings;
 	const walletOptions = marketplaceConfig.settings.walletOptions;
 	const walletConnectProjectId = sdkConfig.walletConnectProjectId;
@@ -71,6 +71,16 @@ function commonConnectors(
 		wallets.push(
 			walletConnect({
 				projectId: walletConnectProjectId,
+			}),
+		);
+	}
+
+	if (walletOptions.connectors.includes('metamask')) {
+		wallets.push(
+			metaMask({
+				dappMetadata: {
+					name: appName,
+				},
 			}),
 		);
 	}

@@ -1,48 +1,50 @@
-import type { GetTokenSuppliesArgs, Page } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import { getIndexerClient, type ValuesOptional } from '../../_internal';
-import type { StandardInfiniteQueryOptions } from '../../types/query';
+import type { Address } from 'viem';
+import {
+	getIndexerClient,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchTokenSuppliesParams
-	extends Omit<GetTokenSuppliesArgs, 'contractAddress'> {
+	extends Omit<
+		Indexer.GetTokenSuppliesRequest,
+		'contractAddress' | 'collectionAddress'
+	> {
 	chainId: number;
-	collectionAddress: string;
-	config: SdkConfig;
-	page?: Page;
+	collectionAddress: Address;
+	page?: Indexer.Page;
 }
+
+export type TokenSuppliesQueryOptions =
+	SdkInfiniteQueryParams<FetchTokenSuppliesParams>;
 
 /**
  * Fetches token supplies with support for indexer API
  */
-export async function fetchTokenSupplies(params: FetchTokenSuppliesParams) {
-	const { chainId, collectionAddress, config, ...rest } = params;
-
+export async function fetchTokenSupplies(
+	params: WithRequired<
+		TokenSuppliesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+) {
+	const { chainId, config, ...apiParams } = params;
 	const indexerClient = getIndexerClient(chainId, config);
-
-	const apiArgs: GetTokenSuppliesArgs = {
-		contractAddress: collectionAddress,
-		...rest,
-	};
-
-	const result = await indexerClient.getTokenSupplies(apiArgs);
+	const result = await indexerClient.getTokenSupplies(apiParams);
 	return result;
 }
 
-export type TokenSuppliesQueryOptions =
-	ValuesOptional<FetchTokenSuppliesParams> & {
-		query?: StandardInfiniteQueryOptions;
-	};
-
 export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
 	const apiArgs = {
-		chainId: params.chainId!,
-		contractAddress: params.collectionAddress!,
+		chainId: params.chainId ?? 0,
+		collectionAddress: params.collectionAddress ?? '',
 		includeMetadata: params.includeMetadata,
 		metadataOptions: params.metadataOptions,
 	};
 
-	return ['token', 'supplies', apiArgs] as const;
+	return createTokenQueryKey('supplies', apiArgs);
 }
 
 export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
@@ -53,20 +55,22 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
-	const initialPageParam = { page: 1, pageSize: 30 } as Page;
+	const initialPageParam: Indexer.Page = { page: 1, pageSize: 30, more: false };
 
-	const queryFn = async ({ pageParam = initialPageParam }) =>
-		fetchTokenSupplies({
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			chainId: params.chainId!,
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			collectionAddress: params.collectionAddress!,
-			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-			config: params.config!,
+	const queryFn = async ({ pageParam = initialPageParam }) => {
+		const requiredParams = params as WithRequired<
+			TokenSuppliesQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>;
+		return fetchTokenSupplies({
+			chainId: requiredParams.chainId,
+			collectionAddress: requiredParams.collectionAddress,
+			config: requiredParams.config,
 			includeMetadata: params.includeMetadata,
 			metadataOptions: params.metadataOptions,
 			page: pageParam,
 		});
+	};
 
 	return infiniteQueryOptions({
 		queryKey: getTokenSuppliesQueryKey(params),

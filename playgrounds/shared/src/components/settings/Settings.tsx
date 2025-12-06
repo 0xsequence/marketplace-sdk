@@ -160,7 +160,7 @@ export function Settings({ collectionAddress }: SettingsProps) {
 						<Field>
 							<FieldLabel>Orderbook</FieldLabel>
 
-							<Select
+							<Select.Helper
 								name="orderbook"
 								defaultValue="default"
 								value={orderbookKind ? orderbookKind : 'default'}
@@ -179,15 +179,13 @@ export function Settings({ collectionAddress }: SettingsProps) {
 							</Text>
 							<div className="flex items-center gap-2">
 								<Switch
-									checked={paginationMode === 'paginated'}
+									checked={paginationMode === 'paged'}
 									onCheckedChange={(checked) =>
-										setPaginationMode(checked ? 'paginated' : 'infinite')
+										setPaginationMode(checked ? 'paged' : 'infinite')
 									}
 								/>
 								<Text variant="small" color="text80">
-									{paginationMode === 'paginated'
-										? 'Paginated'
-										: 'Infinite Scroll'}
+									{paginationMode === 'paged' ? 'Paginated' : 'Infinite Scroll'}
 								</Text>
 							</div>
 						</div>
@@ -341,7 +339,7 @@ function ApiServiceOverride({
 			</div>
 			{isOverridden && (
 				<div className="mt-2 flex gap-2">
-					<Select
+					<Select.Helper
 						name={`${service}-env`}
 						value={env}
 						options={ENV_OPTIONS}
@@ -402,7 +400,7 @@ function BulkApiOverride({ currentConfigs, onUpdate }: BulkApiOverrideProps) {
 			</div>
 
 			<div className="flex gap-2">
-				<Select
+				<Select.Helper
 					name="bulk-env"
 					value={env}
 					options={ENV_OPTIONS}

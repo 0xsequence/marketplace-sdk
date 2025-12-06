@@ -1,5 +1,4 @@
 export {
-	useMarketCheckoutOptions as useCheckoutOptions,
 	usePrimarySaleCheckoutOptions as useCheckoutOptionsSalesContract,
 	usePrimarySaleCheckoutOptions as useShopCheckoutOptions,
 } from '../checkout';

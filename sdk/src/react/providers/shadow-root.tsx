@@ -52,7 +52,7 @@ export const ShadowRoot = (props: ShadowRootProps) => {
 		? createPortal(
 				<div data-shadow-host ref={hostRef}>
 					{container && (
-						<ThemeProvider theme={theme} root={container}>
+						<ThemeProvider defaultTheme={theme} root={container}>
 							{children}
 						</ThemeProvider>
 					)}
