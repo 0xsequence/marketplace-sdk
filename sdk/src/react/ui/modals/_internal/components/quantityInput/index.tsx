@@ -2,6 +2,8 @@
 
 import {
 	AddIcon,
+	Field,
+	FieldLabel,
 	IconButton,
 	NumericInput,
 	SubtractIcon,
@@ -11,12 +13,12 @@ import { useEffect, useState } from 'react';
 import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
-	quantity: string;
+	quantity: bigint;
 	invalidQuantity: boolean;
-	onQuantityChange: (quantity: string) => void;
+	onQuantityChange: (quantity: bigint) => void;
 	onInvalidQuantityChange: (invalid: boolean) => void;
-	decimals: number;
-	maxQuantity: string;
+	decimals?: number;
+	maxQuantity: bigint;
 	className?: string;
 	disabled?: boolean;
 };
@@ -26,7 +28,7 @@ export default function QuantityInput({
 	invalidQuantity,
 	onQuantityChange,
 	onInvalidQuantityChange,
-	decimals,
+	decimals = 0,
 	maxQuantity,
 	className,
 	disabled,
@@ -34,11 +36,14 @@ export default function QuantityInput({
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
 	const minIncrement = decimals > 0 ? `0.${'1'.padStart(decimals, '0')}` : '1';
 	const dnIncrement = dn.from(minIncrement, decimals);
-	const min = decimals > 0 ? minIncrement : '0';
+	const min = decimals > 0 ? minIncrement : '1';
 	const dnMin = dn.from(min, decimals);
 
-	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
-	const [localQuantity, setLocalQuantity] = useState(quantity);
+	const dnQuantityInitial = dn.from(quantity, decimals);
+	const [dnQuantity, setDnQuantity] = useState(dnQuantityInitial);
+	const [localQuantity, setLocalQuantity] = useState(
+		dn.toString(dnQuantityInitial, decimals),
+	);
 
 	// Sync internal state with external prop changes and validate initial quantity
 	useEffect(() => {
@@ -51,10 +56,10 @@ export default function QuantityInput({
 			const validQuantity = dn.toString(dnMaxQuantity, decimals);
 			setLocalQuantity(validQuantity);
 			setDnQuantity(dnMaxQuantity);
-			onQuantityChange(validQuantity);
+			onQuantityChange(dnMaxQuantity[0]);
 			onInvalidQuantityChange(false);
 		} else {
-			setLocalQuantity(quantity);
+			setLocalQuantity(dn.toString(dnInitialQuantity, decimals));
 			setDnQuantity(dnInitialQuantity);
 		}
 	}, [
@@ -65,29 +70,18 @@ export default function QuantityInput({
 		onInvalidQuantityChange,
 	]);
 
-	const setQuantity = ({
-		value,
-		isValid,
-	}: {
-		value: string;
-		isValid: boolean;
-	}) => {
-		setLocalQuantity(value);
-		if (isValid) {
-			onQuantityChange(value);
-			setDnQuantity(dn.from(value, decimals));
-			onInvalidQuantityChange(false);
-		} else {
-			onInvalidQuantityChange(true);
-		}
+	const setValidQuantity = (value: dn.Dnum) => {
+		const valueStr = dn.toString(value, decimals);
+		setLocalQuantity(valueStr);
+		setDnQuantity(value);
+		onQuantityChange(value[0]);
+		onInvalidQuantityChange(false);
 	};
 
 	function handleChangeQuantity(value: string) {
 		if (!value || Number.isNaN(Number(value)) || value.endsWith('.')) {
-			setQuantity({
-				value: value,
-				isValid: false,
-			});
+			setLocalQuantity(value);
+			onInvalidQuantityChange(true);
 			return;
 		}
 		const dnValue = dn.from(value, decimals);
@@ -95,96 +89,84 @@ export default function QuantityInput({
 		const isLessThanMin = dn.lessThan(dnValue, dnMin);
 
 		if (isLessThanMin) {
-			setQuantity({
-				value: value, // Trying to enter fraction starting with 0
-				isValid: false,
-			});
+			setLocalQuantity(value); // Trying to enter fraction starting with 0
+			onInvalidQuantityChange(true);
 			return;
 		}
 
 		if (isBiggerThanMax) {
-			setQuantity({
-				value: maxQuantity,
-				isValid: true, // Is vaid is true because we override the value
-			});
+			setValidQuantity(dnMaxQuantity); // Value capped at max quantity
 			return;
 		}
 
-		setQuantity({
-			value: dn.toString(dnValue, decimals),
-			isValid: true,
-		});
+		setValidQuantity(dnValue);
 	}
 
 	function handleIncrement() {
 		const newValue = dn.add(dnQuantity, dnIncrement);
 		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
-			setQuantity({
-				value: dn.toString(dnMaxQuantity, decimals),
-				isValid: true,
-			});
+			setValidQuantity(dnMaxQuantity);
 		} else {
-			setQuantity({
-				value: dn.toString(newValue, decimals),
-				isValid: true,
-			});
+			setValidQuantity(newValue);
 		}
 	}
 
 	function handleDecrement() {
 		const newValue = dn.subtract(dnQuantity, dnIncrement);
 		if (dn.lessThanOrEqual(newValue, dnMin)) {
-			setQuantity({
-				value: dn.toString(dnMin, decimals),
-				isValid: true,
-			});
+			setValidQuantity(dnMin);
 		} else {
-			setQuantity({
-				value: dn.toString(newValue, decimals),
-				isValid: true,
-			});
+			setValidQuantity(newValue);
 		}
 	}
 
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col [&>label>div>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>div:has(:disabled)]:opacity-100 [&>label>div>div>div>input]:text-xs [&>label>div>div>div]:h-9 [&>label>div>div>div]:rounded [&>label>div>div>div]:pr-0 [&>label>div>div>div]:pl-3 [&>label>div>div>div]:text-xs [&>label]:gap-[2px]',
+				'flex w-full flex-col',
 				className,
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<NumericInput
-				className="w-full pl-1"
-				name={'quantity'}
-				decimals={decimals || 0}
-				label={'Enter quantity'}
-				labelLocation="top"
-				controls={
-					<div className="mr-2 flex items-center gap-1">
-						<IconButton
-							disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
-							onClick={handleDecrement}
-							size="xs"
-							icon={SubtractIcon}
-						/>
+			<Field>
+				<FieldLabel htmlFor="quantity" className="text-xs">
+					Enter quantity
+				</FieldLabel>
 
-						<IconButton
-							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
-							onClick={handleIncrement}
-							size="xs"
-							icon={AddIcon}
-						/>
-					</div>
-				}
-				value={localQuantity}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					handleChangeQuantity(e.target.value)
-				}
-				width={'full'}
-			/>
+				<NumericInput
+					aria-label="Enter quantity"
+					className="h-9 w-full rounded pr-0 [&>div]:pr-2 [&>input]:text-xs"
+					name={'quantity'}
+					decimals={decimals || 0}
+					controls={
+						<div className="flex items-center gap-1">
+							<IconButton
+								disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
+								onClick={handleDecrement}
+								size="xs"
+								icon={SubtractIcon}
+							/>
+
+							<IconButton
+								disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
+								onClick={handleIncrement}
+								size="xs"
+								icon={AddIcon}
+							/>
+						</div>
+					}
+					value={localQuantity}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						handleChangeQuantity(e.target.value)
+					}
+					width={'full'}
+				/>
+			</Field>
+
 			{invalidQuantity && (
-				<div className="text-negative text-sm">Invalid quantity</div>
+				<div className="mt-1.5 font-medium text-amber-500 text-xs">
+					Invalid quantity
+				</div>
 			)}
 		</div>
 	);

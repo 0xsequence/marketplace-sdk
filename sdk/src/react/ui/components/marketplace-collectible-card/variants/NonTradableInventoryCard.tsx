@@ -1,42 +1,60 @@
 'use client';
 
+import { forwardRef } from 'react';
 import type { ContractType } from '../../../../_internal';
-import { BaseCard } from '../components/BaseCard';
-import { NonTradableInventoryFooter } from '../components/footer';
+import { Card } from '../Card';
 import type { NonTradableInventoryCardProps } from '../types';
+import { renderSkeletonIfLoading } from '../utils';
 
-export function NonTradableInventoryCard({
-	collectibleId,
-	chainId,
-	collectionAddress,
-	collectionType,
-	assetSrcPrefixUrl,
-	cardLoading,
-	balance,
-	balanceIsLoading,
-	collectibleMetadata,
-}: NonTradableInventoryCardProps) {
-	return (
-		<BaseCard
-			collectibleId={collectibleId}
-			image={collectibleMetadata.image}
-			video={collectibleMetadata.video}
-			animationUrl={collectibleMetadata.animation_url}
-			chainId={chainId}
-			collectionAddress={collectionAddress}
-			collectionType={collectionType}
-			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading || balanceIsLoading}
-			contractType={collectionType as ContractType}
-			isShop={false}
-			name={collectibleMetadata.name}
-		>
-			<NonTradableInventoryFooter
-				name={collectibleMetadata.name || ''}
-				type={collectionType as ContractType}
-				balance={balance}
-				decimals={collectibleMetadata.decimals}
-			/>
-		</BaseCard>
-	);
-}
+export const NonTradableInventoryCard = forwardRef<
+	HTMLDivElement,
+	NonTradableInventoryCardProps
+>(
+	(
+		{
+			collectionType,
+			assetSrcPrefixUrl,
+			cardLoading,
+			balance,
+			balanceIsLoading,
+			collectibleMetadata,
+			classNames,
+		},
+		ref,
+	) => {
+		// Show loading skeleton
+		const skeleton = renderSkeletonIfLoading({
+			cardLoading,
+			balanceIsLoading,
+			collectionType,
+			isShop: false,
+		});
+		if (skeleton) return skeleton;
+
+		return (
+			<Card ref={ref} className={classNames?.cardRoot}>
+				<Card.Media
+					metadata={collectibleMetadata}
+					assetSrcPrefixUrl={assetSrcPrefixUrl}
+					className={classNames?.cardMedia}
+				/>
+
+				<Card.Content className={classNames?.cardContent}>
+					<Card.Title className={classNames?.cardTitle}>
+						{collectibleMetadata.name || 'Untitled'}
+					</Card.Title>
+
+					<Card.Price className={classNames?.cardPrice} />
+
+					<Card.Badge
+						type={collectionType as ContractType}
+						balance={balance}
+						className={classNames?.cardBadge}
+					/>
+				</Card.Content>
+			</Card>
+		);
+	},
+);
+
+NonTradableInventoryCard.displayName = 'NonTradableInventoryCard';

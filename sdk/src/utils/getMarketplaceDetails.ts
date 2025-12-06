@@ -1,3 +1,4 @@
+import { MarketplaceKind } from '@0xsequence/api-client';
 import type { Image } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
 import {
@@ -10,7 +11,6 @@ import {
 	SequenceLogo,
 	X2y2Logo,
 } from '../react/ui/components/marketplace-logos';
-import { MarketplaceKind } from '../types';
 
 interface Marketplace {
 	logo: ComponentType<React.ComponentProps<typeof Image>>;

@@ -4,8 +4,10 @@ import {
 	Badge,
 	Button,
 	Collapsible,
-	Divider,
+	Field,
+	FieldLabel,
 	Select,
+	Separator,
 	Switch,
 	Text,
 	TextInput,
@@ -122,74 +124,75 @@ export function Settings({ collectionAddress }: SettingsProps) {
 						Basic Settings
 					</Text>
 					<div className="flex w-full items-end gap-3">
-						<TextInput
-							labelLocation="top"
-							label="Project ID"
-							value={pendingProjectId}
-							onChange={(ev) => setPendingProjectId(ev.target.value)}
-							name="projectId"
-						/>
+						<Field>
+							<FieldLabel>Project ID</FieldLabel>
+
+							<TextInput
+								value={pendingProjectId}
+								onChange={(ev) => setPendingProjectId(ev.target.value)}
+								name="projectId"
+							/>
+						</Field>
+
 						<Button
-							label="Apply Configuration"
 							shape="square"
 							size="lg"
 							className="rounded-xl"
 							onClick={() => setProjectId(pendingProjectId)}
-						/>
+						>
+							Apply Configuration
+						</Button>
 					</div>
 					<TextInput
 						placeholder="No wallet connected"
 						value={address || ''}
-						disabled={true}
 						name="wallet"
 						controls={
 							<div>
-								<Button
-									label={address ? 'Disconnect' : 'Connect'}
-									size="xs"
-									shape="square"
-									onClick={toggleConnect}
-								/>
+								<Button size="xs" shape="square" onClick={toggleConnect}>
+									{address ? 'Disconnect' : 'Connect'}
+								</Button>
 							</div>
 						}
 					/>
 
 					<div className="flex items-center gap-3">
-						<Select
-							label="Orderbook"
-							labelLocation="top"
-							name="orderbook"
-							defaultValue="default"
-							value={orderbookKind ? orderbookKind : 'default'}
-							options={orderbookOptions}
-							onValueChange={(value) =>
-								setOrderbookKind(
-									value === 'default' ? undefined : (value as OrderbookKind),
-								)
-							}
-						/>
+						<Field>
+							<FieldLabel>Orderbook</FieldLabel>
+
+							<Select.Helper
+								name="orderbook"
+								defaultValue="default"
+								value={orderbookKind ? orderbookKind : 'default'}
+								options={orderbookOptions}
+								onValueChange={(value) =>
+									setOrderbookKind(
+										value === 'default' ? undefined : (value as OrderbookKind),
+									)
+								}
+							/>
+						</Field>
+
 						<div className="flex flex-col">
 							<Text variant="small" color="text80">
 								Pagination Mode
 							</Text>
 							<div className="flex items-center gap-2">
 								<Switch
-									checked={paginationMode === 'paginated'}
+									checked={paginationMode === 'paged'}
 									onCheckedChange={(checked) =>
-										setPaginationMode(checked ? 'paginated' : 'infinite')
+										setPaginationMode(checked ? 'paged' : 'infinite')
 									}
 								/>
 								<Text variant="small" color="text80">
-									{paginationMode === 'paginated'
-										? 'Paginated'
-										: 'Infinite Scroll'}
+									{paginationMode === 'paged' ? 'Paginated' : 'Infinite Scroll'}
 								</Text>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<Divider />
+				<Separator />
 
 				<Collapsible
 					label={
@@ -238,7 +241,7 @@ export function Settings({ collectionAddress }: SettingsProps) {
 					</div>
 				</Collapsible>
 
-				<Divider />
+				<Separator />
 
 				{/* Collection Overrides */}
 				<Collapsible
@@ -268,21 +271,15 @@ export function Settings({ collectionAddress }: SettingsProps) {
 					/>
 				</Collapsible>
 
-				<Divider />
+				<Separator />
 
 				<div className="flex gap-3 pt-3">
-					<Button
-						label="Reset All Settings"
-						variant="ghost"
-						shape="square"
-						onClick={handleReset}
-					/>
-					<Button
-						label="Clear Overrides Only"
-						variant="ghost"
-						shape="square"
-						onClick={clearAllOverrides}
-					/>
+					<Button variant="ghost" shape="square" onClick={handleReset}>
+						Reset All Settings
+					</Button>
+					<Button variant="ghost" shape="square" onClick={clearAllOverrides}>
+						Clear Overrides Only
+					</Button>
 				</div>
 			</div>
 		</Collapsible>
@@ -342,7 +339,7 @@ function ApiServiceOverride({
 			</div>
 			{isOverridden && (
 				<div className="mt-2 flex gap-2">
-					<Select
+					<Select.Helper
 						name={`${service}-env`}
 						value={env}
 						options={ENV_OPTIONS}
@@ -403,7 +400,7 @@ function BulkApiOverride({ currentConfigs, onUpdate }: BulkApiOverrideProps) {
 			</div>
 
 			<div className="flex gap-2">
-				<Select
+				<Select.Helper
 					name="bulk-env"
 					value={env}
 					options={ENV_OPTIONS}
@@ -419,19 +416,12 @@ function BulkApiOverride({ currentConfigs, onUpdate }: BulkApiOverrideProps) {
 			</div>
 
 			<div className="flex gap-2">
-				<Button
-					label="Apply to All"
-					size="xs"
-					shape="square"
-					onClick={applyToAll}
-				/>
-				<Button
-					label="Clear All"
-					size="xs"
-					shape="square"
-					variant="ghost"
-					onClick={clearAll}
-				/>
+				<Button size="xs" shape="square" onClick={applyToAll}>
+					Apply to All
+				</Button>
+				<Button size="xs" shape="square" variant="ghost" onClick={clearAll}>
+					Clear All
+				</Button>
 			</div>
 		</div>
 	);
@@ -505,34 +495,42 @@ function CollectionOverridesList({
 					Collection Details
 				</Text>
 				<div className="flex gap-2">
-					<TextInput
-						name="chainId"
-						label="Chain ID"
-						labelLocation="top"
-						value={newCollection.chainId.toString()}
-						onChange={(e) => handleChange('chainId', e.target.value)}
-						error={
-							Number.isNaN(newCollection.chainId)
-								? 'Invalid chain ID'
-								: undefined
-						}
-					/>
-					<TextInput
-						name="contractAddress"
-						label="Contract Address"
-						labelLocation="top"
-						value={newCollection.contractAddress}
-						onChange={(e) => handleChange('contractAddress', e.target.value)}
-						error={!isValidAddress ? 'Invalid contract address' : undefined}
-						className="flex-1"
-					/>
+					<Field>
+						<FieldLabel>Chain ID</FieldLabel>
+
+						<TextInput
+							name="chainId"
+							value={newCollection.chainId.toString()}
+							onChange={(e) => handleChange('chainId', e.target.value)}
+						/>
+
+						{Number.isNaN(newCollection.chainId) ? (
+							<Text variant="small" color="text50">
+								Invalid chain ID
+							</Text>
+						) : undefined}
+					</Field>
+
+					<Field>
+						<FieldLabel>Contract Address</FieldLabel>
+
+						<TextInput
+							name="contractAddress"
+							value={newCollection.contractAddress}
+							onChange={(e) => handleChange('contractAddress', e.target.value)}
+							className="flex-1"
+						/>
+
+						{!isValidAddress ? (
+							<Text variant="small" color="text50">
+								Invalid contract address
+							</Text>
+						) : undefined}
+					</Field>
 				</div>
-				<Button
-					label="Add Collection"
-					shape="square"
-					onClick={handleAdd}
-					disabled={!canAdd}
-				/>
+				<Button shape="square" onClick={handleAdd} disabled={!canAdd}>
+					Add Collection
+				</Button>
 			</div>
 
 			{collections.length > 0 && (
@@ -556,12 +554,13 @@ function CollectionOverridesList({
 								)}
 							</div>
 							<Button
-								label="Remove"
 								variant="ghost"
 								size="xs"
 								shape="square"
 								onClick={() => handleRemove(index)}
-							/>
+							>
+								Remove
+							</Button>
 						</div>
 					))}
 				</div>

@@ -1,6 +1,5 @@
 import { SequenceAPIClient } from '@0xsequence/api';
-import { SequenceIndexer } from '@0xsequence/indexer';
-import { SequenceMetadata } from '@0xsequence/metadata';
+import { SequenceIndexer, SequenceMetadata } from '@0xsequence/api-client';
 import { stringTemplate } from '@0xsequence/network';
 import type { ApiConfig, Env, SdkConfig } from '../../../types/sdk-config';
 import { getNetwork } from '../../../utils/network';
@@ -30,7 +29,7 @@ const metadataURL = (env: Env = 'production') => {
 const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	const network = getNetwork(chain).name;
-	return stringTemplate(SERVICES.indexer, { network: network, prefix });
+	return stringTemplate(SERVICES.indexer, { network, prefix });
 };
 
 export const marketplaceApiURL = (env: Env = 'production') => {

@@ -45,7 +45,7 @@ function transformPropertyRules() {
 						customProperties.forEach(({ name, value }) => {
 							const declaration = new Declaration({
 								prop: name,
-								value: value,
+								value,
 							});
 							rootRule.append(declaration);
 						});

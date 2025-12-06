@@ -45,7 +45,7 @@ export const TEST_PRIVATE_KEYS = [
 export const TEST_COLLECTIBLE = {
 	collectionAddress: '0xbabafdd8045740449a42b788a26e9b3a32f88ac1',
 	chainId: 1,
-	collectibleId: '7602',
+	tokenId: 7602n,
 } as const;
 
 export const TEST_CURRENCY: Currency = {
@@ -59,10 +59,10 @@ export const TEST_CURRENCY: Currency = {
 	exchangeRate: 1,
 	defaultChainCurrency: false,
 	nativeCurrency: false,
-	createdAt: '2021-01-01T00:00:00.000Z',
-	updatedAt: '2021-01-01T00:00:00.000Z',
 	openseaListing: true,
 	openseaOffer: true,
+	createdAt: '2021-01-01T00:00:00.000Z',
+	updatedAt: '2021-01-01T00:00:00.000Z',
 };
 
 export const TEST_CURRENCY_2: Currency = {

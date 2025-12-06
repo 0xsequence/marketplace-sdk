@@ -1,6 +1,6 @@
+import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
+import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
-import type { OrderbookKind } from '../../../../sdk/src';
-import type { CollectibleCardProps } from '../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 
 export interface ViewProps {
 	collectionAddress: string;

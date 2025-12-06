@@ -11,8 +11,8 @@ export interface TransferModalState {
 	isOpen: boolean;
 	chainId: number;
 	collectionAddress: Hex;
-	collectibleId: string;
-	quantity: string;
+	tokenId: bigint;
+	quantity: bigint;
 	receiverAddress: string;
 	transferIsProcessing: boolean;
 	view: TransferModalView;
@@ -25,8 +25,8 @@ const initialContext: TransferModalState = {
 	isOpen: false,
 	chainId: 0,
 	collectionAddress: '0x' as Hex,
-	collectibleId: '',
-	quantity: '1',
+	tokenId: 0n,
+	quantity: 1n,
 	receiverAddress: '',
 	transferIsProcessing: false,
 	view: 'enterReceiverAddress',
@@ -43,7 +43,7 @@ export const transferModalStore = createStore({
 			isOpen: true,
 			chainId: event.chainId,
 			collectionAddress: event.collectionAddress,
-			collectibleId: event.collectibleId,
+			tokenId: event.tokenId,
 			view: 'enterReceiverAddress' as const,
 			onSuccess: event.callbacks?.onSuccess,
 			onError: event.callbacks?.onError,
@@ -53,7 +53,7 @@ export const transferModalStore = createStore({
 			context,
 			event: {
 				receiverAddress?: string;
-				quantity?: string;
+				quantity?: bigint;
 			},
 		) => ({
 			...context,
@@ -118,5 +118,5 @@ export const transferDetailsSelector = transferModalStore.select((state) => ({
 export const transferConfigSelector = transferModalStore.select((state) => ({
 	chainId: state.chainId,
 	collectionAddress: state.collectionAddress,
-	collectibleId: state.collectibleId,
+	tokenId: state.tokenId,
 }));

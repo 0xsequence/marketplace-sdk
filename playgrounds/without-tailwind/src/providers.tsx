@@ -4,6 +4,7 @@ import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
+import type { MarketplaceConfig } from '@0xsequence/marketplace-sdk';
 import {
 	createWagmiConfig,
 	getQueryClient,
@@ -16,7 +17,6 @@ import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { WagmiProvider } from 'wagmi';
-import type { MarketplaceConfig } from '../../../sdk/src';
 import { sdkConfig } from './sdkConfig';
 
 export function Providers({ children }: { children: React.ReactNode }) {

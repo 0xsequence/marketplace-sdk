@@ -121,7 +121,7 @@ export const getERC1155SalePaymentParams = async ({
 				{
 					quantity: quantity.toString(),
 					decimals: 0,
-					tokenId: tokenId,
+					tokenId,
 				},
 			],
 			currencyAddress,
@@ -236,7 +236,7 @@ export const useERC1155SalePaymentParams = (
 							collectionAddress,
 							tokenId,
 							quantity,
-							price: BigInt(price!),
+							price: BigInt(price ?? '0'),
 							currencyAddress,
 							callbacks: {
 								onSuccess,

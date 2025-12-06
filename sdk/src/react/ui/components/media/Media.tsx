@@ -59,7 +59,7 @@ export function Media({
 		: '';
 
 	const containerClassNames = cn(
-		'relative aspect-square overflow-hidden bg-background-secondary',
+		'relative aspect-square bg-background-secondary',
 		containerClassName || className,
 	);
 

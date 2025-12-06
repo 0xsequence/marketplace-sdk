@@ -1,5 +1,5 @@
 import type { NetworkConfig } from '@0xsequence/network';
-import type { Chain } from 'viem';
+import type { Address, Chain } from 'viem';
 
 export const networkToWagmiChain = (network: NetworkConfig): Chain => ({
 	...network,
@@ -17,7 +17,7 @@ export const networkToWagmiChain = (network: NetworkConfig): Chain => ({
 	contracts: network.ensAddress
 		? {
 				ensRegistry: {
-					address: network.ensAddress as `0x${string}`,
+					address: network.ensAddress as Address,
 				},
 			}
 		: undefined,

@@ -1,14 +1,31 @@
 'use client';
 
-import { CollectibleCardAction } from '../../../../../types';
 import type { ContractType } from '../../../../_internal';
-import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
-import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../components/footer';
+import { useCurrency } from '../../../../hooks/currency/currency';
 import type { MarketCollectibleCardProps } from '../types';
+import { determineCardAction, renderSkeletonIfLoading } from '../utils';
+import { MarketCardPresentation } from './MarketCardPresentation';
 
+/**
+ * MarketCard - Smart component with built-in data fetching
+ *
+ * This component handles currency fetching and action determination automatically.
+ * Use this for convenient plug-and-play integration.
+ *
+ * For full control over data fetching (e.g., SSR/SSG), use MarketCardPresentation instead.
+ *
+ * @example
+ * ```tsx
+ * <MarketCard
+ *   tokenId="123"
+ *   chainId={1}
+ *   collectionAddress="0x..."
+ *   collectible={collectible}
+ * />
+ * ```
+ */
 export function MarketCard({
-	collectibleId,
+	tokenId,
 	chainId,
 	collectionAddress,
 	collectionType,
@@ -23,94 +40,64 @@ export function MarketCard({
 	onCannotPerformAction,
 	prioritizeOwnerActions,
 	hideQuantitySelector,
+	classNames,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
 	const lowestListing = collectible?.listing;
+
+	// Fetch currency details for the listing price
+	const { data: currency } = useCurrency({
+		chainId,
+		currencyAddress: lowestListing?.priceCurrencyAddress,
+		query: {
+			enabled: !!lowestListing?.priceCurrencyAddress,
+		},
+	});
 
 	if (!collectibleMetadata) {
 		console.error('Collectible metadata is undefined');
 		return null;
 	}
 
-	const showActionButton =
-		!balanceIsLoading && (!!highestOffer || !!collectible);
+	// Show loading skeleton
+	const skeleton = renderSkeletonIfLoading({
+		cardLoading,
+		balanceIsLoading,
+		collectionType,
+		isShop: false,
+	});
+	if (skeleton) return skeleton;
 
-	const action = (
-		balance
-			? (highestOffer && CollectibleCardAction.SELL) ||
-				(!collectible?.listing && CollectibleCardAction.LIST) ||
-				CollectibleCardAction.TRANSFER
-			: (collectible?.listing && CollectibleCardAction.BUY) ||
-				CollectibleCardAction.OFFER
-	) as CollectibleCardAction;
+	const showActionButton = !!highestOffer || !!collectible;
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			onCollectibleClick?.(collectibleId);
-		}
-	};
+	const action = determineCardAction({
+		hasBalance: !!balance,
+		hasOffer: !!highestOffer,
+		hasListing: !!lowestListing,
+	});
 
 	return (
-		<BaseCard
-			collectibleId={collectibleId}
+		<MarketCardPresentation
+			tokenId={tokenId}
 			chainId={chainId}
 			collectionAddress={collectionAddress}
-			collectionType={collectionType}
+			collectionType={collectionType as ContractType}
+			collectibleMetadata={collectibleMetadata}
+			currency={currency}
+			lowestListing={lowestListing}
+			highestOffer={highestOffer}
+			balance={balance}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading}
-			cardType="market"
-			name={collectibleMetadata.name || ''}
-			image={collectibleMetadata.image}
-			video={collectibleMetadata.video}
-			animationUrl={collectibleMetadata.animation_url}
-			contractType={collectionType as ContractType}
-			isShop={false}
-			onClick={() => onCollectibleClick?.(collectibleId)}
-			onKeyDown={handleKeyDown}
+			onCollectibleClick={onCollectibleClick}
+			onOfferClick={onOfferClick}
+			orderbookKind={orderbookKind}
+			action={action}
+			showActionButton={showActionButton}
+			onCannotPerformAction={onCannotPerformAction}
+			prioritizeOwnerActions={prioritizeOwnerActions}
 			hideQuantitySelector={hideQuantitySelector}
-		>
-			<Footer
-				chainId={chainId}
-				name={collectibleMetadata.name || ''}
-				type={collectionType}
-				onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
-				highestOffer={highestOffer}
-				lowestListing={lowestListing}
-				balance={balance}
-				decimals={collectibleMetadata.decimals}
-				quantityInitial={
-					highestOffer?.quantityInitial !== undefined
-						? highestOffer.quantityInitial
-						: collectible?.listing?.quantityInitial !== undefined
-							? collectible.listing.quantityInitial
-							: undefined
-				}
-				quantityRemaining={
-					highestOffer?.quantityRemaining !== undefined
-						? highestOffer.quantityRemaining
-						: collectible?.listing?.quantityRemaining !== undefined
-							? collectible.listing.quantityRemaining
-							: undefined
-				}
-				cardType="market"
-			/>
-
-			<ActionButtonWrapper
-				show={showActionButton ?? false}
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				tokenId={collectibleId}
-				orderbookKind={orderbookKind}
-				action={action}
-				highestOffer={highestOffer}
-				lowestListing={collectible?.listing}
-				owned={!!balance}
-				onCannotPerformAction={onCannotPerformAction}
-				cardType="market"
-				prioritizeOwnerActions={prioritizeOwnerActions}
-				hideQuantitySelector={hideQuantitySelector}
-			/>
-		</BaseCard>
+			classNames={classNames}
+		/>
 	);
 }

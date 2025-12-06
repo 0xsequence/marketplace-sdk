@@ -1,8 +1,11 @@
+import { MetadataMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
+
+const { mockMetadataEndpoint } = MetadataMocks;
+
 import { type UseFiltersParams, useFilters } from './useFilters';
 
 describe('useFilters', () => {

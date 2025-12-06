@@ -1,10 +1,10 @@
-import { Divider, Scroll, Switch, Text } from '@0xsequence/design-system';
-import type { Address } from 'viem';
-import type { PropertyFilter } from '../../../../../sdk/src';
+import { Scroll, Separator, Switch, Text } from '@0xsequence/design-system';
+import type { PropertyFilter } from '@0xsequence/marketplace-sdk';
 import {
 	useFilterState,
 	useFiltersProgressive,
-} from '../../../../../sdk/src/react';
+} from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
 import { PriceFilter } from './PriceFilter';
 import { PropertyFilters } from './PropertyFilters';
 
@@ -38,7 +38,7 @@ function FiltersSidebar({ chainId, collectionAddress }: FiltersSidebarProps) {
 				/>
 			</div>
 
-			<Divider />
+			<Separator />
 
 			{showPriceFilter && (
 				<PriceFilter chainId={chainId} collectionAddress={collectionAddress} />

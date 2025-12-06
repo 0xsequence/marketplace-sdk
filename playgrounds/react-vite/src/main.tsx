@@ -25,7 +25,7 @@ createRoot(document.getElementById('root')!).render(
 							element={<Collectibles />}
 						/>
 						<Route
-							path=":chainId/:collectionAddress/:collectibleId"
+							path=":chainId/:collectionAddress/:tokenId"
 							element={<Collectible />}
 						/>
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />

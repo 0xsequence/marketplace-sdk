@@ -3,7 +3,7 @@
 import type { IconProps } from '@0xsequence/design-system';
 import type { SVGProps } from 'react';
 import { cn } from '../../../utils';
-import { iconVariants } from './iconVariants';
+import { type IconSize, iconVariants } from './iconVariants';
 
 const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
@@ -25,11 +25,15 @@ const Svg = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
-const SvgBellIcon = ({ className, size = 'sm', ...props }: IconProps) => (
+const SvgBellIcon = ({
+	className,
+	size = 'md',
+	...props
+}: Omit<IconProps, 'size'> & { size?: IconSize }) => (
 	<Svg
 		className={cn(
 			iconVariants({
-				size,
+				size: size || 'md',
 			}),
 			className,
 		)}

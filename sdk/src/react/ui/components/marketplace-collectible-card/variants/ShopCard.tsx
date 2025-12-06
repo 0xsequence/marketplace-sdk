@@ -1,15 +1,33 @@
 'use client';
 
-import { type CardType, CollectibleCardAction } from '../../../../../types';
+import type { CardType } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
-import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
-import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../components/footer';
+import { useCurrency } from '../../../../hooks/currency/currency';
 import type { ShopCollectibleCardProps } from '../types';
+import { getShopCardState, renderSkeletonIfLoading } from '../utils';
+import { ShopCardPresentation } from './ShopCardPresentation';
 
+/**
+ * ShopCard - Smart component with built-in data fetching
+ *
+ * This component handles currency fetching and shop state calculation automatically.
+ * Use this for convenient plug-and-play integration.
+ *
+ * For full control over data fetching (e.g., SSR/SSG), use ShopCardPresentation instead.
+ *
+ * @example
+ * ```tsx
+ * <ShopCard
+ *   tokenId="123"
+ *   chainId={1}
+ *   collectionAddress="0x..."
+ *   tokenMetadata={metadata}
+ *   salePrice={salePrice}
+ * />
+ * ```
+ */
 export function ShopCard({
-	collectibleId,
+	tokenId,
 	chainId,
 	collectionAddress,
 	collectionType,
@@ -19,11 +37,11 @@ export function ShopCard({
 	salesContractAddress,
 	tokenMetadata,
 	salePrice,
-	quantityDecimals,
 	quantityInitial,
 	quantityRemaining,
 	unlimitedSupply,
 	hideQuantitySelector,
+	classNames,
 }: ShopCollectibleCardProps) {
 	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
 		chainId,
@@ -44,69 +62,41 @@ export function ShopCard({
 		return null;
 	}
 
-	const showActionButton =
-		salesContractAddress &&
-		collectionType === ContractType.ERC1155 &&
-		(unlimitedSupply ||
-			(quantityRemaining !== undefined && Number(quantityRemaining) > 0));
+	// Show loading skeleton
+	const skeleton = renderSkeletonIfLoading({
+		cardLoading,
+		balanceIsLoading: saleCurrencyLoading,
+		collectionType,
+		isShop: true,
+	});
+	if (skeleton) return skeleton;
 
-	const action = CollectibleCardAction.BUY;
-
-	const mediaClassName = unlimitedSupply
-		? 'opacity-100'
-		: quantityRemaining === '0' || quantityRemaining === undefined
-			? 'opacity-50'
-			: 'opacity-100';
+	// Calculate shop card state (stock availability, styling)
+	const shopState = getShopCardState({
+		quantityRemaining,
+		quantityInitial,
+		unlimitedSupply,
+		collectionType,
+		salesContractAddress,
+	});
 
 	return (
-		<BaseCard
-			collectibleId={collectibleId}
+		<ShopCardPresentation
+			tokenId={tokenId}
 			chainId={chainId}
 			collectionAddress={collectionAddress}
-			collectionType={collectionType}
+			collectionType={collectionType as ContractType}
+			tokenMetadata={tokenMetadata}
+			saleCurrency={saleCurrency}
+			salePrice={salePrice}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading || saleCurrencyLoading}
-			cardType={cardType}
-			name={tokenMetadata.name || ''}
-			image={tokenMetadata.image}
-			video={tokenMetadata.video}
-			animationUrl={tokenMetadata.animation_url}
-			mediaClassName={mediaClassName}
-			contractType={collectionType as ContractType}
-			isShop={true}
+			shopState={shopState}
+			cardType={cardType as CardType}
+			salesContractAddress={salesContractAddress}
+			quantityRemaining={quantityRemaining}
+			unlimitedSupply={unlimitedSupply}
 			hideQuantitySelector={hideQuantitySelector}
-		>
-			<Footer
-				chainId={chainId}
-				name={tokenMetadata.name || ''}
-				type={collectionType}
-				decimals={tokenMetadata.decimals}
-				quantityInitial={quantityInitial}
-				quantityRemaining={quantityRemaining}
-				unlimitedSupply={unlimitedSupply}
-				cardType={cardType as CardType}
-				salePriceAmount={salePrice?.amount}
-				salePriceCurrency={saleCurrency}
-			/>
-
-			<ActionButtonWrapper
-				show={showActionButton}
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				tokenId={collectibleId}
-				action={action}
-				owned={false}
-				cardType={cardType as CardType}
-				salesContractAddress={salesContractAddress}
-				salePrice={salePrice}
-				quantityDecimals={quantityDecimals}
-				quantityRemaining={
-					quantityRemaining !== undefined
-						? Number(quantityRemaining)
-						: undefined
-				}
-				unlimitedSupply={unlimitedSupply}
-			/>
-		</BaseCard>
+			classNames={classNames}
+		/>
 	);
 }

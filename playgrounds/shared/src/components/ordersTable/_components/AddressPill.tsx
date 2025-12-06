@@ -1,7 +1,7 @@
 'use client';
 
 import { GradientAvatar, Text } from '@0xsequence/design-system';
-import { truncateMiddle } from '../../../../../../sdk/src';
+import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import Pill from './Pill';
 
 const AddressPill = ({ address }: { address: string }) => {

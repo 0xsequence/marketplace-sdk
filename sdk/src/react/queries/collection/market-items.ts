@@ -1,0 +1,66 @@
+import type { Page } from '../../../types';
+import type {
+	ListOrdersWithCollectiblesRequest,
+	ListOrdersWithCollectiblesResponse,
+} from '../../_internal';
+import {
+	buildInfiniteQueryOptions,
+	getMarketplaceClient,
+	type SdkInfiniteQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createCollectionQueryKey } from './queryKeys';
+
+export type FetchListItemsOrdersForCollectionParams =
+	ListOrdersWithCollectiblesRequest;
+
+export type ListItemsOrdersForCollectionQueryOptions =
+	SdkInfiniteQueryParams<FetchListItemsOrdersForCollectionParams>;
+
+export async function fetchListItemsOrdersForCollection(
+	params: WithRequired<
+		ListItemsOrdersForCollectionQueryOptions,
+		'chainId' | 'collectionAddress' | 'side' | 'config'
+	>,
+	page: Page,
+): Promise<ListOrdersWithCollectiblesResponse> {
+	const { config, ...apiParams } = params;
+	const marketplaceClient = getMarketplaceClient(config);
+
+	return await marketplaceClient.listOrdersWithCollectibles({
+		...apiParams,
+		page,
+	});
+}
+
+export function getListItemsOrdersForCollectionQueryKey(
+	params: ListItemsOrdersForCollectionQueryOptions,
+) {
+	const apiArgs = {
+		chainId: params.chainId,
+		collectionAddress: params.collectionAddress,
+		side: params.side,
+		filter: params.filter,
+	};
+
+	return createCollectionQueryKey('market-items', apiArgs);
+}
+
+export function listItemsOrdersForCollectionQueryOptions(
+	params: ListItemsOrdersForCollectionQueryOptions,
+) {
+	return buildInfiniteQueryOptions(
+		{
+			getQueryKey: getListItemsOrdersForCollectionQueryKey,
+			requiredParams: [
+				'chainId',
+				'collectionAddress',
+				'side',
+				'config',
+			] as const,
+			fetcher: fetchListItemsOrdersForCollection,
+			getPageInfo: (response) => response.page,
+		},
+		params,
+	);
+}

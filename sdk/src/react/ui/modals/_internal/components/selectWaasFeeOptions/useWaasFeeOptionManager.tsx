@@ -1,30 +1,24 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
+import { useConfig } from '../../../../../hooks';
 import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
+import { useWaasFeeOptions } from '../../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
+	const config = useConfig();
 	const { address: userAddress } = useAccount();
+	const { selectedFeeOption, setSelectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
+
 	const {
-		selectedFeeOption,
-		setSelectedFeeOption,
-		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
-		setPendingFeeOptionConfirmation,
-	} = useSelectWaasFeeOptionsStore();
-
-	const [pendingFeeOptionConfirmationFromHook, confirmPendingFeeOption] =
-		useWaasFeeOptions();
+		pendingFeeOptionConfirmation,
+		confirmPendingFeeOption,
+		rejectPendingFeeOption,
+	} = useWaasFeeOptions(chainId, config);
 	const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
-
-	// Update store when hook value changes
-	useEffect(() => {
-		setPendingFeeOptionConfirmation(
-			pendingFeeOptionConfirmationFromHook as any,
-		);
-	}, [pendingFeeOptionConfirmationFromHook, setPendingFeeOptionConfirmation]);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
 		useCurrencyBalance({
@@ -35,18 +29,14 @@ const useWaasFeeOptionManager = (chainId: number) => {
 		});
 
 	useEffect(() => {
-		if (!selectedFeeOption && storedPendingFeeOptionConfirmation) {
-			if (storedPendingFeeOptionConfirmation.options.length > 0) {
+		if (!selectedFeeOption && pendingFeeOptionConfirmation) {
+			if (pendingFeeOptionConfirmation.options.length > 0) {
 				setSelectedFeeOption(
-					storedPendingFeeOptionConfirmation.options[0] as FeeOption,
+					pendingFeeOptionConfirmation.options[0] as FeeOption,
 				);
 			}
 		}
-	}, [
-		storedPendingFeeOptionConfirmation,
-		selectedFeeOption,
-		setSelectedFeeOption,
-	]);
+	}, [pendingFeeOptionConfirmation, selectedFeeOption, setSelectedFeeOption]);
 
 	const insufficientBalance = (() => {
 		if (!selectedFeeOption?.value || !selectedFeeOption.token.decimals) {
@@ -66,25 +56,32 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	})();
 
 	const handleConfirmFeeOption = () => {
-		if (!selectedFeeOption?.token || !storedPendingFeeOptionConfirmation?.id)
-			return;
+		if (!selectedFeeOption?.token || !pendingFeeOptionConfirmation?.id) return;
 
 		confirmPendingFeeOption(
-			storedPendingFeeOptionConfirmation?.id,
+			pendingFeeOptionConfirmation?.id,
 			selectedFeeOption.token.contractAddress || zeroAddress,
 		);
 
+		rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
 		setFeeOptionsConfirmed(true);
+	};
+
+	const handleRejectFeeOption = (id: string) => {
+		rejectPendingFeeOption(id);
+		// Also clear the store when rejecting
+		setSelectedFeeOption(undefined);
 	};
 
 	return {
 		selectedFeeOption,
-		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
+		pendingFeeOptionConfirmation,
 		currencyBalance,
 		currencyBalanceLoading,
 		insufficientBalance,
 		feeOptionsConfirmed,
 		handleConfirmFeeOption,
+		rejectPendingFeeOption: handleRejectFeeOption,
 	};
 };
 

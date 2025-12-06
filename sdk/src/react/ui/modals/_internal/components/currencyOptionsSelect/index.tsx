@@ -3,12 +3,14 @@
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
+import { compareAddress } from '../../../../../../utils';
 import { type Currency, OrderbookKind } from '../../../../../_internal';
-import { useMarketCurrencies } from '../../../../../hooks/data/market/useMarketCurrencies';
+import { useCurrencyList } from '../../../../../hooks';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
+import { getOpenseaCurrencyForChain } from '../../constants/opensea-currencies';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Address;
@@ -31,27 +33,22 @@ function CurrencyOptionsSelect({
 	orderbookKind,
 	modalType,
 }: CurrencyOptionsSelectProps) {
-	const { data: currencies, isLoading: currenciesLoading } =
-		useMarketCurrencies({
-			chainId,
-			collectionAddress,
-			includeNativeCurrency,
-		});
+	const { data: currencies, isLoading: currenciesLoading } = useCurrencyList({
+		chainId,
+		collectionAddress,
+		includeNativeCurrency,
+	});
 
 	// Filter currencies for OpenSea
 	let filteredCurrencies = currencies;
-
 	if (currencies && orderbookKind === OrderbookKind.opensea && modalType) {
-		// Filter currencies based on OpenSea support flags from API
-		filteredCurrencies = currencies.filter((currency) => {
-			if (modalType === 'listing') {
-				return currency.openseaListing;
-			}
-			if (modalType === 'offer') {
-				return currency.openseaOffer;
-			}
-			return false;
-		});
+		const openseaCurrency = getOpenseaCurrencyForChain(chainId, modalType);
+		if (openseaCurrency) {
+			// Filter to only show the OpenSea-supported currency
+			filteredCurrencies = currencies.filter((currency) =>
+				compareAddress(currency.contractAddress, openseaCurrency.address),
+			);
+		}
 	}
 
 	// set default currency
@@ -64,9 +61,9 @@ function CurrencyOptionsSelect({
 			// We dont support native currency listings for any marketplace other than Sequence Marketplace v2
 			// So we need to set the set another currency as the default
 			if (secondCurrencyAsDefault && filteredCurrencies.length > 1) {
-				onCurrencyChange(filteredCurrencies[1]);
+				onCurrencyChange(filteredCurrencies[1] as Currency);
 			} else {
-				onCurrencyChange(filteredCurrencies[0]);
+				onCurrencyChange(filteredCurrencies[0] as Currency);
 			}
 		}
 	}, [
@@ -77,7 +74,7 @@ function CurrencyOptionsSelect({
 	]);
 
 	if (!filteredCurrencies || currenciesLoading || !selectedCurrency?.symbol) {
-		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
+		return <Skeleton className="mr-0 h-6 w-20 rounded-2xl" />;
 	}
 
 	const options = filteredCurrencies.map(
@@ -94,12 +91,9 @@ function CurrencyOptionsSelect({
 			(currency) => currency.contractAddress === value,
 		);
 		if (selectedCurrency) {
-			onCurrencyChange(selectedCurrency);
+			onCurrencyChange(selectedCurrency as Currency);
 		}
 	};
-
-	// Disable dropdown for OpenSea since there's typically only one currency
-	const isDropdownDisabled = orderbookKind === OrderbookKind.opensea;
 
 	return (
 		<CustomSelect
@@ -109,7 +103,6 @@ function CurrencyOptionsSelect({
 				value: selectedCurrency.contractAddress,
 				content: selectedCurrency.symbol,
 			}}
-			disabled={isDropdownDisabled}
 			testId="currency-select"
 		/>
 	);

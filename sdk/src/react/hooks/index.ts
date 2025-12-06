@@ -1,18 +1,15 @@
-// Re-export all hooks from their new organized locations
-// This maintains backwards compatibility while providing better organization
+'use client';
 
-// Configuration & context hooks
+// Backward compatible exports (deprecated hook names)
+export * from './_deprecated';
+export * from './checkout';
+export * from './collectible';
+export * from './collection';
 export * from './config';
-// Contract hooks
 export * from './contracts';
-// Data fetching hooks
-export * from './data';
-// Inventory hooks
-export * from './data/inventory';
-// Transaction hooks
+export * from './currency';
+export * from './inventory';
+export * from './token';
 export * from './transactions';
-
-// UI state hooks
 export * from './ui';
-// Utility hooks
 export * from './utils';

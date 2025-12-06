@@ -2,7 +2,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "pnpm run --r --filter \"./sdk\" build",
+		"build": "pnpm run --filter \"./api\" build && pnpm run --filter \"./sdk\" build",
 		"deps": "pnpx taze -r",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
@@ -20,17 +20,16 @@
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
-		"tailwind": "pnpm --filter \"./sdk\" tailwind"
+		"tailwind": "pnpm --filter \"./sdk\" tailwind",
+		"resolve-deps-and-build": "node scripts/resolve-deps-and-build.cjs"
 	},
-	"packageManager": "pnpm@10.18.2",
+	"packageManager": "pnpm@10.23.0",
 	"engines": {
 		"node": "24.x"
 	},
 	"pnpm": {
-		"overrides": {
-			"@0xsequence/marketplace-sdk": "workspace:*"
-		},
 		"onlyBuiltDependencies": [
+			"@tailwindcss/oxide",
 			"msw",
 			"oxc-resolver"
 		]

@@ -1,8 +1,11 @@
+import type { Metadata } from '@0xsequence/api-client';
 import type { IconProps } from '@0xsequence/design-system';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { ComponentType } from 'react';
-import type { TokenMetadata } from '../../../_internal';
+
+type TokenMetadata = Metadata.TokenMetadata;
+
 import type { ModalCallbacks } from '../_internal/types';
 
 export interface SuccessfulPurchaseModalState {

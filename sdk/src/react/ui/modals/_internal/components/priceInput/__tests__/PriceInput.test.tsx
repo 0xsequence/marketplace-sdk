@@ -8,7 +8,7 @@ const defaultProps = {
 	chainId: 1,
 	collectionAddress: zeroAddress,
 	price: {
-		amountRaw: '0',
+		amountRaw: 0n,
 		currency: TEST_CURRENCY,
 	},
 };
@@ -34,7 +34,7 @@ describe('PriceInput', () => {
 		fireEvent.change(input, { target: { value: '100' } });
 		expect(onPriceChange).toHaveBeenCalledTimes(1);
 		expect(onPriceChange).toHaveBeenCalledWith({
-			amountRaw: expect.any(String),
+			amountRaw: expect.any(BigInt),
 			currency: TEST_CURRENCY,
 		});
 	});
@@ -47,7 +47,7 @@ describe('PriceInput', () => {
 		fireEvent.change(input, { target: { value: '0' } });
 		expect(onPriceChange).toHaveBeenCalledTimes(2); // Called once for '100', once for '0'
 		expect(onPriceChange).toHaveBeenCalledWith({
-			amountRaw: '0',
+			amountRaw: 0n,
 			currency: TEST_CURRENCY,
 		});
 	});

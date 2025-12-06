@@ -1,5 +1,5 @@
+import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
-import { useFilterState } from '../../../../sdk/src/react';
 
 export function useShopFilters() {
 	const { searchText, showListedOnly: showAvailableSales } = useFilterState();

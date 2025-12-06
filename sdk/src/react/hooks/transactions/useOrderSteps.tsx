@@ -1,9 +1,13 @@
 import {
+	type SignatureStep,
+	type Step,
+	StepType,
+	type TransactionStep,
+} from '@0xsequence/api-client';
+import {
 	BaseError,
 	type Hex,
-	hexToBigInt,
 	isHex,
-	type TypedDataDomain,
 	UserRejectedRequestError as ViemUserRejectedRequestError,
 } from 'viem';
 import {
@@ -19,9 +23,7 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { type Step, StepType } from '../../_internal/api';
 import { createLogger } from '../../_internal/logger';
-import type { SignatureStep, TransactionStep } from '../../_internal/utils';
 
 const useTransactionOperations = () => {
 	const { sendTransactionAsync } = useSendTransaction();
@@ -57,19 +59,19 @@ const useTransactionOperations = () => {
 				return await signMessageAsync({ message });
 			}
 			if (stepItem.id === StepType.signEIP712) {
+				if (!stepItem.signature) {
+					throw new Error('EIP-712 step missing signature data');
+				}
+
 				logger.debug('Signing with EIP-712', {
-					domain: stepItem.domain,
-					types: stepItem.signature?.types,
+					domain: stepItem.signature.domain,
+					types: stepItem.signature.types,
 				});
 				return await signTypedDataAsync({
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					domain: stepItem.signature!.domain as TypedDataDomain,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					types: stepItem.signature!.types,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					primaryType: stepItem.signature!.primaryType,
-					// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
-					message: stepItem.signature!.value,
+					domain: stepItem.signature.domain,
+					types: stepItem.signature.types,
+					primaryType: stepItem.signature.primaryType,
+					message: stepItem.signature.value,
 				});
 			}
 		} catch (e) {
@@ -77,7 +79,7 @@ const useTransactionOperations = () => {
 			logger.error('Signature failed', error);
 
 			if (error.cause instanceof BaseError) {
-				const viemError = error.cause as BaseError;
+				const viemError = error.cause;
 				if (viemError instanceof ViemUserRejectedRequestError) {
 					throw new UserRejectedRequestError();
 				}
@@ -102,23 +104,14 @@ const useTransactionOperations = () => {
 				chainId,
 				to: stepItem.to,
 				data: stepItem.data,
-				value: hexToBigInt(stepItem.value || '0x0'),
-				...(stepItem.maxFeePerGas && {
-					maxFeePerGas: hexToBigInt(stepItem.maxFeePerGas),
-				}),
-				...(stepItem.maxPriorityFeePerGas && {
-					maxPriorityFeePerGas: hexToBigInt(stepItem.maxPriorityFeePerGas),
-				}),
-				...(stepItem.gas && {
-					gas: hexToBigInt(stepItem.gas),
-				}),
+				value: stepItem.value || 0n,
 			});
 		} catch (e) {
 			const error = e as TransactionExecutionError;
 			logger.error('Transaction failed', error);
 
 			if (error.cause instanceof BaseError) {
-				const viemError = error.cause as BaseError;
+				const viemError = error.cause;
 				if (viemError instanceof ViemUserRejectedRequestError) {
 					throw new UserRejectedRequestError();
 				}
@@ -159,10 +152,8 @@ export const useOrderSteps = () => {
 
 		switch (step.id) {
 			case StepType.signEIP191:
-				result = await signMessage(step as SignatureStep);
-				break;
 			case StepType.signEIP712:
-				result = await signMessage(step as SignatureStep);
+				result = await signMessage(step);
 				break;
 			case StepType.buy:
 			case StepType.sell:
@@ -170,14 +161,10 @@ export const useOrderSteps = () => {
 			case StepType.createListing:
 			case StepType.createOffer:
 			case StepType.cancel:
-				result = await sendTransaction(chainId, step as TransactionStep);
+				result = await sendTransaction(chainId, step);
 				break;
-			case StepType.unknown:
-				throw new Error('Unknown step type');
-			default: {
-				const _exhaustiveCheck: never = step.id;
-				console.error(_exhaustiveCheck);
-			}
+			default:
+				throw new Error(`Cannot execute step type: ${step.id}`);
 		}
 
 		return result;

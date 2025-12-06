@@ -1,11 +1,16 @@
+import {
+	MarketplaceKind,
+	MarketplaceMocks,
+	StepType,
+	WalletKind,
+} from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as types from '../../../types';
-import { StepType } from '../../../types';
-import { WalletKind } from '../../_internal/api';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 import { useProcessStep } from './useProcessStep';
@@ -84,7 +89,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -117,7 +122,7 @@ describe('useCancelOrder', () => {
 											id: StepType.cancel,
 											data: '0x...',
 											to: defaultProps.collectionAddress,
-											value: '0',
+											value: 0n,
 											executeType: 'order',
 										},
 									],
@@ -132,7 +137,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation
 		const cancelPromise = result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// Wait for immediate state updates
@@ -162,7 +167,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -187,7 +192,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],
@@ -212,7 +217,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -235,7 +240,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],
@@ -270,7 +275,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation and wait for it to complete
 		await result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// After cancellation is complete, verify the success callback was called

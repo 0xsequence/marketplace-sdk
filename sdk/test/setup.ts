@@ -6,6 +6,17 @@ import { server } from './server-setup';
 // https://github.com/jsdom/jsdom/issues/1695
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
+// Add BigInt serialization support for JSON.stringify
+declare global {
+	interface BigInt {
+		toJSON(): string;
+	}
+}
+
+BigInt.prototype.toJSON = function () {
+	return this.toString();
+};
+
 // jsdom does not support replaceSync yet, so we need to polyfill it for web-sdk
 if (!('replaceSync' in CSSStyleSheet.prototype)) {
 	Object.defineProperty(CSSStyleSheet.prototype, 'replaceSync', {

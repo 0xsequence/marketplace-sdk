@@ -72,6 +72,8 @@ export const PropertyFilters = ({
 								filterValuesLoading={filterValuesLoading}
 							/>
 						);
+					default:
+						return null;
 				}
 			})}
 		</Accordion>

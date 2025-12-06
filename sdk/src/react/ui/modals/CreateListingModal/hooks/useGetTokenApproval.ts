@@ -1,11 +1,12 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import { useConfig, useConnectorMetadata } from '../../../..';
 import {
 	type ContractType,
 	type CreateReq,
-	type GenerateListingTransactionArgs,
+	type GenerateListingTransactionRequest,
 	getMarketplaceClient,
 	type OrderbookKind,
 	type QueryArg,
@@ -14,9 +15,9 @@ import {
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
-	tokenId: string;
-	collectionAddress: string;
-	currencyAddress: string;
+	tokenId: bigint;
+	collectionAddress: Address;
+	currencyAddress: Address;
 	contractType: ContractType;
 	orderbook: OrderbookKind;
 	query?: QueryArg;
@@ -34,9 +35,9 @@ export const useGetTokenApprovalData = (
 
 	const listing = {
 		tokenId: params.tokenId,
-		quantity: '1',
+		quantity: 1n,
 		currencyAddress: params.currencyAddress,
-		pricePerToken: '100000',
+		pricePerToken: 100000n,
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
@@ -48,7 +49,7 @@ export const useGetTokenApprovalData = (
 		queryFn: isEnabled
 			? async () => {
 					const args = {
-						chainId: String(params.chainId),
+						chainId: params.chainId,
 						collectionAddress: params.collectionAddress,
 						owner: address,
 						walletType: walletKind,
@@ -56,7 +57,7 @@ export const useGetTokenApprovalData = (
 						orderbook: params.orderbook,
 						listing,
 						additionalFees: [],
-					} satisfies GenerateListingTransactionArgs;
+					} satisfies GenerateListingTransactionRequest;
 					const steps = await marketplaceClient
 						.generateListingTransaction(args)
 						.then((resp) => resp.steps);

@@ -1,11 +1,11 @@
 'use client';
 
 import { Skeleton, Text } from '@0xsequence/design-system';
+import { cn, formatPrice, type Order } from '@0xsequence/marketplace-sdk';
+import { useCurrency } from '@0xsequence/marketplace-sdk/react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { cn, formatPrice, type Order } from '../../../../../../sdk/src';
-import { useCurrency } from '../../../../../../sdk/src/react';
 import { Table } from '../../Table';
 import OrdersTableAction from './Action';
 import AddressPill from './AddressPill';
@@ -15,12 +15,10 @@ const OrdersTableRow = ({
 	order,
 	index,
 	tokenId,
-	decimals,
 }: {
 	order: Order;
 	index: number;
-	tokenId: string;
-	decimals: number;
+	tokenId: bigint;
 }) => {
 	const { chainId, collectionContractAddress } = order;
 	const { address: accountAddress } = useAccount();
@@ -33,11 +31,6 @@ const OrdersTableRow = ({
 	const expiresInDays = formatDistanceToNow(new Date(order.validUntil), {
 		addSuffix: true,
 	});
-
-	const formattedQuantity = (quantity: string, decimals: number) => {
-		const value = Number(quantity) / 10 ** decimals;
-		return value.toFixed(decimals);
-	};
 
 	return (
 		<Table.Row
@@ -58,7 +51,7 @@ const OrdersTableRow = ({
 			</Table.Cell>
 
 			<Table.Cell className="font-medium text-primary text-xs">
-				{formattedQuantity(order.quantityRemaining, decimals)}
+				{order.quantityRemaining}
 			</Table.Cell>
 
 			<Table.Cell>

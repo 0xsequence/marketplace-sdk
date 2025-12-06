@@ -1,12 +1,14 @@
+import {
+	type ApiConfig,
+	type CardType,
+	type ContractType,
+	type MarketplaceConfig,
+	type OrderbookKind,
+	type SdkConfig,
+	TransactionCrypto,
+} from '@0xsequence/marketplace-sdk';
 import { createStore } from '@xstate/store';
-import type {
-	ApiConfig,
-	ContractType,
-	MarketplaceConfig,
-	OrderbookKind,
-	SdkConfig,
-} from '../../../../sdk/src';
-import type { CardType } from '../../../../sdk/src/types/types';
+import type { Address } from 'viem';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_MARKETPLACE_TYPE,
@@ -67,6 +69,15 @@ export const defaultContext = {
 		projectId: DEFAULT_PROJECT_ID,
 		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
+		checkoutMode: {
+			mode: 'sequence-checkout',
+			options: {
+				crypto: TransactionCrypto.all,
+				swap: [],
+				nftCheckout: [],
+				onRamp: [],
+			},
+		},
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
@@ -108,10 +119,7 @@ export const marketplaceStore = createStore({
 			activeTab: tab,
 		}),
 
-		setCollectionAddress: (
-			context,
-			{ address }: { address: `0x${string}` },
-		) => ({
+		setCollectionAddress: (context, { address }: { address: Address }) => ({
 			...context,
 			collectionAddress: address,
 		}),
@@ -121,12 +129,9 @@ export const marketplaceStore = createStore({
 			chainId,
 		}),
 
-		setCollectibleId: (
-			context,
-			{ collectibleId }: { collectibleId: string },
-		) => ({
+		setCollectibleId: (context, { tokenId }: { tokenId: bigint }) => ({
 			...context,
-			collectibleId,
+			tokenId,
 		}),
 
 		setProjectId: (context, { id }: { id: string }) => ({

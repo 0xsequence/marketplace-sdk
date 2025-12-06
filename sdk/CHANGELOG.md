@@ -145,7 +145,7 @@
 ### ! Breaking Changes
 
 By default, the SDK now uses shadow DOM for all modals. To disable this, you can set the `useShadowDOM` flag to `false` in the `SdkConfig`. Other components (media, collectible card etc) are rendered to the document body and requires Tailwind.
-`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging marketplace-api
+`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging api-client
 
 - **Wallet**: Complete removal of custom wallet client in favor of wagmi hooks
   - Replace `wallet.address` with `useAccount()` hook from wagmi
@@ -584,7 +584,7 @@ SSR config do not require passing query client anymore, and leverages an interna
 
 ### Patch Changes
 
-- Added new `useInventory` hook that combines data from marketplace-api and indexer [#294](https://github.com/0xsequence/marketplace-sdk/pull/294)
+- Added new `useInventory` hook that combines data from api-client and indexer [#294](https://github.com/0xsequence/marketplace-sdk/pull/294)
 - Added optimistic updates for listings and offers [#290](https://github.com/0xsequence/marketplace-sdk/pull/290)
 - Improved test coverage and fixed various bugs
 

@@ -1,9 +1,12 @@
 'use client';
 
 import { Button, Text } from '@0xsequence/design-system';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import { useComparePrices, useLowestListing } from '../../../../../hooks';
+import {
+	useCollectibleMarketLowestListing,
+	useCurrencyComparePrices,
+} from '../../../../../hooks';
 
 export default function FloorPriceText({
 	chainId,
@@ -14,39 +17,40 @@ export default function FloorPriceText({
 }: {
 	chainId: number;
 	collectionAddress: Hex;
-	tokenId: string;
+	tokenId: bigint;
 	price: Price;
 	onBuyNow?: () => void;
 }) {
-	const { data: listing, isLoading: listingLoading } = useLowestListing({
-		tokenId: tokenId,
-		chainId,
-		collectionAddress,
-		filter: {
-			currencies: [price.currency.contractAddress],
-		},
-	});
+	const { data: listing, isLoading: listingLoading } =
+		useCollectibleMarketLowestListing({
+			tokenId,
+			chainId,
+			collectionAddress,
+			filter: {
+				currencies: [price.currency.contractAddress],
+			},
+		});
 
 	const floorPriceRaw = listing?.priceAmount;
 	const floorPriceFormatted = listing?.priceAmountFormatted;
 
 	const { data: priceComparison, isLoading: comparisonLoading } =
-		useComparePrices({
+		useCurrencyComparePrices({
 			chainId,
-			priceAmountRaw: price.amountRaw || '0',
-			priceCurrencyAddress: price.currency.contractAddress as Address,
-			compareToPriceAmountRaw: floorPriceRaw || '0',
-			compareToPriceCurrencyAddress: (listing?.priceCurrencyAddress ||
-				price.currency.contractAddress) as Address,
+			priceAmountRaw: price.amountRaw?.toString() || '0',
+			priceCurrencyAddress: price.currency.contractAddress,
+			compareToPriceAmountRaw: floorPriceRaw?.toString() || '0',
+			compareToPriceCurrencyAddress:
+				listing?.priceCurrencyAddress || price.currency.contractAddress,
 			query: {
-				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
+				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== 0n,
 			},
 		});
 
 	if (
 		!floorPriceRaw ||
 		listingLoading ||
-		price.amountRaw === '0' ||
+		price.amountRaw === 0n ||
 		comparisonLoading
 	) {
 		return null;

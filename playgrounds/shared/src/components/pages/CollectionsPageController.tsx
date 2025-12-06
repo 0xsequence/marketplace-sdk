@@ -1,8 +1,8 @@
 'use client';
 
 import { Button, Skeleton, Text } from '@0xsequence/design-system';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { useMarketplace } from '../../store';
 import { CollectionGrid } from '../collections/CollectionGrid';
 
@@ -25,7 +25,7 @@ export function CollectionsPageController({
 		isLoading: collectionsLoading,
 		error: collectionsError,
 	} = useListCollections({
-		cardType: showMarketTypeToggle
+		collectionType: showMarketTypeToggle
 			? cardType === 'market'
 				? 'market'
 				: 'shop'
@@ -104,7 +104,7 @@ export function CollectionsPageController({
 					<Text variant="xlarge" color="text80">
 						{cardType === 'market' ? 'Market Collections' : 'Shop Collections'}
 					</Text>
-					<Button onClick={toggleMarketplaceType} variant="base">
+					<Button onClick={toggleMarketplaceType} variant="secondary">
 						Switch to {cardType === 'market' ? 'Shop' : 'Market'}
 					</Button>
 				</div>

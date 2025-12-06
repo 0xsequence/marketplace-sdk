@@ -251,7 +251,7 @@ export class InvalidContractTypeError extends TransactionError {
 
 export class CollectionNotFoundError extends TransactionError {
 	override name = 'CollectionNotFoundError';
-	constructor(collectionAddress: string) {
+	constructor(collectionAddress: Address) {
 		super(`Collection not found: ${collectionAddress}`, {
 			details:
 				'The specified collection address could not be found in the marketplace configuration.',
@@ -364,7 +364,7 @@ export class OrdersFetchError extends TransactionError {
 
 export class SalesContractError extends TransactionError {
 	override name = 'SalesContractError';
-	constructor(contractAddress: string, method?: string, cause?: Error) {
+	constructor(contractAddress: Address, method?: string, cause?: Error) {
 		super(`Sales contract operation failed: ${contractAddress}`, {
 			details: `Failed to interact with sales contract${
 				method ? ` on method: ${method}` : ''

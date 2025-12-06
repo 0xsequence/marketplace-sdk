@@ -1,14 +1,17 @@
+import {
+	ContractType,
+	MarketplaceWalletType,
+	OrderbookKind,
+} from '@0xsequence/api-client';
 import { allNetworks } from '@0xsequence/network';
 import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
-import type { SdkConfig } from '../../../../types';
-import { ContractType, OrderbookKind } from '../../../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
-} from '../../../../types/new-marketplace-types';
-import { MarketplaceWalletType } from '../../api/builder.gen';
+	SdkConfig,
+} from '../../../../types';
 import { createWagmiConfig } from '../create-config';
 
 describe('createWagmiConfig', () => {
@@ -49,8 +52,10 @@ describe('createWagmiConfig', () => {
 				private: false,
 				collections: [
 					{
+						id: 1,
+						projectId: 12345,
+						marketplaceCollectionType: 'market',
 						contractType: ContractType.ERC721,
-						cardType: 'market',
 						chainId: polygon.id,
 						bannerUrl: '',
 						itemsAddress: '0x1234567890123456789012345678901234567890',

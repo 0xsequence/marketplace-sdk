@@ -1,6 +1,9 @@
 'use client';
 
+import { OrderbookKind } from '@0xsequence/api-client';
 import {
+	Field,
+	FieldLabel,
 	InfoIcon,
 	NumericInput,
 	Text,
@@ -9,15 +12,13 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { type Address, formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type Currency,
-	OrderbookKind,
-	type Price,
-} from '../../../../../../types';
+import type { Currency, Price } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
 import { validateOpenseaOfferDecimals } from '../../../../../../utils/price';
-import { useConvertPriceToUSD } from '../../../../../hooks';
-import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
+import {
+	useConvertPriceToUSD,
+	useTokenCurrencyBalance,
+} from '../../../../../hooks';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 
@@ -74,8 +75,10 @@ export default function PriceInput({
 	const { data: conversion, isLoading: isConversionLoading } =
 		useConvertPriceToUSD({
 			chainId,
-			currencyAddress: currencyAddress as Address,
-			amountRaw: priceAmountRaw,
+			currencyAddress:
+				currencyAddress ??
+				('0x0000000000000000000000000000000000000000' as Address),
+			amountRaw: priceAmountRaw?.toString(),
 			query: {
 				enabled:
 					orderbookKind === OrderbookKind.opensea &&
@@ -91,11 +94,12 @@ export default function PriceInput({
 		}
 	}, []);
 
-	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
-		currencyAddress: currencyAddress as undefined | Address,
-		chainId,
-		userAddress: accountAddress,
-	});
+	const { data: balance, isSuccess: isBalanceSuccess } =
+		useTokenCurrencyBalance({
+			currencyAddress,
+			chainId,
+			userAddress: accountAddress,
+		});
 	const getTotalRequiredBalance = () => {
 		if (!priceAmountRaw || !currencyDecimals) return BigInt(0);
 
@@ -118,12 +122,12 @@ export default function PriceInput({
 		!!isBalanceSuccess &&
 		!!priceAmountRaw &&
 		!!currencyDecimals &&
-		getTotalRequiredBalance() > BigInt(balance?.value || 0n);
+		getTotalRequiredBalance() > (balance?.value || 0n);
 
 	const hasEnoughForBaseOffer =
 		!!isBalanceSuccess &&
 		!!priceAmountRaw &&
-		BigInt(priceAmountRaw) <= BigInt(balance?.value || 0n);
+		BigInt(priceAmountRaw) <= (balance?.value || 0n);
 
 	const getRoyaltyFeeAmount = () => {
 		if (!priceAmountRaw || !currencyDecimals || !feeData?.royaltyPercentage) {
@@ -191,11 +195,11 @@ export default function PriceInput({
 				// If the user has entered a value and the currency decimals have changed,
 				// we need to adjust the raw amount to maintain the same displayed value
 				const parsedAmount = parseUnits(value, Number(currencyDecimals));
-				const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+				const updatedPrice = { ...price, amountRaw: parsedAmount };
 
 				onPriceChange(updatedPrice);
 			} catch {
-				const updatedPrice = { ...price, amountRaw: '0' };
+				const updatedPrice = { ...price, amountRaw: 0n };
 				onPriceChange(updatedPrice);
 			}
 		}
@@ -216,10 +220,10 @@ export default function PriceInput({
 				setOpenseaDecimalError(validation.errorMessage || null);
 				try {
 					const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-					const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+					const updatedPrice = { ...price, amountRaw: parsedAmount };
 					onPriceChange(updatedPrice);
 				} catch {
-					const updatedPrice = { ...price, amountRaw: '0' };
+					const updatedPrice = { ...price, amountRaw: 0n };
 					onPriceChange(updatedPrice);
 				}
 				return;
@@ -229,11 +233,11 @@ export default function PriceInput({
 
 		try {
 			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+			const updatedPrice = { ...price, amountRaw: parsedAmount };
 
 			onPriceChange(updatedPrice);
 		} catch {
-			const updatedPrice = { ...price, amountRaw: '0' };
+			const updatedPrice = { ...price, amountRaw: 0n };
 			onPriceChange(updatedPrice);
 		}
 	};
@@ -245,18 +249,16 @@ export default function PriceInput({
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<div className="absolute top-8 left-2 flex items-center">
-				<CurrencyImage price={price} />
-			</div>
-
-			<div className="[&>label]:gap-1">
+			<Field className="[&>div>div]:pr-0">
+				<FieldLabel htmlFor="price-input" className="text-xs">
+					Enter price
+				</FieldLabel>
 				<NumericInput
+					aria-label="Enter price"
 					ref={inputRef}
-					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
+					className="h-9 w-full rounded-sm px-2 pl-3 [&>input]:text-xs"
 					name="price-input"
 					decimals={currencyDecimals}
-					label="Enter price"
-					labelLocation="top"
 					controls={
 						<CurrencyOptionsSelect
 							selectedCurrency={currency}
@@ -272,32 +274,32 @@ export default function PriceInput({
 					value={value}
 					onChange={handleChange}
 				/>
+			</Field>
+
+			<div className="absolute top-8 left-2 flex items-center">
+				<CurrencyImage price={price} />
 			</div>
 
 			{balanceError && (
-				<div className="mt-2">
-					<Text className="font-body font-medium text-xs" color="negative">
-						{modalType === 'offer' &&
-						hasEnoughForBaseOffer &&
-						royaltyFeeFormatted &&
-						Number(royaltyFeeFormatted) > 0 ? (
+				<Text className="mt-1.5 font-body font-medium text-amber-500 text-xs">
+					{modalType === 'offer' &&
+					hasEnoughForBaseOffer &&
+					royaltyFeeFormatted &&
+					Number(royaltyFeeFormatted) > 0 ? (
+						<div className="flex items-center gap-1">
 							<RoyaltyFeeTooltip>
-								<div className="flex items-center gap-1">
-									<InfoIcon className="h-4 w-4 text-negative" />
-									<Text
-										className="font-body font-medium text-xs"
-										color="negative"
-									>
-										You need {royaltyFeeFormatted} {currency?.symbol} for
-										royalty fees
-									</Text>
-								</div>
+								<InfoIcon className="h-4 w-4 text-negative" />
 							</RoyaltyFeeTooltip>
-						) : (
-							'Insufficient balance'
-						)}
-					</Text>
-				</div>
+
+							<Text className="font-body font-medium text-xs" color="negative">
+								You need {royaltyFeeFormatted} {currency?.symbol} for royalty
+								fees
+							</Text>
+						</div>
+					) : (
+						'Insufficient balance'
+					)}
+				</Text>
 			)}
 
 			{!balanceError &&
@@ -305,25 +307,25 @@ export default function PriceInput({
 				royaltyFeeFormatted &&
 				Number(royaltyFeeFormatted) > 0 && (
 					<div className="mt-2">
-						<RoyaltyFeeTooltip>
-							<div className="flex items-center gap-1">
+						<div className="flex items-center gap-1">
+							<RoyaltyFeeTooltip>
 								<InfoIcon className="h-4 w-4 text-text-50" />
+							</RoyaltyFeeTooltip>
 
-								<Text className="font-body font-medium text-xs" color="text50">
-									Total:{' '}
-									{(Number(value) + Number(royaltyFeeFormatted))
-										.toFixed(6)
-										.replace(/\.?0+$/, '')}{' '}
-									{currency?.symbol} (includes {royaltyFeeFormatted}{' '}
-									{currency?.symbol} royalty fee)
-								</Text>
-							</div>
-						</RoyaltyFeeTooltip>
+							<Text className="font-body font-medium text-xs" color="text50">
+								Total:{' '}
+								{(Number(value) + Number(royaltyFeeFormatted))
+									.toFixed(6)
+									.replace(/\.?0+$/, '')}{' '}
+								{currency?.symbol} (includes {royaltyFeeFormatted}{' '}
+								{currency?.symbol} royalty fee)
+							</Text>
+						</div>
 					</div>
 				)}
 
 			{!balanceError &&
-				priceAmountRaw !== '0' &&
+				priceAmountRaw !== 0n &&
 				!openseaLowestPriceCriteriaMet &&
 				orderbookKind === OrderbookKind.opensea &&
 				!isConversionLoading &&

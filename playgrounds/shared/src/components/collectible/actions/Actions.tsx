@@ -16,7 +16,7 @@ export interface ActionsProps {
 	isOwner: boolean;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined | null;
 	contractType: ContractType | undefined;
@@ -27,7 +27,7 @@ export function Actions({
 	isOwner,
 	collectionAddress,
 	chainId,
-	collectibleId,
+	tokenId,
 	orderbookKind,
 	lowestListing,
 	contractType,
@@ -53,7 +53,7 @@ export function Actions({
 				contractType={contractType}
 				chainId={chainId}
 				collectionAddress={collectionAddress}
-				tokenId={collectibleId}
+				tokenId={tokenId}
 				collectibleName={collectibleName}
 			/>
 		);
@@ -65,7 +65,7 @@ export function Actions({
 			orderbookKind={orderbookKind}
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleId={collectibleId}
+			tokenId={tokenId}
 			isOwner={isOwner}
 		/>
 	);

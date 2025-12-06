@@ -3,9 +3,9 @@ import type { Preview } from '@storybook/react-vite';
 import { QueryClientProvider } from '@tanstack/react-query';
 
 import { WagmiProvider } from 'wagmi';
-import { MarketplaceProvider } from '../src/react/provider';
-import { ModalProvider } from '../src/react/ui/modals/modal-provider';
-import '../src/index.css';
+import { MarketplaceProvider } from '../src/react/providers';
+import { ModalProvider } from '../src/react/providers/modal-provider';
+import '../src/styles/index.css';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import {
 	createTestQueryClient,
@@ -18,7 +18,6 @@ import { ConnectionStatus } from './ConnectionStatus';
 
 const testQueryClient = createTestQueryClient();
 
-// Initialize MSW
 initialize({
 	onUnhandledRequest: ({ url, method }) => {
 		// Only warn about unhandled requests to our specific API paths
@@ -30,16 +29,14 @@ initialize({
 	},
 });
 
-// Mock marketplace SDK config for Storybook
 const mockSdkConfig = {
 	projectAccessKey: 'storybook-test-key',
 	projectId: '1',
 };
 
-// Get wagmi config based on localStorage
 const getWagmiConfig = () => {
 	if (typeof window === 'undefined') {
-		return wagmiConfig; // Default for SSR
+		return wagmiConfig;
 	}
 
 	const storedConnector = localStorage.getItem('storybook-connector');

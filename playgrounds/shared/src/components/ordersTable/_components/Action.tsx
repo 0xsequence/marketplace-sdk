@@ -21,12 +21,12 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string | undefined;
+	tokenId: bigint | undefined;
 	order: Order;
 }) => {
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId ?? '',
+		tokenId,
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
@@ -110,7 +110,7 @@ const OrdersTableAction = ({
 		openBuyModal({
 			collectionAddress,
 			chainId,
-			collectibleId: tokenId,
+			tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
 		});
@@ -122,12 +122,13 @@ const OrdersTableAction = ({
 
 	return (
 		<Button
-			label={buttonProps.label}
 			onClick={buttonProps.onClick}
 			variant="primary"
 			size="xs"
 			disabled={cancellingOrderId === order.orderId && isExecuting}
-		/>
+		>
+			{buttonProps.label}
+		</Button>
 	);
 };
 
