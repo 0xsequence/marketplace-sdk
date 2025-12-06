@@ -1,0 +1,58 @@
+import type { Currency } from '@0xsequence/api-client';
+import {
+	buildQueryOptions,
+	getMarketplaceClient,
+	type SdkQueryParams,
+	type WithRequired,
+} from '../../_internal';
+import { createCollectionQueryKey } from './queryKeys';
+
+export interface FetchCollectionActiveOffersCurrenciesParams {
+	chainId: number;
+	collectionAddress: string;
+}
+
+export type CollectionActiveOffersCurrenciesQueryOptions =
+	SdkQueryParams<FetchCollectionActiveOffersCurrenciesParams>;
+
+/**
+ * Fetches the active offers currencies for a collection from the marketplace API
+ */
+export async function fetchCollectionActiveOffersCurrencies(
+	params: WithRequired<
+		CollectionActiveOffersCurrenciesQueryOptions,
+		'chainId' | 'collectionAddress' | 'config'
+	>,
+): Promise<Currency[]> {
+	const { collectionAddress, chainId, config } = params;
+
+	const marketplaceClient = getMarketplaceClient(config);
+
+	const result = await marketplaceClient.getCollectionActiveOffersCurrencies({
+		contractAddress: collectionAddress,
+		chainId: String(chainId),
+	});
+	return result.currencies;
+}
+
+export function getCollectionActiveOffersCurrenciesQueryKey(
+	params: CollectionActiveOffersCurrenciesQueryOptions,
+) {
+	return createCollectionQueryKey('active-offers-currencies', {
+		chainId: params.chainId,
+		contractAddress: params.collectionAddress,
+	});
+}
+
+export function collectionActiveOffersCurrenciesQueryOptions(
+	params: CollectionActiveOffersCurrenciesQueryOptions,
+) {
+	return buildQueryOptions(
+		{
+			getQueryKey: getCollectionActiveOffersCurrenciesQueryKey,
+			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
+			fetcher: fetchCollectionActiveOffersCurrencies,
+		},
+		params,
+	);
+}

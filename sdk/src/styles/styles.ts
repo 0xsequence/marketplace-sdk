@@ -65,6 +65,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-orange-900: oklch(40.8% 0.123 38.172);
     --color-amber-300: oklch(87.9% 0.169 91.605);
     --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-yellow-100: oklch(97.3% 0.071 103.193);
     --color-yellow-300: oklch(90.5% 0.182 98.111);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
@@ -154,6 +155,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
@@ -670,6 +672,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
+  .size-2 {
+    width: calc(var(--spacing) * 2);
+    height: calc(var(--spacing) * 2);
+  }
   .size-3 {
     width: calc(var(--spacing) * 3);
     height: calc(var(--spacing) * 3);
@@ -717,6 +723,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .size-16 {
     width: calc(var(--spacing) * 16);
     height: calc(var(--spacing) * 16);
+  }
+  .size-full {
+    width: 100%;
+    height: 100%;
   }
   .h-\(--radix-select-trigger-height\) {
     height: var(--radix-select-trigger-height);
@@ -997,6 +1007,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .max-w-md {
     max-width: var(--container-md);
   }
+  .max-w-sm {
+    max-width: var(--container-sm);
+  }
   .max-w-xs {
     max-width: var(--container-xs);
   }
@@ -1081,6 +1094,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .translate-x-0 {
     --tw-translate-x: calc(var(--spacing) * 0);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .translate-x-16 {
+    --tw-translate-x: calc(var(--spacing) * 16);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .translate-x-\[-50\%\] {
@@ -1277,6 +1294,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .overflow-auto {
     overflow: auto;
   }
+  .overflow-clip {
+    overflow: clip;
+  }
   .overflow-hidden {
     overflow: hidden;
   }
@@ -1309,6 +1329,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
+  }
+  .rounded-3xl {
+    border-radius: var(--radius-3xl);
   }
   .rounded-\[12px\] {
     border-radius: 12px;
@@ -1585,6 +1608,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-white {
     background-color: var(--color-white);
   }
+  .bg-white\/5 {
+    background-color: color-mix(in srgb, #fff 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
+    }
+  }
   .bg-zinc-950 {
     background-color: var(--color-zinc-950);
   }
@@ -1780,6 +1809,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-center {
     text-align: center;
   }
+  .text-end {
+    text-align: end;
+  }
   .text-left {
     text-align: left;
   }
@@ -1947,6 +1979,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-amber-500 {
     color: var(--color-amber-500);
+  }
+  .text-amber-600 {
+    color: var(--color-amber-600);
   }
   .text-background-primary {
     color: var(--seq-color-background-primary);
@@ -2127,6 +2162,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .ring-black {
+    --tw-ring-color: var(--color-black);
+  }
   .ring-border-focus {
     --tw-ring-color: var(--color-border-focus);
   }
@@ -2225,9 +2263,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-duration: 200ms;
     transition-duration: 200ms;
   }
+  .duration-300 {
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+  }
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
+  }
+  .ease-linear {
+    --tw-ease: linear;
+    transition-timing-function: linear;
   }
   .ease-out {
     --tw-ease: var(--ease-out);
@@ -3509,6 +3555,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       border-bottom-left-radius: var(--radius-2xl);
     }
   }
+  .md\:p-12 {
+    @media (width >= 48rem) {
+      padding: calc(var(--spacing) * 12);
+    }
+  }
   .lg\:h-auto\! {
     @media (width >= 64rem) {
       height: auto !important;
@@ -3694,6 +3745,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     & svg:not([class*='size-']) {
       width: calc(var(--spacing) * 4);
       height: calc(var(--spacing) * 4);
+    }
+  }
+  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-9 {
+    & svg:not([class*='size-']) {
+      width: calc(var(--spacing) * 9);
+      height: calc(var(--spacing) * 9);
     }
   }
   .\[\&_svg\:not\(\[class\*\=\'text-\'\]\)\]\:text-muted {

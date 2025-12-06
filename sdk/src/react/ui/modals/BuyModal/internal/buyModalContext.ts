@@ -4,6 +4,7 @@ import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import type { CheckoutMode } from '../../..';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
@@ -12,6 +13,7 @@ import { useBuyModalProps, useOnSuccess } from '../store';
 export function useBuyModalContext() {
 	const config = useConfig();
 	const modalProps = useBuyModalProps();
+	const checkoutModeConfig: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
 	const transactionStatusModal = useTransactionStatusModal();
@@ -20,6 +22,7 @@ export function useBuyModalContext() {
 		useBuyTransaction(modalProps);
 	const {
 		collectible,
+		collection,
 		currencyAddress,
 		currency,
 		order,
@@ -40,8 +43,23 @@ export function useBuyModalContext() {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
-	const useTrailsModal = isChainSupported && buyStep && !isLoading;
-	const useCryptoPaymentModal = !useTrailsModal && steps && !isLoading;
+	let checkoutMode: CheckoutMode | undefined;
+
+	if (checkoutModeConfig === 'trails' && isChainSupported) {
+		checkoutMode = 'trails';
+	} else if (
+		typeof checkoutModeConfig === 'object' &&
+		checkoutModeConfig.mode === 'sequence-checkout'
+	) {
+		checkoutMode = {
+			mode: 'sequence-checkout',
+			options: checkoutModeConfig.options,
+		};
+	} else if (checkoutModeConfig === 'crypto' && isChainSupported) {
+		checkoutMode = 'crypto';
+	} else {
+		checkoutMode = undefined;
+	}
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -96,6 +114,7 @@ export function useBuyModalContext() {
 		close: handleClose,
 		steps,
 		collectible,
+		collection,
 		currencyAddress,
 		currency,
 		order,
@@ -105,8 +124,7 @@ export function useBuyModalContext() {
 		isMarket,
 		buyStep,
 		isLoading,
-		useTrailsModal,
-		useCryptoPaymentModal,
+		checkoutMode,
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,

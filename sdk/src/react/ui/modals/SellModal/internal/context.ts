@@ -9,24 +9,25 @@ import {
 	selectWaasFeeOptionsStore,
 	useSelectWaasFeeOptionsStore,
 } from '../../_internal/components/selectWaasFeeOptions/store';
+import { computeFlowState } from '../../_internal/helpers/flow-state';
+import {
+	createApprovalGuard,
+	createFinalTransactionGuard,
+} from '../../_internal/helpers/step-guards';
+import type {
+	ApprovalStep,
+	FeeStep,
+	TransactionStep,
+} from '../../_internal/types/steps';
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
-export type SellStepId = 'waasFee' | 'approve' | 'sell';
-export type Step = {
-	id: SellStepId;
-	label: string;
-	status: string;
-	isPending: boolean;
-	isSuccess: boolean;
-	isError: boolean;
-	run: () => Promise<void>;
+export type SellModalSteps = {
+	fee?: FeeStep;
+	approval?: ApprovalStep;
+	sell: TransactionStep;
 };
-
-export type SellStep = Step & { id: 'sell' };
-
-export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -49,7 +50,7 @@ export function useSellModalContext() {
 
 	const { walletKind, isWaaS } = useConnectorMetadata();
 
-	const sellSteps = useGenerateSellTransaction({
+	const transactionData = useGenerateSellTransaction({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		seller: address,
@@ -66,93 +67,107 @@ export function useSellModalContext() {
 			: undefined,
 	});
 
-	const { approve, sell } = useSellMutations(sellSteps.data);
+	const { approve, sell } = useSellMutations(transactionData.data);
 
 	const waas = useSelectWaasFeeOptionsStore();
 	const [pendingFee] = useWaasFeeOptions();
 	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
 
-	const steps = [];
+	const steps: SellModalSteps = {} as SellModalSteps;
 
-	// Step 1: WaaS fee selection if needed, TODO: this need to be refactored to be headless and we need to take care of fees from both transactions
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
-		steps.push({
-			id: 'waasFee' satisfies SellStepId,
+
+		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'success' : 'idle',
-			isPending: false,
-			isSuccess: feeSelected,
-			isError: false, // TODO: Fee loading errors not accessible from useWaasFeeOptions
-			run: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
-		});
+			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			isSponsored,
+			isSelecting: waas.isVisible,
+			selectedOption: waas.selectedFeeOption,
+			show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
+			cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
+		};
 	}
 
-	// Step 2: Approve (if needed)
-	if (sellSteps.data?.approveStep && !approve.isSuccess) {
-		steps.push({
-			id: 'approve' satisfies SellStepId,
+	if (transactionData.data?.approveStep) {
+		const approvalGuard = createApprovalGuard({
+			isFormValid: true,
+			txReady: !!transactionData.data?.approveStep,
+			walletConnected: !!address,
+		});
+		const guardResult = approvalGuard();
+
+		const approveTransactionHash =
+			approve.data &&
+			'type' in approve.data &&
+			approve.data.type === 'transaction'
+				? approve.data.hash
+				: undefined;
+
+		steps.approval = {
 			label: 'Approve Token',
-			status: approve.status,
+			status: approve.isSuccess
+				? 'success'
+				: approve.isPending
+					? 'pending'
+					: approve.error
+						? 'error'
+						: 'idle',
 			isPending: approve.isPending,
 			isSuccess: approve.isSuccess,
-			isError: !!approve.error,
-			run: () => approve.mutate(),
-		});
+			isDisabled: !guardResult.canProceed,
+			disabledReason: guardResult.error?.message || null,
+			error: approve.error,
+			canExecute: guardResult.canProceed,
+			result: approveTransactionHash
+				? { type: 'transaction', hash: approveTransactionHash }
+				: null,
+			execute: async () => approve.mutate(),
+			reset: () => {},
+		};
 	}
 
-	// Step 3: Sell
-	// TODO: sell step never completes here, it completes via the success callback, we need to change this
-	steps.push({
-		id: 'sell' satisfies SellStepId,
+	const sellGuard = createFinalTransactionGuard({
+		isFormValid: true,
+		txReady: !!transactionData.data?.sellStep,
+		walletConnected: !!address,
+		requiresApproval: !!transactionData.data?.approveStep,
+		approvalComplete: approve.isSuccess || !transactionData.data?.approveStep,
+	});
+	const sellGuardResult = sellGuard();
+
+	const sellTransactionHash =
+		sell.data && 'type' in sell.data && sell.data.type === 'transaction'
+			? sell.data.hash
+			: undefined;
+
+	steps.sell = {
 		label: 'Accept Offer',
-		status: sell.status,
+		status: sell.isSuccess
+			? 'success'
+			: sell.isPending
+				? 'pending'
+				: sell.error
+					? 'error'
+					: 'idle',
 		isPending: sell.isPending,
 		isSuccess: sell.isSuccess,
-		isError: !!sell.error,
-		run: () => sell.mutate(),
-	});
+		isDisabled: !sellGuardResult.canProceed,
+		disabledReason: sellGuardResult.error?.message || null,
+		error: sell.error,
+		canExecute: sellGuardResult.canProceed,
+		result: sellTransactionHash
+			? { type: 'transaction', hash: sellTransactionHash }
+			: null,
+		execute: async () => sell.mutate(),
+	};
 
-	const nextStep = steps.find((step) => step.status === 'idle');
-
-	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
-	const hasError = !!(
-		approve.error ||
-		sell.error ||
-		sellSteps.error ||
-		collectionQuery.error ||
-		currencyQuery.error
-	);
-
-	const totalSteps = steps.length;
-	const completedSteps = steps.filter((s) => s.isSuccess).length;
-	const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
-
-	const flowStatus: 'idle' | 'pending' | 'success' | 'error' = isPending
-		? 'pending'
-		: hasError
-			? 'error'
-			: completedSteps === totalSteps
-				? 'success'
-				: 'idle';
-
-	const feeSelection = waas.isVisible
-		? {
-				isSponsored,
-				isSelecting: waas.isVisible,
-				selectedOption: waas.selectedFeeOption,
-				balance:
-					waas.selectedFeeOption && 'balanceFormatted' in waas.selectedFeeOption
-						? { formattedValue: waas.selectedFeeOption.balanceFormatted }
-						: undefined,
-				cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
-			}
-		: undefined;
+	const flow = computeFlowState(steps);
 
 	const error =
 		approve.error ||
 		sell.error ||
-		sellSteps.error ||
+		transactionData.error ||
 		collectionQuery.error ||
 		currencyQuery.error;
 
@@ -170,20 +185,13 @@ export function useSellModalContext() {
 			priceAmount: state.order?.priceAmount,
 		},
 
-		flow: {
-			steps: steps as SellSteps,
-			nextStep,
-			status: flowStatus,
-			isPending,
-			totalSteps,
-			completedSteps,
-			progress,
-		},
+		steps,
+		flow,
 
 		loading: {
 			collection: collectionQuery.isLoading,
 			currency: currencyQuery.isLoading,
-			steps: sellSteps.isLoading,
+			steps: transactionData.isLoading,
 		},
 
 		transactions: {
@@ -192,11 +200,34 @@ export function useSellModalContext() {
 			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
 		},
 
-		feeSelection,
 		error,
 		queries: {
 			collection: collectionQuery,
 			currency: currencyQuery,
+		},
+
+		get actions() {
+			const needsApproval =
+				this.steps.approval && this.steps.approval.status !== 'success';
+
+			return {
+				approve: needsApproval
+					? {
+							label: this.steps.approval?.label,
+							onClick: this.steps.approval?.execute || (() => {}),
+							loading: this.steps.approval?.isPending,
+							disabled: this.steps.approval?.isDisabled,
+							testid: 'sell-modal-approve-button',
+						}
+					: undefined,
+				sell: {
+					label: this.steps.sell.label,
+					onClick: this.steps.sell.execute,
+					loading: this.steps.sell.isPending,
+					disabled: this.steps.sell.isDisabled,
+					testid: 'sell-modal-accept-button',
+				},
+			};
 		},
 	};
 }

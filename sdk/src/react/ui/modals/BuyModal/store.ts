@@ -1,3 +1,4 @@
+import type { Step } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
@@ -22,10 +23,14 @@ export type PaymentModalProps = {
 	tokenId: bigint;
 	marketplace: MarketplaceKind;
 	orderId: string;
+	customCreditCardProviderCallback?: (buyStep: Step) => void;
 };
 
 export type BuyModalBaseProps = {
 	chainId: number;
+	skipNativeBalanceCheck?: boolean;
+	nativeTokenAddress?: Address;
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	collectionAddress: Address;
 	cardType?: CardType;
 	successActionButtons?: ActionButton[];
@@ -76,13 +81,24 @@ export type onSuccessCallback = ({
 	orderId?: string;
 }) => void;
 export type onErrorCallback = (error: Error) => void;
+type SubModalState = 'idle' | 'opening' | 'open' | 'closed';
 
-const initialContext = {
+const initialContext: {
+	isOpen: boolean;
+	props: BuyModalProps | null;
+	buyAnalyticsId: string;
+	onError: onErrorCallback;
+	onSuccess: onSuccessCallback;
+	paymentModalState: SubModalState;
+	quantity: number;
+} = {
 	isOpen: false,
-	props: null as BuyModalProps | null,
+	props: null,
 	buyAnalyticsId: '',
-	onError: (() => {}) as onErrorCallback,
-	onSuccess: (() => {}) as onSuccessCallback,
+	onError: () => {},
+	onSuccess: () => {},
+	paymentModalState: 'idle',
+	quantity: 1,
 };
 
 export const buyModalStore = createStore({
@@ -127,6 +143,33 @@ export const buyModalStore = createStore({
 		close: (context) => ({
 			...context,
 			isOpen: false,
+			paymentModalState: 'idle' as const,
+			quantity: 1,
+		}),
+
+		setQuantity: (context, event: { quantity: number }) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+
+		openPaymentModal: (context) => {
+			if (context.paymentModalState !== 'idle') {
+				return context; // Prevent duplicate opens
+			}
+			return {
+				...context,
+				paymentModalState: 'opening' as const,
+			};
+		},
+
+		paymentModalOpened: (context) => ({
+			...context,
+			paymentModalState: 'open' as const,
+		}),
+
+		closePaymentModal: (context) => ({
+			...context,
+			paymentModalState: 'closed' as const,
 		}),
 	},
 });
@@ -152,3 +195,9 @@ export const useOnSuccess = () =>
 
 export const useBuyAnalyticsId = () =>
 	useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);
+
+export const usePaymentModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.paymentModalState);
+
+export const useQuantity = () =>
+	useSelector(buyModalStore, (state) => state.context.quantity);

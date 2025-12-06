@@ -68,8 +68,8 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 				: type === 'offer'
 					? 'Preparing offer data...'
 					: type === 'sell'
-						? 'Preparing sell data...'
-						: 'Preparing purchase data...';
+						? 'Preparing sale data...'
+						: 'Preparing checkout data...';
 
 		return (
 			<div
@@ -305,7 +305,7 @@ function CtaActions({
 							},
 						})
 					}
-					variant={cta.variant || (index === 0 ? 'primary' : 'ghost')}
+					variant={cta.variant || (index === 0 ? 'primary' : 'secondary')}
 					disabled={cta.disabled || cta.loading}
 					size="lg"
 					data-testid={cta.testid}

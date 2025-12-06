@@ -14,6 +14,7 @@ import * as Gen from './marketplace.gen';
 import {
 	toCollectibleOrder,
 	toCollectibleOrders,
+	toCollectiblePrimarySaleItem,
 	toCollectiblePrimarySaleItems,
 	toCurrencies,
 	toOrder,
@@ -333,6 +334,20 @@ export type ListPrimarySaleItemsRequest = Omit<
 	chainId: ChainId;
 };
 
+export type GetPrimarySaleItemRequest = Omit<
+	Gen.GetPrimarySaleItemRequest,
+	'chainId'
+> & {
+	chainId: ChainId;
+};
+
+export type GetPrimarySaleItemResponse = Omit<
+	Gen.GetPrimarySaleItemResponse,
+	'item'
+> & {
+	item: CollectiblePrimarySaleItem;
+};
+
 export type GetCountOfPrimarySaleItemsRequest = Omit<
 	Gen.GetCountOfPrimarySaleItemsRequest,
 	'chainId'
@@ -447,6 +462,12 @@ export class MarketplaceClient {
 	public readonly listCurrencies: (
 		req: ListCurrenciesRequest,
 	) => Promise<ListCurrenciesResponse>;
+	public readonly getCollectionActiveListingsCurrencies: (
+		req: Gen.GetCollectionActiveListingsCurrenciesRequest,
+	) => Promise<ListCurrenciesResponse>;
+	public readonly getCollectionActiveOffersCurrencies: (
+		req: Gen.GetCollectionActiveOffersCurrenciesRequest,
+	) => Promise<ListCurrenciesResponse>;
 
 	// Collectible methods (chainId + optional tokenId)
 	public readonly getCollectible: (
@@ -489,6 +510,9 @@ export class MarketplaceClient {
 	public readonly listPrimarySaleItems: (
 		req: ListPrimarySaleItemsRequest,
 	) => Promise<ListPrimarySaleItemsResponse>;
+	public readonly getPrimarySaleItem: (
+		req: GetPrimarySaleItemRequest,
+	) => Promise<GetPrimarySaleItemResponse>;
 
 	// Count methods (chainId + optional tokenId)
 	public readonly getCountOfPrimarySaleItems: (
@@ -593,6 +617,22 @@ export class MarketplaceClient {
 				chainId: chainIdToString(req.chainId),
 			}),
 			(res: Gen.ListCurrenciesResponse) => ({
+				...res,
+				currencies: toCurrencies(res.currencies),
+			}),
+		);
+		this.getCollectionActiveListingsCurrencies = wrapBothTransform(
+			(req) => this.client.getCollectionActiveListingsCurrencies(req),
+			(req: Gen.GetCollectionActiveListingsCurrenciesRequest) => req,
+			(res: Gen.GetCollectionActiveListingsCurrenciesResponse) => ({
+				...res,
+				currencies: toCurrencies(res.currencies),
+			}),
+		);
+		this.getCollectionActiveOffersCurrencies = wrapBothTransform(
+			(req) => this.client.getCollectionActiveOffersCurrencies(req),
+			(req: Gen.GetCollectionActiveOffersCurrenciesRequest) => req,
+			(res: Gen.GetCollectionActiveOffersCurrenciesResponse) => ({
 				...res,
 				currencies: toCurrencies(res.currencies),
 			}),
@@ -718,6 +758,17 @@ export class MarketplaceClient {
 			): ListPrimarySaleItemsResponse => ({
 				...res,
 				primarySaleItems: toCollectiblePrimarySaleItems(res.primarySaleItems),
+			}),
+		);
+		this.getPrimarySaleItem = wrapBothTransform(
+			(req) => this.client.getPrimarySaleItem(req),
+			(req: GetPrimarySaleItemRequest) => ({
+				...req,
+				chainId: chainIdToString(req.chainId),
+			}),
+			(res: Gen.GetPrimarySaleItemResponse): GetPrimarySaleItemResponse => ({
+				...res,
+				item: toCollectiblePrimarySaleItem(res.item),
 			}),
 		);
 

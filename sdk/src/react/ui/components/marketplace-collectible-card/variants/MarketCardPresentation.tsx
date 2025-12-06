@@ -105,8 +105,6 @@ export function MarketCardPresentation({
 			}
 		: undefined;
 
-	console.log('classNames', classNames);
-
 	return (
 		<Card
 			onClick={handleClick}

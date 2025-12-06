@@ -28,10 +28,7 @@ export type {
 	ShopPage,
 } from './adapters/builder';
 export * as Builder from './adapters/builder';
-export {
-	FilterCondition,
-	MarketplaceWalletType,
-} from './adapters/builder';
+export { FilterCondition, MarketplaceWalletType } from './adapters/builder';
 
 export * as BuilderAPI from './adapters/builder/builder.gen';
 
@@ -89,6 +86,8 @@ export type {
 	GetLowestPriceListingForCollectibleRequest,
 	GetOrdersInput,
 	GetOrdersRequest,
+	GetPrimarySaleItemRequest,
+	GetPrimarySaleItemResponse,
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
 	ListCollectibleListingsRequest,

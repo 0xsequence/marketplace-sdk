@@ -35,6 +35,8 @@ export type {
 	GetLowestPriceListingForCollectibleRequest,
 	GetOrdersRequest,
 	GetOrdersResponse,
+	GetPrimarySaleItemRequest,
+	GetPrimarySaleItemResponse,
 	ListCollectibleActivitiesRequest,
 	ListCollectibleListingsResponse,
 	ListCollectibleOffersResponse,
