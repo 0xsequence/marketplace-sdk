@@ -19,7 +19,7 @@ export type UsePrimarySaleItemParams = Optional<
  * Retrieves details for a specific primary sale item from a primary sale contract.
  *
  * @param params - Configuration parameters
- * @param params.chainId - The chain ID as string
+ * @param params.chainId - The chain ID (number)
  * @param params.primarySaleContractAddress - The primary sale contract address
  * @param params.tokenId - The token ID of the primary sale item (string or bigint)
  * @param params.query - Optional React Query configuration
@@ -30,7 +30,7 @@ export type UsePrimarySaleItemParams = Optional<
  * Basic usage:
  * ```typescript
  * const { data: item, isLoading } = usePrimarySaleItem({
- *   chainId: '137',
+ *   chainId: 137,
  *   primarySaleContractAddress: '0x...',
  *   tokenId: '1',
  * })
@@ -40,7 +40,7 @@ export type UsePrimarySaleItemParams = Optional<
  * With custom query options:
  * ```typescript
  * const { data } = usePrimarySaleItem({
- *   chainId: '1',
+ *   chainId: 1,
  *   primarySaleContractAddress: '0x...',
  *   tokenId: '42',
  *   query: {

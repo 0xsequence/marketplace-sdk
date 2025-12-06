@@ -6,12 +6,12 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 import type {
-  GetPrimarySaleItemRequest,
+  CollectiblePrimarySaleItem,
   GetPrimarySaleItemResponse,
 } from '@0xsequence/api-client';
 
 export interface FetchPrimarySaleItemParams {
-  chainId: string;
+  chainId: number;
   primarySaleContractAddress: string;
   tokenId: string | bigint;
 }
@@ -43,7 +43,7 @@ export function getPrimarySaleItemQueryKey(
   params: PrimarySaleItemQueryOptions,
 ) {
   return createCollectibleQueryKey('primary-sale-item', {
-    chainId: params.chainId ?? '',
+    chainId: params.chainId ?? 0,
     primarySaleContractAddress: params.primarySaleContractAddress ?? '',
     tokenId: params.tokenId?.toString() ?? '',
   });
@@ -67,4 +67,4 @@ export function primarySaleItemQueryOptions(
   );
 }
 
-export type { GetPrimarySaleItemRequest, GetPrimarySaleItemResponse };
+export type { CollectiblePrimarySaleItem, GetPrimarySaleItemResponse };
