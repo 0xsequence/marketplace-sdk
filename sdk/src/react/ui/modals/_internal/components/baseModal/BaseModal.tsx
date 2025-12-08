@@ -2,11 +2,13 @@
 
 import { Modal, Text } from '@0xsequence/design-system';
 import type React from 'react';
+import type { TransactionType } from '../../../../../_internal';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
 
 export interface BaseModalProps {
 	onClose: () => void;
 	title: string;
+	transactionType?: TransactionType;
 	children: React.ReactNode;
 	chainId: number;
 	disableAnimation?: boolean;
@@ -27,13 +29,14 @@ export const BaseModal = ({
 	title,
 	children,
 	disableAnimation,
+	transactionType,
 }: BaseModalProps) => {
 	return (
 		<Modal
 			isDismissible={true}
 			onClose={onClose}
 			overlayProps={MODAL_OVERLAY_PROPS}
-			contentProps={MODAL_CONTENT_PROPS}
+			contentProps={MODAL_CONTENT_PROPS(transactionType)}
 			disableAnimation={disableAnimation}
 		>
 			<div className="relative flex grow flex-col items-center gap-4 p-6">

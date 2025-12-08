@@ -3,38 +3,47 @@
 import { cn, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
 import QuantityInput from '../../../../_internal/components/quantityInput';
-import { transferModalStore, useModalState } from '../../../store';
+
+type TokenQuantityInputProps = {
+	value: bigint;
+	onChange: (value: bigint) => void;
+	maxQuantity: bigint;
+	invalid: boolean;
+	disabled?: boolean;
+	helperText?: string;
+	onInvalidChange?: (invalid: boolean) => void;
+};
 
 const TokenQuantityInput = ({
-	balanceAmount,
-	isProcessingWithWaaS,
-}: {
-	balanceAmount?: bigint;
-	isProcessingWithWaaS: boolean;
-}) => {
-	const modalState = useModalState();
-	const [invalidQuantity, setInvalidQuantity] = useState(false);
+	value,
+	onChange,
+	maxQuantity,
+	invalid,
+	disabled,
+	helperText,
+	onInvalidChange,
+}: TokenQuantityInputProps) => {
+	const [localInvalid, setLocalInvalid] = useState(false);
 
-	let insufficientBalance = true;
-	if (balanceAmount !== undefined && modalState.quantity !== undefined) {
-		insufficientBalance = modalState.quantity > balanceAmount;
-	}
+	const insufficientBalance = value > maxQuantity;
+	const invalidQuantity = invalid || localInvalid;
 
 	return (
-		<div
-			className={cn(
-				'flex flex-col gap-3',
-				isProcessingWithWaaS && 'pointer-events-none opacity-50',
-			)}
-		>
+		<div className={cn('flex flex-col gap-3', disabled && 'opacity-70')}>
 			<QuantityInput
-				quantity={modalState.quantity}
+				quantity={value}
 				invalidQuantity={invalidQuantity}
-				onQuantityChange={(quantity) =>
-					transferModalStore.send({ type: 'updateTransferDetails', quantity })
-				}
-				onInvalidQuantityChange={setInvalidQuantity}
-				maxQuantity={balanceAmount ? balanceAmount : 0n}
+				onQuantityChange={(quantity) => {
+					onChange(quantity);
+					setLocalInvalid(false);
+					onInvalidChange?.(false);
+				}}
+				onInvalidQuantityChange={(isInvalid) => {
+					setLocalInvalid(isInvalid);
+					onInvalidChange?.(isInvalid);
+				}}
+				maxQuantity={maxQuantity}
+				disabled={disabled}
 				className="[&>label>div>div>div>input]:text-sm [&>label>div>div>div]:h-13 [&>label>div>div>div]:rounded-xl [&>label>div>div>span]:text-sm [&>label>div>div>span]:text-text-80 [&>label]:gap-1"
 			/>
 
@@ -43,7 +52,7 @@ const TokenQuantityInput = ({
 				color={insufficientBalance ? 'negative' : 'text50'}
 				fontWeight="medium"
 			>
-				{`You have ${balanceAmount?.toString() || '0'} of this item`}
+				{helperText ?? `You have ${maxQuantity.toString()} of this item`}
 			</Text>
 		</div>
 	);

@@ -17,7 +17,7 @@ interface ERC721TransferParams extends BaseTransferParams {
 
 interface ERC1155TransferParams extends BaseTransferParams {
 	contractType: ContractType.ERC1155;
-	quantity: string;
+	quantity: bigint;
 }
 
 export type TransferTokensParams = ERC721TransferParams | ERC1155TransferParams;
@@ -61,6 +61,7 @@ export const useTransferTokens = () => {
 		isPending,
 		isError,
 		isSuccess,
+		error,
 	} = useWriteContract();
 
 	const transferTokensAsync = async (params: TransferTokensParams) => {
@@ -78,5 +79,6 @@ export const useTransferTokens = () => {
 		transferring: isPending,
 		transferFailed: isError,
 		transferSuccess: isSuccess,
+		error,
 	};
 };
