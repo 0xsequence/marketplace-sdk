@@ -28,7 +28,7 @@ type UseTransferTokensResult = {
 	transferring: boolean;
 	transferFailed: boolean;
 	transferSuccess: boolean;
-	error: unknown;
+	error: Error | null;
 };
 
 const prepareTransferConfig = (
