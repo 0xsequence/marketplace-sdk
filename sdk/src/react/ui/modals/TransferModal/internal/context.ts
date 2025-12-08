@@ -1,5 +1,5 @@
 import { ContractType } from '@0xsequence/api-client';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Address, Hex } from 'viem';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -175,17 +175,9 @@ export function useTransferModalContext(): TransferModalContext {
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(state.chainId, config);
 	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
-
-	useEffect(() => {
-		if (
-			isWaaS &&
-			!isSponsored &&
-			!waas.isVisible &&
-			pendingFeeOptionConfirmation?.options
-		) {
-			waas.show();
-		}
-	}, [isSponsored, isWaaS, pendingFeeOptionConfirmation?.options, waas]);
+	const isFeeSelectionVisible =
+		waas.isVisible ||
+		(isWaaS && !isSponsored && !!pendingFeeOptionConfirmation?.options);
 
 	const baseClose = useCallback(() => {
 		if (pendingFeeOptionConfirmation?.id) {
@@ -206,9 +198,13 @@ export function useTransferModalContext(): TransferModalContext {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
 		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			status: feeSelected
+				? 'success'
+				: isFeeSelectionVisible
+					? 'selecting'
+					: 'idle',
 			isSponsored: isSponsored ?? false,
-			isSelecting: waas.isVisible,
+			isSelecting: isFeeSelectionVisible,
 			selectedOption: waas.selectedFeeOption,
 			show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
 			cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
