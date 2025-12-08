@@ -87,7 +87,7 @@ const OrdersTableAction = ({
 		null;
 
 	function handleSell() {
-		if (!tokenId) return;
+		if (tokenId === undefined) return;
 
 		showSellModal({
 			chainId,

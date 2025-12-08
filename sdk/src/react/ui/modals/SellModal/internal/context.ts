@@ -1,14 +1,14 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
+import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import {
-	useCollectionDetail,
+	useCollectibleMetadata,
+	useCollectionMetadata,
+	useConfig,
 	useConnectorMetadata,
 	useCurrency,
 } from '../../../../hooks';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../../_internal/components/selectWaasFeeOptions/store';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
 	createApprovalGuard,
@@ -32,8 +32,15 @@ export type SellModalSteps = {
 export function useSellModalContext() {
 	const state = useSellModalState();
 	const { address } = useAccount();
+	const config = useConfig();
 
-	const collectionQuery = useCollectionDetail({
+	const collectibleQuery = useCollectibleMetadata({
+		chainId: state.chainId,
+		collectionAddress: state.collectionAddress,
+		tokenId: state.tokenId,
+	});
+
+	const collectionQuery = useCollectionMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		query: {
@@ -70,8 +77,24 @@ export function useSellModalContext() {
 	const { approve, sell } = useSellMutations(transactionData.data);
 
 	const waas = useSelectWaasFeeOptionsStore();
-	const [pendingFee] = useWaasFeeOptions();
-	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(state.chainId, config);
+	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+
+	useEffect(() => {
+		if (
+			!isSponsored &&
+			!waas.isVisible &&
+			!!pendingFeeOptionConfirmation?.options
+		) {
+			waas.show();
+		}
+	}, [
+		pendingFeeOptionConfirmation?.options,
+		isSponsored,
+		waas.isVisible,
+		waas,
+	]);
 
 	const steps: SellModalSteps = {} as SellModalSteps;
 
@@ -84,10 +107,17 @@ export function useSellModalContext() {
 			isSponsored,
 			isSelecting: waas.isVisible,
 			selectedOption: waas.selectedFeeOption,
-			show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
-			cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
+			show: () => waas.show(),
+			cancel: () => waas.hide(),
 		};
 	}
+
+	const approveResult =
+		approve.data &&
+		'type' in approve.data &&
+		approve.data.type === 'transaction'
+			? { type: 'transaction' as const, hash: approve.data.hash }
+			: null;
 
 	if (transactionData.data?.approveStep) {
 		const approvalGuard = createApprovalGuard({
@@ -97,15 +127,8 @@ export function useSellModalContext() {
 		});
 		const guardResult = approvalGuard();
 
-		const approveTransactionHash =
-			approve.data &&
-			'type' in approve.data &&
-			approve.data.type === 'transaction'
-				? approve.data.hash
-				: undefined;
-
 		steps.approval = {
-			label: 'Approve Token',
+			label: 'Approve',
 			status: approve.isSuccess
 				? 'success'
 				: approve.isPending
@@ -119,11 +142,11 @@ export function useSellModalContext() {
 			disabledReason: guardResult.error?.message || null,
 			error: approve.error,
 			canExecute: guardResult.canProceed,
-			result: approveTransactionHash
-				? { type: 'transaction', hash: approveTransactionHash }
-				: null,
-			execute: async () => approve.mutate(),
-			reset: () => {},
+			result: approveResult,
+			execute: async () => {
+				await approve.mutateAsync();
+			},
+			reset: () => approve.reset(),
 		};
 	}
 
@@ -131,15 +154,21 @@ export function useSellModalContext() {
 		isFormValid: true,
 		txReady: !!transactionData.data?.sellStep,
 		walletConnected: !!address,
-		requiresApproval: !!transactionData.data?.approveStep,
+		requiresApproval: !!transactionData.data?.approveStep && !approve.isSuccess,
 		approvalComplete: approve.isSuccess || !transactionData.data?.approveStep,
 	});
 	const sellGuardResult = sellGuard();
 
-	const sellTransactionHash =
-		sell.data && 'type' in sell.data && sell.data.type === 'transaction'
-			? sell.data.hash
-			: undefined;
+	const sellResult =
+		sell.data && 'type' in sell.data
+			? sell.data.type === 'transaction'
+				? { type: 'transaction' as const, hash: sell.data.hash }
+				: sell.data.type === 'signature'
+					? sell.data.orderId
+						? { type: 'signature' as const, orderId: sell.data.orderId }
+						: null
+					: null
+			: null;
 
 	steps.sell = {
 		label: 'Accept Offer',
@@ -156,28 +185,35 @@ export function useSellModalContext() {
 		disabledReason: sellGuardResult.error?.message || null,
 		error: sell.error,
 		canExecute: sellGuardResult.canProceed,
-		result: sellTransactionHash
-			? { type: 'transaction', hash: sellTransactionHash }
-			: null,
-		execute: async () => sell.mutate(),
+		result: sellResult,
+		execute: async () => {
+			await sell.mutateAsync();
+		},
 	};
 
 	const flow = computeFlowState(steps);
-
 	const error =
-		approve.error ||
-		sell.error ||
 		transactionData.error ||
+		collectibleQuery.error ||
 		collectionQuery.error ||
 		currencyQuery.error;
 
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation.id);
+		}
+		waas.hide();
+		state.closeModal();
+	};
+
 	return {
 		isOpen: state.isOpen,
-		close: state.closeModal,
-
-		tokenId: state.tokenId,
-		collectionAddress: state.collectionAddress,
-		chainId: state.chainId,
+		close: handleClose,
+		item: {
+			tokenId: state.tokenId,
+			collectionAddress: state.collectionAddress,
+			chainId: state.chainId,
+		},
 		collection: collectionQuery.data,
 		offer: {
 			order: state.order,
@@ -189,6 +225,7 @@ export function useSellModalContext() {
 		flow,
 
 		loading: {
+			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
 			currency: currencyQuery.isLoading,
 			steps: transactionData.isLoading,
@@ -196,12 +233,13 @@ export function useSellModalContext() {
 
 		transactions: {
 			approve:
-				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
-			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
+				approveResult?.type === 'transaction' ? approveResult.hash : undefined,
+			sell: sellResult?.type === 'transaction' ? sellResult.hash : undefined,
 		},
 
 		error,
 		queries: {
+			collectible: collectibleQuery,
 			collection: collectionQuery,
 			currency: currencyQuery,
 		},
