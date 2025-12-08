@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ShowTransferModalArgs } from '../store';
-import { transferModalStore } from '../store';
+import type { ShowTransferModalArgs } from '../internal/store';
+import { transferModalStore } from '../internal/store';
 
 describe('TransferModal store', () => {
 	beforeEach(() => {

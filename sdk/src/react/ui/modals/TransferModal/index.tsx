@@ -14,7 +14,7 @@ import {
 	transferModalStore,
 	type UseTransferModalArgs,
 	useTransferModal,
-} from './store';
+} from './internal/store';
 
 export const TransferModal = () => {
 	const isOpen = useSelector(
