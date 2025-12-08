@@ -4,6 +4,7 @@ import {
 	type GetLowestPriceListingForCollectibleRequest,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -37,7 +38,12 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 }
 
 export function lowestListingQueryOptions(
-	params: LowestListingQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			LowestListingQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
 ): ReturnType<
 	typeof buildQueryOptions<
 		WithRequired<

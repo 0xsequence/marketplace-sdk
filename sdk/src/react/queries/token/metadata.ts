@@ -4,6 +4,7 @@ import {
 	buildQueryOptions,
 	getMetadataClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
@@ -52,7 +53,12 @@ export function getListTokenMetadataQueryKey(
 }
 
 export function listTokenMetadataQueryOptions(
-	params: ListTokenMetadataQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListTokenMetadataQueryOptions,
+			'chainId' | 'contractAddress' | 'tokenIds' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

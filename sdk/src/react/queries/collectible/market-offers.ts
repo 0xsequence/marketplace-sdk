@@ -3,6 +3,7 @@ import type {
 	ListOffersForCollectibleRequest,
 	Page,
 	SortBy,
+	WithOptionalParams,
 } from '../../_internal';
 import {
 	buildQueryOptions,
@@ -63,7 +64,12 @@ export function getListOffersForCollectibleQueryKey(
 }
 
 export function listOffersForCollectibleQueryOptions(
-	params: ListOffersForCollectibleQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListOffersForCollectibleQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

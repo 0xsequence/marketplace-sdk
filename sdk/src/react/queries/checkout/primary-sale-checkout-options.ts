@@ -8,6 +8,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -76,7 +77,17 @@ export function getPrimarySaleCheckoutOptionsQueryKey(
 }
 
 export function primarySaleCheckoutOptionsQueryOptions(
-	params: PrimarySaleCheckoutOptionsQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			PrimarySaleCheckoutOptionsQueryOptions,
+			| 'chainId'
+			| 'walletAddress'
+			| 'contractAddress'
+			| 'collectionAddress'
+			| 'items'
+			| 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

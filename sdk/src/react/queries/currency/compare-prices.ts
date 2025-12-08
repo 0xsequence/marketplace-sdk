@@ -2,6 +2,7 @@ import type { Address } from 'viem';
 import {
 	buildQueryOptions,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { fetchConvertPriceToUSD } from './convert-to-usd';
@@ -92,7 +93,19 @@ export function getComparePricesQueryKey(params: ComparePricesQueryOptions) {
 	return ['currency', 'compare-prices', apiArgs] as const;
 }
 
-export function comparePricesQueryOptions(params: ComparePricesQueryOptions) {
+export function comparePricesQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			ComparePricesQueryOptions,
+			| 'chainId'
+			| 'priceAmountRaw'
+			| 'priceCurrencyAddress'
+			| 'compareToPriceAmountRaw'
+			| 'compareToPriceCurrencyAddress'
+			| 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getComparePricesQueryKey,

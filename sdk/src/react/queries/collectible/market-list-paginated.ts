@@ -7,6 +7,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -72,7 +73,12 @@ export function getListCollectiblesPaginatedQueryKey(
 }
 
 export function listCollectiblesPaginatedQueryOptions(
-	params: ListCollectiblesPaginatedQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListCollectiblesPaginatedQueryOptions,
+			'collectionAddress' | 'chainId' | 'side' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

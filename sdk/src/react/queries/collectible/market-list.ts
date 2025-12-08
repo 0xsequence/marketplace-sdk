@@ -9,6 +9,7 @@ import {
 	buildInfiniteQueryOptions,
 	getMarketplaceClient,
 	type SdkInfiniteQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { fetchMarketplaceConfig } from '../marketplace/config';
@@ -77,7 +78,12 @@ export function getListCollectiblesQueryKey(
 }
 
 export function listCollectiblesQueryOptions(
-	params: ListCollectiblesQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListCollectiblesQueryOptions,
+			'chainId' | 'collectionAddress' | 'side' | 'config'
+		>
+	>,
 ) {
 	return buildInfiniteQueryOptions(
 		{

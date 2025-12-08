@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
@@ -45,7 +46,12 @@ export function getCollectionActiveListingsCurrenciesQueryKey(
 }
 
 export function collectionActiveListingsCurrenciesQueryOptions(
-	params: CollectionActiveListingsCurrenciesQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			CollectionActiveListingsCurrenciesQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

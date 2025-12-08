@@ -4,6 +4,7 @@ import {
 	type GetHighestPriceOfferForCollectibleRequest,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -40,7 +41,12 @@ export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 }
 
 export function highestOfferQueryOptions(
-	params: HighestOfferQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			HighestOfferQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
 ): ReturnType<
 	typeof buildQueryOptions<
 		WithRequired<

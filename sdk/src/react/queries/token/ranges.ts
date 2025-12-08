@@ -4,6 +4,7 @@ import {
 	buildQueryOptions,
 	getIndexerClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
@@ -45,7 +46,14 @@ export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
 	return createTokenQueryKey('ranges', apiArgs);
 }
 
-export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
+export function getTokenRangesQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			GetTokenRangesQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getTokenRangesQueryKey,

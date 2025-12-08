@@ -6,6 +6,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -47,7 +48,12 @@ export function getCountItemsOrdersForCollectionQueryKey(
 }
 
 export function countItemsOrdersForCollectionQueryOptions(
-	params: CountItemsOrdersForCollectionQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			CountItemsOrdersForCollectionQueryOptions,
+			'chainId' | 'collectionAddress' | 'side' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

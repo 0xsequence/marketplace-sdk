@@ -6,6 +6,7 @@ import type {
 	CheckoutOptionsItem,
 	Optional,
 	WithOptionalParams,
+	WithRequired,
 } from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
@@ -16,7 +17,17 @@ import {
 import { useConfig } from '../config/useConfig';
 
 export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	WithOptionalParams<PrimarySaleCheckoutOptionsQueryOptions>,
+	WithOptionalParams<
+		WithRequired<
+			PrimarySaleCheckoutOptionsQueryOptions,
+			| 'chainId'
+			| 'walletAddress'
+			| 'contractAddress'
+			| 'collectionAddress'
+			| 'items'
+			| 'config'
+		>
+	>,
 	'config' | 'walletAddress'
 >;
 

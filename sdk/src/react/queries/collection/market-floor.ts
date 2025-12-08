@@ -3,6 +3,7 @@ import {
 	type GetFloorOrderRequest,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -35,7 +36,14 @@ export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 	] as const;
 }
 
-export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {
+export function floorOrderQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			FloorOrderQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getFloorOrderQueryKey,

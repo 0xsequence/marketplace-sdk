@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getIndexerClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
@@ -66,7 +67,14 @@ export function getTokenBalancesQueryKey(params: TokenBalancesQueryOptions) {
  * @param params - The query parameters
  * @returns Query options configuration
  */
-export function tokenBalancesOptions(params: TokenBalancesQueryOptions) {
+export function tokenBalancesOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			TokenBalancesQueryOptions,
+			'chainId' | 'collectionAddress' | 'userAddress' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getTokenBalancesQueryKey,

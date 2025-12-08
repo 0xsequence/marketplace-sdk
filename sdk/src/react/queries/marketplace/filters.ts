@@ -7,6 +7,7 @@ import {
 	getMetadataClient,
 	getQueryClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { marketplaceConfigOptions } from './config';
@@ -122,7 +123,14 @@ export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	});
 }
 
-export function filtersQueryOptions(params: FiltersQueryOptions) {
+export function filtersQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			FiltersQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getFiltersQueryKey,

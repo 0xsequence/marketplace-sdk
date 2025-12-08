@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getMetadataClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
@@ -52,7 +53,14 @@ export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
 	return createCollectibleQueryKey('metadata', apiArgs);
 }
 
-export function collectibleQueryOptions(params: CollectibleQueryOptions) {
+export function collectibleQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			CollectibleQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getCollectibleQueryKey,
