@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getIndexerClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
@@ -82,7 +83,12 @@ export function getBalanceOfCollectibleQueryKey(
  * @returns Query options configuration
  */
 export function balanceOfCollectibleOptions(
-	params: BalanceOfCollectibleQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			BalanceOfCollectibleQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'userAddress' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

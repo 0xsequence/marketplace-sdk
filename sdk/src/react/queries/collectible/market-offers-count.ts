@@ -6,6 +6,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -48,7 +49,12 @@ export function getCountOffersForCollectibleQueryKey(
 }
 
 export function countOffersForCollectibleQueryOptions(
-	params: CountOffersForCollectibleQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			CountOffersForCollectibleQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

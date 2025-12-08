@@ -4,6 +4,7 @@ import {
 	type Currency,
 	getQueryClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { marketCurrenciesQueryOptions } from './list';
@@ -74,7 +75,12 @@ export function getConvertPriceToUSDQueryKey(
 }
 
 export function convertPriceToUSDQueryOptions(
-	params: ConvertPriceToUSDQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ConvertPriceToUSDQueryOptions,
+			'chainId' | 'currencyAddress' | 'amountRaw' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

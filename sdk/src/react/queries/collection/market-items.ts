@@ -2,6 +2,7 @@ import type { Page } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
+	WithOptionalParams,
 } from '../../_internal';
 import {
 	buildInfiniteQueryOptions,
@@ -47,7 +48,12 @@ export function getListItemsOrdersForCollectionQueryKey(
 }
 
 export function listItemsOrdersForCollectionQueryOptions(
-	params: ListItemsOrdersForCollectionQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListItemsOrdersForCollectionQueryOptions,
+			'chainId' | 'collectionAddress' | 'side' | 'config'
+		>
+	>,
 ) {
 	return buildInfiniteQueryOptions(
 		{

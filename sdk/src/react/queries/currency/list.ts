@@ -6,6 +6,7 @@ import {
 	getMarketplaceClient,
 	getQueryClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { marketplaceConfigOptions } from '../marketplace/config';
@@ -81,7 +82,9 @@ export function getMarketCurrenciesQueryKey(
 }
 
 export function marketCurrenciesQueryOptions(
-	params: MarketCurrenciesQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<MarketCurrenciesQueryOptions, 'chainId' | 'config'>
+	>,
 ) {
 	return buildQueryOptions(
 		{

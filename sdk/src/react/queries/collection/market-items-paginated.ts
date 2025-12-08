@@ -2,6 +2,7 @@ import type { Address } from 'viem';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
+	WithOptionalParams,
 } from '../../_internal';
 import {
 	buildQueryOptions,
@@ -57,7 +58,12 @@ export function getListItemsOrdersForCollectionPaginatedQueryKey(
 }
 
 export function listItemsOrdersForCollectionPaginatedQueryOptions(
-	params: ListItemsOrdersForCollectionPaginatedQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListItemsOrdersForCollectionPaginatedQueryOptions,
+			'collectionAddress' | 'chainId' | 'config' | 'side'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{
