@@ -88,10 +88,6 @@ const Modal = () => {
 							titleOnConfirm="Accepting offer..."
 						/>
 					)}
-
-					{ctx.formError && (
-						<div className="mt-2 text-red-500 text-sm">{ctx.formError}</div>
-					)}
 				</>
 			)}
 		</ActionModal>

@@ -112,32 +112,6 @@ export function useSellModalContext() {
 		};
 	}
 
-	const computeFormError = () => {
-		if (
-			collectibleQuery.isLoading ||
-			collectionQuery.isLoading ||
-			currencyQuery.isLoading
-		) {
-			return null;
-		}
-
-		if (!state.order) {
-			return 'Offer details are unavailable';
-		}
-
-		if (!currencyQuery.data) {
-			return 'Unable to load the currency for this offer';
-		}
-
-		if (!collectionQuery.data) {
-			return 'Unable to load collection details';
-		}
-
-		return null;
-	};
-
-	const formError = computeFormError();
-
 	const approveResult =
 		approve.data &&
 		'type' in approve.data &&
@@ -147,7 +121,7 @@ export function useSellModalContext() {
 
 	if (transactionData.data?.approveStep) {
 		const approvalGuard = createApprovalGuard({
-			isFormValid: !formError,
+			isFormValid: true,
 			txReady: !!transactionData.data?.approveStep,
 			walletConnected: !!address,
 		});
@@ -177,7 +151,7 @@ export function useSellModalContext() {
 	}
 
 	const sellGuard = createFinalTransactionGuard({
-		isFormValid: !formError,
+		isFormValid: true,
 		txReady: !!transactionData.data?.sellStep,
 		walletConnected: !!address,
 		requiresApproval: !!transactionData.data?.approveStep && !approve.isSuccess,
@@ -270,14 +244,9 @@ export function useSellModalContext() {
 			currency: currencyQuery,
 		},
 
-		get formError() {
-			return computeFormError();
-		},
-
 		get actions() {
 			const needsApproval =
 				this.steps.approval && this.steps.approval.status !== 'success';
-			const isBlocked = !!this.formError;
 
 			return {
 				approve: needsApproval
@@ -285,7 +254,7 @@ export function useSellModalContext() {
 							label: this.steps.approval?.label,
 							onClick: this.steps.approval?.execute || (() => {}),
 							loading: this.steps.approval?.isPending,
-							disabled: this.steps.approval?.isDisabled || isBlocked,
+							disabled: this.steps.approval?.isDisabled,
 							testid: 'sell-modal-approve-button',
 						}
 					: undefined,
@@ -293,7 +262,7 @@ export function useSellModalContext() {
 					label: this.steps.sell.label,
 					onClick: this.steps.sell.execute,
 					loading: this.steps.sell.isPending,
-					disabled: this.steps.sell.isDisabled || isBlocked,
+					disabled: this.steps.sell.isDisabled,
 					testid: 'sell-modal-accept-button',
 				},
 			};
