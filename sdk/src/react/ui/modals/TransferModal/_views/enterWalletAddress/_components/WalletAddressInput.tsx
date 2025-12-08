@@ -8,14 +8,12 @@ type WalletAddressInputProps = {
 	value: string;
 	onChange: (value: string) => void;
 	disabled?: boolean;
-	error?: string;
 };
 
 const WalletAddressInput = ({
 	value,
 	onChange,
 	disabled,
-	error,
 }: WalletAddressInputProps) => {
 	const handleChangeWalletAddress = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -35,14 +33,6 @@ const WalletAddressInput = ({
 				placeholder="Enter wallet address"
 				disabled={disabled}
 			/>
-			{error && (
-				<div
-					className="mt-1 text-amber-500 text-xs"
-					data-testid="wallet-address-error"
-				>
-					{error}
-				</div>
-			)}
 		</Field>
 	);
 };

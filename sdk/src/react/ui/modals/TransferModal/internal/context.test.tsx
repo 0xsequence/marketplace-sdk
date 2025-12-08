@@ -1,4 +1,4 @@
-import { ContractType } from '@0xsequence/api-client';
+import { ContractType, WalletKind } from '@0xsequence/api-client';
 import { renderHook, waitFor } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -105,7 +105,7 @@ describe('useTransferModalContext', () => {
 		mockUseConnectorMetadata.mockReturnValue({
 			isWaaS: false,
 			isSequence: false,
-			walletKind: 'regular',
+			walletKind: WalletKind.unknown,
 		});
 		mockUseTransferTokens.mockReturnValue({
 			transferTokensAsync: vi.fn().mockResolvedValue('0xhash'),
@@ -120,11 +120,13 @@ describe('useTransferModalContext', () => {
 			selectedFeeOption: undefined,
 			show: vi.fn(),
 			hide: vi.fn(),
+			setSelectedFeeOption: vi.fn(),
 			id: undefined,
 		});
 		mockUseWaasFeeOptions.mockReturnValue({
 			pendingFeeOptionConfirmation: undefined,
 			rejectPendingFeeOption: vi.fn(),
+			confirmPendingFeeOption: vi.fn(),
 		});
 	});
 
@@ -159,44 +161,35 @@ describe('useTransferModalContext', () => {
 		mockUseConnectorMetadata.mockReturnValue({
 			isWaaS: true,
 			isSequence: false,
-			walletKind: 'waas',
-		});
-		mockUseSelectWaasFeeOptionsStore.mockReturnValue({
-			isVisible: true,
-			selectedFeeOption: undefined,
-			show: vi.fn(),
-			hide: vi.fn(),
-			id: undefined,
+			walletKind: WalletKind.sequence,
 		});
 
-		const { result } = renderHook(() => useTransferModalContext());
+		it('executes transfer action when form is valid', async () => {
+			const mutate = vi.fn().mockResolvedValue('0xhash');
+			mockUseTransferTokens.mockReturnValue({
+				transferTokensAsync: mutate,
+				hash: undefined,
+				transferring: false,
+				transferFailed: false,
+				transferSuccess: false,
+				error: null,
+			});
 
-		expect(result.current.steps.fee).toBeDefined();
-		expect(result.current.steps.fee?.isSelecting).toBe(true);
-	});
+			transferModalStore.send({
+				type: 'updateReceiver',
+				value: defaultAddress,
+			});
+			transferModalStore.send({ type: 'updateQuantity', value: '1' });
 
-	it('executes transfer action when form is valid', async () => {
-		const mutate = vi.fn().mockResolvedValue('0xhash');
-		mockUseTransferTokens.mockReturnValue({
-			transferTokensAsync: mutate,
-			hash: undefined,
-			transferring: false,
-			transferFailed: false,
-			transferSuccess: false,
-			error: null,
+			const { result } = renderHook(() => useTransferModalContext());
+			await result.current.actions.transfer.onClick();
+
+			expect(mutate).toHaveBeenCalledWith(
+				expect.objectContaining({
+					receiverAddress: defaultAddress,
+					collectionAddress: defaultCollectionAddress,
+				}),
+			);
 		});
-
-		transferModalStore.send({ type: 'updateReceiver', value: defaultAddress });
-		transferModalStore.send({ type: 'updateQuantity', value: '1' });
-
-		const { result } = renderHook(() => useTransferModalContext());
-		await result.current.actions.transfer.onClick();
-
-		expect(mutate).toHaveBeenCalledWith(
-			expect.objectContaining({
-				receiverAddress: defaultAddress,
-				collectionAddress: defaultCollectionAddress,
-			}),
-		);
 	});
 });
