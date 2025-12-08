@@ -44,13 +44,12 @@ const Modal = () => {
 			type="transfer"
 			primaryAction={primaryAction}
 			queries={{
-				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,
 				collectibleBalance: ctx.queries.collectibleBalance,
 			}}
 			externalError={ctx.error}
 		>
-			{({ collectible, collection, collectibleBalance }) => (
+			{({ collection, collectibleBalance }) => (
 				<>
 					<TokenPreview
 						collectionName={collection?.name}
@@ -80,7 +79,6 @@ const Modal = () => {
 								}
 							}}
 							maxQuantity={BigInt(collectibleBalance.balance)}
-							decimals={collectible?.decimals || 0}
 							invalid={!!ctx.form.errors.quantity}
 							disabled={ctx.flow.isPending}
 							helperText={`You have ${collectibleBalance.balance} of this item`}

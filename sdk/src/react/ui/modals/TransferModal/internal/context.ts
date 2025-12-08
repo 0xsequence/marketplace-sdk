@@ -7,7 +7,6 @@ import { compareAddress } from '../../../../../utils';
 import { TransactionType } from '../../../../_internal';
 import {
 	useCollectibleBalance,
-	useCollectibleMetadata,
 	useCollectionMetadata,
 	useConfig,
 	useConnectorMetadata,
@@ -51,12 +50,11 @@ export type TransferModalContext = ModalContext<
 			validation: { isValid: boolean; error: string | null };
 		};
 		quantity: {
-			input: string;
-			update: (value: string) => void;
+			input: bigint;
+			update: (value: bigint) => void;
 			touch: () => void;
 			isTouched: boolean;
 			validation: { isValid: boolean; error: string | null };
-			parsed: bigint;
 		};
 		isValid: boolean;
 		errors: {
@@ -66,7 +64,6 @@ export type TransferModalContext = ModalContext<
 		};
 	};
 	queries: {
-		collectible: ReturnType<typeof useCollectibleMetadata>;
 		collection: ReturnType<typeof useCollectionMetadata>;
 		collectibleBalance: ReturnType<typeof useCollectibleBalance>;
 	};
@@ -74,7 +71,6 @@ export type TransferModalContext = ModalContext<
 		transfer: string | undefined;
 	};
 	loading: {
-		collectible: boolean;
 		collection: boolean;
 		collectibleBalance: boolean;
 	};
@@ -90,14 +86,6 @@ export type TransferModalContext = ModalContext<
 	};
 };
 
-const parseQuantity = (value: string): bigint => {
-	try {
-		return BigInt(value);
-	} catch {
-		return 0n;
-	}
-};
-
 export function useTransferModalContext(): TransferModalContext {
 	const state = useTransferModalState();
 	const { closeModal, callbacks } = state;
@@ -105,12 +93,6 @@ export function useTransferModalContext(): TransferModalContext {
 	const config = useConfig();
 	const { isWaaS } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-
-	const collectibleQuery = useCollectibleMetadata({
-		chainId: state.chainId,
-		collectionAddress: state.collectionAddress,
-		tokenId: state.tokenId,
-	});
 
 	const collectionQuery = useCollectionMetadata({
 		chainId: state.chainId,
@@ -136,11 +118,6 @@ export function useTransferModalContext(): TransferModalContext {
 			? BigInt(collectibleBalanceQuery.data.balance)
 			: undefined;
 
-	const quantityParsed = useMemo(
-		() => parseQuantity(state.quantityInput || '0'),
-		[state.quantityInput],
-	);
-
 	const receiverValidation = useMemo(() => {
 		if (!state.receiverInput || state.receiverInput.trim() === '') {
 			return { isValid: false, error: 'Wallet address is required' };
@@ -161,17 +138,17 @@ export function useTransferModalContext(): TransferModalContext {
 		if (!isErc1155) {
 			return { isValid: true, error: null };
 		}
-		if (!state.quantityInput || state.quantityInput.trim() === '') {
+		if (!state.quantityInput || state.quantityInput <= 0n) {
 			return { isValid: false, error: 'Quantity is required' };
 		}
-		if (quantityParsed <= 0n) {
+		if (state.quantityInput <= 0n) {
 			return { isValid: false, error: 'Quantity must be greater than 0' };
 		}
-		if (balance !== undefined && quantityParsed > balance) {
+		if (balance !== undefined && state.quantityInput > balance) {
 			return { isValid: false, error: 'Quantity exceeds your balance' };
 		}
 		return { isValid: true, error: null };
-	}, [balance, isErc1155, quantityParsed, state.quantityInput]);
+	}, [balance, isErc1155, state.quantityInput, state.quantityInput]);
 
 	const contractTypeError =
 		contractType && (isErc1155 || isErc721)
@@ -271,7 +248,7 @@ export function useTransferModalContext(): TransferModalContext {
 			return feeCheck;
 		}
 		const txReady =
-			!!contractType && (isErc721 || (isErc1155 && quantityParsed > 0n));
+			!!contractType && (isErc721 || (isErc1155 && state.quantityInput > 0n));
 		const finalGuard = createFinalTransactionGuard({
 			isFormValid: formIsValid,
 			txReady,
@@ -298,7 +275,7 @@ export function useTransferModalContext(): TransferModalContext {
 					tokenId: state.tokenId,
 					chainId: state.chainId,
 					contractType: ContractType.ERC1155 as const,
-					quantity: quantityParsed.toString(),
+					quantity: state.quantityInput,
 				}
 			: {
 					receiverAddress: receiver,
@@ -330,7 +307,7 @@ export function useTransferModalContext(): TransferModalContext {
 		baseClose,
 		callbacks,
 		isErc1155,
-		quantityParsed,
+		state.quantityInput,
 		showTransactionStatusModal,
 		state.chainId,
 		state.collectionAddress,
@@ -363,11 +340,7 @@ export function useTransferModalContext(): TransferModalContext {
 
 	const flow = computeFlowState<'transfer'>(steps);
 
-	const error =
-		collectibleQuery.error ||
-		collectionQuery.error ||
-		collectibleBalanceQuery.error ||
-		null;
+	const error = collectionQuery.error || collectibleBalanceQuery.error || null;
 
 	return {
 		isOpen: state.isOpen,
@@ -391,7 +364,6 @@ export function useTransferModalContext(): TransferModalContext {
 				touch: state.touchQuantityInput,
 				isTouched: state.isQuantityTouched,
 				validation: quantityValidation,
-				parsed: quantityParsed,
 			},
 			isValid: formIsValid,
 			errors: {
@@ -407,12 +379,10 @@ export function useTransferModalContext(): TransferModalContext {
 		steps,
 		flow,
 		queries: {
-			collectible: collectibleQuery,
 			collection: collectionQuery,
 			collectibleBalance: collectibleBalanceQuery,
 		},
 		loading: {
-			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
 			collectibleBalance: collectibleBalanceQuery.isLoading,
 		},

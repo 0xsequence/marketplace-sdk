@@ -12,7 +12,7 @@ describe('TransferModal store', () => {
 		const { context } = transferModalStore.getSnapshot();
 		expect(context.isOpen).toBe(false);
 		expect(context.receiverInput).toBe('');
-		expect(context.quantityInput).toBe('1');
+		expect(context.quantityInput).toBe(1n);
 		expect(context.isReceiverTouched).toBe(false);
 		expect(context.isQuantityTouched).toBe(false);
 		expect(context.callbacks).toBeUndefined();
@@ -27,7 +27,7 @@ describe('TransferModal store', () => {
 		};
 
 		transferModalStore.send({ type: 'updateReceiver', value: '0xabc' });
-		transferModalStore.send({ type: 'updateQuantity', value: '5' });
+		transferModalStore.send({ type: 'updateQuantity', value: 5n });
 		transferModalStore.send({ type: 'open', ...openArgs });
 
 		const { context } = transferModalStore.getSnapshot();
@@ -36,7 +36,7 @@ describe('TransferModal store', () => {
 		expect(context.tokenId).toBe(openArgs.tokenId);
 		expect(context.chainId).toBe(openArgs.chainId);
 		expect(context.receiverInput).toBe('');
-		expect(context.quantityInput).toBe('1');
+		expect(context.quantityInput).toBe(1n);
 		expect(context.isReceiverTouched).toBe(false);
 		expect(context.isQuantityTouched).toBe(false);
 		expect(context.callbacks).toEqual(openArgs.callbacks);
@@ -45,12 +45,12 @@ describe('TransferModal store', () => {
 	it('updates receiver and quantity inputs independently', () => {
 		transferModalStore.send({ type: 'updateReceiver', value: '0xabc' });
 		transferModalStore.send({ type: 'touchReceiver' });
-		transferModalStore.send({ type: 'updateQuantity', value: '3' });
+		transferModalStore.send({ type: 'updateQuantity', value: 3n });
 
 		const { context } = transferModalStore.getSnapshot();
 		expect(context.receiverInput).toBe('0xabc');
 		expect(context.isReceiverTouched).toBe(true);
-		expect(context.quantityInput).toBe('3');
+		expect(context.quantityInput).toBe(3n);
 		expect(context.isQuantityTouched).toBe(true);
 	});
 
@@ -67,7 +67,7 @@ describe('TransferModal store', () => {
 		expect(context).toMatchObject({
 			isOpen: false,
 			receiverInput: '',
-			quantityInput: '1',
+			quantityInput: 1n,
 			isReceiverTouched: false,
 			isQuantityTouched: false,
 		});

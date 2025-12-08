@@ -160,7 +160,7 @@ describe('useTransferTokens', () => {
 			collectionAddress: mockCollectionAddress,
 			tokenId: 456n,
 			receiverAddress: mockReceiverAddress,
-			quantity: '5',
+			quantity: 5n,
 		};
 
 		it('should prepare correct ERC1155 transfer config', async () => {
@@ -178,7 +178,7 @@ describe('useTransferTokens', () => {
 					mockAccountAddress,
 					mockReceiverAddress,
 					BigInt('456'),
-					'5',
+					5n,
 					'0x', // data
 				],
 			});
@@ -214,12 +214,12 @@ describe('useTransferTokens', () => {
 			// Test with large quantity
 			await result.current.transferTokensAsync({
 				...erc1155Params,
-				quantity: '1000000',
+				quantity: 1000000n,
 			});
 
 			expect(mockWriteContractAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
-					args: expect.arrayContaining(['1000000']),
+					args: expect.arrayContaining([1000000n]),
 				}),
 			);
 		});

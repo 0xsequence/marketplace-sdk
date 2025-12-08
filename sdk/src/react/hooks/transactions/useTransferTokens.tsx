@@ -17,7 +17,7 @@ interface ERC721TransferParams extends BaseTransferParams {
 
 interface ERC1155TransferParams extends BaseTransferParams {
 	contractType: ContractType.ERC1155;
-	quantity: string;
+	quantity: bigint;
 }
 
 export type TransferTokensParams = ERC721TransferParams | ERC1155TransferParams;

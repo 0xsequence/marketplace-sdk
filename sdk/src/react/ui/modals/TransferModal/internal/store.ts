@@ -29,7 +29,7 @@ type TransferModalState = {
 	tokenId: bigint;
 	collectionType?: CollectionType;
 	receiverInput: string;
-	quantityInput: string;
+	quantityInput: bigint;
 	isReceiverTouched: boolean;
 	isQuantityTouched: boolean;
 	callbacks?: ModalCallbacks;
@@ -42,7 +42,7 @@ const initialContext: TransferModalState = {
 	tokenId: 0n,
 	collectionType: undefined,
 	receiverInput: '',
-	quantityInput: '1',
+	quantityInput: 1n,
 	isReceiverTouched: false,
 	isQuantityTouched: false,
 	callbacks: undefined,
@@ -55,7 +55,7 @@ export const transferModalStore = createStore({
 			...initialContext,
 			...event,
 			isOpen: true,
-			quantityInput: '1',
+			quantityInput: 1n,
 			isReceiverTouched: false,
 			isQuantityTouched: false,
 		}),
@@ -68,7 +68,7 @@ export const transferModalStore = createStore({
 			...context,
 			isReceiverTouched: true,
 		}),
-		updateQuantity: (context, event: { value: string }) => ({
+		updateQuantity: (context, event: { value: bigint }) => ({
 			...context,
 			quantityInput: event.value,
 			isQuantityTouched: true,
@@ -89,7 +89,7 @@ export const useTransferModalState = () => {
 			transferModalStore.send({ type: 'updateReceiver', value }),
 		touchReceiverInput: () =>
 			transferModalStore.send({ type: 'touchReceiver' }),
-		updateQuantityInput: (value: string) =>
+		updateQuantityInput: (value: bigint) =>
 			transferModalStore.send({ type: 'updateQuantity', value }),
 		touchQuantityInput: () =>
 			transferModalStore.send({ type: 'touchQuantity' }),
