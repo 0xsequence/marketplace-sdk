@@ -35,7 +35,7 @@ catalog:
   tailwindcss: ^4.1.17
   tsup: ^8.5.1
   typescript: ^5.9.3
-  viem: ^2.39.0
+  viem: ^2.41.2
   vite: ^7.2.2
   vite-tsconfig-paths: ^5.1.4
   wagmi: ^2.19.4
@@ -45,7 +45,9 @@ ignoredBuiltDependencies:
 
 minimumReleaseAge: 20160
 
+## TODO: remove viem and ox from this list in the future
 minimumReleaseAgeExclude:
+  - viem 
   - '@0xsequence/*'
   - '@0xtrails/*'
   - '0xtrails'
