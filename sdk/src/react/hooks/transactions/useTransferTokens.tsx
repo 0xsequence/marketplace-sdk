@@ -1,5 +1,6 @@
 import { type Abi, type Address, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
+import type { WriteContractErrorType } from 'wagmi/actions';
 import { ERC1155_ABI } from '../../../utils';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import type { ContractType } from '../../_internal';
@@ -53,7 +54,16 @@ const prepareTransferConfig = (
 	};
 };
 
-export const useTransferTokens = () => {
+export interface UseTransferTokensResult {
+	transferTokensAsync: (params: TransferTokensParams) => Promise<Address>;
+	hash: Address | undefined;
+	transferring: boolean;
+	transferFailed: boolean;
+	transferSuccess: boolean;
+	error: WriteContractErrorType | null;
+}
+
+export const useTransferTokens = (): UseTransferTokensResult => {
 	const { address: accountAddress } = useAccount();
 	const {
 		writeContractAsync,
