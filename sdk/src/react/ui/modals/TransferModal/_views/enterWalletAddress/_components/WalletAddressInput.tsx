@@ -32,6 +32,8 @@ const WalletAddressInput = ({
 				name="walletAddress"
 				placeholder="Enter wallet address"
 				disabled={disabled}
+				type="text"
+				className="h-9 rounded-sm [&>input]:h-9 [&>input]:text-sm"
 			/>
 		</Field>
 	);
