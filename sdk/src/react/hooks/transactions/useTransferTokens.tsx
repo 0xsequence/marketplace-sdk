@@ -1,4 +1,4 @@
-import { type Abi, type Address, erc721Abi } from 'viem';
+import { type Abi, type Address, type Hash, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 import { ERC1155_ABI } from '../../../utils';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
@@ -21,6 +21,15 @@ interface ERC1155TransferParams extends BaseTransferParams {
 }
 
 export type TransferTokensParams = ERC721TransferParams | ERC1155TransferParams;
+
+type UseTransferTokensResult = {
+	transferTokensAsync: (params: TransferTokensParams) => Promise<Hash>;
+	hash: Hash | undefined;
+	transferring: boolean;
+	transferFailed: boolean;
+	transferSuccess: boolean;
+	error: unknown;
+};
 
 const prepareTransferConfig = (
 	params: TransferTokensParams,
@@ -53,7 +62,7 @@ const prepareTransferConfig = (
 	};
 };
 
-export const useTransferTokens = () => {
+export const useTransferTokens = (): UseTransferTokensResult => {
 	const { address: accountAddress } = useAccount();
 	const {
 		writeContractAsync,
