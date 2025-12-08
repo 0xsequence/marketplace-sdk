@@ -11,6 +11,7 @@ import {
 	getQueryClient,
 	MetadataStatus,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { tokenBalancesOptions } from '../collectible/token-balances';
@@ -184,7 +185,14 @@ export function getInventoryQueryKey(params: InventoryQueryOptions) {
 	] as const;
 }
 
-export function inventoryOptions(params: InventoryQueryOptions) {
+export function inventoryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			InventoryQueryOptions,
+			'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getInventoryQueryKey,

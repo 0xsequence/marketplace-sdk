@@ -7,6 +7,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -47,7 +48,12 @@ export function getPrimarySaleItemsCountQueryKey(
 }
 
 export const primarySaleItemsCountQueryOptions = (
-	params: PrimarySaleItemsCountQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			PrimarySaleItemsCountQueryOptions,
+			'primarySaleContractAddress' | 'chainId' | 'config'
+		>
+	>,
 ) => {
 	return buildQueryOptions(
 		{

@@ -2,6 +2,7 @@ import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
 	SortBy,
+	WithOptionalParams,
 } from '../../_internal';
 import {
 	buildQueryOptions,
@@ -62,7 +63,12 @@ export function getListCollectionActivitiesQueryKey(
 }
 
 export function listCollectionActivitiesQueryOptions(
-	params: ListCollectionActivitiesQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListCollectionActivitiesQueryOptions,
+			'collectionAddress' | 'chainId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

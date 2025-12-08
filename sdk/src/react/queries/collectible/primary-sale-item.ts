@@ -6,6 +6,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
@@ -50,7 +51,12 @@ export function getPrimarySaleItemQueryKey(
 }
 
 export function primarySaleItemQueryOptions(
-	params: PrimarySaleItemQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			PrimarySaleItemQueryOptions,
+			'chainId' | 'primarySaleContractAddress' | 'tokenId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

@@ -10,6 +10,7 @@ import {
 	buildQueryOptions,
 	getMetadataClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
@@ -138,7 +139,9 @@ export function getListCollectionsQueryKey(
 }
 
 export function listCollectionsQueryOptions(
-	params: ListCollectionsQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<ListCollectionsQueryOptions, 'marketplaceConfig' | 'config'>
+	>,
 ) {
 	return buildQueryOptions(
 		{

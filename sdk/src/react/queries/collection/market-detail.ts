@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -38,7 +39,12 @@ export function getCollectionMarketDetailQueryKey(
 }
 
 export function collectionMarketDetailQueryOptions(
-	params: MarketCollectionDetailQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			MarketCollectionDetailQueryOptions,
+			'collectionAddress' | 'chainId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

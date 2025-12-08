@@ -6,6 +6,7 @@ import {
 	buildQueryOptions,
 	getMarketplaceClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -44,7 +45,12 @@ export function getListListingsForCollectibleQueryKey(
 }
 
 export function listListingsForCollectibleQueryOptions(
-	params: ListListingsForCollectibleQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			ListListingsForCollectibleQueryOptions,
+			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{

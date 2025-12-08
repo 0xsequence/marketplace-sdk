@@ -3,6 +3,7 @@ import {
 	buildQueryOptions,
 	getMetadataClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
@@ -40,7 +41,14 @@ export function getCollectionQueryKey(params: CollectionQueryOptions) {
 	});
 }
 
-export function collectionQueryOptions(params: CollectionQueryOptions) {
+export function collectionQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<
+			CollectionQueryOptions,
+			'chainId' | 'collectionAddress' | 'config'
+		>
+	>,
+) {
 	return buildQueryOptions(
 		{
 			getQueryKey: getCollectionQueryKey,

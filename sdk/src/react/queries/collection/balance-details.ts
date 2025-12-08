@@ -4,6 +4,7 @@ import {
 	buildQueryOptions,
 	getIndexerClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
@@ -82,7 +83,12 @@ export function getCollectionBalanceDetailsQueryKey(
 }
 
 export function collectionBalanceDetailsQueryOptions(
-	params: CollectionBalanceDetailsQueryOptions,
+	params: WithOptionalParams<
+		WithRequired<
+			CollectionBalanceDetailsQueryOptions,
+			'chainId' | 'filter' | 'config'
+		>
+	>,
 ) {
 	return buildQueryOptions(
 		{
