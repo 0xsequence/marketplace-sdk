@@ -61,6 +61,7 @@ export const useTransferTokens = () => {
 		isPending,
 		isError,
 		isSuccess,
+		error,
 	} = useWriteContract();
 
 	const transferTokensAsync = async (params: TransferTokensParams) => {
@@ -78,5 +79,6 @@ export const useTransferTokens = () => {
 		transferring: isPending,
 		transferFailed: isError,
 		transferSuccess: isSuccess,
+		error,
 	};
 };

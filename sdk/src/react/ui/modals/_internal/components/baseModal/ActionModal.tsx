@@ -10,7 +10,7 @@ import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
 import { SmartErrorHandler } from './SmartErrorHandler';
 
-type ActionModalType = 'listing' | 'offer' | 'sell' | 'buy';
+type ActionModalType = 'listing' | 'offer' | 'sell' | 'buy' | 'transfer';
 
 export interface CtaAction {
 	label: React.ReactNode;
@@ -69,7 +69,9 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 					? 'Preparing offer data...'
 					: type === 'sell'
 						? 'Preparing sale data...'
-						: 'Preparing checkout data...';
+						: type === 'transfer'
+							? 'Preparing transfer data...'
+							: 'Preparing checkout data...';
 
 		return (
 			<div

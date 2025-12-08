@@ -1,29 +1,26 @@
 'use client';
 
 import { Field, FieldLabel, TextInput } from '@0xsequence/design-system';
-import { isAddress } from 'viem';
-import { useAccount } from 'wagmi';
-import { transferModalStore, useModalState } from '../../../store';
 
 const MAX_WALLET_ADDRESS_LENGTH = 42;
 
-const WalletAddressInput = () => {
-	const { address: connectedAddress } = useAccount();
-	const { receiverAddress, transferIsProcessing } = useModalState();
-	const isWalletAddressValid = isAddress(receiverAddress);
+type WalletAddressInputProps = {
+	value: string;
+	onChange: (value: string) => void;
+	disabled?: boolean;
+	error?: string;
+};
 
-	const isSelfTransfer =
-		isWalletAddressValid &&
-		connectedAddress &&
-		receiverAddress.toLowerCase() === connectedAddress.toLowerCase();
-
+const WalletAddressInput = ({
+	value,
+	onChange,
+	disabled,
+	error,
+}: WalletAddressInputProps) => {
 	const handleChangeWalletAddress = (
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
-		transferModalStore.send({
-			type: 'updateTransferDetails',
-			receiverAddress: event.target.value,
-		});
+		onChange(event.target.value);
 	};
 
 	return (
@@ -31,16 +28,19 @@ const WalletAddressInput = () => {
 			<FieldLabel className="text-text-80 text-xs">Wallet address</FieldLabel>
 			<TextInput
 				autoFocus
-				value={receiverAddress}
+				value={value}
 				maxLength={MAX_WALLET_ADDRESS_LENGTH}
 				onChange={handleChangeWalletAddress}
 				name="walletAddress"
 				placeholder="Enter wallet address"
-				disabled={transferIsProcessing}
+				disabled={disabled}
 			/>
-			{isSelfTransfer && (
-				<div className="mt-1 text-amber-500 text-xs">
-					You cannot transfer to your own address
+			{error && (
+				<div
+					className="mt-1 text-amber-500 text-xs"
+					data-testid="wallet-address-error"
+				>
+					{error}
 				</div>
 			)}
 		</Field>

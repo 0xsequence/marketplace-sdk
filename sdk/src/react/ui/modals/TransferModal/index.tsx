@@ -12,6 +12,10 @@ import {
 } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import TokenPreview from '../_internal/components/tokenPreview';
+import TokenQuantityInput from './_views/enterWalletAddress/_components/TokenQuantityInput';
+import WalletAddressInput from './_views/enterWalletAddress/_components/WalletAddressInput';
+import { useTransferModalContext } from './internal/context';
 import {
 	selectWaasFeeOptionsStore,
 	useSelectWaasFeeOptionsStore,
@@ -135,4 +139,5 @@ const TransferModal = () => {
 	);
 };
 
-export { TransferModal };
+export { useTransferModal };
+export type { ShowTransferModalArgs, UseTransferModalArgs };
