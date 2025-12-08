@@ -1,5 +1,5 @@
 import type { Dnum } from 'dnum';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
@@ -186,16 +186,8 @@ export function useMakeOfferModalContext() {
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(state.chainId, config);
 	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
-
-	useEffect(() => {
-		if (
-			!isSponsored &&
-			!waas.isVisible &&
-			!!pendingFeeOptionConfirmation?.options
-		) {
-			waas.show();
-		}
-	}, [pendingFeeOptionConfirmation?.options, isSponsored, waas.isVisible]);
+	const isFeeSelectionVisible =
+		waas.isVisible || (!isSponsored && !!pendingFeeOptionConfirmation?.options);
 
 	const steps: MakeOfferModalSteps = {} as MakeOfferModalSteps;
 
@@ -204,9 +196,13 @@ export function useMakeOfferModalContext() {
 
 		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			status: feeSelected
+				? 'success'
+				: isFeeSelectionVisible
+					? 'selecting'
+					: 'idle',
 			isSponsored,
-			isSelecting: waas.isVisible,
+			isSelecting: isFeeSelectionVisible,
 			selectedOption: waas.selectedFeeOption,
 			show: () => waas.show(),
 			cancel: () => waas.hide(),

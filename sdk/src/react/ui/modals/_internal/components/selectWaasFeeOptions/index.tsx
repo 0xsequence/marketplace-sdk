@@ -45,8 +45,11 @@ const SelectWaasFeeOptions = ({
 	};
 
 	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+	const shouldDisplay =
+		!isSponsored &&
+		(isVisible || !!pendingFeeOptionConfirmation?.options?.length);
 
-	if (!isVisible || isSponsored || !selectedFeeOption) {
+	if (!shouldDisplay || !selectedFeeOption) {
 		return null;
 	}
 

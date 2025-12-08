@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import {
 	useCollectibleMetadata,
@@ -80,21 +79,8 @@ export function useSellModalContext() {
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(state.chainId, config);
 	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
-
-	useEffect(() => {
-		if (
-			!isSponsored &&
-			!waas.isVisible &&
-			!!pendingFeeOptionConfirmation?.options
-		) {
-			waas.show();
-		}
-	}, [
-		pendingFeeOptionConfirmation?.options,
-		isSponsored,
-		waas.isVisible,
-		waas,
-	]);
+	const isFeeSelectionVisible =
+		waas.isVisible || (!isSponsored && !!pendingFeeOptionConfirmation?.options);
 
 	const steps: SellModalSteps = {} as SellModalSteps;
 
@@ -103,9 +89,13 @@ export function useSellModalContext() {
 
 		steps.fee = {
 			label: 'Select Fee',
-			status: feeSelected ? 'success' : waas.isVisible ? 'selecting' : 'idle',
+			status: feeSelected
+				? 'success'
+				: isFeeSelectionVisible
+					? 'selecting'
+					: 'idle',
 			isSponsored,
-			isSelecting: waas.isVisible,
+			isSelecting: isFeeSelectionVisible,
 			selectedOption: waas.selectedFeeOption,
 			show: () => waas.show(),
 			cancel: () => waas.hide(),
