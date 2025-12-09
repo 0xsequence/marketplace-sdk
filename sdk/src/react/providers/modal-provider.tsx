@@ -1,6 +1,3 @@
-// import { SequenceCheckoutProvider } from '@0xsequence/checkout';
-
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
 //import { marketplaceApiURL } from '../_internal';
@@ -37,9 +34,7 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 				<MakeOfferModal />
 				<TransferModal />
 				<SellModal />
-				<SequenceCheckoutProvider>
-					<BuyModal />
-				</SequenceCheckoutProvider>
+				<BuyModal />
 				{/* Helper modals */}
 				<SwitchChainErrorModal />
 				<TransactionStatusModal />

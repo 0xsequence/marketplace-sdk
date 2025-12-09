@@ -30,6 +30,7 @@
 		"typescript": "catalog:"
 	},
 	"dependencies": {
+		"@0xsequence/design-system-v2": "npm:@0xsequence/design-system@2.1.11",
 		"@radix-ui/react-accordion": "^1.2.12",
 		"@tailwindcss/postcss": "^4.1.17",
 		"@tailwindcss/vite": "^4.1.17",

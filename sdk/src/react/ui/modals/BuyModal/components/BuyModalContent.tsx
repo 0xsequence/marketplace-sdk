@@ -1,7 +1,9 @@
 'use client';
 
 import type { ContractType } from '@0xsequence/api-client';
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
+import { ThemeProvider } from '@0xsequence/design-system-v2';
 import { TrailsWidget } from '0xtrails/widget';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
@@ -30,10 +32,14 @@ export const BuyModalContent = () => {
 		checkoutMode.mode === 'sequence-checkout'
 	) {
 		return (
-			<SequenceCheckout
-				steps={steps}
-				contractType={collection?.type as ContractType}
-			/>
+			<ThemeProvider>
+				<SequenceCheckoutProvider>
+					<SequenceCheckout
+						steps={steps}
+						contractType={collection?.type as ContractType}
+					/>
+				</SequenceCheckoutProvider>
+			</ThemeProvider>
 		);
 	}
 
