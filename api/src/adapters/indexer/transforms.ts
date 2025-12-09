@@ -53,7 +53,7 @@ export function toNativeTokenBalance(
 		accountAddress: normalizeAddress(raw.accountAddress),
 		chainId: normalizeChainId(raw.chainId),
 		balance: BigInt(raw.balance),
-		errorReason: raw.errorReason,
+		errorReason: raw.error,
 	};
 }
 

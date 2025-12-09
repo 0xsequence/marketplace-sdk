@@ -63,6 +63,7 @@
 		"0xtrails": "^0.8.5",
 		"@0xsequence/api-client": "workspace:*",
 		"@0xsequence/design-system-v2": "npm:@0xsequence/design-system@2.1.11",
+		"@0xsequence/indexer-v2": "npm:@0xsequence/indexer@2.3.38",
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
 		"@tailwindcss/cli": "^4.1.17",

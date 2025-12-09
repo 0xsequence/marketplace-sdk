@@ -26,7 +26,7 @@ const metadataURL = (env: Env = 'production') => {
 	return stringTemplate(SERVICES.metadata, { prefix });
 };
 
-const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
+export const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	const network = getNetwork(chain).name;
 	return stringTemplate(SERVICES.indexer, { network, prefix });
