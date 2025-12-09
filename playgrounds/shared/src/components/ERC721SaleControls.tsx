@@ -66,11 +66,9 @@ export function ERC721SaleControls({
 			salesContractAddress,
 			cardType: 'shop',
 			quantityRemaining: quantityRemaining ?? 0n,
-			items: [
-				{
-					quantity: BigInt(quantity),
-				},
-			],
+			item: {
+				quantity: BigInt(quantity),
+			},
 			salePrice: {
 				amount: salePrice?.amount || 0n,
 				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),

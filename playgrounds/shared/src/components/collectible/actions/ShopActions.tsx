@@ -103,12 +103,10 @@ export function ShopActions({
 							// collectionAddress is already an Address type
 							collectionAddress,
 							salesContractAddress: saleContractAddress as Address,
-							items: [
-								{
-									tokenId: BigInt(tokenId),
-									quantity: 1n, // TODO: this is overwritten later, should not be exposed
-								},
-							],
+							item: {
+								tokenId: BigInt(tokenId),
+								quantity: 1n, // TODO: this is overwritten later, should not be exposed
+							},
 							cardType: 'shop',
 							salePrice: {
 								amount: primarySaleItem?.priceAmount ?? 0n,
@@ -168,12 +166,10 @@ export function ShopActions({
 								// collectionAddress is already an Address type
 								collectionAddress,
 								salesContractAddress: saleContractAddress as Address,
-								items: [
-									{
-										tokenId: BigInt(tokenId),
-										quantity: 1n, // TODO: this is overwritten later, should not be exposed
-									},
-								],
+								item: {
+									tokenId: BigInt(tokenId),
+									quantity: 1n, // TODO: this is overwritten later, should not be exposed
+								},
 								cardType: 'shop',
 								salePrice: {
 									amount: primarySaleItem?.priceAmount ?? 0n,
