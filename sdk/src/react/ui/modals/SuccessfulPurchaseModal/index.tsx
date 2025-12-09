@@ -11,7 +11,6 @@ import {
 
 type TokenMetadata = Metadata.TokenMetadata;
 
-import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModalStore,
@@ -19,13 +18,12 @@ import {
 	useModalState,
 } from './store';
 
-export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
+export const useSuccessfulPurchaseModal = () => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
 			successfulPurchaseModalStore.send({
 				type: 'open',
 				...args,
-				defaultCallbacks: callbacks,
 			}),
 		close: () => successfulPurchaseModalStore.send({ type: 'close' }),
 	};

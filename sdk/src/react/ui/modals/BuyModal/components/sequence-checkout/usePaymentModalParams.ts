@@ -10,7 +10,7 @@ import { StepType } from '../../../../../../../../api/src/adapters/marketplace/m
 import type { CheckoutMode, MarketplaceKind } from '../../../../../../types';
 import { decodeERC20Approval } from '../../../../../../utils/decode/erc20';
 import { getQueryClient } from '../../../../../_internal';
-import type { ModalCallbacks } from '../../../_internal/types';
+import type { ActionButton } from '../../../_internal/types';
 import { useBuyModalContext } from '../../internal/buyModalContext';
 import {
 	buyModalStore,
@@ -27,7 +27,6 @@ interface GetBuyCollectableParams {
 	marketplaceKind: MarketplaceKind | undefined;
 	orderId: string;
 	quantity: number;
-	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
 	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
@@ -37,6 +36,7 @@ interface GetBuyCollectableParams {
 	checkoutMode: CheckoutMode | undefined;
 	steps: Step[] | undefined;
 	marketplaceType: 'market' | 'shop';
+	successActionButtons?: ActionButton[];
 }
 
 export const getBuyCollectableParams = async ({
@@ -44,7 +44,7 @@ export const getBuyCollectableParams = async ({
 	chainId,
 	collectionAddress,
 	tokenId,
-	callbacks,
+	successActionButtons,
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
 	marketplaceKind,
@@ -123,7 +123,7 @@ export const getBuyCollectableParams = async ({
 			},
 		}),
 		onRampProvider,
-		successActionButtons: callbacks?.successActionButtons,
+		successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
 
@@ -152,6 +152,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
 		onRampProvider,
+		successActionButtons,
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
@@ -186,9 +187,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						orderId,
 						quantity,
 						priceCurrencyAddress,
-						callbacks: {
-							successActionButtons: buyModalProps.successActionButtons,
-						},
+						successActionButtons,
 						customCreditCardProviderCallback,
 						skipNativeBalanceCheck,
 						nativeTokenAddress,

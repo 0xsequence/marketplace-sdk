@@ -5,13 +5,8 @@ export interface ActionButton {
 	action: () => void;
 }
 
-export type ModalCallbacks = {
-	successActionButtons?: ActionButton[];
-};
-
 export type BaseModalState = {
 	isOpen: boolean;
 	chainId: number;
 	collectionAddress: Address;
-	callbacks?: ModalCallbacks;
 };

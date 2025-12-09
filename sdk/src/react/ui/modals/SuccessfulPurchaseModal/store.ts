@@ -6,8 +6,6 @@ import type { ComponentType } from 'react';
 
 type TokenMetadata = Metadata.TokenMetadata;
 
-import type { ModalCallbacks } from '../_internal/types';
-
 export interface SuccessfulPurchaseModalState {
 	isOpen: boolean;
 	state: {
@@ -21,7 +19,6 @@ export interface SuccessfulPurchaseModalState {
 			ctaIcon?: ComponentType<IconProps>;
 		};
 	};
-	callbacks?: ModalCallbacks;
 }
 
 const initialContext: SuccessfulPurchaseModalState = {
@@ -33,19 +30,12 @@ const initialContext: SuccessfulPurchaseModalState = {
 		explorerUrl: '',
 		ctaOptions: undefined,
 	},
-	callbacks: undefined,
 };
 
 export const successfulPurchaseModalStore = createStore({
 	context: initialContext,
 	on: {
-		open: (
-			context,
-			event: SuccessfulPurchaseModalState['state'] & {
-				callbacks?: ModalCallbacks;
-				defaultCallbacks?: ModalCallbacks;
-			},
-		) => ({
+		open: (context, event: SuccessfulPurchaseModalState['state'] & {}) => ({
 			...context,
 			isOpen: true,
 			state: {
@@ -55,7 +45,6 @@ export const successfulPurchaseModalStore = createStore({
 				explorerUrl: event.explorerUrl,
 				ctaOptions: event.ctaOptions,
 			},
-			callbacks: event.callbacks || event.defaultCallbacks,
 		}),
 		close: () => ({
 			...initialContext,
@@ -69,6 +58,3 @@ export const useIsOpen = () =>
 
 export const useModalState = () =>
 	useSelector(successfulPurchaseModalStore, (state) => state.context.state);
-
-export const useCallbacks = () =>
-	useSelector(successfulPurchaseModalStore, (state) => state.context.callbacks);
