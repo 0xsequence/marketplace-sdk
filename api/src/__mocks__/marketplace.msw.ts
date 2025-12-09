@@ -328,10 +328,18 @@ export const handlers = [
 
 	// by default, all endpoints include a tokenApproval step
 	mockMarketplaceHandler('GenerateBuyTransaction', {
+		resp: {
+			steps: createMockSteps([StepType.buy]),
+			canBeUsedWithTrails: false,
+		},
 		steps: createMockSteps([StepType.buy]),
 	}),
 
 	mockMarketplaceHandler('GenerateSellTransaction', {
+		resp: {
+			steps: createMockSteps([StepType.tokenApproval, StepType.sell]),
+			canBeUsedWithTrails: false,
+		},
 		steps: createMockSteps([StepType.tokenApproval, StepType.sell]),
 	}),
 

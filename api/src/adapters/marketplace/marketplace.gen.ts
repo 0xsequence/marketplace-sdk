@@ -651,6 +651,11 @@ export interface Domain {
   verifyingContract: string
 }
 
+export interface GenerateBuySellTransactionResponse {
+  steps: Array<Step>
+  canBeUsedWithTrails: boolean
+}
+
 export interface CheckoutOptionsMarketplaceOrder {
   contractAddress: string
   orderId: string
@@ -1189,9 +1194,11 @@ export interface GenerateBuyTransactionRequest {
   ordersData: Array<OrderData>
   additionalFees: Array<AdditionalFee>
   walletType?: WalletKind
+  useWithTrails: boolean
 }
 
 export interface GenerateBuyTransactionResponse {
+  resp?: GenerateBuySellTransactionResponse
   steps: Array<Step>
 }
 
@@ -1203,9 +1210,11 @@ export interface GenerateSellTransactionRequest {
   ordersData: Array<OrderData>
   additionalFees: Array<AdditionalFee>
   walletType?: WalletKind
+  useWithTrails: boolean
 }
 
 export interface GenerateSellTransactionResponse {
+  resp?: GenerateBuySellTransactionResponse
   steps: Array<Step>
 }
 
@@ -2322,15 +2331,16 @@ const BIG_INT_FIELDS: { [typ: string]: (string | [string, string])[] } = {
   CollectiblePrimarySaleItem: [['metadata', 'TokenMetadata'], ['primarySaleItem', 'PrimarySaleItem']],
   CollectiblesFilter: [['prices', 'PriceFilter[]']],
   CreateReq: ['tokenId', 'quantity', 'pricePerToken'],
+  GenerateBuySellTransactionResponse: [['steps', 'Step[]']],
   GenerateBuyTransactionRequest: [['ordersData', 'OrderData[]'], ['additionalFees', 'AdditionalFee[]']],
-  GenerateBuyTransactionResponse: [['steps', 'Step[]']],
+  GenerateBuyTransactionResponse: [['resp', 'GenerateBuySellTransactionResponse'], ['steps', 'Step[]']],
   GenerateCancelTransactionResponse: [['steps', 'Step[]']],
   GenerateListingTransactionRequest: [['listing', 'CreateReq'], ['additionalFees', 'AdditionalFee[]']],
   GenerateListingTransactionResponse: [['steps', 'Step[]']],
   GenerateOfferTransactionRequest: [['offer', 'CreateReq'], ['additionalFees', 'AdditionalFee[]']],
   GenerateOfferTransactionResponse: [['steps', 'Step[]']],
   GenerateSellTransactionRequest: [['ordersData', 'OrderData[]'], ['additionalFees', 'AdditionalFee[]']],
-  GenerateSellTransactionResponse: [['steps', 'Step[]']],
+  GenerateSellTransactionResponse: [['resp', 'GenerateBuySellTransactionResponse'], ['steps', 'Step[]']],
   GetCollectibleHighestListingRequest: ['tokenId'],
   GetCollectibleHighestListingResponse: [['order', 'Order']],
   GetCollectibleHighestOfferRequest: ['tokenId'],
