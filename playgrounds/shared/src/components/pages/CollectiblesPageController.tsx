@@ -14,7 +14,7 @@ import { MarketContent } from './MarketContent';
 import { ShopContent } from './ShopContent';
 
 export interface CollectiblesPageControllerProps {
-	onCollectibleClick: (tokenId: string) => void;
+	onCollectibleClick: (tokenId: bigint) => void;
 	showMarketTypeToggle?: boolean;
 	showFilters?: boolean;
 	showSaleControls?: boolean;
@@ -22,7 +22,7 @@ export interface CollectiblesPageControllerProps {
 		chainId: number;
 		salesContractAddress: Address;
 		collectionAddress: Address;
-		tokenIds: string[];
+		tokenIds: bigint[];
 		isLoading: boolean;
 		salePrice?: {
 			amount?: bigint;
@@ -78,7 +78,7 @@ export function CollectiblesPageController({
 	const saleItemIds = isShop
 		? (primarySaleItems?.pages
 				.flatMap((page) => page.primarySaleItems)
-				.map((item) => item.primarySaleItem.tokenId?.toString() ?? '')
+				.map((item) => item.primarySaleItem.tokenId)
 				.filter(Boolean) ?? [])
 		: [];
 

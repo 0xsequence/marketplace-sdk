@@ -15,7 +15,7 @@ export const useBuyModalData = () => {
 	const marketplace = isMarket ? buyModalProps.marketplace : undefined;
 	const tokenId = isMarket
 		? buyModalProps.tokenId
-		: buyModalProps.items?.[0]?.tokenId;
+		: buyModalProps.item?.tokenId;
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
 

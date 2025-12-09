@@ -43,11 +43,9 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 		salesContractAddress: isShopProps(modalProps)
 			? modalProps.salesContractAddress
 			: zeroAddress,
-		tokenIds: isShopProps(modalProps)
-			? modalProps.items.map((item) => item.tokenId || 0n)
-			: [],
+		tokenIds: isShopProps(modalProps) ? [modalProps.item.tokenId] : [],
 		amounts: isShopProps(modalProps)
-			? modalProps.items.map((item) => Number(item.quantity) || 1)
+			? [Number(modalProps.item.quantity) || 1]
 			: [],
 		maxTotal: isShopProps(modalProps) ? modalProps.salePrice.amount : 0n,
 		paymentToken: isShopProps(modalProps)

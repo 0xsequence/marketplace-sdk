@@ -26,7 +26,7 @@ vi.mock('../../store', () => ({
 		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
 		marketplaceType: 'shop',
 		salesContractAddress: '0x1234567890123456789012345678901234567890',
-		items: [],
+		item: { tokenId: undefined, quantity: undefined },
 		quantityDecimals: 0,
 		quantityRemaining: 100,
 		salePrice: {

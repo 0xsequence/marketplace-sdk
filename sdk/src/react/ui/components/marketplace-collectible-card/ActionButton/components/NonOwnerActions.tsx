@@ -76,12 +76,10 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						chainId,
 						collectionAddress,
 						salesContractAddress,
-						items: [
-							{
-								tokenId,
-								quantity: 1n,
-							},
-						],
+						item: {
+							tokenId,
+							quantity: 1n,
+						},
 						cardType: 'shop',
 						salePrice: {
 							amount: salePrice.amount,

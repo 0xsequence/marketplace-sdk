@@ -20,7 +20,7 @@ interface ERC721SaleControlsProps {
 	salesContractAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
-	tokenIds: string[];
+	tokenIds: bigint[];
 	isLoading: boolean;
 	salePrice?: {
 		amount?: bigint;
@@ -34,6 +34,7 @@ export function ERC721SaleControls({
 	chainId,
 	isLoading,
 	salePrice,
+	tokenIds,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
 	const { openConnectModal } = useOpenConnectModal();
@@ -66,11 +67,10 @@ export function ERC721SaleControls({
 			salesContractAddress,
 			cardType: 'shop',
 			quantityRemaining: quantityRemaining ?? 0n,
-			items: [
-				{
-					quantity: BigInt(quantity),
-				},
-			],
+			item: {
+				quantity: BigInt(quantity),
+				tokenId: tokenIds[0],
+			},
 			salePrice: {
 				amount: salePrice?.amount || 0n,
 				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),

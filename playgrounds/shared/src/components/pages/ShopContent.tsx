@@ -16,10 +16,10 @@ import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
 
 export interface ShopContentProps {
 	saleContractAddress: Address;
-	saleItemIds: string[];
+	saleItemIds: bigint[];
 	collectionAddress: Address;
 	chainId: number;
-	onCollectibleClick: (tokenId: string) => void;
+	onCollectibleClick: (tokenId: bigint) => void;
 }
 
 export function ShopContent({
@@ -84,7 +84,7 @@ export function ShopContent({
 			? cardDataLoading721
 			: cardDataLoading1155;
 
-	function handleCollectibleClick(tokenId: string) {
+	function handleCollectibleClick(tokenId: bigint) {
 		onCollectibleClick(tokenId);
 	}
 
@@ -101,7 +101,7 @@ export function ShopContent({
 			<button
 				type="button"
 				key={index}
-				onClick={() => handleCollectibleClick(card.tokenId.toString())}
+				onClick={() => handleCollectibleClick(card.tokenId)}
 				className={cn('w-full cursor-pointer')}
 			>
 				<CollectibleCard {...card} />

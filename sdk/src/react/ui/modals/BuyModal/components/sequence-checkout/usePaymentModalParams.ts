@@ -158,7 +158,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	// Extract Marketplace-specific properties using type guard
 	const tokenId = isMarketProps(buyModalProps)
 		? buyModalProps.tokenId
-		: buyModalProps.items[0].tokenId;
+		: buyModalProps.item.tokenId;
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
