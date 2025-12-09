@@ -3,7 +3,7 @@ import type { SdkConfig } from '../../../types';
 import { dateToUnixTime } from '../../../utils/date';
 import {
 	type CreateReq,
-	type GenerateOfferTransactionArgs,
+	type GenerateOfferTransactionRequest,
 	getMarketplaceClient,
 	type Step,
 	type WalletKind,
@@ -11,7 +11,7 @@ import {
 import { useConfig } from '../config/useConfig';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
-export type UseGenerateOfferTransactionArgs = {
+export type UseGenerateOfferTransactionRequest = {
 	chainId: number;
 	onSuccess?: (data?: Step[]) => void;
 };
@@ -21,14 +21,14 @@ type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 };
 
 export type GenerateOfferTransactionProps = Omit<
-	GenerateOfferTransactionArgs,
+	GenerateOfferTransactionRequest,
 	'offer'
 > & {
 	offer: CreateReqWithDateExpiry;
 };
 
-type GenerateOfferTransactionArgsWithNumberChainId = Omit<
-	GenerateOfferTransactionArgs,
+type GenerateOfferTransactionRequestWithNumberChainId = Omit<
+	GenerateOfferTransactionRequest,
 	'chainId' | 'offer'
 > & {
 	chainId: number;
@@ -36,22 +36,22 @@ type GenerateOfferTransactionArgsWithNumberChainId = Omit<
 };
 
 export const generateOfferTransaction = async (
-	params: GenerateOfferTransactionArgsWithNumberChainId,
+	params: GenerateOfferTransactionRequestWithNumberChainId,
 	config: SdkConfig,
 	walletKind?: WalletKind,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
-		chainId: String(params.chainId),
+		chainId: params.chainId,
 		offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
 		walletType: walletKind,
-	} satisfies GenerateOfferTransactionArgs;
+	};
 	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateOfferTransaction(args)).steps;
 };
 
 export const useGenerateOfferTransaction = (
-	params: UseGenerateOfferTransactionArgs,
+	params: UseGenerateOfferTransactionRequest,
 ) => {
 	const config = useConfig();
 	const { walletKind } = useConnectorMetadata();
@@ -59,7 +59,7 @@ export const useGenerateOfferTransaction = (
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
 		mutationFn: (
-			args: Omit<GenerateOfferTransactionArgsWithNumberChainId, 'chainId'>,
+			args: Omit<GenerateOfferTransactionRequestWithNumberChainId, 'chainId'>,
 		) =>
 			generateOfferTransaction(
 				{ ...args, chainId: params.chainId },

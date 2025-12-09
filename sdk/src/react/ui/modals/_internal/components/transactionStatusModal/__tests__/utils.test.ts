@@ -99,7 +99,7 @@ describe('Transaction Status Modal Utils', () => {
 					collectibleName: 'Test NFT',
 					transactionStatus: 'SUCCESS',
 					price: {
-						amountRaw: '1000000000000000000',
+						amountRaw: 1000000000000000000n,
 						currency: {
 							chainId: 1,
 							contractAddress: '0x0000000000000000000000000000000000000000',
@@ -110,11 +110,11 @@ describe('Transaction Status Modal Utils', () => {
 							exchangeRate: 1,
 							defaultChainCurrency: true,
 							nativeCurrency: true,
+							openseaListing: true,
+							openseaOffer: true,
 							createdAt: '2024-01-21T00:00:00Z',
 							updatedAt: '2024-01-21T00:00:00Z',
 							status: CurrencyStatus.active,
-							openseaListing: true,
-							openseaOffer: true,
 						},
 					},
 				}),

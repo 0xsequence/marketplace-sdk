@@ -1,18 +1,17 @@
-import { renderHook, server, waitFor } from '@test';
-
-import { HttpResponse, http } from 'msw';
-import { zeroAddress } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	createMockSteps,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
+	MarketplaceMocks,
 	OfferType,
 	OrderbookKind,
 	StepType,
-} from '../../_internal/api/marketplace.gen';
+} from '@0xsequence/api-client';
+
+const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
+
+import { renderHook, server, waitFor } from '@test';
+import { HttpResponse, http } from 'msw';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useGenerateOfferTransaction } from './useGenerateOfferTransaction';
 
@@ -20,11 +19,11 @@ describe('useGenerateOfferTransaction', () => {
 	const mockOnSuccess = vi.fn();
 
 	const mockOffer = {
-		tokenId: '1',
-		quantity: '1',
+		tokenId: 1n,
+		quantity: 1n,
 		expiry: new Date('2024-12-31'),
 		currencyAddress: zeroAddress,
-		pricePerToken: '1000000000000000000',
+		pricePerToken: 1000000000000000000n,
 	};
 
 	const mockTransactionProps = {
@@ -33,8 +32,8 @@ describe('useGenerateOfferTransaction', () => {
 		contractType: ContractType.ERC721,
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		offer: mockOffer,
-		additionalFees: [],
 		offerType: OfferType.item,
+		additionalFees: [],
 	};
 
 	const defaultArgs = {
@@ -95,7 +94,7 @@ describe('useGenerateOfferTransaction', () => {
 	it('should handle invalid offer data', async () => {
 		const invalidOffer = {
 			...mockOffer,
-			pricePerToken: 'invalid-price',
+			pricePerToken: -1n,
 		};
 
 		server.use(

@@ -15,7 +15,7 @@ import { calculateEarningsAfterFees } from '../../../../../../utils/price';
 import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
 type TransactionDetailsProps = {
-	collectibleId: string;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	price?: Price;
@@ -26,7 +26,7 @@ type TransactionDetailsProps = {
 };
 
 export default function TransactionDetails({
-	collectibleId,
+	tokenId,
 	collectionAddress,
 	chainId,
 	includeMarketplaceFee,
@@ -45,7 +45,7 @@ export default function TransactionDetails({
 	const { data: royalty, isLoading: royaltyLoading } = useRoyalty({
 		chainId,
 		collectionAddress,
-		collectibleId,
+		tokenId,
 	});
 	const [overflow, setOverflow] = useState({
 		status: false,
@@ -60,7 +60,7 @@ export default function TransactionDetails({
 		if (!price || royaltyLoading || marketplaceConfigLoading) return;
 
 		const fees: number[] = [];
-		if (royalty !== null) {
+		if (royalty?.percentage && royalty?.percentage > 0) {
 			fees.push(Number(royalty.percentage));
 		}
 		if (marketplaceFeePercentage > 0) {
@@ -98,10 +98,14 @@ export default function TransactionDetails({
 				Total earnings
 			</Text>
 			<div className="flex items-center gap-2">
-				<Image className="h-3 w-3" src={currencyImageUrl} />
+				{currencyImageUrl ? (
+					<Image className="h-3 w-3" src={currencyImageUrl} />
+				) : (
+					<div className="h-3 w-3 rounded-full bg-background-secondary" />
+				)}
 
 				{priceLoading ? (
-					<Skeleton className="h-4 w-24 animate-shimmer" />
+					<Skeleton className="h-4 w-12 animate-shimmer" />
 				) : (
 					<Text className="font-body font-medium text-xs" color={'text100'}>
 						{showPlaceholderPrice ? (

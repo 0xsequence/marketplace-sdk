@@ -7,8 +7,7 @@ import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
-import { useCollectible } from '../../../../../hooks';
-import type { ModalCallbacks } from '../../types';
+import { useCollectibleDetail } from '../../../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
@@ -17,7 +16,7 @@ import useTransactionStatus from './hooks/useTransactionStatus';
 import {
 	transactionStatusModalStore,
 	useIsOpen,
-	useTransactionModalState,
+	useTransactionStatusModalState,
 } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
@@ -28,9 +27,8 @@ export type ShowTransactionStatusModalArgs = {
 	price?: Price;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	type: TransactionType;
-	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 };
 
@@ -77,18 +75,18 @@ function TransactionStatusModalContent() {
 		price,
 		collectionAddress,
 		chainId,
-		collectibleId,
-		callbacks,
+		tokenId,
 		queriesToInvalidate,
-	} = useTransactionModalState();
+	} = useTransactionStatusModalState();
 
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId,
-	});
+	const { data: collectible, isLoading: collectibleLoading } =
+		useCollectibleDetail({
+			collectionAddress,
+			chainId,
+			tokenId,
+		});
 
-	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
+	const transactionStatus = useTransactionStatus(hash, chainId);
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,

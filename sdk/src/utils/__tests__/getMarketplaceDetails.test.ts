@@ -1,10 +1,10 @@
+import { MarketplaceKind } from '@0xsequence/api-client';
 import { describe, expect, test } from 'vitest';
 import {
 	MagicEdenLogo,
 	OpenSeaLogo,
 	SequenceLogo,
 } from '../../react/ui/components/marketplace-logos';
-import { MarketplaceKind } from '../../types';
 import { getMarketplaceDetails } from '../getMarketplaceDetails';
 
 describe('getMarketplaceDetails', () => {

@@ -7,10 +7,10 @@ import TransactionStatusModal from '../index';
 import { transactionStatusModalStore } from '../store';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
-	hash: '0x123' as `0x${string}`,
-	collectionAddress: '0x456' as `0x${string}`,
+	hash: '0x123',
+	collectionAddress: '0x456',
 	chainId: 1,
-	collectibleId: '1',
+	tokenId: 1n,
 	type: TransactionType.BUY,
 };
 
@@ -132,7 +132,6 @@ describe('TransactionStatusModal', () => {
 			type: 'open',
 			transactionType,
 			...rest,
-			callbacks: { onSuccess },
 		});
 		render(<TransactionStatusModal />);
 
@@ -156,7 +155,6 @@ describe('TransactionStatusModal', () => {
 			type: 'open',
 			transactionType,
 			...rest,
-			callbacks: { onError },
 		});
 		render(<TransactionStatusModal />);
 

@@ -26,6 +26,8 @@ import {
 	WagmiProvider,
 } from 'wagmi';
 import { mock } from 'wagmi/connectors';
+import { MarketplaceProvider } from '../src/react/providers';
+import type { SdkConfig } from '../src/types/sdk-config';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
 export const createTestQueryClient = () =>
@@ -86,6 +88,11 @@ export const sequenceConnectConfig = createSequenceConnectConfig('universal', {
 	defaultChainId: 1,
 	appName: 'Demo Dapp',
 });
+
+export const testMarketplaceSdkConfig: SdkConfig = {
+	projectAccessKey: 'test-project-access-key',
+	projectId: '12345',
+};
 
 function mockWaas() {
 	return new Proxy(mockConnector, {
@@ -156,10 +163,15 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
 				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
-					<ThemeProvider>
-						<TestConnectorSetup autoConnect={options?.autoConnect} />
-						{children}
-					</ThemeProvider>
+					<MarketplaceProvider
+						config={testMarketplaceSdkConfig}
+						openConnectModal={() => {}}
+					>
+						<ThemeProvider>
+							<TestConnectorSetup autoConnect={options?.autoConnect} />
+							{children}
+						</ThemeProvider>
+					</MarketplaceProvider>
 				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
@@ -197,8 +209,13 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
-						<TestConnectorSetup autoConnect={options?.autoConnect} />
-						{children}
+						<MarketplaceProvider
+							config={testMarketplaceSdkConfig}
+							openConnectModal={() => {}}
+						>
+							<TestConnectorSetup autoConnect={options?.autoConnect} />
+							{children}
+						</MarketplaceProvider>
 					</QueryClientProvider>
 				</WagmiProvider>
 			);

@@ -1,13 +1,19 @@
-import type { ModalCallbacks } from '../_internal/types';
-import { makeOfferModal$, type OpenMakeOfferModalArgs } from './store';
+export {
+	type MakeOfferModalContext,
+	useMakeOfferModalContext,
+} from './internal/context';
 
-export type ShowMakeOfferModalArgs = Exclude<
-	OpenMakeOfferModalArgs,
-	'callbacks'
->;
+import {
+	makeOfferModalStore,
+	type OpenMakeOfferModalArgs,
+} from './internal/store';
 
-export const useMakeOfferModal = (callbacks?: ModalCallbacks) => ({
-	show: (args: ShowMakeOfferModalArgs) =>
-		makeOfferModal$.open({ ...args, callbacks }),
-	close: () => makeOfferModal$.close(),
-});
+export type ShowMakeOfferModalArgs = OpenMakeOfferModalArgs;
+
+export const useMakeOfferModal = () => {
+	return {
+		show: (args: ShowMakeOfferModalArgs) =>
+			makeOfferModalStore.send({ type: 'open', ...args }),
+		close: () => makeOfferModalStore.send({ type: 'close' }),
+	};
+};

@@ -1,138 +1,113 @@
 'use client';
 
-import { Modal } from '@0xsequence/design-system';
-import type { Address } from 'viem';
-import { useAccount } from 'wagmi';
-import type { FeeOption } from '../../../../types/waas-types';
-import type { CollectionType } from '../../../_internal';
-import {
-	useConnectorMetadata,
-	useEnsureCorrectChain,
-	useListBalances,
-} from '../../../hooks';
-import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
+import { Text, WarningIcon } from '@0xsequence/design-system';
+import { useSelector } from '@xstate/store/react';
+import { TransactionType } from '../../../_internal';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import TokenPreview from '../_internal/components/tokenPreview';
+import TokenQuantityInput from './_views/enterWalletAddress/_components/TokenQuantityInput';
+import WalletAddressInput from './_views/enterWalletAddress/_components/WalletAddressInput';
+import { useTransferModalContext } from './internal/context';
 import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import type { ModalCallbacks } from '../_internal/types';
-import EnterWalletAddressView from './_views/enterWalletAddress';
-import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { transferModalStore, useIsOpen, useModalState, useView } from './store';
+	type ShowTransferModalArgs,
+	transferModalStore,
+	type UseTransferModalArgs,
+	useTransferModal,
+} from './internal/store';
 
-export type ShowTransferModalArgs = {
-	collectionAddress: Address;
-	collectibleId: string;
-	chainId: number;
-	collectionType?: CollectionType;
-	callbacks?: ModalCallbacks;
+export const TransferModal = () => {
+	const isOpen = useSelector(
+		transferModalStore,
+		(state) => state.context.isOpen,
+	);
+	return isOpen ? <Modal /> : null;
 };
 
-export type UseTransferModalArgs = {
-	prefetch?: {
-		collectibleId: string;
-		chainId: number;
-		collectionAddress: Address;
-	};
-};
+const Modal = () => {
+	const ctx = useTransferModalContext();
 
-export const useTransferModal = (args?: UseTransferModalArgs) => {
-	const { ensureCorrectChain } = useEnsureCorrectChain();
-	const { address: accountAddress } = useAccount();
-	// Prefetch balances if `prefetch` is provided
-	useListBalances({
-		chainId: args?.prefetch?.chainId!,
-		contractAddress: args?.prefetch?.collectionAddress,
-		tokenId: args?.prefetch?.collectibleId,
-		accountAddress,
-		query: { enabled: !!accountAddress && !!args?.prefetch },
-	});
-
-	const openModal = (args: ShowTransferModalArgs) => {
-		transferModalStore.send({ type: 'open', ...args });
-	};
-
-	const handleShowModal = (args: ShowTransferModalArgs) => {
-		const targetChainId = Number(args.chainId);
-
-		ensureCorrectChain(targetChainId, {
-			onSuccess: () => openModal(args),
-		});
-	};
-
-	return {
-		show: handleShowModal,
-		close: () => transferModalStore.send({ type: 'close' }),
-	};
-};
-
-const TransactionModalView = () => {
-	const view = useView();
-	const { isWaaS } = useConnectorMetadata();
-
-	switch (view) {
-		case 'enterReceiverAddress':
-			return <EnterWalletAddressView />;
-		case 'followWalletInstructions':
-			if (isWaaS) {
-				return <EnterWalletAddressView />;
-			}
-			return <FollowWalletInstructionsView />;
-		default:
-			return null;
+	if (!ctx.isOpen) {
+		return null;
 	}
-};
 
-const TransferModal = () => {
-	const isOpen = useIsOpen();
-	const modalState = useModalState();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
-		isProcessing: modalState.transferIsProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
-
-	if (!isOpen) return null;
+	const primaryAction = ctx.steps.fee?.isSelecting
+		? undefined
+		: ctx.actions.transfer;
 
 	return (
-		<Modal
-			isDismissible={true}
-			onClose={() => {
-				transferModalStore.send({ type: 'close' });
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+		<ActionModal
+			transactionType={TransactionType.TRANSFER}
+			chainId={ctx.item.chainId}
+			onClose={ctx.close}
+			title="Transfer your item"
+			type="transfer"
+			primaryAction={primaryAction}
+			queries={{
+				collection: ctx.queries.collection,
+				collectibleBalance: ctx.queries.collectibleBalance,
 			}}
-			size="sm"
-			overlayProps={MODAL_OVERLAY_PROPS}
-			contentProps={{
-				style: {
-					height: 'auto',
-					overflow: 'auto',
-				},
-			}}
+			externalError={ctx.error}
 		>
-			<div className="flex w-full flex-col p-7">
-				<TransactionModalView />
-			</div>
+			{({ collection, collectibleBalance }) => (
+				<>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={ctx.item.collectionAddress}
+						tokenId={ctx.item.tokenId}
+						chainId={ctx.item.chainId}
+					/>
 
-			{waasFeeOptionsShown && (
-				<SelectWaasFeeOptions
-					chainId={Number(modalState.chainId)}
-					onCancel={() => {
-						transferModalStore.send({
-							type: 'failTransfer',
-							error: new Error('Transfer cancelled'),
-						});
-					}}
-					titleOnConfirm="Processing transfer..."
-					className="p-7 pt-0"
-				/>
+					<WalletAddressInput
+						value={ctx.form.receiver.input}
+						onChange={(value) => {
+							ctx.form.receiver.update(value);
+							if (!ctx.form.receiver.isTouched) {
+								ctx.form.receiver.touch();
+							}
+						}}
+						disabled={ctx.flow.isPending}
+					/>
+
+					{collection?.type === 'ERC1155' && collectibleBalance?.balance && (
+						<TokenQuantityInput
+							value={ctx.form.quantity.input}
+							onChange={(value) => {
+								ctx.form.quantity.update(value);
+								if (!ctx.form.quantity.isTouched) {
+									ctx.form.quantity.touch();
+								}
+							}}
+							maxQuantity={BigInt(collectibleBalance.balance)}
+							invalid={!!ctx.form.errors.quantity}
+							disabled={ctx.flow.isPending}
+							helperText={`You have ${collectibleBalance.balance} of this item`}
+						/>
+					)}
+
+					<div className="flex items-center justify-between gap-3 rounded-xl bg-[hsla(39,71%,40%,0.3)] p-4">
+						<WarningIcon />
+						<Text className="font-body font-medium text-sm text-text-80">
+							Items sent to the wrong wallet address can&apos;t be recovered!
+						</Text>
+					</div>
+
+					{ctx.steps.fee?.isSelecting && (
+						<SelectWaasFeeOptions
+							chainId={ctx.item.chainId}
+							onCancel={ctx.steps.fee.cancel}
+							titleOnConfirm="Processing transfer..."
+						/>
+					)}
+
+					{ctx.formError && (
+						<div className="mt-2 text-red-500 text-sm">{ctx.formError}</div>
+					)}
+				</>
 			)}
-		</Modal>
+		</ActionModal>
 	);
 };
 
-export { TransferModal };
+export { useTransferModal };
+export type { ShowTransferModalArgs, UseTransferModalArgs };

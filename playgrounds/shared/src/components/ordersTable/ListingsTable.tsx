@@ -1,7 +1,6 @@
 'use client';
 import { Text } from '@0xsequence/design-system';
 import {
-	useCollectible,
 	useCountListingsForCollectible,
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
@@ -13,29 +12,23 @@ import OrdersTable from './OrdersTable';
 type ListingsTableProps = {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	tokenId: bigint;
 };
 
 const ListingsTable = ({
 	chainId,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 }: ListingsTableProps) => {
 	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(initialPageSize);
 
-	const { data: collectible } = useCollectible({
-		chainId,
-		collectionAddress,
-		collectibleId,
-	});
-
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
-			chainId: chainId,
+			chainId,
 			collectionAddress,
-			collectibleId,
+			tokenId,
 			page: {
 				page,
 				pageSize,
@@ -46,7 +39,7 @@ const ListingsTable = ({
 		useCountListingsForCollectible({
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		});
 
 	const totalListings =
@@ -100,8 +93,7 @@ const ListingsTable = ({
 				onPageSizeChange={handlePageSizeChange}
 				isLoading={listingsLoading}
 				chainId={chainId}
-				tokenId={collectibleId}
-				decimals={collectible?.decimals || 0}
+				tokenId={tokenId}
 			/>
 		</div>
 	);

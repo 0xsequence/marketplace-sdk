@@ -1,5 +1,4 @@
-import { Text, WarningIcon } from '@0xsequence/design-system';
-import SvgInfoIcon from '../../../../icons/InfoIcon';
+import { InfoIcon, Text, WarningIcon } from '@0xsequence/design-system';
 
 type AlertMessageProps = {
 	message: string;
@@ -20,7 +19,7 @@ export default function AlertMessage({ message, type }: AlertMessageProps) {
 			</Text>
 
 			{type === 'warning' && <WarningIcon size="sm" color="white" />}
-			{type === 'info' && <SvgInfoIcon size="sm" color="white" />}
+			{type === 'info' && <InfoIcon size="sm" color="white" />}
 		</div>
 	);
 }

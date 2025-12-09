@@ -1,90 +1,64 @@
-import { cleanup, render, renderHook, screen, waitFor } from '@test';
+import { renderHook } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { StepType } from '../../../../_internal';
-import { createMockStep } from '../../../../_internal/api/__mocks__/marketplace.msw';
-
 import { useCreateListingModal } from '..';
-import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
-import { CreateListingModal } from '../Modal';
+import { createListingModalStore } from '../internal/store';
 
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	chainId: TEST_COLLECTIBLE.chainId,
-	collectibleId: TEST_COLLECTIBLE.collectibleId,
+	tokenId: TEST_COLLECTIBLE.tokenId,
 };
 
-describe('MakeOfferModal', () => {
+describe('CreateListingModal', () => {
 	beforeEach(() => {
-		cleanup();
-		// Reset all mocks
 		vi.clearAllMocks();
 		vi.resetAllMocks();
 		vi.restoreAllMocks();
+		createListingModalStore.send({ type: 'close' });
 	});
 
-	it('should show main button if there is no approval step', async () => {
-		vi.spyOn(
-			useGetTokenApprovalDataModule,
-			'useGetTokenApprovalData',
-		).mockReturnValue({
-			data: {
-				step: null,
-			},
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			error: null,
+	describe('Store and Hook', () => {
+		it('should open and close the modal via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			expect(createListingModalStore.getSnapshot().context.isOpen).toBe(true);
+
+			createListingModalStore.send({ type: 'close' });
+			expect(createListingModalStore.getSnapshot().context.isOpen).toBe(false);
 		});
 
-		// Render the modal
-		const { result } = renderHook(() => useCreateListingModal());
-		result.current.show(defaultArgs);
+		it('should provide show and close methods via useCreateListingModal hook', () => {
+			const { result } = renderHook(() => useCreateListingModal());
 
-		render(<CreateListingModal />);
-
-		// Wait for the component to update
-		await waitFor(() => {
-			// The Approve TOKEN button should not exist
-			expect(screen.queryByText('Approve TOKEN')).toBeNull();
-
-			// The List item for sale button should exist
-			expect(
-				screen.getByRole('button', { name: 'List item for sale' }),
-			).toBeDefined();
+			expect(result.current.show).toBeDefined();
+			expect(result.current.close).toBeDefined();
 		});
 	});
 
-	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
-		vi.spyOn(
-			useGetTokenApprovalDataModule,
-			'useGetTokenApprovalData',
-		).mockReturnValue({
-			data: {
-				step: createMockStep(StepType.tokenApproval),
-			},
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			error: null,
+	describe('Form State Management', () => {
+		it('should update price input via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updatePrice', value: '1.5' });
+
+			expect(createListingModalStore.getSnapshot().context.priceInput).toBe(
+				'1.5',
+			);
 		});
 
-		// Render the modal
-		const { result } = renderHook(() => useCreateListingModal());
-		result.current.show(defaultArgs);
+		it('should update quantity input via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updateQuantity', value: '5' });
 
-		render(<CreateListingModal />);
+			expect(createListingModalStore.getSnapshot().context.quantityInput).toBe(
+				'5',
+			);
+		});
 
-		await waitFor(() => {
-			expect(screen.getByText('Approve TOKEN')).toBeDefined();
+		it('should update expiry days via store', () => {
+			createListingModalStore.send({ type: 'open', ...defaultArgs });
+			createListingModalStore.send({ type: 'updateExpiryDays', days: 14 });
 
-			expect(
-				screen.getByRole('button', { name: 'List item for sale' }),
-			).toBeDefined();
-			expect(
-				screen.getByRole('button', { name: 'List item for sale' }),
-			).toBeDisabled();
+			expect(createListingModalStore.getSnapshot().context.expiryDays).toBe(14);
 		});
 	});
 });

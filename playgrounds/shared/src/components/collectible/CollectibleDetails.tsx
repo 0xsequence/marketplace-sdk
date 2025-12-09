@@ -1,16 +1,16 @@
-import { Card, Divider, Text } from '@0xsequence/design-system';
+import { Card, Separator, Text } from '@0xsequence/design-system';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
 import { cn } from '@0xsequence/marketplace-sdk';
 import {
 	useHighestOffer,
 	useLowestListing,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { useMarketplace } from '../../store';
 
 export interface CollectibleDetailsProps {
 	name?: string;
-	id: string;
+	id: bigint;
 	balance?: number;
 	chainId: number;
 	collection: ContractInfo | undefined;
@@ -80,7 +80,7 @@ export const CollectibleDetails = ({
 					</Text>
 				</button>
 
-				<Divider className="my-2" />
+				<Separator className="my-2" />
 
 				{/* Basic Info Section */}
 				<div className="space-y-3">
@@ -115,7 +115,7 @@ export const CollectibleDetails = ({
 								{lowestListing?.priceAmountFormatted || '—'}{' '}
 								<span className="text-text-80">
 									{currencies?.find(
-										(c) =>
+										(c: { contractAddress: string }) =>
 											c.contractAddress === lowestListing?.priceCurrencyAddress,
 									)?.symbol || ''}
 								</span>
@@ -129,7 +129,7 @@ export const CollectibleDetails = ({
 								{highestOffer?.priceAmountFormatted || '—'}{' '}
 								<span className="text-text-80">
 									{currencies?.find(
-										(c) =>
+										(c: { contractAddress: string }) =>
 											c.contractAddress === highestOffer?.priceCurrencyAddress,
 									)?.symbol || ''}
 								</span>

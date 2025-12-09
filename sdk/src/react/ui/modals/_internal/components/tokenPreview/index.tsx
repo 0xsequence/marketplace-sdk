@@ -2,27 +2,28 @@
 
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import { useCollectible } from '../../../../../hooks';
+import { useCollectibleDetail } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 
 type TokenPreviewProps = {
 	collectionName?: string;
 	collectionAddress: Address;
-	collectibleId: string;
+	tokenId: bigint;
 	chainId: number;
 };
 
 export default function TokenPreview({
 	collectionName,
 	collectionAddress,
-	collectibleId,
+	tokenId,
 	chainId,
 }: TokenPreviewProps) {
-	const { data: collectable, isLoading: collectibleLoading } = useCollectible({
-		chainId: chainId,
-		collectionAddress: collectionAddress,
-		collectibleId,
-	});
+	const { data: collectable, isLoading: collectibleLoading } =
+		useCollectibleDetail({
+			chainId,
+			collectionAddress,
+			tokenId,
+		});
 
 	if (collectibleLoading) {
 		return (

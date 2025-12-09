@@ -27,14 +27,7 @@ export function MarketplaceListingsTable({
 }: {
 	collection: Collection;
 }) {
-	const { show: openBuyModal } = useBuyModal({
-		onSuccess: ({ hash }) => {
-			console.log('Purchase successful', `Transaction: ${hash}`);
-		},
-		onError: (error) => {
-			console.error('Purchase failed', error.message);
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
 
 	const collectionAddress = collection.address as Address;
 	const chainId = collection.chainId;
@@ -102,7 +95,7 @@ export function MarketplaceListingsTable({
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					{collectibles?.pages?.[0]?.collectibles?.map((collectible) => (
+					{collectibles?.pages?.[0]?.collectibles?.map((collectible: any) => (
 						<ListingRow
 							key={collectible.metadata.tokenId}
 							collectible={collectible}
@@ -114,7 +107,7 @@ export function MarketplaceListingsTable({
 									openBuyModal({
 										collectionAddress,
 										chainId,
-										collectibleId: collectible.metadata.tokenId,
+										tokenId: collectible.metadata.tokenId,
 										orderId: collectible.listing.orderId,
 										marketplace: collectible.listing.marketplace,
 									});

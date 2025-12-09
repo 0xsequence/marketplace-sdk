@@ -77,11 +77,12 @@ export const FilterBadges = ({
 					<Button
 						className="rounded-lg bg-background-secondary"
 						size="xs"
-						variant="raised"
+						variant="secondary"
 						onClick={clearAllFilters}
-						label="Clear all"
 						shape="square"
-					/>
+					>
+						Clear all
+					</Button>
 				)}
 			</div>
 		</div>

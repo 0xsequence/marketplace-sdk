@@ -10,13 +10,17 @@ describe('Pill', () => {
 
 		expect(pillElement).toMatchInlineSnapshot(`
 			<div
-			  class="flex w-max items-center justify-center rounded-lg bg-background-raised px-2 py-1"
+			  id="sdk-provider"
 			>
-			  <span
-			    class="leading-inherit tracking-inherit font-inherit font-medium text-secondary text-sm"
+			  <div
+			    class="flex w-max items-center justify-center rounded-lg bg-background-raised px-2 py-1"
 			  >
-			    Test Pill
-			  </span>
+			    <span
+			      class="leading-inherit tracking-inherit font-inherit font-medium text-secondary text-sm"
+			    >
+			      Test Pill
+			    </span>
+			  </div>
 			</div>
 		`);
 	});

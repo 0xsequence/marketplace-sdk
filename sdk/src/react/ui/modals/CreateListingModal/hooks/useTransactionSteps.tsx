@@ -1,34 +1,32 @@
+import type { Marketplace } from '@0xsequence/api-client';
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { OrderbookKind, type Price } from '../../../../../types';
+import type { Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
-	balanceQueries,
-	collectableKeys,
+	OrderbookKind,
 	StepType,
 	type TransactionSteps,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
 import {
 	useConfig,
 	useConnectorMetadata,
+	useCurrencyList,
 	useGenerateListingTransaction,
-	useMarketCurrencies,
 	useProcessStep,
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import type { ModalCallbacks } from '../../_internal/types';
+import type { CreateListingInput } from './useCreateListing';
 
 interface UseTransactionStepsArgs {
-	listingInput: ListingInput;
+	listingInput: CreateListingInput;
 	chainId: number;
 	collectionAddress: Address;
 	orderbookKind: OrderbookKind;
-	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
 }
@@ -38,7 +36,6 @@ export const useTransactionSteps = ({
 	chainId,
 	collectionAddress,
 	orderbookKind,
-	callbacks,
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs) => {
@@ -47,12 +44,12 @@ export const useTransactionSteps = ({
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const { data: currencies } = useMarketCurrencies({
+	const { data: currencies } = useCurrencyList({
 		chainId,
 	});
 	const currency = currencies?.find(
-		(currency) =>
-			currency.contractAddress === listingInput.listing.currencyAddress,
+		(c: Marketplace.Currency) =>
+			c.contractAddress === listingInput.listing.currencyAddress,
 	);
 	const analytics = useAnalytics();
 	const { processStep } = useProcessStep();
@@ -75,7 +72,10 @@ export const useTransactionSteps = ({
 				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
 				listing: {
-					...listingInput.listing,
+					tokenId: listingInput.listing.tokenId,
+					quantity: listingInput.listing.quantity,
+					currencyAddress: listingInput.listing.currencyAddress,
+					pricePerToken: listingInput.listing.pricePerToken,
 					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
 				additionalFees: [],
@@ -83,11 +83,7 @@ export const useTransactionSteps = ({
 
 			return steps;
 		} catch (error) {
-			if (callbacks?.onError) {
-				callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+			console.debug('Error generating listing steps:', error);
 		}
 	};
 
@@ -150,22 +146,20 @@ export const useTransactionSteps = ({
 
 			showTransactionStatusModal({
 				type: TransactionType.LISTING,
-				collectionAddress: collectionAddress as Address,
+				collectionAddress,
 				chainId,
-				collectibleId: listingInput.listing.tokenId,
+				tokenId: listingInput.listing.tokenId,
 				hash,
 				orderId,
-				callbacks,
 				price: {
-					amountRaw: listingInput.listing.pricePerToken,
+					amountRaw: BigInt(listingInput.listing.pricePerToken),
 					currency,
 				} as Price,
 				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.lowestListings,
-					collectableKeys.listings,
-					collectableKeys.listingsCount,
-					collectableKeys.userBalances,
+					['collectible', 'market-lowest-listing'],
+					['collectible', 'market-list-listings'],
+					['collectible', 'market-count-listings'],
+					['token', 'balances'],
 				],
 			});
 
@@ -188,8 +182,8 @@ export const useTransactionSteps = ({
 			if (hash || orderId) {
 				const currencyDecimal =
 					currencies?.find(
-						(currency) =>
-							currency.contractAddress === listingInput.listing.currencyAddress,
+						(c: Marketplace.Currency) =>
+							c.contractAddress === listingInput.listing.currencyAddress,
 					)?.decimals || 0;
 
 				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
@@ -217,7 +211,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: listingInput.listing.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						tokenId: listingInput.listing.tokenId,
+						tokenId: listingInput.listing.tokenId.toString(),
 						requestId: requestId || '',
 						chainId: chainId.toString(),
 						txnHash: hash || '',
@@ -228,13 +222,9 @@ export const useTransactionSteps = ({
 					},
 				});
 			}
-		} catch (error) {
+		} catch (_error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
-
-			if (callbacks?.onError && typeof callbacks.onError === 'function') {
-				callbacks.onError(error as Error);
-			}
 		}
 	};
 

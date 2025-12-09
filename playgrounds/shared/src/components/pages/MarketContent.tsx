@@ -7,11 +7,14 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	type CollectibleCardProps,
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
+	useMarketCardDataPaged,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
+import { useState } from 'react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
@@ -46,13 +49,10 @@ export function MarketContent({
 		},
 	});
 
-	const {
-		collectibleCards,
-		isLoading: collectiblesLoading,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-	} = useListMarketCardData({
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(30);
+
+	const infiniteQueryResult = useListMarketCardData({
 		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
 		collectionType: collection?.type as ContractType,
 		filterOptions,
@@ -61,19 +61,38 @@ export function MarketContent({
 		priceFilters,
 		collectionAddress,
 		chainId,
+		enabled: paginationMode === 'infinite',
+	});
+
+	const pagedQueryResult = useMarketCardDataPaged({
+		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		searchText,
+		showListedOnly,
+		priceFilters,
+		collectionAddress,
+		chainId,
+		page,
+		pageSize,
+		enabled: paginationMode === 'paged',
 	});
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
 	}
 
-	const renderItemContent = (index: number) => {
-		const card = collectibleCards[index];
+	const renderItemContent = (
+		index: number,
+		overrideCard?: CollectibleCardProps,
+	) => {
+		const card = overrideCard;
 		if (!card) return null;
 
 		return (
 			<button
-				onClick={() => handleCollectibleClick(card.collectibleId)}
+				key={index}
+				onClick={() => handleCollectibleClick(card.tokenId.toString())}
 				className={cn('w-full cursor-pointer')}
 				type="button"
 			>
@@ -82,24 +101,29 @@ export function MarketContent({
 		);
 	};
 
-	return paginationMode === 'paginated' ? (
+	return paginationMode === 'paged' ? (
 		<PaginatedView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleCards={collectibleCards}
+			collectibleCards={pagedQueryResult.collectibleCards}
 			renderItemContent={renderItemContent}
-			isLoading={collectiblesLoading}
+			isLoading={pagedQueryResult.isLoading}
+			page={page}
+			pageSize={pageSize}
+			onPageChange={setPage}
+			onPageSizeChange={setPageSize}
+			hasMore={pagedQueryResult.hasMore}
 		/>
 	) : (
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleCards={collectibleCards}
-			isLoading={collectiblesLoading}
+			collectibleCards={infiniteQueryResult.collectibleCards}
+			isLoading={infiniteQueryResult.isLoading}
 			renderItemContent={renderItemContent}
-			hasNextPage={hasNextPage}
-			isFetchingNextPage={isFetchingNextPage}
-			fetchNextPage={fetchNextPage}
+			hasNextPage={infiniteQueryResult.hasNextPage}
+			isFetchingNextPage={infiniteQueryResult.isFetchingNextPage}
+			fetchNextPage={infiniteQueryResult.fetchNextPage}
 		/>
 	);
 }

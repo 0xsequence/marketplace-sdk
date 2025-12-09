@@ -181,19 +181,18 @@ export const IntFilter = ({ filter, filterValuesLoading }: FilterProps) => {
 					<Button
 						size="xs"
 						className="mt-2 w-full rounded-sm bg-button-glass text-primary hover:bg-button-glass/80"
-						label={
-							filterValuesLoading ? (
-								<div className="flex items-center gap-2">
-									<Spinner size="sm" />
-									<Text className="text-xs">Apply</Text>
-								</div>
-							) : (
-								<Text>Apply</Text>
-							)
-						}
 						onClick={applyFilter}
 						disabled={!isValid || filterValuesLoading}
-					/>
+					>
+						{filterValuesLoading ? (
+							<div className="flex items-center gap-2">
+								<Spinner size="sm" />
+								<Text className="text-xs">Apply</Text>
+							</div>
+						) : (
+							<Text>Apply</Text>
+						)}
+					</Button>
 				</div>
 			</AccordionContent>
 		</AccordionItem>

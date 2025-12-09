@@ -3,30 +3,34 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import type { MarketCollection } from '../../../../../types/new-marketplace-types';
+import type { MarketCollection } from '../../../../../types';
 import { compareAddress } from '../../../../../utils';
 import {
 	type ContractType,
-	type CreateReq,
 	OrderbookKind,
 	type TransactionSteps,
 } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
-import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 
-export interface ListingInput {
+// Internal type for modal state - uses bigint for type safety
+export interface CreateListingInput {
 	contractType: ContractType;
-	listing: CreateReq;
+	listing: {
+		tokenId: bigint;
+		quantity: bigint;
+		expiry: string;
+		currencyAddress: Address;
+		pricePerToken: bigint;
+	};
 }
 
 interface UseCreateListingArgs {
-	listingInput: ListingInput;
+	listingInput: CreateListingInput;
 	chainId: number;
 	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
-	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
 }
@@ -37,14 +41,13 @@ export const useCreateListing = ({
 	collectionAddress,
 	orderbookKind,
 	steps$,
-	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find((c) =>
-		compareAddress(c.itemsAddress, collectionAddress),
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c: MarketCollection) => compareAddress(c.itemsAddress, collectionAddress),
 	) as MarketCollection;
 
 	orderbookKind =
@@ -81,7 +84,6 @@ export const useCreateListing = ({
 			chainId,
 			collectionAddress,
 			orderbookKind,
-			callbacks,
 			closeMainModal,
 			steps$,
 		});

@@ -1,6 +1,8 @@
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
+	Field,
+	FieldLabel,
 	IconButton,
 	Select,
 	Skeleton,
@@ -37,7 +39,7 @@ export function PreviousNextPageControls({
 		<div className="flex items-center gap-2">
 			<IconButton
 				onClick={handlePrevPage}
-				variant="raised"
+				variant="secondary"
 				disabled={page <= 1}
 				size="xs"
 				icon={ChevronLeftIcon}
@@ -45,7 +47,7 @@ export function PreviousNextPageControls({
 
 			<IconButton
 				onClick={handleNextPage}
-				variant="raised"
+				variant="secondary"
 				disabled={!hasMore && page >= totalPages}
 				size="xs"
 				icon={ChevronRightIcon}
@@ -76,7 +78,7 @@ export function PageSelect({
 
 	return (
 		<div className="flex items-center gap-2 sm:flex">
-			<Select
+			<Select.Helper
 				name="page"
 				options={options.map((option) => ({
 					label: option.label,
@@ -110,16 +112,18 @@ export function ItemsPerPageSelect({
 		<div className="flex items-center gap-2 sm:flex">
 			<Text color="text50">Items per page</Text>
 
-			<Select
-				label="Items per page"
-				name="pageSize"
-				value={pageSize.toString()}
-				options={Object.entries(PAGE_SIZE_OPTIONS).map(([, value]) => ({
-					label: value.label,
-					value: value.value.toString(),
-				}))}
-				onValueChange={(value) => onPageSizeChange(Number(value))}
-			/>
+			<Field>
+				<FieldLabel>Items per page</FieldLabel>
+				<Select.Helper
+					name="pageSize"
+					value={pageSize.toString()}
+					options={Object.entries(PAGE_SIZE_OPTIONS).map(([, value]) => ({
+						label: value.label,
+						value: value.value.toString(),
+					}))}
+					onValueChange={(value) => onPageSizeChange(Number(value))}
+				/>
+			</Field>
 		</div>
 	);
 }

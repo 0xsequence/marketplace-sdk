@@ -4,9 +4,9 @@ import {
 	Text,
 	truncateAddress,
 } from '@0xsequence/design-system';
+import type { ContractInfo } from '@0xsequence/marketplace-sdk';
+import { ContractType } from '@0xsequence/marketplace-sdk';
 import { Media } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
-import { ContractType } from '../../../../../sdk/src';
 import { NetworkPill } from './NetworkPill';
 
 export interface CollectionCardProps {

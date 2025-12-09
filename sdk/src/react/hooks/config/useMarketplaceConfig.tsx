@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { marketplaceConfigOptions } from '../../queries/market/marketplaceConfig';
+import { marketplaceConfigOptions } from '../../queries/marketplace/config';
 import { useConfig } from '../config/useConfig';
 
 export const useMarketplaceConfig = () => {

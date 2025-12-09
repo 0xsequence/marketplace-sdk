@@ -14,9 +14,9 @@ import { PROVIDER_ID } from '../_internal/get-provider';
 import { AnalyticsProvider } from './analytics-provider';
 import { ThemeProvider } from './theme-provider';
 
-export const MarketplaceSdkContext = createContext(
-	{} as MarketplaceSdkContextType,
-);
+export const MarketplaceSdkContext = createContext<
+	MarketplaceSdkContextType | undefined
+>(undefined);
 
 export type MarketplaceSdkProviderProps = {
 	config: SdkConfig;

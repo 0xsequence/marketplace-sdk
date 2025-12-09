@@ -1,6 +1,9 @@
-import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
+import type {
+	ApiConfig,
+	CardType,
+	OrderbookKind,
+} from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
-import type { CardType } from '../../../../sdk/src/types/types';
 
 import type { PaginationMode, Tab } from '../types';
 import {

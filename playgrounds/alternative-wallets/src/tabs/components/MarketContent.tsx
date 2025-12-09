@@ -18,7 +18,7 @@ export function MarketContent() {
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress,
-			tokenId,
+			BigInt(tokenId),
 		);
 		navigate(route);
 	}

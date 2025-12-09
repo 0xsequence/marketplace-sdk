@@ -1,4 +1,4 @@
-import type { TransactionReceipt } from '@0xsequence/indexer';
+import type { Indexer } from '@0xsequence/api-client';
 import { type Hex, TransactionReceiptNotFoundError } from 'viem';
 import type { SdkConfig } from '../../types';
 import { getIndexerClient } from '../_internal/api';
@@ -16,7 +16,7 @@ export const waitForTransactionReceipt = async ({
 	chainId: number;
 	sdkConfig: SdkConfig;
 	maxBlockWait?: number;
-}): Promise<TransactionReceipt> => {
+}): Promise<Indexer.TransactionReceipt> => {
 	const indexer = getIndexerClient(chainId, sdkConfig);
 	let retries = 0;
 

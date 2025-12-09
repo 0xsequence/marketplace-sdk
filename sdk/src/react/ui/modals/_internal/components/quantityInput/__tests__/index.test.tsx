@@ -4,12 +4,11 @@ import QuantityInput from '..';
 
 describe('QuantityInput', () => {
 	const defaultProps = {
-		quantity: '1',
+		quantity: 1n,
 		invalidQuantity: false,
 		onQuantityChange: vi.fn(),
 		onInvalidQuantityChange: vi.fn(),
-		decimals: 1,
-		maxQuantity: '10',
+		maxQuantity: 10n,
 	};
 
 	it('should render quantity input', () => {
@@ -20,7 +19,7 @@ describe('QuantityInput', () => {
 	});
 
 	it('should display current quantity value', () => {
-		render(<QuantityInput {...defaultProps} quantity="5" />);
+		render(<QuantityInput {...defaultProps} quantity={5n} />);
 
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		expect(input).toHaveValue('5');
@@ -35,7 +34,7 @@ describe('QuantityInput', () => {
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '5' } });
 
-		expect(onQuantityChange).toHaveBeenCalledWith('5');
+		expect(onQuantityChange).toHaveBeenCalledWith(5n);
 	});
 
 	it('should not allow values greater than maxQuantity', () => {
@@ -53,27 +52,8 @@ describe('QuantityInput', () => {
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '15' } });
 
-		expect(onQuantityChange).toHaveBeenCalledWith('10'); // Capped at max
+		expect(onQuantityChange).toHaveBeenCalledWith(10n); // Capped at max
 		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
-	});
-
-	it('should handle decimal values correctly based on decimal prop', () => {
-		const onQuantityChange = vi.fn();
-		const onInvalidQuantityChange = vi.fn();
-
-		render(
-			<QuantityInput
-				{...defaultProps}
-				onQuantityChange={onQuantityChange}
-				onInvalidQuantityChange={onInvalidQuantityChange}
-				decimals={2}
-			/>,
-		);
-
-		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
-		fireEvent.change(input, { target: { value: '1.234' } });
-
-		expect(onQuantityChange).toHaveBeenCalledWith('1.23'); // Should truncate to 2 decimals
 	});
 
 	it('should validate and mark invalid quantities', () => {
@@ -109,8 +89,7 @@ describe('QuantityInput', () => {
 		render(
 			<QuantityInput
 				{...defaultProps}
-				quantity="5"
-				decimals={0} // Set decimals to 0 for whole number increments
+				quantity={5n}
 				onQuantityChange={onQuantityChange}
 			/>,
 		);
@@ -118,7 +97,7 @@ describe('QuantityInput', () => {
 		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
 		fireEvent.click(incrementButton);
 
-		expect(onQuantityChange).toHaveBeenCalledWith('6');
+		expect(onQuantityChange).toHaveBeenCalledWith(6n);
 	});
 
 	it('should decrement quantity when decrement button is clicked', () => {
@@ -127,8 +106,7 @@ describe('QuantityInput', () => {
 		render(
 			<QuantityInput
 				{...defaultProps}
-				quantity="5"
-				decimals={0} // Set decimals to 0 for whole number decrements
+				quantity={5n}
 				onQuantityChange={onQuantityChange}
 			/>,
 		);
@@ -136,60 +114,50 @@ describe('QuantityInput', () => {
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		fireEvent.click(decrementButton);
 
-		expect(onQuantityChange).toHaveBeenCalledWith('4');
+		expect(onQuantityChange).toHaveBeenCalledWith(4n);
 	});
 
 	it('should disable decrement button when quantity is minimum value', () => {
-		render(<QuantityInput {...defaultProps} quantity="0.1" />);
+		render(<QuantityInput {...defaultProps} quantity={1n} />);
 
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		expect(decrementButton).toBeDisabled();
 	});
 
 	it('should disable increment button when quantity is maximum value', () => {
-		render(<QuantityInput {...defaultProps} quantity="10" />);
+		render(<QuantityInput {...defaultProps} quantity={10n} />);
 
 		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
 		expect(incrementButton).toBeDisabled();
 	});
 
-	it('should properly handle non-zero decimals for minimum values', () => {
+	it('should properly handle minimum value of 1', () => {
 		const onQuantityChange = vi.fn();
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				quantity="1"
+				quantity={2n}
 				onQuantityChange={onQuantityChange}
-				decimals={1}
 			/>,
 		);
 
-		// Click decrement button multiple times to reach minimum value
+		// Click decrement button to reach minimum value
 		const decrementButton = screen.getAllByRole('button')[0];
 		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
-		fireEvent.click(decrementButton);
 
-		// For decimals=1, the min value should be 0.1
-		expect(onQuantityChange).toHaveBeenLastCalledWith('0.1');
+		// The min value should be 1
+		expect(onQuantityChange).toHaveBeenLastCalledWith(1n);
 	});
 
 	it('should cap quantity to maxQuantity when incrementing past the maximum', () => {
 		const onQuantityChange = vi.fn();
-		const maxQuantity = '10';
+		const maxQuantity = 10n;
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				quantity="9"
-				decimals={0} // Set decimals to 0 for whole number increments
+				quantity={9n}
 				onQuantityChange={onQuantityChange}
 				maxQuantity={maxQuantity}
 			/>,
@@ -200,18 +168,18 @@ describe('QuantityInput', () => {
 		fireEvent.click(incrementButton);
 
 		// Value should be 10
-		expect(onQuantityChange).toHaveBeenCalledWith('10');
+		expect(onQuantityChange).toHaveBeenCalledWith(10n);
 	});
 
 	it('should set quantity to maxQuantity when direct input exceeds max', () => {
 		const onQuantityChange = vi.fn();
 		const onInvalidQuantityChange = vi.fn();
-		const maxQuantity = '10';
+		const maxQuantity = 10n;
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				quantity="5"
+				quantity={5n}
 				onQuantityChange={onQuantityChange}
 				onInvalidQuantityChange={onInvalidQuantityChange}
 				maxQuantity={maxQuantity}
@@ -222,90 +190,7 @@ describe('QuantityInput', () => {
 		fireEvent.change(input, { target: { value: '15' } });
 
 		// Value should be capped at max
-		expect(onQuantityChange).toHaveBeenCalledWith('10');
+		expect(onQuantityChange).toHaveBeenCalledWith(10n);
 		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
-	});
-
-	describe('with 2 decimals', () => {
-		const defaultPropsDecimals2 = {
-			...defaultProps,
-			decimals: 2,
-			quantity: '1.00',
-			maxQuantity: '10.00',
-		};
-
-		it('should handle increment with 2 decimal places', () => {
-			const onQuantityChange = vi.fn();
-			render(
-				<QuantityInput
-					{...defaultPropsDecimals2}
-					quantity="1.50"
-					onQuantityChange={onQuantityChange}
-				/>,
-			);
-
-			const incrementButton = screen.getAllByRole('button')[1];
-			fireEvent.click(incrementButton);
-
-			expect(onQuantityChange).toHaveBeenCalledWith('1.51');
-		});
-
-		it('should handle decrement with 2 decimal places', () => {
-			const onQuantityChange = vi.fn();
-			render(
-				<QuantityInput
-					{...defaultPropsDecimals2}
-					quantity="1.50"
-					onQuantityChange={onQuantityChange}
-				/>,
-			);
-
-			const decrementButton = screen.getAllByRole('button')[0];
-			fireEvent.click(decrementButton);
-
-			expect(onQuantityChange).toHaveBeenCalledWith('1.49');
-		});
-
-		it('should enforce minimum value with 2 decimal places', () => {
-			const onQuantityChange = vi.fn();
-			render(
-				<QuantityInput
-					{...defaultPropsDecimals2}
-					quantity="0.02"
-					onQuantityChange={onQuantityChange}
-				/>,
-			);
-
-			const decrementButton = screen.getAllByRole('button')[0];
-			fireEvent.click(decrementButton);
-
-			expect(onQuantityChange).toHaveBeenCalledWith('0.01');
-			expect(decrementButton).toBeDisabled();
-		});
-
-		it('should handle direct input with 2 decimal places', () => {
-			const onQuantityChange = vi.fn();
-			const onInvalidQuantityChange = vi.fn();
-
-			render(
-				<QuantityInput
-					{...defaultPropsDecimals2}
-					onQuantityChange={onQuantityChange}
-					onInvalidQuantityChange={onInvalidQuantityChange}
-				/>,
-			);
-
-			const input = screen.getByRole('textbox', { name: /Enter quantity/i });
-
-			// Test valid input
-			fireEvent.change(input, { target: { value: '1.23' } });
-			expect(onQuantityChange).toHaveBeenCalledWith('1.23');
-			expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
-
-			// Test too many decimal places
-			fireEvent.change(input, { target: { value: '1.234' } });
-			expect(onQuantityChange).toHaveBeenCalledWith('1.23');
-			expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
-		});
 	});
 });

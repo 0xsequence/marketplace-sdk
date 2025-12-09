@@ -1,4 +1,4 @@
-import { Button, Divider, Text } from '@0xsequence/design-system';
+import { Button, Separator, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
 import {
 	Navigation,
@@ -27,13 +27,13 @@ function App() {
 				<div className="flex gap-3">
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 						<Button
-							variant={cardType === 'market' ? 'glass' : 'ghost'}
+							variant={cardType === 'market' ? 'secondary' : 'outline'}
 							onClick={() => handleChangeMarketplaceType('market')}
 						>
 							Market
 						</Button>
 						<Button
-							variant={cardType === 'shop' ? 'glass' : 'ghost'}
+							variant={cardType === 'shop' ? 'secondary' : 'outline'}
 							onClick={() => handleChangeMarketplaceType('shop')}
 						>
 							Shop
@@ -50,7 +50,7 @@ function App() {
 					/>
 				</div>
 
-				<Divider />
+				<Separator />
 
 				<Outlet />
 			</div>

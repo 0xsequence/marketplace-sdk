@@ -4,7 +4,6 @@ import { useSelector } from '@xstate/store/react';
 import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import type { TransactionType } from '../../../../../_internal/types';
-import type { ModalCallbacks } from '../../types';
 import type { ShowTransactionStatusModalArgs } from '.';
 
 export type ConfirmationStatus = {
@@ -25,8 +24,7 @@ interface TransactionStatusModalContext {
 	price: Price | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
-	callbacks?: ModalCallbacks;
+	tokenId: bigint;
 	queriesToInvalidate?: QueryKey[];
 }
 
@@ -37,10 +35,9 @@ const initialContext: TransactionStatusModalContext = {
 	status: 'PENDING',
 	transactionType: undefined,
 	price: undefined,
-	collectionAddress: '' as Address,
+	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
-	collectibleId: '',
-	callbacks: undefined,
+	tokenId: 0n,
 	queriesToInvalidate: [],
 };
 
@@ -60,9 +57,8 @@ export const transactionStatusModalStore = createStore({
 			price: event.price,
 			collectionAddress: event.collectionAddress,
 			chainId: event.chainId,
-			collectibleId: event.collectibleId,
+			tokenId: event.tokenId,
 			transactionType: event.transactionType,
-			callbacks: event.callbacks,
 			queriesToInvalidate: event.queriesToInvalidate,
 			status: 'PENDING' as TransactionStatus,
 		}),
@@ -82,7 +78,7 @@ export const transactionStatusModalStore = createStore({
 export const useIsOpen = () =>
 	useSelector(transactionStatusModalStore, (state) => state.context.isOpen);
 
-export const useTransactionModalState = () =>
+export const useTransactionStatusModalState = () =>
 	useSelector(transactionStatusModalStore, (state) => state.context);
 
 export const useTransactionHash = () =>
@@ -106,7 +102,7 @@ export const useTransactionDetails = () =>
 export const useCollectibleInfo = () =>
 	useSelector(transactionStatusModalStore, (state) => ({
 		collectionAddress: state.context.collectionAddress,
-		collectibleId: state.context.collectibleId,
+		tokenId: state.context.tokenId,
 		chainId: state.context.chainId,
 		price: state.context.price,
 	}));

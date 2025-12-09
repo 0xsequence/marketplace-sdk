@@ -1,10 +1,10 @@
 'use client';
 
+import type { TokenMetadata } from '@0xsequence/api-client';
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '@0xsequence/metadata';
 import { type Address, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
-import { useCollection } from '../../../../../hooks';
+import { useCollectionDetail } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { useTransactionType } from '../transactionStatusModal/store';
@@ -43,10 +43,11 @@ const TransactionPreview = ({
 		{ isConfirmed, isConfirming, isFailed, isTimeout },
 		transactionType,
 	);
-	const { data: collection, isLoading: collectionLoading } = useCollection({
-		collectionAddress,
-		chainId,
-	});
+	const { data: collection, isLoading: collectionLoading } =
+		useCollectionDetail({
+			collectionAddress,
+			chainId,
+		});
 
 	const collectibleImage = collectible?.image;
 	const collectibleName = collectible?.name;

@@ -31,7 +31,7 @@ export async function generateStyles(options = {}) {
 		const css = `/* Modified Tailwind CSS, to avoid issues with shadow DOM, see Marketplace SDK - compile-tailwind.js and postcss.config.mjs */
 ${result.css}`;
 
-		const tsContent = `export const styles = String.raw\`${css}\`;`;
+		const tsContent = `export const styles = String.raw\`${css}\`;\n`;
 
 		await fs.writeFile(outputTSPath, tsContent);
 

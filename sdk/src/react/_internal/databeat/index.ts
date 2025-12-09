@@ -59,5 +59,9 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 export const useAnalytics = () => {
 	const context = useContext(MarketplaceSdkContext);
 
+	if (!context) {
+		throw new Error('useAnalytics must be used within MarketplaceProvider');
+	}
+
 	return context.analytics;
 };

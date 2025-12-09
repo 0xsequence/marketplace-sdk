@@ -14,9 +14,7 @@ function CurrencyImage({ price }: { price: Price | undefined }) {
 	}
 
 	if (
-		imageLoadErrorCurrencyAddresses?.includes(
-			price.currency.contractAddress as Address,
-		)
+		imageLoadErrorCurrencyAddresses?.includes(price.currency.contractAddress)
 	) {
 		return <div className="h-3 w-3 rounded-full bg-background-secondary" />;
 	}
@@ -27,9 +25,9 @@ function CurrencyImage({ price }: { price: Price | undefined }) {
 			onError={() => {
 				if (price) {
 					setImageLoadErrorCurrencyAddresses((prev) => {
-						if (!prev) return [price.currency.contractAddress as Address];
-						if (!prev.includes(price.currency.contractAddress as Address)) {
-							return [...prev, price.currency.contractAddress as Address];
+						if (!prev) return [price.currency.contractAddress];
+						if (!prev.includes(price.currency.contractAddress)) {
+							return [...prev, price.currency.contractAddress];
 						}
 						return prev;
 					});

@@ -9,10 +9,7 @@ const createMarketplaceLogo = (
 	const LazyLogo = lazy(async () => {
 		const src = await importFn();
 		return {
-			default: function MarketplaceLogo({
-				alt: altProp,
-				...props
-			}: ComponentProps<typeof Image>) {
+			default({ alt: altProp, ...props }: ComponentProps<typeof Image>) {
 				return <Image src={src.default} alt={altProp || alt} {...props} />;
 			},
 		};

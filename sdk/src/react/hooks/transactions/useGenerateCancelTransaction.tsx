@@ -1,43 +1,48 @@
+import type { Step } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import type * as types from '../../../types';
 import {
-	type GenerateCancelTransactionArgs,
+	type GenerateCancelTransactionRequest,
 	getMarketplaceClient,
 } from '../../_internal';
-import type { Step } from '../../_internal/api/marketplace.gen';
 import { useConfig } from '../config/useConfig';
 
 // Create a type that uses number for chainId
-type GenerateCancelTransactionArgsWithNumberChainId = Omit<
-	GenerateCancelTransactionArgs,
+type GenerateCancelTransactionRequestWithNumberChainId = Omit<
+	GenerateCancelTransactionRequest,
 	'chainId'
 > & {
 	chainId: number;
 };
 
-interface UseGenerateCancelTransactionArgs {
+interface UseGenerateCancelTransactionRequest {
 	chainId: number;
 	onSuccess?: (steps?: Step[]) => void;
 }
 
 export const generateCancelTransaction = async (
-	args: GenerateCancelTransactionArgsWithNumberChainId,
+	args: GenerateCancelTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
-		.generateCancelTransaction({ ...args, chainId: String(args.chainId) })
+		.generateCancelTransaction(args)
 		.then((data) => data.steps);
 };
 
 export const useGenerateCancelTransaction = (
-	params: UseGenerateCancelTransactionArgs,
+	params: UseGenerateCancelTransactionRequest,
 ) => {
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
-		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateCancelTransactionArgsWithNumberChainId) =>
+		onSuccess: (data) => {
+			// Only pass the data (steps) to the user's onSuccess callback to maintain backwards compatibility
+			if (params.onSuccess) {
+				params.onSuccess(data);
+			}
+		},
+		mutationFn: (args: GenerateCancelTransactionRequestWithNumberChainId) =>
 			generateCancelTransaction(args, config),
 	});
 

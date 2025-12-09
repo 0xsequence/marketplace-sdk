@@ -19,18 +19,15 @@ export const createRoute = {
 	collections: () => '/',
 	collectibles: (chainId: number, collectionAddress: string) =>
 		`/${chainId}/${collectionAddress}`,
-	collectible: (
-		chainId: number,
-		collectionAddress: string,
-		collectibleId: string,
-	) => `/${chainId}/${collectionAddress}/${collectibleId}`,
+	collectible: (chainId: number, collectionAddress: string, tokenId: bigint) =>
+		`/${chainId}/${collectionAddress}/${tokenId}`,
 	inventory: () => '/inventory',
 	debug: () => '/debug',
 } as const;
 
 export type RouteParams = {
 	projectId?: string;
-	collectibleId?: string;
+	tokenId?: string;
 };
 
 // Get navigation routes (excludes detail routes)

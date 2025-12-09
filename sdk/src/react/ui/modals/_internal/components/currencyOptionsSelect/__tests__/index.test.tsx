@@ -1,11 +1,9 @@
-import type { UseQueryResult } from '@tanstack/react-query';
 import { render } from '@test';
 import { TEST_CURRENCIES, TEST_CURRENCY } from '@test/const';
 import { screen } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Currency } from '../../../../../../_internal';
-import * as marketCurrenciesFn from '../../../../../../hooks/data/market/useMarketCurrencies';
+import * as marketCurrenciesFn from '../../../../../../hooks/currency/list';
 import CurrencyOptionsSelect from '..';
 
 const mockOnCurrencyChange = vi.fn();
@@ -26,33 +24,27 @@ describe('CurrencyOptionsSelect', () => {
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {
-		const useCurrenciesSpy = vi.spyOn(
-			marketCurrenciesFn,
-			'useMarketCurrencies',
-		);
+		const useCurrenciesSpy = vi.spyOn(marketCurrenciesFn, 'useCurrencyList');
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: true,
 			data: undefined,
 			error: null,
-		} as UseQueryResult<Currency[], Error>);
+		} as any);
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 
-		const skeleton = document.querySelector('.h-7.w-20.rounded-2xl');
+		const skeleton = document.querySelector('.h-6.w-20.rounded-2xl');
 		expect(skeleton).toBeInTheDocument();
 		expect(skeleton).toHaveClass('animate-skeleton');
 	});
 
 	it('should set first currency as default when currencies load', async () => {
-		const useCurrenciesSpy = vi.spyOn(
-			marketCurrenciesFn,
-			'useMarketCurrencies',
-		);
+		const useCurrenciesSpy = vi.spyOn(marketCurrenciesFn, 'useCurrencyList');
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: false,
 			data: TEST_CURRENCIES,
 			error: null,
-		} as UseQueryResult<Currency[], Error>);
+		} as any);
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 

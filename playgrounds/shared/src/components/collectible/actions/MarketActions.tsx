@@ -6,78 +6,49 @@ import {
 	SendIcon,
 	Text,
 } from '@0xsequence/design-system';
+import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
 	useMakeOfferModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { toast } from 'sonner';
 import type { Address } from 'viem';
-import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
 export function MarketActionsCard({
 	lowestListing,
 	orderbookKind,
 	collectionAddress,
 	chainId,
-	collectibleId,
+	tokenId,
 	isOwner,
 }: {
 	lowestListing: Order | undefined | null;
 	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	tokenId: bigint;
 	isOwner: boolean;
 }) {
 	const shouldShowBuyButton = !!lowestListing;
 
-	const { show: openBuyModal } = useBuyModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your purchase was successful!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-	});
-	const { show: openMakeOfferModal } = useMakeOfferModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your offer has been made!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-		onError: (error) => {
-			console.error(error);
-			toast.error(`An error occurred while making your offer: ${error.name}`);
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
+	const { show: openMakeOfferModal } = useMakeOfferModal();
 
-	const { show: openCreateListingModal } = useCreateListingModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your listing has been created!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-		onError: (error) => {
-			console.error('Error creating listing', error);
-			toast.error(
-				`An error occurred while creating your listing: ${error.name}`,
-			);
-		},
-	});
+	const { show: openCreateListingModal } = useCreateListingModal();
 
 	const { show: openTransferModal } = useTransferModal({
 		prefetch: {
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId,
 		},
 	});
 
 	const hooksProps = {
 		collectionAddress,
 		chainId,
-		collectibleId,
+		tokenId,
 	};
 
 	return (
@@ -98,32 +69,36 @@ export function MarketActionsCard({
 								openBuyModal({
 									collectionAddress,
 									chainId,
-									collectibleId,
+									tokenId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
 								})
 							}
-							leftIcon={CartIcon}
 							disabled={isOwner}
-							label="Buy Now"
 							className="w-full"
-						/>
+						>
+							<CartIcon />
+							Buy Now
+						</Button>
 					</div>
 				)}
 
 				{!isOwner && (
 					<Button
-						variant="glass"
+						variant="secondary"
 						onClick={() =>
 							openMakeOfferModal({
-								...hooksProps,
+								collectionAddress,
+								chainId,
+								tokenId,
 								orderbookKind,
 							})
 						}
-						leftIcon={AddIcon}
-						label="Make Offer"
 						className="w-full"
-					/>
+					>
+						<AddIcon />
+						Make Offer
+					</Button>
 				)}
 
 				{isOwner && (
@@ -133,30 +108,32 @@ export function MarketActionsCard({
 						</Text>
 						<div className="flex flex-row gap-2">
 							<Button
-								variant="glass"
+								variant="secondary"
 								onClick={() =>
 									openCreateListingModal({
 										...hooksProps,
 										orderbookKind,
 									})
 								}
-								rightIcon={AddIcon}
-								label="Create Listing"
 								className="w-full"
-							/>
+							>
+								Create Listing
+								<AddIcon />
+							</Button>
 							<Button
-								variant="glass"
+								variant="secondary"
 								onClick={() =>
 									openTransferModal({
 										collectionAddress,
 										chainId,
-										collectibleId,
+										tokenId,
 									})
 								}
-								rightIcon={SendIcon}
-								label="Transfer"
 								className="w-full"
-							/>
+							>
+								Transfer
+								<SendIcon />
+							</Button>
 						</div>
 					</div>
 				)}

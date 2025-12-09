@@ -1,19 +1,24 @@
 'use client';
 
-import { Image, Select, Text, Tooltip } from '@0xsequence/design-system';
+import { cn, Image, Select, Text, Tooltip } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
-import type { FeeOption } from '../../../../../../types/waas-types';
+import type {
+	FeeOption,
+	FeeOptionExtended,
+} from '../../../../../../types/waas-types';
 import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
 
 const WaasFeeOptionsSelect = ({
 	options,
 	selectedFeeOption,
 	onSelectedFeeOptionChange,
+	currencyBalance,
 }: {
-	options: FeeOption[];
+	options: FeeOption[] | FeeOptionExtended[];
 	selectedFeeOption: FeeOption | undefined;
 	onSelectedFeeOptionChange: (option: FeeOption | undefined) => void;
+	currencyBalance?: { value: bigint };
 }) => {
 	options = options.map((option) => ({
 		...option,
@@ -25,8 +30,24 @@ const WaasFeeOptionsSelect = ({
 
 	const feeOptions = options.map((option) => {
 		const value = option.token.contractAddress ?? '';
+		const canAfford = (() => {
+			const extendedOption = option as FeeOptionExtended;
+			if ('hasEnoughBalanceForFee' in extendedOption) {
+				return extendedOption.hasEnoughBalanceForFee;
+			}
 
-		return FeeOptionSelectItem({ value, option });
+			if (!currencyBalance || !option.value || !option.token.decimals) {
+				return false;
+			}
+			try {
+				const feeValue = BigInt(option.value);
+				return currencyBalance.value >= feeValue;
+			} catch {
+				return false;
+			}
+		})();
+
+		return FeeOptionSelectItem({ value, option, canAfford });
 	});
 
 	useEffect(() => {
@@ -38,12 +59,14 @@ const WaasFeeOptionsSelect = ({
 	if (options.length === 0 || !selectedFeeOption?.token) return null;
 
 	return (
-		<Select
+		<Select.Helper
+			id="fee-option"
 			name="fee-option"
 			options={feeOptions.map((option) => ({
 				label: option.content,
 				value: option.value,
 			}))}
+			className="w-full"
 			onValueChange={(value) => {
 				const selectedOption = options.find(
 					(option) => option.token.contractAddress === value,
@@ -59,9 +82,11 @@ const WaasFeeOptionsSelect = ({
 function FeeOptionSelectItem({
 	value,
 	option,
+	canAfford,
 }: {
 	value: string;
 	option: FeeOption;
+	canAfford: boolean;
 }) {
 	const formattedFee = formatUnits(
 		BigInt(option.value),
@@ -74,10 +99,24 @@ function FeeOptionSelectItem({
 
 	const feeDisplay = isTruncated ? (
 		<Tooltip message={formattedFee}>
-			<Text className="font-body text-sm">{truncatedFee}</Text>
+			<Text
+				className={cn(
+					'font-body text-sm',
+					canAfford ? 'text-positive' : 'text-text-50',
+				)}
+			>
+				{truncatedFee}
+			</Text>
 		</Tooltip>
 	) : (
-		<Text className="font-body text-sm">{truncatedFee}</Text>
+		<Text
+			className={cn(
+				'font-body text-sm',
+				canAfford ? 'text-positive' : 'text-text-50',
+			)}
+		>
+			{truncatedFee}
+		</Text>
 	);
 
 	return {
@@ -88,21 +127,37 @@ function FeeOptionSelectItem({
 					className="h-3 w-3"
 					src={option.token.logoURL}
 					alt={option.token.symbol}
+					style={{ opacity: canAfford ? 1 : 0.5 }}
 				/>
 
 				<div className="flex gap-1">
-					<Text className="font-body text-sm" color="text100">
+					<Text
+						className={cn(
+							'font-body text-sm',
+							canAfford ? 'opacity-100' : 'opacity-50',
+						)}
+						color="text100"
+					>
 						Fee
 					</Text>
 					<Text
-						className="font-body text-sm"
+						className={cn(
+							'font-body text-sm',
+							canAfford ? 'opacity-100' : 'opacity-50',
+						)}
 						color="text50"
 						fontWeight="semibold"
 					>
 						(in {option.token.symbol})
 					</Text>
 
-					<Text className="font-body text-sm" color="text100">
+					<Text
+						className={cn(
+							'font-body text-sm',
+							canAfford ? 'opacity-100' : 'opacity-50',
+						)}
+						color="text100"
+					>
 						:
 					</Text>
 				</div>

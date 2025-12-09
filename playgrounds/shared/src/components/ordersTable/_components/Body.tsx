@@ -1,15 +1,13 @@
-import type { Order } from '../../../../../../sdk/src';
+import type { Order } from '@0xsequence/marketplace-sdk';
 import { Table } from '../../Table';
 import OrdersTableRow from './TableRow';
 
 const OrdersTableBody = ({
 	orders,
 	tokenId,
-	decimals,
 }: {
 	orders: Order[] | undefined;
-	tokenId: string;
-	decimals: number;
+	tokenId: bigint;
 }) => {
 	return (
 		<Table.Body>
@@ -19,7 +17,6 @@ const OrdersTableBody = ({
 					order={order}
 					index={index}
 					tokenId={tokenId}
-					decimals={decimals}
 				/>
 			))}
 		</Table.Body>

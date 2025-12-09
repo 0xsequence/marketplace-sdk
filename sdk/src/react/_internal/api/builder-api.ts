@@ -1,13 +1,21 @@
-import { MarketplaceService } from './builder.gen';
+import { Builder, MarketplaceService } from '@0xsequence/api-client';
 
-export class BuilderAPI extends MarketplaceService {
+/**
+ * BuilderAPI wraps the generated MarketplaceService to apply type transformations
+ * Transforms raw API responses to use bigint primitives and nested structures
+ */
+export class BuilderAPI {
+	private client: MarketplaceService;
+
 	constructor(
 		hostname: string,
 		public projectAccessKey?: string,
 		public jwtAuth?: string,
 	) {
-		super(hostname.endsWith('/') ? hostname.slice(0, -1) : hostname, fetch);
-		this.fetch = this._fetch;
+		this.client = new MarketplaceService(
+			hostname.endsWith('/') ? hostname.slice(0, -1) : hostname,
+			this._fetch,
+		);
 	}
 
 	_fetch = (input: RequestInfo, init?: RequestInit): Promise<Response> => {
@@ -29,4 +37,18 @@ export class BuilderAPI extends MarketplaceService {
 
 		return fetch(input, requestInit);
 	};
+
+	/**
+	 * Lookup marketplace configuration with transformed types
+	 * - Nests collections within market/shop pages
+	 * - Converts tokenIds to bigint[]
+	 */
+	async lookupMarketplace(
+		args: Builder.LookupMarketplaceArgs,
+		headers?: object,
+		signal?: AbortSignal,
+	): Promise<Builder.LookupMarketplaceReturn> {
+		const result = await this.client.lookupMarketplace(args, headers, signal);
+		return Builder.toLookupMarketplaceReturn(result);
+	}
 }

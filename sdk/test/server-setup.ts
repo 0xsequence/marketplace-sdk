@@ -1,9 +1,11 @@
+import {
+	BuilderMocks,
+	IndexerMocks,
+	MarketplaceMocks,
+	MetadataMocks,
+} from '@0xsequence/api-client';
 import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
-import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
-import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
-import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
-import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
 
 const tickHandler = mswHttp.post(
 	'https://nodes.sequence.app/rpc/Databeat/Tick',
@@ -13,9 +15,9 @@ const tickHandler = mswHttp.post(
 );
 
 export const server = setupServer(
-	...marketplaceHandlers,
-	...metadataHandlers,
-	...indexerHandlers,
-	...marketplaceConfigHandlers,
+	...MarketplaceMocks.handlers,
+	...MetadataMocks.handlers,
+	...IndexerMocks.handlers,
+	...BuilderMocks.handlers,
 	tickHandler,
 );

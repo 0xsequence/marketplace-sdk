@@ -1,7 +1,7 @@
 'use client';
 
 import { useIsOpen } from '../store';
-import { BuyModalRouter } from './BuyModalRouter';
+import { BuyModalContent } from './BuyModalContent';
 
 export const BuyModal = () => {
 	const isOpen = useIsOpen();
@@ -10,5 +10,5 @@ export const BuyModal = () => {
 		return null;
 	}
 
-	return <BuyModalRouter />;
+	return <BuyModalContent />;
 };

@@ -1,9 +1,9 @@
+import { ContractType } from '@0xsequence/api-client';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount, useWriteContract } from 'wagmi';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
-import { ContractType } from '../../_internal/api/marketplace.gen';
 import {
 	type TransferTokensParams,
 	useTransferTokens,
@@ -81,7 +81,7 @@ describe('useTransferTokens', () => {
 		it('should return wagmi hook states correctly', () => {
 			mockUseWriteContract.mockReturnValue({
 				writeContractAsync: mockWriteContractAsync,
-				data: '0xhash123' as `0x${string}`,
+				data: '0xhash123',
 				isPending: true,
 				isError: false,
 				isSuccess: false,
@@ -111,7 +111,7 @@ describe('useTransferTokens', () => {
 			contractType: ContractType.ERC721,
 			chainId: 1,
 			collectionAddress: mockCollectionAddress,
-			tokenId: '123',
+			tokenId: 123n,
 			receiverAddress: mockReceiverAddress,
 		};
 
@@ -158,9 +158,9 @@ describe('useTransferTokens', () => {
 			contractType: ContractType.ERC1155,
 			chainId: 1,
 			collectionAddress: mockCollectionAddress,
-			tokenId: '456',
+			tokenId: 456n,
 			receiverAddress: mockReceiverAddress,
-			quantity: '5',
+			quantity: 5n,
 		};
 
 		it('should prepare correct ERC1155 transfer config', async () => {
@@ -178,7 +178,7 @@ describe('useTransferTokens', () => {
 					mockAccountAddress,
 					mockReceiverAddress,
 					BigInt('456'),
-					'5',
+					5n,
 					'0x', // data
 				],
 			});
@@ -214,12 +214,12 @@ describe('useTransferTokens', () => {
 			// Test with large quantity
 			await result.current.transferTokensAsync({
 				...erc1155Params,
-				quantity: '1000000',
+				quantity: 1000000n,
 			});
 
 			expect(mockWriteContractAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
-					args: expect.arrayContaining(['1000000']),
+					args: expect.arrayContaining([1000000n]),
 				}),
 			);
 		});
@@ -246,7 +246,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -275,7 +275,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -341,7 +341,7 @@ describe('useTransferTokens', () => {
 		it('should reflect isSuccess state', () => {
 			mockUseWriteContract.mockReturnValue({
 				writeContractAsync: mockWriteContractAsync,
-				data: '0xsuccess123' as `0x${string}`,
+				data: '0xsuccess123',
 				isPending: false,
 				isError: false,
 				isSuccess: true,
@@ -396,7 +396,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '789',
+				tokenId: 789n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -416,7 +416,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '789',
+				tokenId: 789n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -437,7 +437,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '999999999999999999999',
+				tokenId: 999999999999999999999n,
 				receiverAddress: mockReceiverAddress,
 			});
 
@@ -457,7 +457,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 137, // Polygon
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 

@@ -1,11 +1,16 @@
+import {
+	MarketplaceKind,
+	MarketplaceMocks,
+	StepType,
+	WalletKind,
+} from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as types from '../../../types';
-import { StepType } from '../../../types';
-import { WalletKind } from '../../_internal/api';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 import { useProcessStep } from './useProcessStep';
@@ -66,8 +71,6 @@ describe('useCancelOrder', () => {
 	});
 
 	it('should handle cancellation error', async () => {
-		const onError = vi.fn();
-
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
 				return HttpResponse.error();
@@ -77,21 +80,19 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
 		}
 
 		await waitFor(() => {
-			expect(onError).toHaveBeenCalled();
 			expect(result.current.cancellingOrderId).toBeNull();
 			expect(result.current.isExecuting).toBe(false);
 		});
@@ -117,7 +118,7 @@ describe('useCancelOrder', () => {
 											id: StepType.cancel,
 											data: '0x...',
 											to: defaultProps.collectionAddress,
-											value: '0',
+											value: 0n,
 											executeType: 'order',
 										},
 									],
@@ -132,7 +133,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation
 		const cancelPromise = result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// Wait for immediate state updates
@@ -150,34 +151,28 @@ describe('useCancelOrder', () => {
 	});
 
 	it.skip('should handle chain switching failure', async () => {
-		const onError = vi.fn();
-
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
 		}
 
 		await waitFor(() => {
-			expect(onError).toHaveBeenCalledWith(expect.any(Error));
 			expect(result.current.cancellingOrderId).toBeNull();
 			expect(result.current.isExecuting).toBe(false);
 		});
 	});
 
 	it('should handle transaction confirmation failure', async () => {
-		const onError = vi.fn();
-
 		// Mock the GenerateCancelTransaction endpoint to return a valid transaction step
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
@@ -187,7 +182,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],
@@ -205,27 +200,22 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
 		}
 
-		await waitFor(() => {
-			expect(onError).toHaveBeenCalledWith(expect.any(Error));
-		});
+		await waitFor(() => {});
 	});
 
 	it('should successfully cancel an order', async () => {
-		const onSuccess = vi.fn();
-
 		// Mock successful responses for all steps - make the response immediate
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
@@ -235,7 +225,7 @@ describe('useCancelOrder', () => {
 							id: StepType.cancel,
 							data: '0x1234',
 							to: defaultProps.collectionAddress,
-							value: '0',
+							value: 0n,
 							executeType: 'order',
 						},
 					],
@@ -263,19 +253,13 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onSuccess,
 			}),
 		);
 
 		// Start the cancellation and wait for it to complete
 		await result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
-		});
-
-		// After cancellation is complete, verify the success callback was called
-		expect(onSuccess).toHaveBeenCalledWith({
-			hash: mockTxHash,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// Verify final state

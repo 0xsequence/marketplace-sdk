@@ -1,6 +1,8 @@
+import { BuilderMocks } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { createLookupMarketplaceErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
+
+const { createLookupMarketplaceErrorHandler } = BuilderMocks;
 
 import { useMarketplaceConfig } from './useMarketplaceConfig';
 

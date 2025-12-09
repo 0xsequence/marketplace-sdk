@@ -9,7 +9,6 @@ import {
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ReactNode } from 'react';
-import { toast } from 'sonner';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -21,12 +20,12 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string | undefined;
+	tokenId: bigint | undefined;
 	order: Order;
 }) => {
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId ?? '',
+		tokenId,
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
@@ -38,22 +37,8 @@ const OrdersTableAction = ({
 	const { cancelOrder, isExecuting, cancellingOrderId } = useCancelOrder({
 		chainId,
 		collectionAddress,
-		onError: (error) => {
-			toast.error('An error occurred while cancelling the order');
-			console.error(error);
-		},
-		onSuccess: () => {
-			toast.success('You canceled the order');
-		},
 	});
-	const { show: openBuyModal } = useBuyModal({
-		onError: (error) => {
-			toast.error(`An error occurred while purchasing: ${error.message}`);
-		},
-		onSuccess: () => {
-			toast.success('You purchased the collectible');
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
 	const accountHasCollectible = !!balance?.balance || false;
 	const orderCreatedByAccount =
 		order.createdBy === accountAddress?.toLowerCase();
@@ -87,7 +72,7 @@ const OrdersTableAction = ({
 		null;
 
 	function handleSell() {
-		if (!tokenId) return;
+		if (tokenId === undefined) return;
 
 		showSellModal({
 			chainId,
@@ -110,7 +95,7 @@ const OrdersTableAction = ({
 		openBuyModal({
 			collectionAddress,
 			chainId,
-			collectibleId: tokenId,
+			tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
 		});
@@ -122,12 +107,13 @@ const OrdersTableAction = ({
 
 	return (
 		<Button
-			label={buttonProps.label}
 			onClick={buttonProps.onClick}
 			variant="primary"
 			size="xs"
 			disabled={cancellingOrderId === order.orderId && isExecuting}
-		/>
+		>
+			{buttonProps.label}
+		</Button>
 	);
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Divider, Skeleton, Text } from '@0xsequence/design-system';
+import { Separator, Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
@@ -32,18 +32,24 @@ const SelectWaasFeeOptions = ({
 		insufficientBalance,
 		feeOptionsConfirmed,
 		handleConfirmFeeOption,
+		rejectPendingFeeOption,
 	} = useWaasFeeOptionManager(chainId);
 
-	console.log('pendingFeeOptionConfirmation', pendingFeeOptionConfirmation);
-
 	const handleCancelFeeOption = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
 		hide();
 		onCancel?.();
 	};
 
 	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+	const shouldDisplay =
+		!isSponsored &&
+		(isVisible || !!pendingFeeOptionConfirmation?.options?.length);
 
-	if (!isVisible || isSponsored || !selectedFeeOption) {
+	if (!shouldDisplay || !selectedFeeOption) {
 		return null;
 	}
 
@@ -54,7 +60,7 @@ const SelectWaasFeeOptions = ({
 				className,
 			)}
 		>
-			<Divider className="mt-0 mb-4" />
+			<Separator className="mt-0 mb-4" />
 
 			<Text className="mb-2 font-body font-bold text-large text-text-100">
 				{feeOptionsConfirmed ? titleOnConfirm : 'Select a fee option'}
@@ -79,6 +85,7 @@ const SelectWaasFeeOptions = ({
 						}
 						selectedFeeOption={selectedFeeOption}
 						onSelectedFeeOptionChange={setSelectedFeeOption}
+						currencyBalance={currencyBalance}
 					/>
 				</div>
 			)}
@@ -86,7 +93,7 @@ const SelectWaasFeeOptions = ({
 			<div className="flex w-full items-start justify-between">
 				{!feeOptionsConfirmed &&
 					(!pendingFeeOptionConfirmation || currencyBalanceLoading) && (
-						<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
+						<Skeleton className="h-4 w-2/3 animate-shimmer rounded-xl" />
 					)}
 
 				{(feeOptionsConfirmed ||

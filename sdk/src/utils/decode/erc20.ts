@@ -18,7 +18,7 @@ export function decodeERC20Approval(calldata: Hex): DecodedApprovalData {
 	const [spender, value] = decoded.args;
 
 	return {
-		spender: spender as string,
-		value: value as bigint,
+		spender,
+		value,
 	};
 }

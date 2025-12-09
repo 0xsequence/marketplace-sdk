@@ -73,12 +73,14 @@ export const calculateEarningsAfterFees = (
 	fees: number[],
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		let earnings = dn.from(decimalAmount.toString(), decimals);
+		// formatUnits already returns a string, no need for Number conversion
+		const decimalAmount = formatUnits(amount, decimals);
+		let earnings = dn.from(decimalAmount, decimals);
 
 		for (const fee of fees) {
 			if (fee > 0) {
-				const feeMultiplier = dn.from((1 - fee / 100).toString(), decimals);
+				// dnum accepts numbers directly via Numberish type
+				const feeMultiplier = dn.from(1 - fee / 100, decimals);
 				earnings = dn.multiply(earnings, feeMultiplier);
 			}
 		}
@@ -111,12 +113,11 @@ export const formatPriceWithFee = (
 	feePercentage: number,
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		const price = dn.from(decimalAmount.toString(), decimals);
-		const feeMultiplier = dn.from(
-			(1 + feePercentage / 100).toString(),
-			decimals,
-		);
+		// formatUnits already returns a string, no need for Number conversion
+		const decimalAmount = formatUnits(amount, decimals);
+		const price = dn.from(decimalAmount, decimals);
+		// dnum accepts numbers directly via Numberish type
+		const feeMultiplier = dn.from(1 + feePercentage / 100, decimals);
 		const totalPrice = dn.multiply(price, feeMultiplier);
 
 		return dn.format(totalPrice, {
@@ -140,9 +141,10 @@ export const calculateTotalOfferCost = (
 		let totalCost = dn.from(dnumAmount);
 
 		if (royaltyPercentage > 0) {
+			// dnum accepts numbers directly via Numberish type
 			const royaltyFee = dn.multiply(
 				totalCost,
-				dn.from((royaltyPercentage / 100).toString(), decimals),
+				dn.from(royaltyPercentage / 100, decimals),
 			);
 			totalCost = dn.add(totalCost, royaltyFee);
 		}
