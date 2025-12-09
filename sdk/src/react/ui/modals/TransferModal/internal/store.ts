@@ -4,14 +4,12 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CollectionType } from '../../../../_internal';
 import { useEnsureCorrectChain, useListBalances } from '../../../../hooks';
-import type { ModalCallbacks } from '../../_internal/types';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
 	tokenId: bigint;
 	chainId: number;
 	collectionType?: CollectionType;
-	callbacks?: ModalCallbacks;
 };
 
 export type UseTransferModalArgs = {
@@ -32,7 +30,6 @@ type TransferModalState = {
 	quantityInput: bigint;
 	isReceiverTouched: boolean;
 	isQuantityTouched: boolean;
-	callbacks?: ModalCallbacks;
 };
 
 const initialContext: TransferModalState = {
@@ -45,7 +42,6 @@ const initialContext: TransferModalState = {
 	quantityInput: 1n,
 	isReceiverTouched: false,
 	isQuantityTouched: false,
-	callbacks: undefined,
 };
 
 export const transferModalStore = createStore({

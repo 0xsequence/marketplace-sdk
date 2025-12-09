@@ -1,7 +1,7 @@
 import type { Step } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address, Hash } from 'viem';
+import type { Address } from 'viem';
 import type {
 	CardType,
 	CheckoutOptionsItem,
@@ -73,30 +73,18 @@ export function isMarketProps(
 	return !props.cardType || props.cardType === 'market';
 }
 
-export type onSuccessCallback = ({
-	hash,
-	orderId,
-}: {
-	hash?: Hash;
-	orderId?: string;
-}) => void;
-export type onErrorCallback = (error: Error) => void;
 type SubModalState = 'idle' | 'opening' | 'open' | 'closed';
 
 const initialContext: {
 	isOpen: boolean;
 	props: BuyModalProps | null;
 	buyAnalyticsId: string;
-	onError: onErrorCallback;
-	onSuccess: onSuccessCallback;
 	paymentModalState: SubModalState;
 	quantity: number;
 } = {
 	isOpen: false,
 	props: null,
 	buyAnalyticsId: '',
-	onError: () => {},
-	onSuccess: () => {},
 	paymentModalState: 'idle',
 	quantity: 1,
 };
@@ -108,8 +96,6 @@ export const buyModalStore = createStore({
 			context,
 			event: {
 				props: BuyModalProps;
-				onError?: onErrorCallback;
-				onSuccess?: onSuccessCallback;
 				analyticsFn: ReturnType<typeof useAnalytics>;
 			},
 		) => {
@@ -134,8 +120,6 @@ export const buyModalStore = createStore({
 				...context,
 				props: event.props,
 				buyAnalyticsId,
-				onError: event.onError ?? context.onError,
-				onSuccess: event.onSuccess ?? context.onSuccess,
 				isOpen: true,
 			};
 		},
@@ -186,12 +170,6 @@ export const useBuyModalProps = () => {
 	}
 	return props;
 };
-
-export const useOnError = () =>
-	useSelector(buyModalStore, (state) => state.context.onError);
-
-export const useOnSuccess = () =>
-	useSelector(buyModalStore, (state) => state.context.onSuccess);
 
 export const useBuyAnalyticsId = () =>
 	useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);

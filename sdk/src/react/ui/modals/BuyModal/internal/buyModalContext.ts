@@ -8,14 +8,13 @@ import type { CheckoutMode } from '../../..';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useBuyModalProps, useOnSuccess } from '../store';
+import { useBuyModalProps } from '../store';
 
 export function useBuyModalContext() {
 	const config = useConfig();
 	const modalProps = useBuyModalProps();
 	const checkoutModeConfig: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
-	const onSuccess = useOnSuccess();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
 	const { data: steps, isLoading: isLoadingSteps } =
@@ -71,7 +70,6 @@ export function useBuyModalContext() {
 		if (!currency) throw new Error('Currency not found');
 
 		close();
-		onSuccess({ hash: hash as Hash });
 
 		transactionStatusModal.show({
 			hash: hash as Hash,

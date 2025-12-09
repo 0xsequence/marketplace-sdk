@@ -2,14 +2,12 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
 import type { Order } from '../../../../_internal';
-import type { ModalCallbacks } from '../../_internal/types';
 
 export type OpenSellModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
 	order: Order;
-	callbacks?: ModalCallbacks;
 };
 
 type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
@@ -23,7 +21,6 @@ const initialContext: SellModalState = {
 	chainId: 0,
 	tokenId: 0n,
 	order: null,
-	callbacks: undefined,
 };
 
 export const sellModalStore = createStore({
@@ -51,8 +48,10 @@ export const useSellModal = () => {
 
 // Internal hook for accessing store state
 export const useSellModalState = () => {
-	const { isOpen, tokenId, collectionAddress, chainId, order, callbacks } =
-		useSelector(sellModalStore, (state) => state.context);
+	const { isOpen, tokenId, collectionAddress, chainId, order } = useSelector(
+		sellModalStore,
+		(state) => state.context,
+	);
 
 	const closeModal = () => sellModalStore.send({ type: 'close' });
 	const currencyAddress = order?.priceCurrencyAddress;
@@ -63,7 +62,6 @@ export const useSellModalState = () => {
 		collectionAddress,
 		chainId,
 		order,
-		callbacks,
 		closeModal,
 		currencyAddress,
 	};

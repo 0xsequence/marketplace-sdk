@@ -9,8 +9,6 @@ import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 interface UseCancelOrderArgs {
 	collectionAddress: Address;
 	chainId: number;
-	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
-	onError?: (error: Error) => void;
 }
 
 export type TransactionStep = {
@@ -22,8 +20,6 @@ export type TransactionStep = {
 export const useCancelOrder = ({
 	collectionAddress,
 	chainId,
-	onSuccess,
-	onError,
 }: UseCancelOrderArgs) => {
 	const [steps, setSteps] = useState<TransactionStep>({
 		exist: false,
@@ -76,13 +72,11 @@ export const useCancelOrder = ({
 	const { cancelOrder: cancelOrderBase } = useCancelTransactionSteps({
 		collectionAddress,
 		chainId,
-		onSuccess: (result) => {
+		onSuccess: () => {
 			setCancellingOrderId(null);
-			onSuccess?.(result);
 		},
-		onError: (error) => {
+		onError: () => {
 			setCancellingOrderId(null);
-			onError?.(error);
 		},
 		setSteps,
 	});

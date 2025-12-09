@@ -37,22 +37,10 @@ const MakeOfferTrigger = ({
 	tokenImage = 'https://picsum.photos/seed/nft1/400/400',
 	collectionName = 'Test Collection',
 }: MakeOfferTriggerProps) => {
-	const { show } = useMakeOfferModal({
-		onSuccess: ({ hash }) => {
-			alert(`Offer created! Hash: ${hash?.slice(0, 10)}...`);
-		},
-		onError: (error) => {
-			alert(`Offer failed: ${error.message}`);
-		},
-	});
+	const { show } = useMakeOfferModal();
 
 	const handleMakeOffer = () => {
-		show({
-			collectionAddress,
-			chainId,
-			tokenId,
-			orderbookKind,
-		});
+		show({ collectionAddress, chainId, tokenId, orderbookKind });
 	};
 
 	return (

@@ -4,7 +4,7 @@ import type {
 	TransactionOnRampProvider,
 } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Address, Hash, Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { StepType } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import type { CheckoutMode, MarketplaceKind } from '../../../../../../types';
@@ -17,8 +17,6 @@ import {
 	isMarketProps,
 	useBuyAnalyticsId,
 	useBuyModalProps,
-	useOnError,
-	useOnSuccess,
 } from '../../store';
 
 interface GetBuyCollectableParams {
@@ -108,13 +106,7 @@ export const getBuyCollectableParams = async ({
 		collectionAddress,
 		recipientAddress: address,
 		creditCardProviders,
-		onSuccess: (txHash?: string) => {
-			if (txHash) {
-				callbacks?.onSuccess?.({ hash: txHash as Hash });
-			}
-		},
 		supplementaryAnalyticsInfo,
-		onError: callbacks?.onError,
 		onClose: () => {
 			const queryClient = getQueryClient();
 			queryClient.invalidateQueries({
@@ -171,8 +163,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 
-	const onSuccess = useOnSuccess();
-	const onError = useOnError();
 	const buyAnalyticsId = useBuyAnalyticsId();
 	const { address } = useAccount();
 
@@ -197,8 +187,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						quantity,
 						priceCurrencyAddress,
 						callbacks: {
-							onSuccess,
-							onError,
 							successActionButtons: buyModalProps.successActionButtons,
 						},
 						customCreditCardProviderCallback,

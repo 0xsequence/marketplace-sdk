@@ -8,7 +8,6 @@ import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectibleDetail } from '../../../../../hooks';
-import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
@@ -30,7 +29,6 @@ export type ShowTransactionStatusModalArgs = {
 	chainId: number;
 	tokenId: bigint;
 	type: TransactionType;
-	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 };
 
@@ -78,7 +76,6 @@ function TransactionStatusModalContent() {
 		collectionAddress,
 		chainId,
 		tokenId,
-		callbacks,
 		queriesToInvalidate,
 	} = useTransactionStatusModalState();
 
@@ -89,7 +86,7 @@ function TransactionStatusModalContent() {
 			tokenId,
 		});
 
-	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
+	const transactionStatus = useTransactionStatus(hash, chainId);
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,

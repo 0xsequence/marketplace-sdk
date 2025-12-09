@@ -1,4 +1,4 @@
-import type { Address, Hash } from 'viem';
+import type { Address } from 'viem';
 
 export interface ActionButton {
 	label: string;
@@ -6,8 +6,6 @@ export interface ActionButton {
 }
 
 export type ModalCallbacks = {
-	onSuccess?: ({ hash, orderId }: { hash?: Hash; orderId?: string }) => void;
-	onError?: (error: Error) => void;
 	successActionButtons?: ActionButton[];
 };
 

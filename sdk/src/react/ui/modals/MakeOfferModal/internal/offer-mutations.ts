@@ -162,7 +162,6 @@ export const useOfferMutations = ({
 
 			return result;
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
 
 	const makeOffer = useMutation({
@@ -213,7 +212,6 @@ export const useOfferMutations = ({
 				chainId,
 				hash: res?.type === 'transaction' ? res.hash : undefined,
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
-				callbacks: state.callbacks,
 				collectionAddress,
 				tokenId: state.tokenId,
 				queriesToInvalidate: [
@@ -222,13 +220,7 @@ export const useOfferMutations = ({
 					['collectible', 'market-count-offers'],
 				],
 			});
-
-			state.callbacks?.onSuccess?.({
-				hash: res?.type === 'transaction' ? res.hash : undefined,
-				orderId: res?.type === 'signature' ? res.orderId : undefined,
-			});
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
 
 	return {

@@ -62,7 +62,6 @@ export const transactionStatusModalStore = createStore({
 			chainId: event.chainId,
 			tokenId: event.tokenId,
 			transactionType: event.transactionType,
-			callbacks: event.callbacks,
 			queriesToInvalidate: event.queriesToInvalidate,
 			status: 'PENDING' as TransactionStatus,
 		}),

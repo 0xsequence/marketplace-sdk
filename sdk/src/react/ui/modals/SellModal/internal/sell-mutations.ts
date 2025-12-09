@@ -48,7 +48,6 @@ export const useSellMutations = (
 			if (!tx?.approveStep) throw new Error('No approval step available');
 			return await executeStepAndWait(tx.approveStep);
 		},
-		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	const sell = useMutation<ProcessStepResult, Error, void>({
@@ -89,7 +88,6 @@ export const useSellMutations = (
 				chainId: state.chainId,
 				hash: res?.type === 'transaction' ? res.hash : undefined,
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
-				callbacks: state.callbacks,
 				queriesToInvalidate: [
 					['collectible', 'market-highest-offer'],
 					['collectible', 'market-list-offers'],
@@ -100,13 +98,7 @@ export const useSellMutations = (
 				collectionAddress: state.collectionAddress,
 				tokenId: state.tokenId,
 			});
-
-			state.callbacks?.onSuccess?.({
-				hash: res?.type === 'transaction' ? res.hash : undefined,
-				orderId: res?.type === 'signature' ? res.orderId : undefined,
-			});
 		},
-		onError: (e) => state.callbacks?.onError?.(e),
 	});
 
 	return {

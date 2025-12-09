@@ -5,14 +5,9 @@ import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import { useConfig } from '../../../../../../hooks/config';
 import { waitForTransactionReceipt } from '../../../../../../utils/waitForTransactionReceipt';
-import type { ModalCallbacks } from '../../../types';
 import type { TransactionStatus } from '../store';
 
-const useTransactionStatus = (
-	hash: Hex | undefined,
-	chainId: number,
-	callbacks?: ModalCallbacks,
-) => {
+const useTransactionStatus = (hash: Hex | undefined, chainId: number) => {
 	const sdkConfig = useConfig();
 	const [status, setStatus] = useState<TransactionStatus>(
 		hash ? 'PENDING' : 'SUCCESS',
@@ -38,7 +33,6 @@ const useTransactionStatus = (
 					? 'TIMEOUT'
 					: 'FAILED',
 			);
-			callbacks?.onError?.(error);
 			return;
 		}
 
@@ -50,7 +44,6 @@ const useTransactionStatus = (
 		// If we have a confirmation result and no error, the transaction succeeded
 		// The Indexer will only return a receipt for successful transactions
 		setStatus('SUCCESS');
-		callbacks?.onSuccess?.({ hash: hash || '0x0' });
 	}, [confirmationResult, error, hash]);
 
 	return status;

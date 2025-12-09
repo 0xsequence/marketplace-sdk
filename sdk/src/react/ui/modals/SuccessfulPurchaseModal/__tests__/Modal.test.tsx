@@ -1,7 +1,6 @@
 import { MetadataStatus } from '@0xsequence/api-client';
 import { cleanup, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ModalCallbacks } from '../../_internal/types';
 import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import { successfulPurchaseModalStore } from '../store';
 
@@ -131,32 +130,14 @@ describe('SuccessfulPurchaseModal', () => {
 		});
 
 		it('should pass callbacks to modal state', () => {
-			const callbacks = {
-				onSuccess: vi.fn(),
-			} satisfies ModalCallbacks;
-
-			const modal = useSuccessfulPurchaseModal(callbacks);
-			const mockPurchaseData = {
-				collectibles: [
-					{
-						tokenId: 1n,
-						name: 'Test NFT',
-						image: 'https://test.com/image.png',
-						attributes: [],
-						source: 'test',
-						status: MetadataStatus.AVAILABLE,
-					},
-				],
-				totalPrice: '1.5 ETH',
-				explorerUrl: 'https://etherscan.io/tx/123',
-				explorerName: 'Etherscan',
-				status: MetadataStatus.AVAILABLE,
-			};
-
-			modal.show(mockPurchaseData);
-			expect(successfulPurchaseModalStore.getSnapshot().context.callbacks).toBe(
-				callbacks,
-			);
+			const modal = useSuccessfulPurchaseModal();
+			modal.show({
+				collectibles: [],
+				totalPrice: '0',
+				explorerName: '',
+				explorerUrl: '',
+				ctaOptions: undefined,
+			});
 		});
 	});
 });

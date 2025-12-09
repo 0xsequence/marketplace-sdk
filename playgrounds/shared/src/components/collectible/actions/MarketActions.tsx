@@ -13,7 +13,6 @@ import {
 	useMakeOfferModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { toast } from 'sonner';
 import type { Address } from 'viem';
 
 export function MarketActionsCard({
@@ -33,38 +32,10 @@ export function MarketActionsCard({
 }) {
 	const shouldShowBuyButton = !!lowestListing;
 
-	const { show: openBuyModal } = useBuyModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your purchase was successful!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-	});
-	const { show: openMakeOfferModal } = useMakeOfferModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your offer has been made!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-		onError: (error) => {
-			console.error(error);
-			toast.error(`An error occurred while making your offer: ${error.name}`);
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
+	const { show: openMakeOfferModal } = useMakeOfferModal();
 
-	const { show: openCreateListingModal } = useCreateListingModal({
-		onSuccess: ({ hash }) => {
-			toast.success(
-				`Your listing has been created!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
-			);
-		},
-		onError: (error) => {
-			console.error('Error creating listing', error);
-			toast.error(
-				`An error occurred while creating your listing: ${error.name}`,
-			);
-		},
-	});
+	const { show: openCreateListingModal } = useCreateListingModal();
 
 	const { show: openTransferModal } = useTransferModal({
 		prefetch: {

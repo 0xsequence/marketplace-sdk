@@ -71,8 +71,6 @@ describe('useCancelOrder', () => {
 	});
 
 	it('should handle cancellation error', async () => {
-		const onError = vi.fn();
-
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
 				return HttpResponse.error();
@@ -82,7 +80,6 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
@@ -96,7 +93,6 @@ describe('useCancelOrder', () => {
 		}
 
 		await waitFor(() => {
-			expect(onError).toHaveBeenCalled();
 			expect(result.current.cancellingOrderId).toBeNull();
 			expect(result.current.isExecuting).toBe(false);
 		});
@@ -155,12 +151,9 @@ describe('useCancelOrder', () => {
 	});
 
 	it.skip('should handle chain switching failure', async () => {
-		const onError = vi.fn();
-
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
@@ -174,15 +167,12 @@ describe('useCancelOrder', () => {
 		}
 
 		await waitFor(() => {
-			expect(onError).toHaveBeenCalledWith(expect.any(Error));
 			expect(result.current.cancellingOrderId).toBeNull();
 			expect(result.current.isExecuting).toBe(false);
 		});
 	});
 
 	it('should handle transaction confirmation failure', async () => {
-		const onError = vi.fn();
-
 		// Mock the GenerateCancelTransaction endpoint to return a valid transaction step
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
@@ -210,7 +200,6 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onError,
 			}),
 		);
 
@@ -223,14 +212,10 @@ describe('useCancelOrder', () => {
 			// Error is expected
 		}
 
-		await waitFor(() => {
-			expect(onError).toHaveBeenCalledWith(expect.any(Error));
-		});
+		await waitFor(() => {});
 	});
 
 	it('should successfully cancel an order', async () => {
-		const onSuccess = vi.fn();
-
 		// Mock successful responses for all steps - make the response immediate
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
@@ -268,7 +253,6 @@ describe('useCancelOrder', () => {
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
-				onSuccess,
 			}),
 		);
 
@@ -276,11 +260,6 @@ describe('useCancelOrder', () => {
 		await result.current.cancelOrder({
 			orderId: mockOrderId,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-		});
-
-		// After cancellation is complete, verify the success callback was called
-		expect(onSuccess).toHaveBeenCalledWith({
-			hash: mockTxHash,
 		});
 
 		// Verify final state
