@@ -7,7 +7,7 @@ import type { Address } from 'viem';
 
 export interface ShopContentProps {
 	saleContractAddress: Address;
-	saleItemIds: string[];
+	saleItemIds: bigint[];
 	collectionAddress: Address;
 	chainId: number;
 }
@@ -20,12 +20,8 @@ export function ShopContent({
 }: ShopContentProps) {
 	const navigate = useNavigate();
 
-	function handleCollectibleClick(tokenId: string) {
-		const route = createRoute.collectible(
-			chainId,
-			collectionAddress,
-			BigInt(tokenId),
-		);
+	function handleCollectibleClick(tokenId: bigint) {
+		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 		navigate(route);
 	}
 

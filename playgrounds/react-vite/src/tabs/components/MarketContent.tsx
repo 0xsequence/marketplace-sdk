@@ -12,13 +12,13 @@ export function MarketContent() {
 		chainId: string;
 	}>();
 
-	function handleCollectibleClick(tokenId: string) {
+	function handleCollectibleClick(tokenId: bigint) {
 		if (!collectionAddress || !chainId) return;
 
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress,
-			BigInt(tokenId),
+			tokenId,
 		);
 		navigate(route);
 	}

@@ -13,11 +13,11 @@ export function Collectibles() {
 		chainId: string;
 	}>();
 
-	const handleCollectibleClick = (tokenId: string) => {
+	const handleCollectibleClick = (tokenId: bigint) => {
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress as string,
-			BigInt(tokenId),
+			tokenId,
 		);
 		navigate(route);
 	};
@@ -32,7 +32,7 @@ export function Collectibles() {
 		chainId: number;
 		salesContractAddress: Address;
 		collectionAddress: Address;
-		tokenIds: string[];
+		tokenIds: bigint[];
 		isLoading: boolean;
 	}) => (
 		<ERC721SaleControls

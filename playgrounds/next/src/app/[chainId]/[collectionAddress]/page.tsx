@@ -11,7 +11,7 @@ export default function CollectiblesPage() {
 		chainId: string;
 	}>();
 
-	const handleCollectibleClick = (tokenId: string) => {
+	const handleCollectibleClick = (tokenId: bigint) => {
 		const route = createRoute.collectible(
 			Number(chainId),
 			collectionAddress as string,

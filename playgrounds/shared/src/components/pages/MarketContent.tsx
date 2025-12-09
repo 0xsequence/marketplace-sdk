@@ -23,7 +23,7 @@ import { PaginatedView } from '../collectibles/PaginatedView';
 export interface MarketContentProps {
 	collectionAddress: Address;
 	chainId: number;
-	onCollectibleClick: (tokenId: string) => void;
+	onCollectibleClick: (tokenId: bigint) => void;
 }
 
 export function MarketContent({
@@ -78,7 +78,7 @@ export function MarketContent({
 		enabled: paginationMode === 'paged',
 	});
 
-	function handleCollectibleClick(tokenId: string) {
+	function handleCollectibleClick(tokenId: bigint) {
 		onCollectibleClick(tokenId);
 	}
 
@@ -92,7 +92,7 @@ export function MarketContent({
 		return (
 			<button
 				key={index}
-				onClick={() => handleCollectibleClick(card.tokenId.toString())}
+				onClick={() => handleCollectibleClick(card.tokenId)}
 				className={cn('w-full cursor-pointer')}
 				type="button"
 			>
