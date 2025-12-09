@@ -65,7 +65,7 @@ export function usePrimarySaleTransactionSteps({
 		},
 	});
 
-	return useQuery<Step[], Error>({
+	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
 		queryKey: [
 			'primary-sale-steps',
 			{
@@ -132,7 +132,10 @@ export function usePrimarySaleTransactionSteps({
 				price: maxTotal,
 			});
 
-			return steps;
+			return {
+				steps,
+				canBeUsedWithTrails: true,
+			};
 		},
 		enabled: enabled && !!buyer && !!abi && !abiLoading && !allowanceLoading,
 	});

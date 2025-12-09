@@ -60,12 +60,7 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 	// Return the active query based on transaction type
 	if (transactionType === TransactionType.MARKET_BUY) {
 		return {
-			data: marketQuery.data
-				? {
-						steps: marketQuery.data.steps,
-						canBeUsedWithTrails: marketQuery.data.canBeUsedWithTrails,
-					}
-				: undefined,
+			data: marketQuery.data,
 			isLoading: marketQuery.isLoading,
 			error: marketQuery.error,
 			isError: marketQuery.isError,
@@ -74,12 +69,7 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 	}
 
 	return {
-		data: primaryQuery.data
-			? {
-					steps: primaryQuery.data,
-					canBeUsedWithTrails: true,
-				}
-			: undefined,
+		data: primaryQuery.data,
 		isLoading: primaryQuery.isLoading,
 		error: primaryQuery.error,
 		isError: primaryQuery.isError,
