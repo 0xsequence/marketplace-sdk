@@ -17,8 +17,12 @@ export function useBuyModalContext() {
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
-	const { data: steps, isLoading: isLoadingSteps } =
-		useBuyTransaction(modalProps);
+	const transactionData = useBuyTransaction(modalProps);
+	const steps = transactionData.data?.steps;
+	const canBeUsedWithTrails =
+		transactionData.data?.canBeUsedWithTrails ?? false;
+	const isLoadingSteps = transactionData.isLoading;
+
 	const {
 		collectible,
 		collection,
@@ -44,8 +48,19 @@ export function useBuyModalContext() {
 
 	let checkoutMode: CheckoutMode | undefined;
 
-	if (checkoutModeConfig === 'trails' && isChainSupported) {
+	if (
+		checkoutModeConfig === 'trails' &&
+		isChainSupported &&
+		canBeUsedWithTrails
+	) {
 		checkoutMode = 'trails';
+	} else if (
+		checkoutModeConfig === 'trails' &&
+		isChainSupported &&
+		!canBeUsedWithTrails
+	) {
+		// Fallback to crypto when order doesn't support trails
+		checkoutMode = 'crypto';
 	} else if (
 		typeof checkoutModeConfig === 'object' &&
 		checkoutModeConfig.mode === 'sequence-checkout'

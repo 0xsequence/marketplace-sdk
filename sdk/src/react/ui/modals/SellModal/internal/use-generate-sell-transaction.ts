@@ -47,7 +47,7 @@ const generateSellTransaction = async (
 export const useGenerateSellTransaction = (
 	params: UseGenerateSellTransactionArgs,
 ) => {
-	const config = useConfig();
+	const client = useConfig();
 
 	const { chainId, collectionAddress, seller, marketplace, ordersData } =
 		params;
@@ -83,9 +83,11 @@ export const useGenerateSellTransaction = (
 							collectionAddress,
 							ordersData,
 							additionalFees: [platformFee, ...additionalFees],
+							useWithTrails: false, // SellModal doesn't support trails yet
 						},
-						config,
+						client,
 					)
-			: skipToken,
+			: undefined,
+		enabled,
 	});
 };

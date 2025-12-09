@@ -25,6 +25,7 @@ describe('useGenerateSellTransaction', () => {
 		marketplace: MarketplaceKind.sequence_marketplace_v2,
 		ordersData: [mockOrderData],
 		additionalFees: [],
+		useWithTrails: false,
 	};
 
 	const defaultArgs = {

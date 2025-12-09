@@ -43,7 +43,9 @@ export function useMarketTransactionSteps({
 		[config],
 	);
 
-	return useQuery<Step[], Error>({
+	const useWithTrails = config.checkoutMode === 'trails' ? true : false;
+
+	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
 		queryKey: [
 			'market-transaction-steps',
 			{
@@ -53,6 +55,7 @@ export function useMarketTransactionSteps({
 				orderId,
 				tokenId,
 				quantity,
+				useWithTrails,
 			},
 		],
 		queryFn: async () => {
@@ -70,9 +73,13 @@ export function useMarketTransactionSteps({
 				],
 				additionalFees,
 				walletType: WalletKind.unknown,
+				useWithTrails,
 			});
 
-			return response.steps;
+			return {
+				steps: response.steps,
+				canBeUsedWithTrails: response.resp.canBeUsedWithTrails,
+			};
 		},
 		enabled: enabled && !!buyer,
 	});

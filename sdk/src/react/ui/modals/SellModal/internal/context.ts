@@ -71,6 +71,7 @@ export function useSellModalContext() {
 					},
 				]
 			: undefined,
+		useWithTrails: false, // SellModal doesn't support trails yet
 	});
 
 	const { approve, sell } = useSellMutations(transactionData.data);
