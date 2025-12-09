@@ -1,5 +1,5 @@
 import type { Address } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { ShowTransferModalArgs } from '../internal/store';
 import { transferModalStore } from '../internal/store';
 
@@ -15,7 +15,6 @@ describe('TransferModal store', () => {
 		expect(context.quantityInput).toBe(1n);
 		expect(context.isReceiverTouched).toBe(false);
 		expect(context.isQuantityTouched).toBe(false);
-		expect(context.callbacks).toBeUndefined();
 	});
 
 	it('opens with provided arguments and resets form state', () => {
@@ -23,7 +22,6 @@ describe('TransferModal store', () => {
 			collectionAddress: '0x742d35Cc6634C0532925a3b8D4C9db96' as Address,
 			tokenId: 123n,
 			chainId: 1,
-			callbacks: { onSuccess: vi.fn(), onError: vi.fn() },
 		};
 
 		transferModalStore.send({ type: 'updateReceiver', value: '0xabc' });
@@ -39,7 +37,6 @@ describe('TransferModal store', () => {
 		expect(context.quantityInput).toBe(1n);
 		expect(context.isReceiverTouched).toBe(false);
 		expect(context.isQuantityTouched).toBe(false);
-		expect(context.callbacks).toEqual(openArgs.callbacks);
 	});
 
 	it('updates receiver and quantity inputs independently', () => {

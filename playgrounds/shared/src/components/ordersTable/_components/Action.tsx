@@ -9,7 +9,6 @@ import {
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ReactNode } from 'react';
-import { toast } from 'sonner';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -38,22 +37,8 @@ const OrdersTableAction = ({
 	const { cancelOrder, isExecuting, cancellingOrderId } = useCancelOrder({
 		chainId,
 		collectionAddress,
-		onError: (error) => {
-			toast.error('An error occurred while cancelling the order');
-			console.error(error);
-		},
-		onSuccess: () => {
-			toast.success('You canceled the order');
-		},
 	});
-	const { show: openBuyModal } = useBuyModal({
-		onError: (error) => {
-			toast.error(`An error occurred while purchasing: ${error.message}`);
-		},
-		onSuccess: () => {
-			toast.success('You purchased the collectible');
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
 	const accountHasCollectible = !!balance?.balance || false;
 	const orderCreatedByAccount =
 		order.createdBy === accountAddress?.toLowerCase();

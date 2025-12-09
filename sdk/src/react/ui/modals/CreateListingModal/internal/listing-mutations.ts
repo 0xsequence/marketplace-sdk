@@ -164,7 +164,6 @@ export const useListingMutations = ({
 			const result = await executeStepAndWait(approvalStep);
 			return result;
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
 
 	const createListing = useMutation({
@@ -245,7 +244,6 @@ export const useListingMutations = ({
 				chainId,
 				hash: res.hash,
 				orderId: res.orderId,
-				callbacks: state.callbacks,
 				collectionAddress,
 				tokenId: state.tokenId,
 				queriesToInvalidate: [
@@ -255,13 +253,7 @@ export const useListingMutations = ({
 					['token', 'balances'],
 				],
 			});
-
-			state.callbacks?.onSuccess?.({
-				hash: res.hash,
-				orderId: res.orderId,
-			});
 		},
-		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
 
 	return {

@@ -11,7 +11,6 @@ import {
 	type TransactionSteps,
 } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
-import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 
@@ -32,7 +31,6 @@ interface UseCreateListingArgs {
 	chainId: number;
 	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
-	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
 }
@@ -43,7 +41,6 @@ export const useCreateListing = ({
 	collectionAddress,
 	orderbookKind,
 	steps$,
-	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
@@ -87,7 +84,6 @@ export const useCreateListing = ({
 			chainId,
 			collectionAddress,
 			orderbookKind,
-			callbacks,
 			closeMainModal,
 			steps$,
 		});

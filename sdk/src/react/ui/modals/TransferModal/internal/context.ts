@@ -88,7 +88,7 @@ export type TransferModalContext = ModalContext<
 
 export function useTransferModalContext(): TransferModalContext {
 	const state = useTransferModalState();
-	const { closeModal, callbacks } = state;
+	const { closeModal } = state;
 	const { address } = useAccount();
 	const config = useConfig();
 	const { isWaaS } = useConnectorMetadata();
@@ -283,15 +283,12 @@ export function useTransferModalContext(): TransferModalContext {
 
 		const txHash = await transferTokensAsync(params);
 
-		callbacks?.onSuccess?.({ hash: txHash as Hex });
-
 		showTransactionStatusModal({
 			hash: txHash as Hex,
 			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
 			tokenId: state.tokenId,
 			type: TransactionType.TRANSFER,
-			callbacks,
 			queriesToInvalidate: [
 				['token', 'balances'],
 				['collection', 'balance-details'],
@@ -301,7 +298,6 @@ export function useTransferModalContext(): TransferModalContext {
 		baseClose();
 	}, [
 		baseClose,
-		callbacks,
 		isErc1155,
 		state.quantityInput,
 		showTransactionStatusModal,

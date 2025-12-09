@@ -20,7 +20,6 @@ import {
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import type { ModalCallbacks } from '../../_internal/types';
 import type { CreateListingInput } from './useCreateListing';
 
 interface UseTransactionStepsArgs {
@@ -28,7 +27,6 @@ interface UseTransactionStepsArgs {
 	chainId: number;
 	collectionAddress: Address;
 	orderbookKind: OrderbookKind;
-	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
 }
@@ -38,7 +36,6 @@ export const useTransactionSteps = ({
 	chainId,
 	collectionAddress,
 	orderbookKind,
-	callbacks,
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs) => {
@@ -86,11 +83,7 @@ export const useTransactionSteps = ({
 
 			return steps;
 		} catch (error) {
-			if (callbacks?.onError) {
-				callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+			console.debug('Error generating listing steps:', error);
 		}
 	};
 
@@ -158,7 +151,6 @@ export const useTransactionSteps = ({
 				tokenId: listingInput.listing.tokenId,
 				hash,
 				orderId,
-				callbacks,
 				price: {
 					amountRaw: BigInt(listingInput.listing.pricePerToken),
 					currency,
@@ -230,13 +222,9 @@ export const useTransactionSteps = ({
 					},
 				});
 			}
-		} catch (error) {
+		} catch (_error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
-
-			if (callbacks?.onError && typeof callbacks.onError === 'function') {
-				callbacks.onError(error as Error);
-			}
 		}
 	};
 

@@ -132,7 +132,6 @@ describe('TransactionStatusModal', () => {
 			type: 'open',
 			transactionType,
 			...rest,
-			callbacks: { onSuccess },
 		});
 		render(<TransactionStatusModal />);
 
@@ -156,7 +155,6 @@ describe('TransactionStatusModal', () => {
 			type: 'open',
 			transactionType,
 			...rest,
-			callbacks: { onError },
 		});
 		render(<TransactionStatusModal />);
 

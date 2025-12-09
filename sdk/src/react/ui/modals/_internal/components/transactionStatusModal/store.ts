@@ -4,7 +4,6 @@ import { useSelector } from '@xstate/store/react';
 import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import type { TransactionType } from '../../../../../_internal/types';
-import type { ModalCallbacks } from '../../types';
 import type { ShowTransactionStatusModalArgs } from '.';
 
 export type ConfirmationStatus = {
@@ -26,7 +25,6 @@ interface TransactionStatusModalContext {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
-	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 }
 
@@ -40,7 +38,6 @@ const initialContext: TransactionStatusModalContext = {
 	collectionAddress: '0x0000000000000000000000000000000000000000',
 	chainId: 0,
 	tokenId: 0n,
-	callbacks: undefined,
 	queriesToInvalidate: [],
 };
 
@@ -62,7 +59,6 @@ export const transactionStatusModalStore = createStore({
 			chainId: event.chainId,
 			tokenId: event.tokenId,
 			transactionType: event.transactionType,
-			callbacks: event.callbacks,
 			queriesToInvalidate: event.queriesToInvalidate,
 			status: 'PENDING' as TransactionStatus,
 		}),

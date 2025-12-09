@@ -2,14 +2,12 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
 import { OrderbookKind } from '../../../../../types';
-import type { ModalCallbacks } from '../../_internal/types';
 
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
-	callbacks?: ModalCallbacks;
 };
 
 type CreateListingModalState = OpenCreateListingModalArgs & {
@@ -32,7 +30,6 @@ const initialContext: CreateListingModalState = {
 	currencyAddress: undefined,
 	quantityInput: '1',
 	expiryDays: 7,
-	callbacks: undefined,
 	isPriceTouched: false,
 	isQuantityTouched: false,
 };
@@ -106,7 +103,6 @@ export const useCreateListingModalState = () => {
 		collectionAddress,
 		chainId,
 		orderbookKind,
-		callbacks,
 		priceInput,
 		currencyAddress,
 		quantityInput,
@@ -135,7 +131,6 @@ export const useCreateListingModalState = () => {
 		collectionAddress,
 		chainId,
 		orderbookKind,
-		callbacks,
 		priceInput,
 		currencyAddress,
 		quantityInput,

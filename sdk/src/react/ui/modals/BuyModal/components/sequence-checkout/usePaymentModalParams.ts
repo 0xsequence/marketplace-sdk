@@ -4,21 +4,19 @@ import type {
 	TransactionOnRampProvider,
 } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Address, Hash, Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { StepType } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import type { CheckoutMode, MarketplaceKind } from '../../../../../../types';
 import { decodeERC20Approval } from '../../../../../../utils/decode/erc20';
 import { getQueryClient } from '../../../../../_internal';
-import type { ModalCallbacks } from '../../../_internal/types';
+import type { ActionButton } from '../../../_internal/types';
 import { useBuyModalContext } from '../../internal/buyModalContext';
 import {
 	buyModalStore,
 	isMarketProps,
 	useBuyAnalyticsId,
 	useBuyModalProps,
-	useOnError,
-	useOnSuccess,
 } from '../../store';
 
 interface GetBuyCollectableParams {
@@ -29,7 +27,6 @@ interface GetBuyCollectableParams {
 	marketplaceKind: MarketplaceKind | undefined;
 	orderId: string;
 	quantity: number;
-	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
 	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
@@ -39,6 +36,7 @@ interface GetBuyCollectableParams {
 	checkoutMode: CheckoutMode | undefined;
 	steps: Step[] | undefined;
 	marketplaceType: 'market' | 'shop';
+	successActionButtons?: ActionButton[];
 }
 
 export const getBuyCollectableParams = async ({
@@ -46,7 +44,7 @@ export const getBuyCollectableParams = async ({
 	chainId,
 	collectionAddress,
 	tokenId,
-	callbacks,
+	successActionButtons,
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
 	marketplaceKind,
@@ -108,13 +106,7 @@ export const getBuyCollectableParams = async ({
 		collectionAddress,
 		recipientAddress: address,
 		creditCardProviders,
-		onSuccess: (txHash?: string) => {
-			if (txHash) {
-				callbacks?.onSuccess?.({ hash: txHash as Hash });
-			}
-		},
 		supplementaryAnalyticsInfo,
-		onError: callbacks?.onError,
 		onClose: () => {
 			const queryClient = getQueryClient();
 			queryClient.invalidateQueries({
@@ -131,7 +123,7 @@ export const getBuyCollectableParams = async ({
 			},
 		}),
 		onRampProvider,
-		successActionButtons: callbacks?.successActionButtons,
+		successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
 
@@ -160,6 +152,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
 		onRampProvider,
+		successActionButtons,
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
@@ -171,8 +164,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 
-	const onSuccess = useOnSuccess();
-	const onError = useOnError();
 	const buyAnalyticsId = useBuyAnalyticsId();
 	const { address } = useAccount();
 
@@ -196,11 +187,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						orderId,
 						quantity,
 						priceCurrencyAddress,
-						callbacks: {
-							onSuccess,
-							onError,
-							successActionButtons: buyModalProps.successActionButtons,
-						},
+						successActionButtons,
 						customCreditCardProviderCallback,
 						skipNativeBalanceCheck,
 						nativeTokenAddress,

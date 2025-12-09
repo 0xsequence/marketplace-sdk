@@ -1,12 +1,6 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import {
-	type Address,
-	encodeFunctionData,
-	type Hash,
-	type Hex,
-	toHex,
-} from 'viem';
+import { type Address, encodeFunctionData, type Hex, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 import { ContractType } from '../../../../../types';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
@@ -15,13 +9,11 @@ import {
 	type TransactionOnRampProvider,
 } from '../../../../_internal';
 import { useSalesContractABI } from '../../../../hooks/contracts/useSalesContractABI';
-import type { ActionButton, ModalCallbacks } from '../../_internal/types';
+import type { ActionButton } from '../../_internal/types';
 import {
 	buyModalStore,
 	useBuyAnalyticsId,
 	useBuyModalProps,
-	useOnError,
-	useOnSuccess,
 	useQuantity,
 } from '../store';
 
@@ -64,7 +56,6 @@ interface GetERC1155SalePaymentParams {
 	quantity: number;
 	price: bigint;
 	currencyAddress: string;
-	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
@@ -84,7 +75,6 @@ export const getERC1155SalePaymentParams = async ({
 	quantity,
 	price,
 	currencyAddress,
-	callbacks,
 	customCreditCardProviderCallback,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
@@ -131,12 +121,6 @@ export const getERC1155SalePaymentParams = async ({
 			collectionAddress,
 			recipientAddress: address,
 			creditCardProviders,
-			onSuccess: (txHash?: string) => {
-				if (txHash) {
-					callbacks?.onSuccess?.({ hash: txHash as Hash });
-				}
-			},
-			onError: callbacks?.onError,
 			onClose: () => {
 				const queryClient = getQueryClient();
 				queryClient.invalidateQueries({
@@ -196,8 +180,6 @@ export const useERC1155SalePaymentParams = (
 
 	const { address } = useAccount();
 	const quantity = useQuantity();
-	const onSuccess = useOnSuccess();
-	const onError = useOnError();
 	const buyModalProps = useBuyModalProps();
 	const saleAnalyticsId = useBuyAnalyticsId();
 
@@ -238,10 +220,6 @@ export const useERC1155SalePaymentParams = (
 							quantity,
 							price: BigInt(price ?? '0'),
 							currencyAddress,
-							callbacks: {
-								onSuccess,
-								onError,
-							},
 							customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
 							skipNativeBalanceCheck: false, // Can be added as a prop if needed
 							nativeTokenAddress: undefined, // Can be added as a prop if needed

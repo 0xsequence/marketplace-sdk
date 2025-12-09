@@ -6,7 +6,6 @@ import {
 	type MarketplaceKind,
 	StepType,
 } from '../../_internal';
-import type { ModalCallbacks } from '../../ui/modals/_internal/types';
 import { waitForTransactionReceipt } from '../../utils/waitForTransactionReceipt';
 import { useConfig } from '../config/useConfig';
 import {
@@ -21,7 +20,6 @@ import { useProcessStep } from './useProcessStep';
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: Address;
 	chainId: number;
-	callbacks?: ModalCallbacks;
 	setSteps: React.Dispatch<React.SetStateAction<TransactionStep>>;
 	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
 	onError?: (error: Error) => void;
@@ -30,7 +28,6 @@ interface UseCancelTransactionStepsArgs {
 export const useCancelTransactionSteps = ({
 	collectionAddress,
 	chainId,
-	callbacks,
 	setSteps,
 	onSuccess,
 	onError,
@@ -69,11 +66,7 @@ export const useCancelTransactionSteps = ({
 
 			return steps;
 		} catch (error) {
-			if (callbacks?.onError) {
-				callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+			console.debug('onError callback not provided:', error);
 		}
 	};
 

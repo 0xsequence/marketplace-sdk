@@ -8,7 +8,7 @@ import {
 	CurrencyStatus,
 	type TransactionSteps,
 } from '../../../_internal';
-import type { BaseModalState, ModalCallbacks } from '../_internal/types';
+import type { BaseModalState } from '../_internal/types';
 
 type CreateListingState = BaseModalState & {
 	tokenId: bigint;
@@ -31,7 +31,6 @@ export type OpenCreateListingModalArgs = {
 	chainId: number;
 	tokenId: bigint;
 	orderbookKind?: OrderbookKind;
-	callbacks?: ModalCallbacks;
 };
 
 type Actions = {
@@ -91,7 +90,6 @@ const initialState: CreateListingState = {
 	quantity: 1n,
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
-	callbacks: undefined as ModalCallbacks | undefined,
 	steps: { ...steps },
 	listingIsBeingProcessed: false,
 };
@@ -102,7 +100,6 @@ const actions: Actions = {
 		createListingModal$.chainId.set(args.chainId);
 		createListingModal$.tokenId.set(args.tokenId);
 		createListingModal$.orderbookKind.set(args.orderbookKind);
-		createListingModal$.callbacks.set(args.callbacks);
 		createListingModal$.isOpen.set(true);
 	},
 	close: () => {

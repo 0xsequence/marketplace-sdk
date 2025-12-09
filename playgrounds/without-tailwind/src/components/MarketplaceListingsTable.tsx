@@ -27,14 +27,7 @@ export function MarketplaceListingsTable({
 }: {
 	collection: Collection;
 }) {
-	const { show: openBuyModal } = useBuyModal({
-		onSuccess: ({ hash }) => {
-			console.log('Purchase successful', `Transaction: ${hash}`);
-		},
-		onError: (error) => {
-			console.error('Purchase failed', error.message);
-		},
-	});
+	const { show: openBuyModal } = useBuyModal();
 
 	const collectionAddress = collection.address as Address;
 	const chainId = collection.chainId;

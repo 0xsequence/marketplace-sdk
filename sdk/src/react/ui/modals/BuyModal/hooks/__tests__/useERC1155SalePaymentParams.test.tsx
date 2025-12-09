@@ -20,8 +20,6 @@ vi.mock('wagmi', async () => {
 
 // Mock store hooks
 vi.mock('../../store', () => ({
-	useOnSuccess: vi.fn(() => vi.fn()),
-	useOnError: vi.fn(() => vi.fn()),
 	useQuantity: vi.fn(() => 1),
 	useBuyModalProps: vi.fn(() => ({
 		chainId: 1,
@@ -71,10 +69,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 			quantity: 1,
 			price: BigInt(mockPrice),
 			currencyAddress: mockCurrencyAddress,
-			callbacks: {
-				onSuccess: vi.fn(),
-				onError: vi.fn(),
-			},
 			customCreditCardProviderCallback: undefined,
 			skipNativeBalanceCheck: false,
 			nativeTokenAddress: undefined,
@@ -107,8 +101,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 		expect(result.txData).toBeDefined();
 		expect(typeof result.txData).toBe('string');
 		expect(result.txData).toMatch(/^0x/);
-		expect(result.onSuccess).toBeInstanceOf(Function);
-		expect(result.onError).toBe(params.callbacks.onError);
 		expect(result.onClose).toBeInstanceOf(Function);
 	});
 
@@ -122,7 +114,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 			quantity: 1,
 			price: BigInt(mockPrice),
 			currencyAddress: mockCurrencyAddress,
-			callbacks: undefined,
 			customCreditCardProviderCallback: undefined,
 			skipNativeBalanceCheck: false,
 			nativeTokenAddress: undefined,
@@ -148,7 +139,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 			quantity: 1,
 			price: BigInt(mockPrice),
 			currencyAddress: mockCurrencyAddress,
-			callbacks: undefined,
 			customCreditCardProviderCallback: customCallback,
 			skipNativeBalanceCheck: false,
 			nativeTokenAddress: undefined,
@@ -174,7 +164,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 			quantity: 5,
 			price: BigInt(mockPrice),
 			currencyAddress: mockCurrencyAddress,
-			callbacks: undefined,
 			customCreditCardProviderCallback: undefined,
 			skipNativeBalanceCheck: false,
 			nativeTokenAddress: undefined,
@@ -200,7 +189,6 @@ describe.skip('getERC1155SalePaymentParams', () => {
 			quantity: 3,
 			price: BigInt(mockPrice),
 			currencyAddress: mockCurrencyAddress,
-			callbacks: undefined,
 			customCreditCardProviderCallback: undefined,
 			skipNativeBalanceCheck: false,
 			nativeTokenAddress: undefined,
