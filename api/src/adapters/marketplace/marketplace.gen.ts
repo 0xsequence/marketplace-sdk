@@ -1198,7 +1198,7 @@ export interface GenerateBuyTransactionRequest {
 }
 
 export interface GenerateBuyTransactionResponse {
-  resp: GenerateBuySellTransactionResponse
+  resp?: GenerateBuySellTransactionResponse
   steps: Array<Step>
 }
 
@@ -1214,7 +1214,7 @@ export interface GenerateSellTransactionRequest {
 }
 
 export interface GenerateSellTransactionResponse {
-  resp: GenerateBuySellTransactionResponse
+  resp?: GenerateBuySellTransactionResponse
   steps: Array<Step>
 }
 

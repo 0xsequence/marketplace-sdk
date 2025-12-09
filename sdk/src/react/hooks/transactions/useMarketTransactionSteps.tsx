@@ -78,7 +78,7 @@ export function useMarketTransactionSteps({
 
 			return {
 				steps: response.steps,
-				canBeUsedWithTrails: response.resp.canBeUsedWithTrails,
+				canBeUsedWithTrails: response.resp?.canBeUsedWithTrails ?? false,
 			};
 		},
 		enabled: enabled && !!buyer,
