@@ -11,7 +11,6 @@ import { BuyModal } from '../ui/modals/BuyModal/components/Modal';
 import { CreateListingModal } from '../ui/modals/CreateListingModal/Modal';
 import { MakeOfferModal } from '../ui/modals/MakeOfferModal/Modal';
 import { SellModal } from '../ui/modals/SellModal/Modal';
-import SuccessfulPurchaseModal from '../ui/modals/SuccessfulPurchaseModal';
 import { TransferModal } from '../ui/modals/TransferModal';
 import { ShadowRoot } from './shadow-root';
 
@@ -41,7 +40,6 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 				<SequenceCheckoutProvider>
 					<BuyModal />
 				</SequenceCheckoutProvider>
-				<SuccessfulPurchaseModal />
 				{/* Helper modals */}
 				<SwitchChainErrorModal />
 				<TransactionStatusModal />

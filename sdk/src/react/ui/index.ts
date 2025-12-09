@@ -26,5 +26,4 @@ export {
 	useSellModal,
 	useSellModalContext,
 } from './modals/SellModal';
-export { useSuccessfulPurchaseModal } from './modals/SuccessfulPurchaseModal';
 export { useTransferModal } from './modals/TransferModal';
