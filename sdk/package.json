@@ -60,12 +60,12 @@
 		}
 	},
 	"dependencies": {
+		"0xtrails": "^0.8.5",
 		"@0xsequence/api-client": "workspace:*",
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
 		"@tailwindcss/cli": "^4.1.17",
 		"@xstate/store": "catalog:",
-		"0xtrails": "^0.8.4",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
