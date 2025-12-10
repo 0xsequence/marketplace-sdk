@@ -21,6 +21,7 @@ export const createWagmiConfig = (
 		marketplaceConfig,
 		sdkConfig,
 		walletType,
+		ssr,
 	});
 
 	const multiInjectedProviderDiscovery =

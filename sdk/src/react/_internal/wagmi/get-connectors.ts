@@ -7,16 +7,16 @@ import {
 	email,
 	emailWaas,
 	facebook,
-	getConnectWallets,
 	google,
 	googleWaas,
 	metaMask,
-	type SequenceOptions,
 	sequence,
 	twitch,
-	type Wallet,
 	walletConnect,
+	type SequenceOptions,
+	type Wallet,
 } from '@0xsequence/connect';
+import { getConnectWallets } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
@@ -27,12 +27,14 @@ export function getConnectors({
 	marketplaceConfig,
 	sdkConfig,
 	walletType,
+	ssr,
 }: {
 	marketplaceConfig: MarketplaceConfig;
 	sdkConfig: SdkConfig;
 	walletType: MarketplaceWalletType;
+	ssr?: boolean;
 }): CreateConnectorFn[] {
-	const connectors = commonConnectors(marketplaceConfig, sdkConfig);
+	const connectors = commonConnectors(marketplaceConfig, sdkConfig, ssr);
 
 	if (walletType === MarketplaceWalletType.UNIVERSAL) {
 		connectors.push(...getUniversalWalletConfigs(sdkConfig, marketplaceConfig));
@@ -50,7 +52,8 @@ export function getConnectors({
 function commonConnectors(
 	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
-) {
+	ssr?: boolean,
+): Wallet[] {
 	const wallets: Wallet[] = [];
 	const { title: appName } = marketplaceConfig.settings;
 	const walletOptions = marketplaceConfig.settings.walletOptions;
@@ -64,9 +67,19 @@ function commonConnectors(
 		);
 	}
 
+	// Skip WalletConnect during SSR to avoid localStorage errors
+	// WalletConnect accesses localStorage at module evaluation time, causing:
+	// "Failed to create a CookieStore: `localStorage` is not available" in Edge runtime
+	// See: https://github.com/WalletConnect/walletconnect-monorepo/issues/6841 (closed as "not planned")
+	//
+	// This is safe because:
+	// 1. SSR config is only used for initial hydration state (cookie-based reconnection)
+	// 2. Client-side config (ssr=false) recreates the full connector list WITH WalletConnect
+	// 3. WalletConnect connections only happen client-side anyway
 	if (
 		walletConnectProjectId &&
-		walletOptions.connectors.includes('walletconnect')
+		walletOptions.connectors.includes('walletconnect') &&
+		!ssr
 	) {
 		wallets.push(
 			walletConnect({
