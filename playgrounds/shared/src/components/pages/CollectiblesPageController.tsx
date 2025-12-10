@@ -69,10 +69,10 @@ export function CollectiblesPageController({
 		});
 	const ERC721SalePrice = {
 		amount:
-			primarySaleItems?.pages[0].primarySaleItems[0].primarySaleItem
-				.priceAmount,
+			primarySaleItems?.pages[0].primarySaleItems[0]?.primarySaleItem
+				?.priceAmount,
 		currencyAddress: primarySaleItems?.pages[0].primarySaleItems[0]
-			.primarySaleItem.currencyAddress as Address,
+			?.primarySaleItem?.currencyAddress as Address,
 	};
 
 	const saleItemIds = isShop

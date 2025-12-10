@@ -22,7 +22,7 @@ export default defineConfig([
 			'!src/**/*.test.*',
 		],
 		dts: {
-			resolve: true
+			resolve: true,
 		},
 		platform: 'neutral',
 		sourcemap: true,
