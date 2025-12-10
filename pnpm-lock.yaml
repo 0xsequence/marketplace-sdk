@@ -48,9 +48,6 @@ catalogs:
     '@google/model-viewer':
       specifier: ^4.1.0
       version: 4.1.0
-    '@legendapp/state':
-      specifier: 3.0.0-beta.32
-      version: 3.0.0-beta.32
     '@tanstack/react-query':
       specifier: ^5.90.9
       version: 5.90.10
@@ -190,9 +187,6 @@ importers:
       '@dynamic-labs/wagmi-connector':
         specifier: ^4.45.0
         version: 4.46.3(5b61a16a11c6f25874c31fd598846480)
-      '@legendapp/state':
-        specifier: 'catalog:'
-        version: 3.0.0-beta.32(react@19.2.0)
       '@tailwindcss/vite':
         specifier: ^4.1.17
         version: 4.1.17(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -393,9 +387,6 @@ importers:
       '@0xsequence/network':
         specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@legendapp/state':
-        specifier: 'catalog:'
-        version: 3.0.0-beta.32(react@19.2.0)
       '@tailwindcss/vite':
         specifier: ^4.1.17
         version: 4.1.17(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -502,9 +493,6 @@ importers:
       '@0xsequence/network':
         specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@legendapp/state':
-        specifier: 'catalog:'
-        version: 3.0.0-beta.32(react@19.2.0)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -681,9 +669,6 @@ importers:
       '@google/model-viewer':
         specifier: 'catalog:'
         version: 4.1.0(three@0.172.0)
-      '@legendapp/state':
-        specifier: 'catalog:'
-        version: 3.0.0-beta.32(react@19.2.0)
       '@tailwindcss/cli':
         specifier: ^4.1.17
         version: 4.1.17
@@ -2526,14 +2511,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@legendapp/state@3.0.0-beta.32':
-    resolution: {integrity: sha512-rQ9q8qAQ1/llNc5+8QG3besV9NoKL/4Md7pDwoS/Fvvag4cmRlzoSsXHPrgT+JdzXyec7kDxvgYIf7WIEmY6dQ==}
-    peerDependencies:
-      expo-sqlite: ^15.0.0
-    peerDependenciesMeta:
-      expo-sqlite:
-        optional: true
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
@@ -9233,11 +9210,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  use-sync-external-store@1.6.0:
-    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   utf-8-validate@5.0.10:
     resolution: {integrity: sha512-Z6czzLq4u8fPOyx7TU6X3dvUZVvoJmxSQ+IcrlmagKhilxlhZgxPK6C5Jqbkw1IDUmFTM+cz9QDnnLTwDz/2gQ==}
     engines: {node: '>=6.14.2'}
@@ -12505,12 +12477,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@legendapp/state@3.0.0-beta.32(react@19.2.0)':
-    dependencies:
-      use-sync-external-store: 1.6.0(react@19.2.0)
-    transitivePeerDependencies:
-      - react
 
   '@lit-labs/ssr-dom-shim@1.4.0': {}
 
@@ -21978,10 +21944,6 @@ snapshots:
       react: 19.2.0
 
   use-sync-external-store@1.4.0(react@19.2.0):
-    dependencies:
-      react: 19.2.0
-
-  use-sync-external-store@1.6.0(react@19.2.0):
     dependencies:
       react: 19.2.0
 

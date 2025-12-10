@@ -1,6 +1,7 @@
+'use client';
+
 import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { ThemeProvider } from '@0xsequence/design-system-v2';
-import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
 //import { marketplaceApiURL } from '../_internal';
 import { useConfig } from '../hooks';
@@ -17,7 +18,7 @@ interface ModalProviderProps {
 	children?: ReactNode;
 }
 
-export const ModalProvider = observer(({ children }: ModalProviderProps) => {
+export const ModalProvider = ({ children }: ModalProviderProps) => {
 	const sdkConfig = useConfig();
 	const { shadowDom, experimentalShadowDomCssOverride } = sdkConfig;
 
@@ -47,4 +48,4 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 			</ThemeProvider>
 		</>
 	);
-});
+};

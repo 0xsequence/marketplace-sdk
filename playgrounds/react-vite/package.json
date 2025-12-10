@@ -22,7 +22,6 @@
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
-		"@legendapp/state": "catalog:",
 		"@tailwindcss/vite": "^4.1.17",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",

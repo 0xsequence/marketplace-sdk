@@ -25,7 +25,6 @@
 		"@dynamic-labs/ethereum": "^4.45.0",
 		"@dynamic-labs/sdk-react-core": "^4.45.0",
 		"@dynamic-labs/wagmi-connector": "^4.45.0",
-		"@legendapp/state": "catalog:",
 		"@tailwindcss/vite": "^4.1.17",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",

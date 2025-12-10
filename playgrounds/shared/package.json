@@ -13,7 +13,6 @@
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
-		"@legendapp/state": "catalog:",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"@xstate/store": "^3.2.1",
