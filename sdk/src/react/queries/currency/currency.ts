@@ -1,10 +1,11 @@
-import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import {
+	buildQueryOptions,
 	type Currency,
 	getMarketplaceClient,
 	getQueryClient,
 	type SdkQueryParams,
+	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
 
@@ -63,33 +64,17 @@ export function getCurrencyQueryKey(params: CurrencyQueryOptions) {
 	return ['currency', 'currency', apiArgs] as const;
 }
 
-export function currencyQueryOptions(params: CurrencyQueryOptions) {
-	const enabled = Boolean(
-		params.chainId &&
-			params.currencyAddress &&
-			params.config &&
-			(params.query?.enabled ?? true),
+export function currencyQueryOptions(
+	params: WithOptionalParams<
+		WithRequired<CurrencyQueryOptions, 'chainId' | 'currencyAddress' | 'config'>
+	>,
+) {
+	return buildQueryOptions(
+		{
+			getQueryKey: getCurrencyQueryKey,
+			requiredParams: ['chainId', 'currencyAddress', 'config'] as const,
+			fetcher: fetchCurrency,
+		},
+		params,
 	);
-
-	const queryFn =
-		params.chainId && params.currencyAddress && params.config
-			? () => {
-					const requiredParams = params as WithRequired<
-						CurrencyQueryOptions,
-						'chainId' | 'currencyAddress' | 'config'
-					>;
-					return fetchCurrency({
-						chainId: requiredParams.chainId,
-						currencyAddress: requiredParams.currencyAddress,
-						config: requiredParams.config,
-					});
-				}
-			: skipToken;
-
-	return queryOptions({
-		queryKey: getCurrencyQueryKey(params),
-		queryFn,
-		...params.query,
-		enabled,
-	});
 }
