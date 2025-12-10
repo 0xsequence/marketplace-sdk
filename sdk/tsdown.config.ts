@@ -21,10 +21,13 @@ export default defineConfig([
 			'!src/**/__tests__/**',
 			'!src/**/*.test.*',
 		],
-		dts: true,
+		dts: {
+			resolve: true
+		},
 		platform: 'neutral',
 		sourcemap: true,
 		format: ['esm'],
+		noExternal: ['@0xsequence/api-client'],
 		outDir: 'dist',
 		clean: true,
 		hash: false,

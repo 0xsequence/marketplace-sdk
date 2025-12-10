@@ -5,31 +5,32 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"types": "./src/index.ts",
-			"default": "./src/index.ts"
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
 		},
 		"./types": {
-			"types": "./src/types/index.ts",
-			"default": "./src/types/index.ts"
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/types/index.js"
 		},
 		"./mocks/metadata": {
-			"types": "./src/__mocks__/metadata.msw.ts",
-			"default": "./src/__mocks__/metadata.msw.ts"
+			"types": "./dist/__mocks__/metadata.msw.d.ts",
+			"default": "./dist/__mocks__/metadata.msw.js"
 		},
 		"./mocks/indexer": {
-			"types": "./src/__mocks__/indexer.msw.ts",
-			"default": "./src/__mocks__/indexer.msw.ts"
+			"types": "./dist/__mocks__/indexer.msw.d.ts",
+			"default": "./dist/__mocks__/indexer.msw.js"
 		},
 		"./mocks/builder": {
-			"types": "./src/__mocks__/builder.msw.ts",
-			"default": "./src/__mocks__/builder.msw.ts"
+			"types": "./dist/__mocks__/builder.msw.d.ts",
+			"default": "./dist/__mocks__/builder.msw.js"
 		},
 		"./mocks/marketplace": {
-			"types": "./src/__mocks__/marketplace.msw.ts",
-			"default": "./src/__mocks__/marketplace.msw.ts"
+			"types": "./dist/__mocks__/marketplace.msw.d.ts",
+			"default": "./dist/__mocks__/marketplace.msw.js"
 		}
 	},
 	"scripts": {
+		"build": "tsdown",
 		"check": "tsc --noEmit",
 		"lint": "biome lint --write .",
 		"format": "biome format --write ."
@@ -45,6 +46,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"msw": "^2.12.1",
+		"tsdown": "^0.16.4",
 		"typescript": "catalog:"
 	}
 }
