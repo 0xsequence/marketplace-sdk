@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    0xsequence:
+      specifier: ^2.3.38
+      version: 2.3.38
     '@0xsequence/api':
       specifier: ^2.3.38
       version: 2.3.38
@@ -30,12 +33,21 @@ catalogs:
     '@0xsequence/network':
       specifier: ^2.3.38
       version: 2.3.38
+    '@0xsequence/waas':
+      specifier: ^2.3.38
+      version: 2.3.38
     '@0xsequence/wallet-widget':
       specifier: ^5.4.8
       version: 5.4.8
     '@biomejs/biome':
       specifier: ^2.3.5
       version: 2.3.7
+    '@changesets/cli':
+      specifier: ^2.29.7
+      version: 2.29.7
+    '@google/model-viewer':
+      specifier: ^4.1.0
+      version: 4.1.0
     '@tanstack/react-query':
       specifier: ^5.90.9
       version: 5.90.10
@@ -48,6 +60,9 @@ catalogs:
     '@types/react-dom':
       specifier: ^19.2.3
       version: 19.2.3
+    '@xstate/store':
+      specifier: ^3.11.2
+      version: 3.11.2
     date-fns:
       specifier: ^4.1.0
       version: 4.1.0
@@ -60,6 +75,9 @@ catalogs:
     react:
       specifier: ^19.2.0
       version: 19.2.0
+    react-day-picker:
+      specifier: ^9.11.1
+      version: 9.11.1
     react-dom:
       specifier: ^19.2.0
       version: 19.2.0
@@ -610,58 +628,58 @@ importers:
   sdk:
     dependencies:
       0xsequence:
-        specifier: ^2.3.38
+        specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       0xtrails:
         specifier: ^0.8.5
         version: 0.8.5(0xsequence@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@emotion/is-prop-valid@1.4.0)(@react-oauth/google@0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(wagmi@2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(zod@4.1.12))(zod@4.1.12)
       '@0xsequence/api':
-        specifier: ^2.3.38
+        specifier: 'catalog:'
         version: 2.3.38
       '@0xsequence/api-client':
         specifier: workspace:*
         version: link:../api
       '@0xsequence/checkout':
-        specifier: ^5.4.8
-        version: 5.4.8(acb11d0a344ea42ddaa82e9412802f22)
+        specifier: 'catalog:'
+        version: 5.4.8(773a4cc0242485bfe6e2553578a8b072)
       '@0xsequence/connect':
-        specifier: ^5.4.8
-        version: 5.4.8(ecd782acf883228d1f91fe3d87f94d17)
+        specifier: 'catalog:'
+        version: 5.4.8(e679d04123fe4370a130485840ccd481)
       '@0xsequence/design-system':
-        specifier: ^3.1.7
+        specifier: 'catalog:'
         version: 3.1.7(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-hook-form@7.66.0(react@19.2.0))(react@19.2.0)
       '@0xsequence/design-system-v2':
         specifier: npm:@0xsequence/design-system@2.1.11
         version: '@0xsequence/design-system@2.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)'
       '@0xsequence/indexer':
-        specifier: ^2.3.38
-        version: 2.3.38
+        specifier: 'catalog:'
+        version: 3.0.0-beta.4
       '@0xsequence/indexer-v2':
         specifier: npm:@0xsequence/indexer@2.3.38
         version: '@0xsequence/indexer@2.3.38'
       '@0xsequence/metadata':
-        specifier: ^2.3.38
+        specifier: 'catalog:'
         version: 2.3.38
       '@0xsequence/network':
-        specifier: ^2.3.38
+        specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/waas':
-        specifier: ^2.3.38
+        specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@databeat/tracker':
         specifier: ^0.9.3
         version: 0.9.3
       '@google/model-viewer':
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0(three@0.172.0)
       '@tailwindcss/cli':
         specifier: ^4.1.17
         version: 4.1.17
       '@tanstack/react-query':
-        specifier: ^5.90.9
+        specifier: 'catalog:'
         version: 5.90.10(react@19.2.0)
       '@xstate/store':
-        specifier: ^3.11.2
+        specifier: 'catalog:'
         version: 3.11.2(react@19.2.0)
       class-variance-authority:
         specifier: ^0.7.1
@@ -670,38 +688,38 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       date-fns:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       dnum:
-        specifier: ^2.15.0
+        specifier: 'catalog:'
         version: 2.15.0
       nuqs:
-        specifier: ^2.7.3
+        specifier: 'catalog:'
         version: 2.7.3(next@15.5.6(@babel/core@7.28.5)(babel-plugin-macros@3.1.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-router@7.9.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
       react:
-        specifier: ^19.2.0
+        specifier: 'catalog:'
         version: 19.2.0
       react-day-picker:
-        specifier: ^9.11.1
+        specifier: 'catalog:'
         version: 9.11.1(react@19.2.0)
       react-dom:
-        specifier: ^19.2.0
+        specifier: 'catalog:'
         version: 19.2.0(react@19.2.0)
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
       viem:
-        specifier: ^2.41.2
+        specifier: 'catalog:'
         version: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
       wagmi:
-        specifier: 2.18.0
+        specifier: 'catalog:'
         version: 2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(zod@4.1.12)
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.3.5
+        specifier: 'catalog:'
         version: 2.3.7
       '@changesets/cli':
-        specifier: ^2.29.7
+        specifier: 'catalog:'
         version: 2.29.7(@types/node@24.10.1)
       '@eslint/js':
         specifier: ^9.39.1
@@ -728,10 +746,10 @@ importers:
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@types/react':
-        specifier: ^19.2.4
+        specifier: 'catalog:'
         version: 19.2.6
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.6)
       '@vitest/browser':
         specifier: 4.0.8
@@ -782,19 +800,19 @@ importers:
         specifier: ^9.1.16
         version: 9.1.16(@testing-library/dom@10.4.1)(bufferutil@4.0.9)(msw@2.12.1(@types/node@24.10.1)(typescript@5.9.3))(prettier@2.8.8)(utf-8-validate@5.0.10)(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2))
       tailwindcss:
-        specifier: ^4.1.17
+        specifier: 'catalog:'
         version: 4.1.17
       tsdown:
         specifier: ^0.16.4
         version: 0.16.4(ms@2.1.3)(oxc-resolver@11.13.2)(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
       typescript-eslint:
         specifier: ^8.46.4
         version: 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       vite-tsconfig-paths:
-        specifier: ^5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.9.3)(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2))
       vitest:
         specifier: 4.0.8
@@ -9762,14 +9780,14 @@ snapshots:
       '@0xsequence/wallet': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  '@0xsequence/checkout@5.4.8(acb11d0a344ea42ddaa82e9412802f22)':
+  '@0xsequence/checkout@5.4.8(773a4cc0242485bfe6e2553578a8b072)':
     dependencies:
       0xsequence: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/api': 2.3.38
-      '@0xsequence/connect': 5.4.8(ecd782acf883228d1f91fe3d87f94d17)
+      '@0xsequence/connect': 5.4.8(e679d04123fe4370a130485840ccd481)
       '@0xsequence/design-system': 2.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@0xsequence/hooks': 5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
-      '@0xsequence/indexer': 2.3.38
+      '@0xsequence/hooks': 5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
+      '@0xsequence/indexer': 3.0.0-beta.4
       '@0xsequence/marketplace': 2.3.38
       '@0xsequence/metadata': 2.3.38
       '@0xsequence/network': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -9854,6 +9872,42 @@ snapshots:
       - '@types/react-dom'
       - aws-crt
 
+  '@0xsequence/connect@5.4.8(e679d04123fe4370a130485840ccd481)':
+    dependencies:
+      0xsequence: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/api': 2.3.38
+      '@0xsequence/auth': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/core': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@0xsequence/ethauth': 1.0.0(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/hooks': 5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
+      '@0xsequence/indexer': 2.3.38
+      '@0xsequence/metadata': 2.3.38
+      '@0xsequence/network': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/provider': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/utils': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@databeat/tracker': 0.9.3
+      '@react-oauth/google': 0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tailwindcss/cli': 4.1.17
+      '@tanstack/react-query': 5.90.10(react@19.2.0)
+      clsx: 2.1.1
+      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      fuse.js: 7.1.0
+      motion: 12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react: 19.2.0
+      react-apple-signin-auth: 1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react-dom: 19.2.0(react@19.2.0)
+      tailwindcss: 4.1.17
+      uuid: 10.0.0
+      viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
+      wagmi: 2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(zod@4.1.12)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/react'
+      - '@types/react-dom'
+      - aws-crt
+
   '@0xsequence/connect@5.4.8(e894cf77420fce72edc288d1799cadf3)':
     dependencies:
       0xsequence: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -9884,42 +9938,6 @@ snapshots:
       uuid: 10.0.0
       viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       wagmi: 2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76)
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/react'
-      - '@types/react-dom'
-      - aws-crt
-
-  '@0xsequence/connect@5.4.8(ecd782acf883228d1f91fe3d87f94d17)':
-    dependencies:
-      0xsequence: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/api': 2.3.38
-      '@0xsequence/auth': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/core': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(motion@12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@0xsequence/ethauth': 1.0.0(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/hooks': 5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
-      '@0xsequence/indexer': 2.3.38
-      '@0xsequence/metadata': 2.3.38
-      '@0xsequence/network': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/provider': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/utils': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/waas': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@databeat/tracker': 0.9.3
-      '@react-oauth/google': 0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@tailwindcss/cli': 4.1.17
-      '@tanstack/react-query': 5.90.10(react@19.2.0)
-      clsx: 2.1.1
-      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      fuse.js: 7.1.0
-      motion: 12.23.24(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react: 19.2.0
-      react-apple-signin-auth: 1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react-dom: 19.2.0(react@19.2.0)
-      tailwindcss: 4.1.17
-      uuid: 10.0.0
-      viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
-      wagmi: 2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.10(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(zod@4.1.12)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - '@types/react'
@@ -10015,17 +10033,6 @@ snapshots:
       react-dom: 19.2.0(react@19.2.0)
       viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
 
-  '@0xsequence/hooks@5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))':
-    dependencies:
-      '@0xsequence/api': 2.3.38
-      '@0xsequence/indexer': 2.3.38
-      '@0xsequence/metadata': 2.3.38
-      '@0xsequence/network': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@tanstack/react-query': 5.90.10(react@19.2.0)
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
-
   '@0xsequence/hooks@5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
       '@0xsequence/api': 2.3.38
@@ -10036,6 +10043,17 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+
+  '@0xsequence/hooks@5.4.8(@0xsequence/api@2.3.38)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.10(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))':
+    dependencies:
+      '@0xsequence/api': 2.3.38
+      '@0xsequence/indexer': 3.0.0-beta.4
+      '@0xsequence/metadata': 2.3.38
+      '@0xsequence/network': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@tanstack/react-query': 5.90.10(react@19.2.0)
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      viem: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12)
 
   '@0xsequence/indexer@2.3.38': {}
 
