@@ -101,12 +101,13 @@ export function ShopCardPresentation({
 
 				<div className="flex items-center gap-1">
 					{collectionType === ContractType.ERC1155 &&
-						salePrice?.amount &&
+						salePrice?.amount !== undefined &&
 						saleCurrency && (
 							<Card.Price
 								amount={salePrice.amount}
 								currency={saleCurrency}
 								className={classNames?.cardPrice}
+								type={'shop'}
 							/>
 						)}
 				</div>
@@ -117,8 +118,6 @@ export function ShopCardPresentation({
 					unlimitedSupply={unlimitedSupply}
 					className={classNames?.cardSaleDetails}
 				/>
-
-				{!salePrice?.amount && <div className="h-5 w-full" />}
 			</Card.Content>
 
 			<Card.Footer
