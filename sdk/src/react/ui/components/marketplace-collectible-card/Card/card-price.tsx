@@ -3,17 +3,22 @@
 import { cn, Text } from '@0xsequence/design-system';
 import { forwardRef } from 'react';
 import type { Currency } from '../../../../_internal';
+import type { CardType } from '../../../../ssr';
 import { PriceDisplay as BasePriceDisplay } from '../_internals/PriceDisplay';
 
 export interface CardPriceProps extends React.HTMLAttributes<HTMLDivElement> {
 	amount?: bigint;
 	currency?: Currency;
 	showCurrencyIcon?: boolean;
+	type: CardType;
 }
 
 export const CardPrice = forwardRef<HTMLDivElement, CardPriceProps>(
-	({ amount, currency, showCurrencyIcon = true, className, ...props }, ref) => {
-		if (!amount || !currency) {
+	(
+		{ amount, currency, showCurrencyIcon = true, type, className, ...props },
+		ref,
+	) => {
+		if (type === 'market' && (!amount || !currency)) {
 			return (
 				<div ref={ref} {...props}>
 					<Text className="text-left font-body font-bold text-sm text-text-50">

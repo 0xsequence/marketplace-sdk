@@ -44,7 +44,7 @@ export const NonTradableInventoryCard = forwardRef<
 						{collectibleMetadata.name || 'Untitled'}
 					</Card.Title>
 
-					<Card.Price className={classNames?.cardPrice} />
+					<Card.Price className={classNames?.cardPrice} type={'market'} />
 
 					<Card.Badge
 						type={collectionType as ContractType}
