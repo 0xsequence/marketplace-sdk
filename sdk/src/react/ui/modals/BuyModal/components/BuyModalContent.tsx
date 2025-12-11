@@ -20,14 +20,17 @@ export const BuyModalContent = () => {
 		collection,
 		checkoutMode,
 		formattedAmount,
+		salePrice,
+		isShop,
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
 
 	if (
-		typeof checkoutMode === 'object' &&
-		checkoutMode.mode === 'sequence-checkout'
+		(isShop && salePrice?.amount === 0n) ||
+		(typeof checkoutMode === 'object' &&
+			checkoutMode.mode === 'sequence-checkout')
 	) {
 		return (
 			<SequenceCheckout
