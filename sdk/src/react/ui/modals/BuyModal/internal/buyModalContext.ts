@@ -34,6 +34,7 @@ export function useBuyModalContext() {
 		marketPriceAmount,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
+		isShop,
 	} = useBuyModalData();
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(modalProps.chainId, config);
@@ -135,6 +136,7 @@ export function useBuyModalContext() {
 		salePrice,
 		marketPriceAmount,
 		isMarket,
+		isShop,
 		buyStep,
 		isLoading,
 		checkoutMode,
