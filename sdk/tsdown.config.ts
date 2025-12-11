@@ -22,12 +22,13 @@ export default defineConfig([
 			'!src/**/*.test.*',
 		],
 		dts: {
-			resolve: true
+			resolve: true,
 		},
 		platform: 'neutral',
 		sourcemap: true,
 		format: ['esm'],
 		noExternal: ['@0xsequence/api-client'],
+		external: ['wagmi', '@tanstack/react-query'],
 		outDir: 'dist',
 		clean: true,
 		hash: false,
