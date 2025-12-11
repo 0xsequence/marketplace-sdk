@@ -43,7 +43,7 @@ export function useMarketTransactionSteps({
 		[config],
 	);
 
-	const useWithTrails = config.checkoutMode === 'trails' ? true : false;
+	const useWithTrails = config.checkoutMode === 'trails';
 
 	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
 		queryKey: [
