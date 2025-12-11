@@ -139,6 +139,7 @@ export function MarketCardPresentation({
 						amount={lowestListing?.priceAmount}
 						currency={currency}
 						className={classNames?.cardPrice}
+						type={'market'}
 					/>
 				</div>
 
