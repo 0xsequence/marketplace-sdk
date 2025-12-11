@@ -7,16 +7,16 @@ import {
 	email,
 	emailWaas,
 	facebook,
+	getConnectWallets,
 	google,
 	googleWaas,
 	metaMask,
+	type SequenceOptions,
 	sequence,
 	twitch,
-	walletConnect,
-	type SequenceOptions,
 	type Wallet,
+	walletConnect,
 } from '@0xsequence/connect';
-import { getConnectWallets } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';

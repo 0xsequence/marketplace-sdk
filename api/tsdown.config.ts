@@ -1,11 +1,7 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-	entry: [
-		'src/index.ts',
-		'src/types/index.ts',
-		'src/__mocks__/**/*.ts',
-	],
+	entry: ['src/index.ts', 'src/types/index.ts', 'src/__mocks__/**/*.ts'],
 	dts: true,
 	platform: 'neutral',
 	sourcemap: true,
