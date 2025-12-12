@@ -66,7 +66,8 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
+				{!isLoading &&
+					(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
 					steps && (
 						<CryptoPaymentModal
 							chainId={modalProps.chainId}
@@ -75,7 +76,8 @@ export const BuyModalContent = () => {
 						/>
 					)}
 
-				{checkoutMode === 'trails' &&
+				{!isLoading &&
+					checkoutMode === 'trails' &&
 					buyStep &&
 					!(isShop && salePrice?.amount === 0n) && (
 						<div className="w-full">
