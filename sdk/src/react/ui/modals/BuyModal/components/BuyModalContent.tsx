@@ -68,7 +68,8 @@ export const BuyModalContent = () => {
 
 				{!isLoading &&
 					(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
-					steps && (
+					steps &&
+					steps.length > 0 && (
 						<CryptoPaymentModal
 							chainId={modalProps.chainId}
 							steps={steps}
