@@ -97,6 +97,21 @@ export const getTrailsApiUrl = (config: SdkConfig) => {
 	return overrides?.url || trailsApiURL(overrides?.env || 'production');
 };
 
+export const getSequenceIndexerUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.indexer;
+	return overrides?.url;
+};
+
+export const getSequenceNodeGatewayUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.nodeGateway;
+	return overrides?.url;
+};
+
+export const getSequenceApiUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.sequenceApi;
+	return overrides?.url || sequenceApiUrl(overrides?.env || 'production');
+};
+
 const getPrefix = (env: ApiConfig['env']) => {
 	switch (env) {
 		case 'development':

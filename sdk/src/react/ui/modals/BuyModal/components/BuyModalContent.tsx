@@ -3,7 +3,12 @@
 import type { ContractType } from '@0xsequence/api-client';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
-import { getTrailsApiUrl } from '../../../../_internal/api/services';
+import {
+	getSequenceApiUrl,
+	getSequenceIndexerUrl,
+	getSequenceNodeGatewayUrl,
+	getTrailsApiUrl,
+} from '../../../../_internal/api/services';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
@@ -29,6 +34,9 @@ export const BuyModalContent = () => {
 	} = useBuyModalContext();
 
 	const trailsApiUrl = getTrailsApiUrl(config);
+	const sequenceIndexerUrl = getSequenceIndexerUrl(config);
+	const sequenceNodeGatewayUrl = getSequenceNodeGatewayUrl(config);
+	const sequenceApiUrl = getSequenceApiUrl(config);
 
 	if (
 		typeof checkoutMode === 'object' &&
@@ -88,6 +96,10 @@ export const BuyModalContent = () => {
 							<TrailsWidget
 								apiKey={config.projectAccessKey}
 								trailsApiUrl={trailsApiUrl}
+								sequenceIndexerUrl={sequenceIndexerUrl}
+								sequenceNodeGatewayUrl={sequenceNodeGatewayUrl}
+								sequenceApiUrl={sequenceApiUrl}
+								walletConnectProjectId={config.walletConnectProjectId}
 								toChainId={modalProps.chainId}
 								toAddress={buyStep.to}
 								toToken={currencyAddress}
