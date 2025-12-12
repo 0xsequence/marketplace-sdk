@@ -18,7 +18,7 @@ const SERVICES = {
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	builderRpcApi: 'https://${prefix}api.sequence.build',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
-	trailsApi: 'https://${prefix}trails-api.sequence.app',
+	trailsApi: 'https://${prefix}trails-api.sequence${postfix}.app',
 };
 
 type ChainNameOrId = string | number;
@@ -51,7 +51,8 @@ export const sequenceApiUrl = (env: Env = 'production') => {
 
 const trailsApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	return stringTemplate(SERVICES.trailsApi, { prefix });
+	const postfix = getPostfix(env);
+	return stringTemplate(SERVICES.trailsApi, { prefix, postfix });
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
@@ -105,5 +106,16 @@ const getPrefix = (env: ApiConfig['env']) => {
 			return '';
 		case 'next':
 			return 'next-';
+	}
+};
+
+const getPostfix = (env: ApiConfig['env']) => {
+	switch (env) {
+		case 'development':
+			return '-dev';
+		case 'production':
+			return '';
+		case 'next':
+			return '-next';
 	}
 };
