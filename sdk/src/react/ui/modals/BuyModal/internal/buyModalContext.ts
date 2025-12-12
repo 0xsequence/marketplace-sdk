@@ -34,6 +34,7 @@ export function useBuyModalContext() {
 		marketPriceAmount,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
+		isShop,
 	} = useBuyModalData();
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(modalProps.chainId, config);
@@ -61,6 +62,9 @@ export function useBuyModalContext() {
 	) {
 		// Fallback to crypto when order doesn't support trails
 		checkoutMode = 'crypto';
+	} else if (checkoutModeConfig === 'trails' && !isChainSupported) {
+		// Fallback to crypto when chain is not supported by trails
+		checkoutMode = 'crypto';
 	} else if (
 		typeof checkoutModeConfig === 'object' &&
 		checkoutModeConfig.mode === 'sequence-checkout'
@@ -69,7 +73,7 @@ export function useBuyModalContext() {
 			mode: 'sequence-checkout',
 			options: checkoutModeConfig.options,
 		};
-	} else if (checkoutModeConfig === 'crypto' && isChainSupported) {
+	} else if (checkoutModeConfig === 'crypto') {
 		checkoutMode = 'crypto';
 	} else {
 		checkoutMode = undefined;
@@ -135,6 +139,7 @@ export function useBuyModalContext() {
 		salePrice,
 		marketPriceAmount,
 		isMarket,
+		isShop,
 		buyStep,
 		isLoading,
 		checkoutMode,

@@ -11,8 +11,8 @@ import type { Currency } from '../../../../_internal';
 import { formatPriceData } from '../utils';
 
 interface PriceDisplayProps {
-	amount: bigint;
-	currency: Currency;
+	amount: bigint | undefined;
+	currency: Currency | undefined;
 	showCurrencyIcon?: boolean;
 	className?: string;
 }
@@ -63,9 +63,10 @@ export const PriceDisplay = ({
 	showCurrencyIcon = true,
 	className,
 }: PriceDisplayProps) => {
+	const isFree = amount === 0n;
 	return (
 		<div className="flex items-center gap-1">
-			{showCurrencyIcon && currency.imageUrl && (
+			{showCurrencyIcon && currency?.imageUrl && (
 				<Image
 					alt={currency.symbol}
 					className="h-3 w-3"
@@ -76,7 +77,11 @@ export const PriceDisplay = ({
 				/>
 			)}
 
-			{formatPrice(amount, currency, className)}
+			{isFree ? (
+				<Text className="font-bold text-sm text-text-100">Free</Text>
+			) : (
+				formatPrice(amount!, currency!, className)
+			)}
 		</div>
 	);
 };
