@@ -43,6 +43,7 @@
 	},
 	"prepare": "lefthook install",
 	"dependencies": {
-		"@babel/core": "^7.28.5"
+		"@babel/core": "^7.28.5",
+		"@tanstack/react-query": "5.90.9"
 	}
 }
