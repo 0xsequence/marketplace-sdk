@@ -1,0 +1,42 @@
+import { n as SEQUENCE_MARKET_V1_ADDRESS, r as SEQUENCE_MARKET_V2_ADDRESS, t as DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from "../../consts.js";
+import { C as TransactionCrypto, S as StepType, T as WalletKind, _ as OrderSide, b as PropertyType, c as FilterCondition, d as CollectionStatus, m as MarketplaceKind, t as ContractType, v as OrderStatus, x as SortOrder, y as OrderbookKind } from "../../dist.js";
+import { t as BuilderAPI } from "../../builder-api.js";
+import { t as networkToWagmiChain } from "../../networkconfigToWagmiChain.js";
+import "../../transaction.js";
+import { t as createWagmiConfig } from "../../create-config.js";
+import { a as TransactionType, i as NATIVE_TOKEN_ADDRESS, n as isMarketCollection, r as isShopCollection, t as CollectibleCardAction } from "../../types.js";
+import { n as SequenceMarketplaceV1_ABI, r as EIP2981_ABI, t as SequenceMarketplaceV2_ABI } from "../../marketplace.js";
+import { i as ERC721_SALE_ABI_V0, n as ERC1155_SALES_CONTRACT_ABI_V0, r as ERC721_SALE_ABI_V1, t as ERC1155_SALES_CONTRACT_ABI_V1 } from "../../primary-sale.js";
+import { n as getMarketplaceABI, r as getSaleContractABI, t as MAIN_MODULE_ABI } from "../../abi.js";
+import { i as ERC20_ABI, n as ERC1155_ABI, r as ERC721_ABI, t as SEQUENCE_1155_ITEMS_ABI } from "../../token.js";
+import { a as formatPriceWithFee, c as cn, d as truncateMiddle, i as formatPrice, l as compareAddress, n as calculatePriceDifferencePercentage, o as validateOpenseaOfferDecimals, r as calculateTotalOfferCost, s as getMarketplaceDetails, t as calculateEarningsAfterFees, u as truncateEnd } from "../../utils.js";
+import "../../marketplace-logos.js";
+import { n as getPresentableChainName, t as getNetwork } from "../../network.js";
+import { m as getQueryClient } from "../../api.js";
+import "../../utils2.js";
+import "../../_internal.js";
+import "../../wagmi.js";
+import { n as marketplaceConfigOptions } from "../../config.js";
+import { cookieToInitialState } from "wagmi";
+
+//#region src/react/ssr/create-ssr-client.ts
+const marketplaceConfig = async (config) => {
+	const configOptions = marketplaceConfigOptions(config);
+	return getQueryClient().fetchQuery(configOptions);
+};
+const initialState = async (args) => {
+	return { wagmi: cookieToInitialState(createWagmiConfig(await marketplaceConfig(args.config), args.config, true), args.cookie) };
+};
+const createSSRClient = (args) => {
+	const getMarketplaceConfig = async () => marketplaceConfig(args.config);
+	const getInitialState = async () => initialState(args);
+	return {
+		getInitialState,
+		getMarketplaceConfig,
+		config: args.config
+	};
+};
+
+//#endregion
+export { BuilderAPI, CollectibleCardAction, CollectionStatus, ContractType, DEFAULT_MARKETPLACE_FEE_PERCENTAGE, EIP2981_ABI, ERC1155_ABI, ERC1155_SALES_CONTRACT_ABI_V0, ERC1155_SALES_CONTRACT_ABI_V1, ERC20_ABI, ERC721_ABI, ERC721_SALE_ABI_V0, ERC721_SALE_ABI_V1, FilterCondition, MAIN_MODULE_ABI, MarketplaceKind, NATIVE_TOKEN_ADDRESS, OrderSide, OrderStatus, OrderbookKind, PropertyType, SEQUENCE_1155_ITEMS_ABI, SEQUENCE_MARKET_V1_ADDRESS, SEQUENCE_MARKET_V2_ADDRESS, SequenceMarketplaceV1_ABI, SequenceMarketplaceV2_ABI, SortOrder, StepType, TransactionCrypto, TransactionType, WalletKind, calculateEarningsAfterFees, calculatePriceDifferencePercentage, calculateTotalOfferCost, cn, compareAddress, createSSRClient, formatPrice, formatPriceWithFee, getMarketplaceABI, getMarketplaceDetails, getNetwork, getPresentableChainName, getSaleContractABI, isMarketCollection, isShopCollection, networkToWagmiChain, truncateEnd, truncateMiddle, validateOpenseaOfferDecimals };
+//# sourceMappingURL=index.js.map
