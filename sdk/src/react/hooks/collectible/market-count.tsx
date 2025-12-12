@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Optional } from '../../_internal';
+import type { Optional, WithRequired } from '../../_internal';
 import {
 	type CountOfCollectablesQueryOptions,
 	countOfCollectablesQueryOptions,
@@ -10,7 +10,10 @@ import {
 import { useConfig } from '../config/useConfig';
 
 export type UseCollectibleMarketCountParams = Optional<
-	CountOfCollectablesQueryOptions,
+	WithRequired<
+		CountOfCollectablesQueryOptions,
+		'chainId' | 'collectionAddress'
+	>,
 	'config'
 >;
 
