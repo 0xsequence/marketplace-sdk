@@ -172,7 +172,9 @@ export const CryptoPaymentModal = ({
 
 							await executeApproval();
 						}}
-						disabled={!canApprove || isAnyTransactionPending}
+						disabled={
+							isAnyTransactionPending || (isOnCorrectChain && !canApprove)
+						}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -181,7 +183,7 @@ export const CryptoPaymentModal = ({
 					</Button>
 				)}
 
-				{canBuy && (
+				{!isLoadingBalance && !isLoadingBuyModalData && (
 					<Button
 						onClick={async () => {
 							dismissChainSwitchError();
@@ -196,7 +198,7 @@ export const CryptoPaymentModal = ({
 
 							await executeBuy();
 						}}
-						disabled={!canBuy || isAnyTransactionPending}
+						disabled={isAnyTransactionPending || (isOnCorrectChain && !canBuy)}
 						variant="primary"
 						size="lg"
 						className="w-full"
