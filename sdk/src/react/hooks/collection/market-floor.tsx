@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Optional } from '../../_internal';
+import type { Optional, WithRequired } from '../../_internal';
 import {
 	type FloorOrderQueryOptions,
 	floorOrderQueryOptions,
@@ -9,7 +9,7 @@ import {
 import { useConfig } from '../config/useConfig';
 
 export type UseCollectionMarketFloorParams = Optional<
-	FloorOrderQueryOptions,
+	WithRequired<FloorOrderQueryOptions, 'chainId' | 'collectionAddress'>,
 	'config'
 >;
 
