@@ -111,6 +111,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
     --color-gray-800: oklch(27.8% 0.033 256.848);
+    --color-gray-900: oklch(21% 0.034 264.665);
     --color-zinc-500: oklch(55.2% 0.016 285.938);
     --color-zinc-600: oklch(44.2% 0.017 285.786);
     --color-zinc-700: oklch(37% 0.013 285.805);
@@ -845,6 +846,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-px {
     height: 1px;
   }
+  .h-screen {
+    height: 100vh;
+  }
   .max-h-\(--radix-dropdown-menu-content-available-height\) {
     max-height: var(--radix-dropdown-menu-content-available-height);
   }
@@ -1569,8 +1573,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-gray-50 {
     background-color: var(--color-gray-50);
   }
+  .bg-gray-900 {
+    background-color: var(--color-gray-900);
+  }
   .bg-green-500 {
     background-color: var(--color-green-500);
+  }
+  .bg-green-500\/20 {
+    background-color: color-mix(in srgb, oklch(72.3% 0.219 149.579) 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-green-500) 20%, transparent);
+    }
   }
   .bg-info {
     background-color: var(--seq-color-info);
@@ -2034,6 +2047,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-gray-600 {
     color: var(--color-gray-600);
   }
+  .text-green-500 {
+    color: var(--color-green-500);
+  }
   .text-indigo-400 {
     color: var(--color-indigo-400);
   }
@@ -2087,6 +2103,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-secondary {
     color: var(--seq-color-secondary);
+  }
+  .text-success {
+    color: var(--seq-color-positive);
   }
   .text-text-50 {
     color: var(--color-text-50);

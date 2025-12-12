@@ -3,6 +3,7 @@
 import type { ContractType } from '@0xsequence/api-client';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
+import { getTrailsApiUrl } from '../../../../_internal/api/services';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
@@ -26,6 +27,8 @@ export const BuyModalContent = () => {
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
+
+	const trailsApiUrl = getTrailsApiUrl(config);
 
 	if (
 		typeof checkoutMode === 'object' &&
@@ -84,6 +87,7 @@ export const BuyModalContent = () => {
 						<div className="w-full">
 							<TrailsWidget
 								apiKey={config.projectAccessKey}
+								trailsApiUrl={trailsApiUrl}
 								toChainId={modalProps.chainId}
 								toAddress={buyStep.to}
 								toToken={currencyAddress}

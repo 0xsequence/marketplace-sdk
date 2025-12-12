@@ -17,6 +17,8 @@ const SERVICES = {
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	builderRpcApi: 'https://${prefix}api.sequence.build',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	trailsApi: 'https://${prefix}trails-api.sequence.app',
 };
 
 type ChainNameOrId = string | number;
@@ -45,6 +47,11 @@ const builderRpcApiURL = (env: Env = 'production') => {
 export const sequenceApiUrl = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.sequenceApi, { prefix });
+};
+
+const trailsApiURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.trailsApi, { prefix });
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
@@ -83,6 +90,11 @@ export const getSequenceApiClient = (config: SdkConfig) => {
 	const url = overrides?.url || sequenceApiUrl(overrides?.env || 'production');
 	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
 	return new SequenceAPIClient(url, projectAccessKey);
+};
+
+export const getTrailsApiUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.trails;
+	return overrides?.url || trailsApiURL(overrides?.env || 'production');
 };
 
 const getPrefix = (env: ApiConfig['env']) => {
