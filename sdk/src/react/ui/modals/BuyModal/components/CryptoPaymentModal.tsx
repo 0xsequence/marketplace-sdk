@@ -163,14 +163,14 @@ export const CryptoPaymentModal = ({
 							dismissChainSwitchError();
 							try {
 								await ensureCorrectChainAsync(chainId);
-								try {
-									await executeApproval();
-								} catch (error) {
-									console.error('Approval failed:', error);
-								}
 							} catch (error) {
-								handleChainSwitchError(error as Error);
+								if (error instanceof Error) {
+									handleChainSwitchError(error);
+								}
+								return; // Don't proceed with transaction if chain switch failed
 							}
+
+							await executeApproval();
 						}}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
@@ -184,18 +184,17 @@ export const CryptoPaymentModal = ({
 				{canBuy && (
 					<Button
 						onClick={async () => {
-							dismissError();
 							dismissChainSwitchError();
 							try {
 								await ensureCorrectChainAsync(chainId);
-								try {
-									await executeBuy();
-								} catch (error) {
-									console.error('Buy failed:', error);
-								}
 							} catch (error) {
-								handleChainSwitchError(error as Error);
+								if (error instanceof Error) {
+									handleChainSwitchError(error);
+								}
+								return; // Don't proceed with transaction if chain switch failed
 							}
+
+							await executeBuy();
 						}}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
@@ -206,21 +205,15 @@ export const CryptoPaymentModal = ({
 					</Button>
 				)}
 
-				{chainSwitchError && (
+				{(chainSwitchError || error) && (
 					<ErrorLogBox
-						title={chainSwitchError.title}
-						message={chainSwitchError.message}
-						error={chainSwitchError.details}
-						onDismiss={dismissChainSwitchError}
-					/>
-				)}
-
-				{error && (
-					<ErrorLogBox
-						title={error.title}
-						message={error.message}
-						error={error.details}
-						onDismiss={dismissError}
+						title={chainSwitchError?.title ?? error?.title ?? ''}
+						message={chainSwitchError?.message ?? error?.message ?? ''}
+						error={chainSwitchError?.details ?? error?.details}
+						onDismiss={() => {
+							dismissChainSwitchError();
+							dismissError();
+						}}
 					/>
 				)}
 			</div>

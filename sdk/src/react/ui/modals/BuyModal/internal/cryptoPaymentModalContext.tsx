@@ -181,6 +181,14 @@ export function useCryptoPaymentModalContext({
 			await executeTransaction(approvalStep);
 			setApprovalStep(undefined);
 		} catch (error) {
+			const errorObj =
+				error instanceof Error ? error : new Error(String(error));
+			setError({
+				title: 'Approval failed',
+				message:
+					errorObj.message || 'Failed to approve token. Please try again.',
+				details: errorObj,
+			});
 			console.error('Approval transaction failed:', error);
 		} finally {
 			setIsApproving(false);
@@ -223,6 +231,14 @@ export function useCryptoPaymentModalContext({
 
 			onSuccess(hash as Hash);
 		} catch (error) {
+			const errorObj =
+				error instanceof Error ? error : new Error(String(error));
+			setError({
+				title: 'Purchase failed',
+				message:
+					errorObj.message || 'Failed to complete purchase. Please try again.',
+				details: errorObj,
+			});
 			console.error('Buy transaction failed:', error);
 		} finally {
 			setIsExecuting(false);
