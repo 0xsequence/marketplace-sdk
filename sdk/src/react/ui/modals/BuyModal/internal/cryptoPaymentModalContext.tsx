@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { Address, Hash, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
-import { getPresentableChainName } from '../../../../../utils/network';
 import { formatPrice } from '../../../../../utils/price';
 import { type Step, StepType } from '../../../../_internal';
 import { useConnectorMetadata } from '../../../../hooks';
@@ -27,8 +26,6 @@ type CryptoPaymentModalReturn = {
 	};
 	chain: {
 		isOnCorrectChain: boolean;
-		currentChainName: string;
-		requiredChainName: string;
 		currentChainId: number | undefined;
 	};
 	balance: {
@@ -37,7 +34,6 @@ type CryptoPaymentModalReturn = {
 	transaction: {
 		isApproving: boolean;
 		isExecuting: boolean;
-		isSwitchingChain: boolean;
 		isExecutingBundledTransactions: boolean;
 		isAnyTransactionPending: boolean;
 	};
@@ -70,7 +66,6 @@ type CryptoPaymentModalReturn = {
 	actions: {
 		executeApproval: () => Promise<void>;
 		executeBuy: () => Promise<void>;
-		handleSwitchChain: () => Promise<void>;
 	};
 };
 
@@ -85,7 +80,6 @@ export function useCryptoPaymentModalContext({
 }): CryptoPaymentModalReturn {
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
-	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
 	const [error, setError] = useState<{
 		title: string;
 		message: string;
@@ -111,16 +105,11 @@ export function useCryptoPaymentModalContext({
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
-	const requiredChainName = getPresentableChainName(chainId);
-	const currentChainName = currentChainId
-		? getPresentableChainName(currentChainId)
-		: 'Unknown';
 	const priceAmount = isMarket ? order?.priceAmount : salePrice?.amount;
 	const priceCurrencyAddress = isMarket
 		? currencyAddress
 		: (salePrice?.currencyAddress as Address);
-	const isAnyTransactionPending =
-		isApproving || isExecuting || isSwitchingChain;
+	const isAnyTransactionPending = isApproving || isExecuting;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -240,17 +229,6 @@ export function useCryptoPaymentModalContext({
 		}
 	};
 
-	const handleSwitchChain = async () => {
-		setIsSwitchingChain(true);
-		try {
-			await ensureCorrectChainAsync(chainId);
-		} catch (error) {
-			console.error('Chain switch failed:', error);
-		} finally {
-			setIsSwitchingChain(false);
-		}
-	};
-
 	const dismissError = () => {
 		setError(null);
 	};
@@ -320,8 +298,6 @@ export function useCryptoPaymentModalContext({
 		},
 		chain: {
 			isOnCorrectChain,
-			currentChainName,
-			requiredChainName,
 			currentChainId,
 		},
 		balance: {
@@ -330,7 +306,6 @@ export function useCryptoPaymentModalContext({
 		transaction: {
 			isApproving,
 			isExecuting,
-			isSwitchingChain,
 			isExecutingBundledTransactions,
 			isAnyTransactionPending,
 		},
@@ -359,7 +334,6 @@ export function useCryptoPaymentModalContext({
 		actions: {
 			executeApproval,
 			executeBuy,
-			handleSwitchChain,
 		},
 	};
 
