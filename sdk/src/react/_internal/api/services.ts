@@ -14,6 +14,10 @@ const SERVICES = {
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	indexerGateway: 'https://${prefix}indexer.sequence.app',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	nodeGateway: 'https://${prefix}nodes.sequence.app',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	builderRpcApi: 'https://${prefix}api.sequence.build',
@@ -52,6 +56,16 @@ export const sequenceApiUrl = (env: Env = 'production') => {
 const trailsApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.trailsApi, { prefix });
+};
+
+const indexerGatewayURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.indexerGateway, { prefix });
+};
+
+const nodeGatewayURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.nodeGateway, { prefix });
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
@@ -99,12 +113,12 @@ export const getTrailsApiUrl = (config: SdkConfig) => {
 
 export const getSequenceIndexerUrl = (config: SdkConfig) => {
 	const overrides = config._internal?.overrides?.api?.indexer;
-	return overrides?.url;
+	return overrides?.url || indexerGatewayURL(overrides?.env || 'production');
 };
 
 export const getSequenceNodeGatewayUrl = (config: SdkConfig) => {
 	const overrides = config._internal?.overrides?.api?.nodeGateway;
-	return overrides?.url;
+	return overrides?.url || nodeGatewayURL(overrides?.env || 'production');
 };
 
 export const getSequenceApiUrl = (config: SdkConfig) => {
