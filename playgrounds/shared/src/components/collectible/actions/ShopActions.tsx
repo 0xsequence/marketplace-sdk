@@ -105,7 +105,6 @@ export function ShopActions({
 							salesContractAddress: saleContractAddress as Address,
 							item: {
 								tokenId: BigInt(tokenId),
-								quantity: 1n, // TODO: this is overwritten later, should not be exposed
 							},
 							cardType: 'shop',
 							salePrice: {
@@ -168,7 +167,6 @@ export function ShopActions({
 								salesContractAddress: saleContractAddress as Address,
 								item: {
 									tokenId: BigInt(tokenId),
-									quantity: 1n, // TODO: this is overwritten later, should not be exposed
 								},
 								cardType: 'shop',
 								salePrice: {

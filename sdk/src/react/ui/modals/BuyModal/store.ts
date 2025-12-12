@@ -42,7 +42,7 @@ export type BuyModalBaseProps = {
 export type ShopBuyModalProps = BuyModalBaseProps & {
 	cardType: 'shop';
 	salesContractAddress: Address;
-	item: Partial<CheckoutOptionsItem> & { tokenId: bigint };
+	item: { tokenId: bigint };
 	quantityRemaining: bigint;
 	salePrice: {
 		amount: bigint;

@@ -68,7 +68,6 @@ export function ERC721SaleControls({
 			cardType: 'shop',
 			quantityRemaining: quantityRemaining ?? 0n,
 			item: {
-				quantity: BigInt(quantity),
 				tokenId: tokenIds[0],
 			},
 			salePrice: {
