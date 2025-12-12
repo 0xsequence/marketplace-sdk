@@ -66,8 +66,10 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
-					steps && (
+				{!isLoading &&
+					(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
+					steps &&
+					steps.length > 0 && (
 						<CryptoPaymentModal
 							chainId={modalProps.chainId}
 							steps={steps}
@@ -75,24 +77,27 @@ export const BuyModalContent = () => {
 						/>
 					)}
 
-				{checkoutMode === 'trails' && buyStep && (
-					<div className="w-full">
-						<TrailsWidget
-							apiKey={config.projectAccessKey}
-							toChainId={modalProps.chainId}
-							toAddress={buyStep.to}
-							toToken={currencyAddress}
-							toCalldata={buyStep.data}
-							toAmount={formattedAmount}
-							renderInline={true}
-							theme="dark"
-							mode="pay"
-							customCss={TRAILS_CUSTOM_CSS}
-							onDestinationConfirmation={handleTrailsSuccess}
-							payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
-						/>
-					</div>
-				)}
+				{!isLoading &&
+					checkoutMode === 'trails' &&
+					buyStep &&
+					!(isShop && salePrice?.amount === 0n) && (
+						<div className="w-full">
+							<TrailsWidget
+								apiKey={config.projectAccessKey}
+								toChainId={modalProps.chainId}
+								toAddress={buyStep.to}
+								toToken={currencyAddress}
+								toCalldata={buyStep.data}
+								toAmount={formattedAmount}
+								renderInline={true}
+								theme="dark"
+								mode="pay"
+								customCss={TRAILS_CUSTOM_CSS}
+								onDestinationConfirmation={handleTrailsSuccess}
+								payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
+							/>
+						</div>
+					)}
 			</div>
 		</Modal>
 	);

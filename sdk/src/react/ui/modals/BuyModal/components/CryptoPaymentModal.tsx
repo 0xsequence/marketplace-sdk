@@ -7,8 +7,11 @@ import {
 	Text,
 	Tooltip,
 } from '@0xsequence/design-system';
+import { useState } from 'react';
 import type { Hex } from 'viem';
+import { getPresentableChainName } from '../../../../../utils/network';
 import type { Step } from '../../../../_internal';
+import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
 import { useCryptoPaymentModalContext } from '../internal/cryptoPaymentModalContext';
@@ -28,17 +31,11 @@ export const CryptoPaymentModal = ({
 	const {
 		data: { collectible, currency, collection },
 		loading: { isLoadingBuyModalData, isLoadingBalance },
-		chain: {
-			isOnCorrectChain,
-			currentChainName,
-			requiredChainName,
-			currentChainId,
-		},
+		chain: { isOnCorrectChain, currentChainId },
 		balance: { hasSufficientBalance },
 		transaction: {
 			isApproving,
 			isExecuting,
-			isSwitchingChain,
 			isExecutingBundledTransactions,
 			isAnyTransactionPending,
 		},
@@ -48,8 +45,28 @@ export const CryptoPaymentModal = ({
 		flags: { isMarket },
 		permissions: { canApprove, canBuy },
 		price: { formattedPrice, renderCurrencyPrice, renderPriceUSD },
-		actions: { executeApproval, executeBuy, handleSwitchChain },
+		actions: { executeApproval, executeBuy },
 	} = useCryptoPaymentModalContext({ chainId, steps, onSuccess });
+
+	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
+	const [chainSwitchError, setChainSwitchError] = useState<{
+		title: string;
+		message: string;
+		details?: Error;
+	} | null>(null);
+
+	const handleChainSwitchError = (error: Error) => {
+		const chainName = getPresentableChainName(chainId);
+		setChainSwitchError({
+			title: 'Chain switch failed',
+			message: `Failed to switch to ${chainName}. Please try changing the network in your wallet manually.`,
+			details: error,
+		});
+	};
+
+	const dismissChainSwitchError = () => {
+		setChainSwitchError(null);
+	};
 
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
@@ -140,35 +157,24 @@ export const CryptoPaymentModal = ({
 						</Text>
 					)}
 
-				{!isOnCorrectChain && currentChainId && (
-					<div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-						<Text className="text-amber-300 text-xs">
-							Wrong network detected. You&apos;re currently on{' '}
-							<Text className="font-bold">{currentChainName}</Text>, but this
-							transaction requires{' '}
-							<Text className="font-bold">{requiredChainName}</Text>.
-						</Text>
-					</div>
-				)}
-
-				{!isOnCorrectChain && (
-					<Button
-						onClick={handleSwitchChain}
-						disabled={isAnyTransactionPending}
-						variant="primary"
-						size="lg"
-						className="w-full"
-					>
-						{isSwitchingChain
-							? 'Switching Network...'
-							: `Switch to ${requiredChainName}`}
-					</Button>
-				)}
-
 				{approvalStep && !isSequenceConnector && (
 					<Button
-						onClick={executeApproval}
-						disabled={!canApprove || isAnyTransactionPending}
+						onClick={async () => {
+							dismissChainSwitchError();
+							try {
+								await ensureCorrectChainAsync(chainId);
+							} catch (error) {
+								if (error instanceof Error) {
+									handleChainSwitchError(error);
+								}
+								return; // Don't proceed with transaction if chain switch failed
+							}
+
+							await executeApproval();
+						}}
+						disabled={
+							isAnyTransactionPending || (isOnCorrectChain && !canApprove)
+						}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -177,13 +183,22 @@ export const CryptoPaymentModal = ({
 					</Button>
 				)}
 
-				{canBuy && (
+				{!isLoadingBalance && !isLoadingBuyModalData && (
 					<Button
-						onClick={() => {
-							dismissError();
-							return executeBuy();
+						onClick={async () => {
+							dismissChainSwitchError();
+							try {
+								await ensureCorrectChainAsync(chainId);
+							} catch (error) {
+								if (error instanceof Error) {
+									handleChainSwitchError(error);
+								}
+								return; // Don't proceed with transaction if chain switch failed
+							}
+
+							await executeBuy();
 						}}
-						disabled={!canBuy || isAnyTransactionPending}
+						disabled={isAnyTransactionPending || (isOnCorrectChain && !canBuy)}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -192,12 +207,15 @@ export const CryptoPaymentModal = ({
 					</Button>
 				)}
 
-				{error && (
+				{(chainSwitchError || error) && (
 					<ErrorLogBox
-						title={error.title}
-						message={error.message}
-						error={error.details}
-						onDismiss={dismissError}
+						title={chainSwitchError?.title ?? error?.title ?? ''}
+						message={chainSwitchError?.message ?? error?.message ?? ''}
+						error={chainSwitchError?.details ?? error?.details}
+						onDismiss={() => {
+							dismissChainSwitchError();
+							dismissError();
+						}}
 					/>
 				)}
 			</div>
