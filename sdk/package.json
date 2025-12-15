@@ -60,7 +60,7 @@
 		}
 	},
 	"dependencies": {
-		"0xtrails": "^0.8.8",
+		"0xtrails": "^0.8.9",
 		"@0xsequence/api-client": "workspace:*",
 		"@0xsequence/design-system-v2": "npm:@0xsequence/design-system@2.1.11",
 		"@0xsequence/indexer-v2": "npm:@0xsequence/indexer@2.3.38",
