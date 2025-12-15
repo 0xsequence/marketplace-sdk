@@ -1,10 +1,7 @@
 'use client';
 
 import type { Address } from 'viem';
-import type {
-	CollectibleCardAction,
-	OrderbookKind,
-} from '../../../../../types';
+import type { CollectibleCardAction } from '../../../../../types';
 import type { ContractType, Currency, Order } from '../../../../_internal';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Card } from '../Card';
@@ -40,7 +37,6 @@ export interface MarketCardPresentationProps {
 	}) => void;
 
 	/** Action button configuration */
-	orderbookKind?: OrderbookKind;
 	action: CollectibleCardAction;
 	showActionButton?: boolean;
 	onCannotPerformAction?: (
@@ -84,7 +80,6 @@ export function MarketCardPresentation({
 	assetSrcPrefixUrl,
 	onCollectibleClick,
 	onOfferClick,
-	orderbookKind,
 	action,
 	showActionButton = true,
 	onCannotPerformAction,
@@ -155,7 +150,6 @@ export function MarketCardPresentation({
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					tokenId={tokenId}
-					orderbookKind={orderbookKind}
 					action={action}
 					highestOffer={highestOffer}
 					lowestListing={lowestListing}

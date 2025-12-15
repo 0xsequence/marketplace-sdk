@@ -8,7 +8,6 @@ import {
 	useCollectible,
 	useCollection,
 	useLowestListing,
-	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -56,12 +55,7 @@ export function CollectiblePageController({
 	collectionAddress,
 	tokenId,
 }: CollectiblePageControllerProps) {
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	);
-	const orderbookKind = collectionConfig?.destinationMarketplace;
-	const { orderbookKind: orderbookKindInternal, cardType } = useMarketplace();
+	const { cardType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const isShop = cardType === 'shop';
 
@@ -153,7 +147,6 @@ export function CollectiblePageController({
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				tokenId={tokenId}
-				orderbookKind={orderbookKindInternal || orderbookKind}
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
 				collectibleName={collectible?.name ?? ''}

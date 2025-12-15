@@ -42,7 +42,6 @@ export function useCreateListingModalContext() {
 	const state = useCreateListingModalState();
 	const { address } = useAccount();
 	const config = useConfig();
-
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,

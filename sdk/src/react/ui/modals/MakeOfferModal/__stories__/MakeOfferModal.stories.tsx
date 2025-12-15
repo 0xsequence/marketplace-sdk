@@ -1,6 +1,5 @@
 'use client';
 
-import { OrderbookKind } from '@0xsequence/api-client';
 import { Button, Card, Text } from '@0xsequence/design-system';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
@@ -22,7 +21,6 @@ interface MakeOfferTriggerProps {
 	collectionAddress: `0x${string}`;
 	tokenId: bigint;
 	chainId: number;
-	orderbookKind?: OrderbookKind;
 	tokenName?: string;
 	tokenImage?: string;
 	collectionName?: string;
@@ -32,7 +30,6 @@ const MakeOfferTrigger = ({
 	collectionAddress,
 	tokenId,
 	chainId,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
 	tokenName = 'Cool NFT #1',
 	tokenImage = 'https://picsum.photos/seed/nft1/400/400',
 	collectionName = 'Test Collection',
@@ -40,7 +37,7 @@ const MakeOfferTrigger = ({
 	const { show } = useMakeOfferModal();
 
 	const handleMakeOffer = () => {
-		show({ collectionAddress, chainId, tokenId, orderbookKind });
+		show({ collectionAddress, chainId, tokenId });
 	};
 
 	return (

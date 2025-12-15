@@ -1,6 +1,5 @@
 import {
 	MarketplaceKind,
-	OrderbookKind,
 	OrderSide,
 	OrderStatus,
 } from '@0xsequence/api-client';
@@ -136,7 +135,6 @@ export const OfferAction: Story = {
 		action: CollectibleCardAction.OFFER,
 		owned: false,
 		cardType: 'market',
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 		onCannotPerformAction: fn(),
 	},
 	play: async ({ canvasElement }) => {
@@ -167,7 +165,6 @@ export const SellAction: Story = {
 			side: OrderSide.offer,
 			status: OrderStatus.active,
 		},
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -192,7 +189,6 @@ export const ListAction: Story = {
 		action: CollectibleCardAction.LIST,
 		owned: true,
 		cardType: 'market',
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -279,7 +275,6 @@ export const MarketBuyAction: Story = {
 			side: OrderSide.listing,
 			status: OrderStatus.active,
 		},
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 		onCannotPerformAction: fn(),
 	},
 	play: async ({ canvasElement }) => {

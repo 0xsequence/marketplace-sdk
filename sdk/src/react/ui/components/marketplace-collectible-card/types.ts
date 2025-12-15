@@ -1,12 +1,7 @@
 import type { Metadata } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import type { CardType, CollectibleCardAction } from '../../../../types';
-import type {
-	CollectibleOrder,
-	ContractType,
-	Order,
-	OrderbookKind,
-} from '../../../_internal';
+import type { CollectibleOrder, ContractType, Order } from '../../../_internal';
 
 export type CardClassNames = {
 	cardRoot?: string;
@@ -54,7 +49,6 @@ type ShopCardSpecificProps = {
 
 // Properties specific to marketplace and inventory cards
 type MarketCardSpecificProps = {
-	orderbookKind?: OrderbookKind;
 	collectible: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: bigint) => void;
 	onOfferClick?: ({
