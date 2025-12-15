@@ -1,5 +1,10 @@
 'use client';
 
+import type {
+	ContractInfo,
+	Currency,
+	TokenMetadata,
+} from '@0xsequence/api-client';
 import { NetworkImage, Text, Tooltip } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
 import type { CheckoutMode } from '../../../../ssr';
@@ -7,24 +12,11 @@ import { Media } from '../../../components/media/Media';
 
 export interface CollectibleMetadataSummaryProps {
 	checkoutMode: Exclude<CheckoutMode, 'sequence-checkout'>;
-	collectible?: {
-		name?: string;
-		tokenId?: bigint | number;
-		description?: string;
-		image?: string;
-		video?: string;
-		animation_url?: string;
-	};
-	collection?: {
-		name?: string;
-		logoURI?: string;
-	};
+	collectible?: TokenMetadata;
+	collection?: ContractInfo;
 	// Price props for cryptoPayment variant
 	chainId?: number;
-	currency?: {
-		symbol?: string;
-		imageUrl?: string;
-	};
+	currency?: Currency;
 	formattedPrice?: string;
 	renderCurrencyPrice?: () => ReactNode;
 	renderPriceUSD?: () => ReactNode;
