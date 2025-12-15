@@ -178,7 +178,7 @@ export function useCreateListingModalContext() {
 				!!collectionQuery.data?.type &&
 				!!state.orderbookKind &&
 				state.isOpen &&
-				!isSequence,
+				!canBeBundled,
 		});
 
 	const waas = useSelectWaasFeeOptionsStore();
