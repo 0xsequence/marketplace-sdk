@@ -68,6 +68,8 @@ export const useListingMutations = ({
 	const state = useCreateListingModalState();
 	const { processStep } = useProcessStep();
 	const { walletKind, isSequence } = useConnectorMetadata();
+	const canBeBundled =
+		isSequence && orderbookKind === OrderbookKind.sequence_marketplace_v2;
 	const { data: currency } = useCurrency({
 		chainId,
 		currencyAddress: listing.currencyAddress,
@@ -135,7 +137,7 @@ export const useListingMutations = ({
 		contractType,
 		enabled:
 			nftApprovalEnabled &&
-			!isSequence &&
+			!canBeBundled &&
 			!!ownerAddress &&
 			!!contractType &&
 			!!orderbookKind &&
@@ -143,11 +145,11 @@ export const useListingMutations = ({
 	});
 
 	const needsApproval = useMemo(() => {
-		if (isSequence) return false;
+		if (canBeBundled) return false;
 		if (collectibleApprovalQuery.isApproved === undefined) return true;
 
 		return !collectibleApprovalQuery.isApproved;
-	}, [collectibleApprovalQuery.isApproved, isSequence]);
+	}, [collectibleApprovalQuery.isApproved, canBeBundled]);
 
 	const approve = useMutation({
 		mutationFn: async () => {
