@@ -1,10 +1,6 @@
 'use client';
 
-import {
-	type ContractType,
-	cn,
-	type OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import { type ContractType, cn } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	type CollectibleCardProps,
@@ -12,7 +8,6 @@ import {
 	useFilterState,
 	useListMarketCardData,
 	useMarketCardDataPaged,
-	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import type { Address } from 'viem';
@@ -31,13 +26,7 @@ export function MarketContent({
 	chainId,
 	onCollectibleClick,
 }: MarketContentProps) {
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	);
-	const orderbookKind = collectionConfig?.destinationMarketplace;
-	const { orderbookKind: orderbookKindInternal, paginationMode } =
-		useMarketplace();
+	const { paginationMode } = useMarketplace();
 	const { filterOptions, searchText, showListedOnly, priceFilters } =
 		useFilterState();
 
@@ -53,7 +42,6 @@ export function MarketContent({
 	const [pageSize, setPageSize] = useState(30);
 
 	const infiniteQueryResult = useListMarketCardData({
-		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
 		collectionType: collection?.type as ContractType,
 		filterOptions,
 		searchText,
@@ -65,7 +53,6 @@ export function MarketContent({
 	});
 
 	const pagedQueryResult = useMarketCardDataPaged({
-		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
 		collectionType: collection?.type as ContractType,
 		filterOptions,
 		searchText,

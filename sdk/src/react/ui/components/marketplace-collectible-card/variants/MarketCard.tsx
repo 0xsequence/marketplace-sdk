@@ -31,7 +31,6 @@ export function MarketCard({
 	collectionType,
 	assetSrcPrefixUrl,
 	cardLoading,
-	orderbookKind,
 	collectible,
 	onCollectibleClick,
 	onOfferClick,
@@ -91,7 +90,6 @@ export function MarketCard({
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			onCollectibleClick={onCollectibleClick}
 			onOfferClick={onOfferClick}
-			orderbookKind={orderbookKind}
 			action={action}
 			showActionButton={showActionButton}
 			onCannotPerformAction={onCannotPerformAction}

@@ -7,7 +7,6 @@ import type {
 	CollectibleOrder,
 	ContractType,
 	Order,
-	OrderbookKind,
 	PropertyFilter,
 } from '../../../../types';
 import type { PriceFilter } from '../../../_internal';
@@ -19,8 +18,6 @@ import { useCollectionBalanceDetails } from '../../collection/balance-details';
 interface UseMarketCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
-	// orderbookKind is optional — used to override marketplace config for internal tests
-	orderbookKind?: OrderbookKind;
 	collectionType: ContractType;
 	filterOptions?: PropertyFilter[];
 	searchText?: string;
@@ -37,7 +34,6 @@ interface UseMarketCardDataProps {
 export function useMarketCardData({
 	collectionAddress,
 	chainId,
-	orderbookKind,
 	collectionType,
 	filterOptions,
 	searchText,
@@ -113,7 +109,6 @@ export function useMarketCardData({
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
 				cardType: 'market',
-				orderbookKind,
 				collectible: {
 					...collectible,
 					metadata: {
@@ -152,7 +147,6 @@ export function useMarketCardData({
 		collectionType,
 		collectiblesListIsLoading,
 		balanceLoading,
-		orderbookKind,
 		onCollectibleClick,
 		collectionBalance?.balances,
 		onCannotPerformAction,
