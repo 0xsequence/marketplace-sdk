@@ -1,4 +1,5 @@
 import { useAccount } from 'wagmi';
+import type { ContractType } from '../../../../_internal';
 import {
 	useCollectibleMetadata,
 	useCollectionMetadata,
@@ -7,6 +8,7 @@ import {
 	useCurrency,
 } from '../../../../hooks';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
+import { OrderbookKind } from '../../../../ssr';
 import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { computeFlowState } from '../../_internal/helpers/flow-state';
 import {
@@ -54,7 +56,9 @@ export function useSellModalContext() {
 		},
 	});
 
-	const { walletKind, isWaaS } = useConnectorMetadata();
+	const { walletKind, isWaaS, isSequence } = useConnectorMetadata();
+	const canBeBundled =
+		isSequence && state.orderbookKind === OrderbookKind.sequence_marketplace_v2;
 
 	const transactionData = useGenerateSellTransaction({
 		chainId: state.chainId,
@@ -74,7 +78,20 @@ export function useSellModalContext() {
 		useWithTrails: false, // SellModal doesn't support trails yet
 	});
 
-	const { approve, sell } = useSellMutations(transactionData.data);
+	const { approve, sell, needsApproval, collectibleApprovalQuery } =
+		useSellMutations({
+			tx: transactionData.data,
+			collectionAddress: state.collectionAddress,
+			chainId: state.chainId,
+			contractType: collectionQuery.data?.type as ContractType,
+			orderbookKind: state.orderbookKind as OrderbookKind,
+			nftApprovalEnabled:
+				!!address &&
+				!!collectionQuery.data?.type &&
+				!!state.orderbookKind &&
+				state.isOpen &&
+				!canBeBundled,
+		});
 
 	const waas = useSelectWaasFeeOptionsStore();
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
@@ -110,7 +127,7 @@ export function useSellModalContext() {
 			? { type: 'transaction' as const, hash: approve.data.hash }
 			: null;
 
-	if (transactionData.data?.approveStep) {
+	if (!approve.isSuccess && needsApproval) {
 		const approvalGuard = createApprovalGuard({
 			isFormValid: true,
 			txReady: !!transactionData.data?.approveStep,
@@ -145,8 +162,8 @@ export function useSellModalContext() {
 		isFormValid: true,
 		txReady: !!transactionData.data?.sellStep,
 		walletConnected: !!address,
-		requiresApproval: !!transactionData.data?.approveStep && !approve.isSuccess,
-		approvalComplete: approve.isSuccess || !transactionData.data?.approveStep,
+		requiresApproval: needsApproval && !approve.isSuccess,
+		approvalComplete: approve.isSuccess || !needsApproval,
 	});
 	const sellGuardResult = sellGuard();
 
@@ -187,7 +204,8 @@ export function useSellModalContext() {
 		transactionData.error ||
 		collectibleQuery.error ||
 		collectionQuery.error ||
-		currencyQuery.error;
+		currencyQuery.error ||
+		collectibleApprovalQuery.error;
 
 	const handleClose = () => {
 		if (pendingFeeOptionConfirmation?.id) {
@@ -220,6 +238,7 @@ export function useSellModalContext() {
 			collection: collectionQuery.isLoading,
 			currency: currencyQuery.isLoading,
 			steps: transactionData.isLoading,
+			collectibleApproval: collectibleApprovalQuery.isLoading,
 		},
 
 		transactions: {
@@ -240,15 +259,16 @@ export function useSellModalContext() {
 				this.steps.approval && this.steps.approval.status !== 'success';
 
 			return {
-				approve: needsApproval
-					? {
-							label: this.steps.approval?.label,
-							onClick: this.steps.approval?.execute || (() => {}),
-							loading: this.steps.approval?.isPending,
-							disabled: this.steps.approval?.isDisabled,
-							testid: 'sell-modal-approve-button',
-						}
-					: undefined,
+				approve:
+					needsApproval && !canBeBundled
+						? {
+								label: this.steps.approval?.label,
+								onClick: this.steps.approval?.execute || (() => {}),
+								loading: this.steps.approval?.isPending,
+								disabled: this.steps.approval?.isDisabled,
+								testid: 'sell-modal-approve-button',
+							}
+						: undefined,
 				sell: {
 					label: this.steps.sell.label,
 					onClick: this.steps.sell.execute,
