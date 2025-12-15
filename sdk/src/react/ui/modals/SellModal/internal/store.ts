@@ -1,7 +1,8 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
-import { type Order, OrderbookKind } from '../../../../_internal';
+import type { Order } from '../../../../_internal';
+import { useMarketplaceConfig } from '../../../hooks';
 
 export type OpenSellModalArgs = {
 	collectionAddress: Address;
@@ -13,7 +14,6 @@ export type OpenSellModalArgs = {
 type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
 	isOpen: boolean;
 	order: Order | null;
-	orderbookKind: OrderbookKind | undefined;
 };
 
 const initialContext: SellModalState = {
@@ -22,7 +22,6 @@ const initialContext: SellModalState = {
 	chainId: 0,
 	tokenId: 0n,
 	order: null,
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 };
 
 export const sellModalStore = createStore({
@@ -50,8 +49,15 @@ export const useSellModal = () => {
 
 // Internal hook for accessing store state
 export const useSellModalState = () => {
-	const { isOpen, tokenId, collectionAddress, chainId, order, orderbookKind } =
-		useSelector(sellModalStore, (state) => state.context);
+	const { isOpen, tokenId, collectionAddress, chainId, order } = useSelector(
+		sellModalStore,
+		(state) => state.context,
+	);
+
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const orderbookKind = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === collectionAddress,
+	)?.destinationMarketplace;
 
 	const closeModal = () => sellModalStore.send({ type: 'close' });
 	const currencyAddress = order?.priceCurrencyAddress;
