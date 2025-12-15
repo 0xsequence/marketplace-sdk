@@ -1,13 +1,12 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
+import { useMarketplaceConfig } from '../../../hooks';
 
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
-	orderbookKind?: OrderbookKind;
 };
 
 type MakeOfferModalState = OpenMakeOfferModalArgs & {
@@ -25,7 +24,6 @@ const initialContext: MakeOfferModalState = {
 	collectionAddress: '' as Address,
 	chainId: 0,
 	tokenId: 0n,
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	priceInput: '',
 	currencyAddress: undefined,
 	quantityInput: '1',
@@ -102,7 +100,6 @@ export const useMakeOfferModalState = () => {
 		tokenId,
 		collectionAddress,
 		chainId,
-		orderbookKind,
 		priceInput,
 		currencyAddress,
 		quantityInput,
@@ -110,6 +107,11 @@ export const useMakeOfferModalState = () => {
 		isPriceTouched,
 		isQuantityTouched,
 	} = useSelector(makeOfferModalStore, (state) => state.context);
+
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const orderbookKind = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === collectionAddress,
+	)?.destinationMarketplace;
 
 	const closeModal = () => makeOfferModalStore.send({ type: 'close' });
 	const updatePriceInput = (value: string) =>
@@ -130,13 +132,13 @@ export const useMakeOfferModalState = () => {
 		tokenId,
 		collectionAddress,
 		chainId,
-		orderbookKind,
 		priceInput,
 		currencyAddress,
 		quantityInput,
 		expiryDays,
 		isPriceTouched,
 		isQuantityTouched,
+		orderbookKind,
 		closeModal,
 		updatePriceInput,
 		touchPriceInput,

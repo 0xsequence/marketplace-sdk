@@ -11,7 +11,6 @@ import {
 	useConfig,
 	useConnectorMetadata,
 	useCurrencyList,
-	useMarketplaceConfig,
 } from '../../../../hooks';
 import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
@@ -43,10 +42,6 @@ export function useCreateListingModalContext() {
 	const state = useCreateListingModalState();
 	const { address } = useAccount();
 	const config = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const orderbookKind = marketplaceConfig?.market.collections.find(
-		(collection) => collection.itemsAddress === state.collectionAddress,
-	)?.destinationMarketplace;
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
@@ -75,16 +70,16 @@ export function useCreateListingModalContext() {
 
 	const { isWaaS, isSequence } = useConnectorMetadata();
 	const canBeBundled =
-		isSequence && orderbookKind === OrderbookKind.sequence_marketplace_v2;
+		isSequence && state.orderbookKind === OrderbookKind.sequence_marketplace_v2;
 
 	const availableCurrencies = useMemo(() => {
 		if (!currenciesQuery.data) return [];
 		return filterCurrenciesForOrderbook(
 			currenciesQuery.data,
-			orderbookKind,
+			state.orderbookKind,
 			state.chainId,
 		);
-	}, [currenciesQuery.data, orderbookKind, state.chainId]);
+	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 
 	const selectedCurrency = useMemo(() => {
 		if (state.currencyAddress) {
@@ -94,8 +89,12 @@ export function useCreateListingModalContext() {
 				) || null
 			);
 		}
-		return getDefaultCurrency(availableCurrencies, orderbookKind, 'listing');
-	}, [state.currencyAddress, availableCurrencies, orderbookKind]);
+		return getDefaultCurrency(
+			availableCurrencies,
+			state.orderbookKind,
+			'listing',
+		);
+	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
 	const expiryDate = useMemo(
 		() => new Date(Date.now() + state.expiryDays * 24 * 60 * 60 * 1000),
@@ -162,7 +161,7 @@ export function useCreateListingModalContext() {
 			chainId: state.chainId,
 			collectionAddress: state.collectionAddress,
 			contractType: collectionQuery.data?.type as ContractType | undefined,
-			orderbookKind,
+			orderbookKind: state.orderbookKind,
 			listing: {
 				tokenId: state.tokenId,
 				quantity: quantityRaw,
@@ -176,7 +175,7 @@ export function useCreateListingModalContext() {
 			nftApprovalEnabled:
 				!!address &&
 				!!collectionQuery.data?.type &&
-				!!orderbookKind &&
+				!!state.orderbookKind &&
 				state.isOpen &&
 				!canBeBundled,
 		});
@@ -310,7 +309,7 @@ export function useCreateListingModalContext() {
 			chainId: state.chainId,
 			collectionAddress: state.collectionAddress,
 			tokenId: state.tokenId,
-			orderbookKind: orderbookKind as OrderbookKind,
+			orderbookKind: state.orderbookKind,
 		},
 
 		listing: {

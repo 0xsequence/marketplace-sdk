@@ -1,6 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
+import { useMarketplaceConfig } from '../../../hooks';
 
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
@@ -107,6 +108,11 @@ export const useCreateListingModalState = () => {
 		isQuantityTouched,
 	} = useSelector(createListingModalStore, (state) => state.context);
 
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const orderbookKind = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === collectionAddress,
+	)?.destinationMarketplace;
+
 	const closeModal = () => createListingModalStore.send({ type: 'close' });
 	const updatePriceInput = (value: string) =>
 		createListingModalStore.send({ type: 'updatePrice', value });
@@ -132,6 +138,7 @@ export const useCreateListingModalState = () => {
 		expiryDays,
 		isPriceTouched,
 		isQuantityTouched,
+		orderbookKind,
 		closeModal,
 		updatePriceInput,
 		touchPriceInput,
