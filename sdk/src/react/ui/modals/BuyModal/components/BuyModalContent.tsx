@@ -11,6 +11,7 @@ import {
 } from '../../../../_internal/api/services';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
+import { CollectibleMetadataSummary } from './CollectibleMetadataSummary';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
 import SequenceCheckout from './sequence-checkout/SequenceCheckoutNew';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
@@ -21,6 +22,7 @@ export const BuyModalContent = () => {
 		modalProps,
 		close,
 		steps,
+		collectible,
 		buyStep,
 		isLoading,
 		collection,
@@ -63,7 +65,7 @@ export const BuyModalContent = () => {
 				className: 'overflow-y-auto',
 			}}
 		>
-			<div className="relative flex grow flex-col items-center gap-4 p-6">
+			<div className="relative flex grow flex-col items-center p-6">
 				<Text className="w-full text-center font-body font-bold text-large text-text-100">
 					Complete Your Purchase
 				</Text>
@@ -93,6 +95,14 @@ export const BuyModalContent = () => {
 					buyStep &&
 					!(isShop && salePrice?.amount === 0n) && (
 						<div className="w-full">
+							{collectible && (
+								<CollectibleMetadataSummary
+									checkoutMode={'trails'}
+									collectible={collectible}
+									collection={collection}
+								/>
+							)}
+
 							<TrailsWidget
 								apiKey={config.projectAccessKey}
 								trailsApiUrl={trailsApiUrl}

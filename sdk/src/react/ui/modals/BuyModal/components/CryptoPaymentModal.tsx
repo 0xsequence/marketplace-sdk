@@ -1,20 +1,14 @@
 'use client';
 
-import {
-	Button,
-	NetworkImage,
-	Spinner,
-	Text,
-	Tooltip,
-} from '@0xsequence/design-system';
+import { Button, Spinner, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { getPresentableChainName } from '../../../../../utils/network';
 import type { Step } from '../../../../_internal';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
-import { Media } from '../../../components/media/Media';
 import { useCryptoPaymentModalContext } from '../internal/cryptoPaymentModalContext';
+import { CollectibleMetadataSummary } from './CollectibleMetadataSummary';
 import { CryptoPaymentModalSkeleton } from './CryptoPaymentModalSkeleton';
 
 export interface CryptoPaymentModalProps {
@@ -95,56 +89,17 @@ export const CryptoPaymentModal = ({
 	return (
 		<div className="flex w-full flex-col">
 			<div className="flex flex-col gap-4 p-4">
-				<div className="flex items-start gap-4">
-					<Media
-						assets={[collectible?.image]}
-						name={collectible?.name}
-						containerClassName="h-[84px] w-[84px] rounded-lg object-cover"
-					/>
-					<div className="flex flex-col">
-						<div className="flex items-center gap-2">
-							<Text className="font-bold text-sm text-text-80">
-								{collectible?.name}
-							</Text>
-							<Text className="font-bold text-text-50 text-xs">
-								#{collectible?.tokenId}
-							</Text>
-						</div>
-						<Text className="font-bold text-text-50 text-xs">
-							{' '}
-							{collection?.name}
-						</Text>
-
-						<div className="mt-2 flex flex-col">
-							<Tooltip
-								message={`${formattedPrice} ${currency?.symbol}`}
-								side="right"
-							>
-								<div className="flex items-center gap-1">
-									{currency?.imageUrl ? (
-										<img
-											src={currency.imageUrl}
-											alt={currency.symbol}
-											className="h-5 w-5 rounded-full"
-										/>
-									) : (
-										<NetworkImage chainId={chainId} size="sm" />
-									)}
-
-									<Text className="font-bold text-md">
-										{renderCurrencyPrice()}
-									</Text>
-								</div>
-							</Tooltip>
-
-							{isMarket && renderPriceUSD() && (
-								<Text className="font-bold text-text-50 text-xs">
-									{renderPriceUSD()}
-								</Text>
-							)}
-						</div>
-					</div>
-				</div>
+				<CollectibleMetadataSummary
+					checkoutMode={'crypto'}
+					collectible={collectible}
+					collection={collection}
+					chainId={chainId}
+					currency={currency}
+					formattedPrice={formattedPrice}
+					renderCurrencyPrice={renderCurrencyPrice}
+					renderPriceUSD={renderPriceUSD}
+					isMarket={isMarket}
+				/>
 
 				{!isLoadingBalance &&
 					!isLoadingBuyModalData &&
