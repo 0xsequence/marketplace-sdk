@@ -4,7 +4,7 @@ import {
 	StepType,
 } from '@0xsequence/api-client';
 
-const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
+const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
 import { act, renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
@@ -31,7 +31,13 @@ describe('useGenerateCancelTransaction', () => {
 		});
 
 		await waitFor(() => {
-			expect(result.current.data).toEqual(createMockSteps([StepType.cancel]));
+			expect(result.current.data).toEqual([
+				{
+					id: StepType.cancel,
+					data: '0x...',
+					to: '0x1234567890123456789012345678901234567890',
+				},
+			]);
 		});
 		expect(result.current.error).toBeNull();
 	});
@@ -125,9 +131,13 @@ describe('useGenerateCancelTransaction', () => {
 		});
 
 		await waitFor(() => {
-			expect(onSuccess).toHaveBeenCalledWith(
-				createMockSteps([StepType.cancel]),
-			);
+			expect(onSuccess).toHaveBeenCalledWith([
+				{
+					id: StepType.cancel,
+					data: '0x...',
+					to: '0x1234567890123456789012345678901234567890',
+				},
+			]);
 		});
 	});
 });
