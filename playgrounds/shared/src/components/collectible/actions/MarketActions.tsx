@@ -112,7 +112,6 @@ export function MarketActionsCard({
 								onClick={() =>
 									openCreateListingModal({
 										...hooksProps,
-										orderbookKind,
 									})
 								}
 								className="w-full"

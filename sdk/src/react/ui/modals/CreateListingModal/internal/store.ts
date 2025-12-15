@@ -1,13 +1,11 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
 
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
-	orderbookKind?: OrderbookKind;
 };
 
 type CreateListingModalState = OpenCreateListingModalArgs & {
@@ -25,7 +23,6 @@ const initialContext: CreateListingModalState = {
 	collectionAddress: '' as Address,
 	chainId: 0,
 	tokenId: 0n,
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	priceInput: '',
 	currencyAddress: undefined,
 	quantityInput: '1',
@@ -102,7 +99,6 @@ export const useCreateListingModalState = () => {
 		tokenId,
 		collectionAddress,
 		chainId,
-		orderbookKind,
 		priceInput,
 		currencyAddress,
 		quantityInput,
@@ -130,7 +126,6 @@ export const useCreateListingModalState = () => {
 		tokenId,
 		collectionAddress,
 		chainId,
-		orderbookKind,
 		priceInput,
 		currencyAddress,
 		quantityInput,
