@@ -66,13 +66,8 @@ export function ERC721SaleControls({
 			collectionAddress,
 			salesContractAddress,
 			cardType: 'shop',
-			quantityRemaining: quantityRemaining ?? 0n,
 			item: {
 				tokenId: tokenIds[0],
-			},
-			salePrice: {
-				amount: salePrice?.amount || 0n,
-				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
 			},
 		});
 	};

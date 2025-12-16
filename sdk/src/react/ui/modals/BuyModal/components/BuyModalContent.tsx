@@ -33,6 +33,7 @@ export const BuyModalContent = () => {
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
+		primarySaleItem,
 	} = useBuyModalContext();
 
 	const trailsApiUrl = getTrailsApiUrl(config);
@@ -48,6 +49,7 @@ export const BuyModalContent = () => {
 			<SequenceCheckout
 				steps={steps}
 				contractType={collection?.type as ContractType}
+				primarySaleItem={primarySaleItem}
 			/>
 		);
 	}
