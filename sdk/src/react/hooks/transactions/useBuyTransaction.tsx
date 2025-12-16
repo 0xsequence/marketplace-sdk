@@ -65,11 +65,7 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 		maxTotal: salePrice?.amount!,
 		paymentToken: salePrice?.currencyAddress!,
 		contractType: ContractType.ERC1155, // TODO: Determine from contract
-		enabled:
-			transactionType === TransactionType.PRIMARY_SALE &&
-			!!buyer &&
-			!!salePrice?.amount &&
-			!!salePrice?.currencyAddress,
+		enabled: transactionType === TransactionType.PRIMARY_SALE,
 	});
 
 	// Return the active query based on transaction type

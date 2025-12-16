@@ -69,8 +69,8 @@ export const useBuyModalData = () => {
 		chainId,
 		primarySaleContractAddress: isShop
 			? buyModalProps.salesContractAddress
-			: ('0x0' as Address),
-		tokenId: isShop ? buyModalProps.item.tokenId : 0n,
+			: undefined,
+		tokenId: isShop ? buyModalProps.item.tokenId : undefined,
 		query: {
 			enabled: isShop,
 		},
@@ -103,7 +103,7 @@ export const useBuyModalData = () => {
 		: undefined;
 
 	const marketPriceAmount = isMarket
-		? (orders?.orders[0]?.priceAmount ?? BigInt(0))
+		? orders?.orders[0]?.priceAmount
 		: undefined;
 
 	return {

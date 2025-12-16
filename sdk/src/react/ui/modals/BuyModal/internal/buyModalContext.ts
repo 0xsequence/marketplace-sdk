@@ -87,7 +87,7 @@ export function useBuyModalContext() {
 	const formattedAmount =
 		currency?.decimals && buyStep?.price
 			? formatUnits(BigInt(buyStep.price), currency.decimals)
-			: '0';
+			: undefined;
 
 	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
