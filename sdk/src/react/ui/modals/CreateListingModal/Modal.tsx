@@ -121,7 +121,6 @@ const Modal = () => {
 											ctx.form.quantity.update(quantity.toString())
 										}
 										onInvalidQuantityChange={() => {}}
-										decimals={collectible?.decimals || 0}
 										maxQuantity={BigInt(collectibleBalance.balance)}
 										disabled={ctx.flow.isPending}
 									/>

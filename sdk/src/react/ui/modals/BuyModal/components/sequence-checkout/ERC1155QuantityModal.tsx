@@ -2,7 +2,7 @@
 
 import type { Order } from '@0xsequence/api-client';
 import { Skeleton, Text, TokenImage } from '@0xsequence/design-system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
@@ -40,9 +40,26 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const minQuantity = 1n;
 	const [quantity, setQuantity] = useState<bigint>(minQuantity);
-	const [invalidQuantity, setInvalidQuantity] = useState(false);
+	const [localInvalidQuantity, setLocalInvalidQuantity] = useState(false);
 
 	const maxQuantity: bigint = unlimitedSupply ? maxUint256 : quantityRemaining;
+	const maxBelowMin = maxQuantity < minQuantity;
+	const invalidQuantity = maxBelowMin || localInvalidQuantity;
+
+	// Keep `quantity` clamped when `maxQuantity` changes (e.g. remaining decreases).
+	useEffect(() => {
+		if (maxBelowMin) {
+			// Keep quantity at minimum, but disable the action via invalid state.
+			setQuantity(minQuantity);
+			return;
+		}
+
+		setQuantity((q) => {
+			if (q < minQuantity) return minQuantity;
+			if (q > maxQuantity) return maxQuantity;
+			return q;
+		});
+	}, [maxBelowMin, maxQuantity, minQuantity]);
 
 	const handleSetQuantity = () => {
 		buyModalStore.send({
@@ -78,8 +95,7 @@ export const ERC1155QuantityModal = ({
 							quantity={quantity}
 							invalidQuantity={invalidQuantity}
 							onQuantityChange={setQuantity}
-							onInvalidQuantityChange={setInvalidQuantity}
-							decimals={0}
+							onInvalidQuantityChange={setLocalInvalidQuantity}
 							maxQuantity={maxQuantity}
 						/>
 
