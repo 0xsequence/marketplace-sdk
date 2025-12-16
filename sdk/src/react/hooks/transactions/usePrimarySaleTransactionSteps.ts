@@ -41,6 +41,14 @@ export function usePrimarySaleTransactionSteps({
 	contractType,
 	enabled = true,
 }: UsePrimarySaleTransactionStepsParams) {
+	const queryEnabled =
+		enabled &&
+		!!buyer &&
+		!!salesContractAddress &&
+		tokenIds.length > 0 &&
+		amounts.length > 0 &&
+		maxTotal !== undefined &&
+		paymentToken !== undefined;
 	// Get the correct ABI version for this sales contract
 	const {
 		abi,
@@ -137,7 +145,7 @@ export function usePrimarySaleTransactionSteps({
 				canBeUsedWithTrails: true,
 			};
 		},
-		enabled: enabled && !!buyer && !!abi && !abiLoading && !allowanceLoading,
+		enabled: queryEnabled && !!abi && !abiLoading && !allowanceLoading,
 	});
 }
 
