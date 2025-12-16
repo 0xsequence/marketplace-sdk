@@ -47,14 +47,13 @@ const Modal = () => {
 						: undefined
 			}
 			queries={{
-				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,
 				currencies: ctx.queries.currencies,
 				collectibleBalance: ctx.queries.collectibleBalance,
 			}}
 			externalError={ctx.error}
 		>
-			{({ collectible, collection, currencies, collectibleBalance }) => (
+			{({ collection, currencies, collectibleBalance }) => (
 				<>
 					{currencies.length === 0 && (
 						<div className="text-center text-gray-400">
