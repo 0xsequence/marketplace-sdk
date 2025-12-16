@@ -50,11 +50,8 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 		tokenId: isMarketProps(modalProps) ? modalProps.tokenId : 0n,
 		quantity: 1n, // Single item purchase for now
 		additionalFees: [marketPlatformFee],
-		enabled: transactionType === TransactionType.MARKET_BUY && !!buyer,
+		enabled: transactionType === TransactionType.MARKET_BUY,
 	});
-
-	// Get the sale price - use override if provided, otherwise use modal props
-	const effectiveSalePrice = isShopProps(modalProps) ? salePrice : undefined;
 
 	// Primary sale transaction query
 	const primaryQuery = usePrimarySaleTransactionSteps({
@@ -65,19 +62,14 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 			: zeroAddress,
 		tokenIds: isShopProps(modalProps) ? [modalProps.item.tokenId] : [],
 		amounts: isShopProps(modalProps) ? [normalizedQuantity] : [],
-		maxTotal:
-			isShopProps(modalProps) && effectiveSalePrice
-				? (effectiveSalePrice.amount ?? 0n * BigInt(normalizedQuantity))
-				: 0n,
-		paymentToken:
-			isShopProps(modalProps) && effectiveSalePrice
-				? (effectiveSalePrice.currencyAddress ?? zeroAddress)
-				: zeroAddress,
+		maxTotal: salePrice?.amount!,
+		paymentToken: salePrice?.currencyAddress!,
 		contractType: ContractType.ERC1155, // TODO: Determine from contract
 		enabled:
 			transactionType === TransactionType.PRIMARY_SALE &&
 			!!buyer &&
-			!!effectiveSalePrice,
+			!!salePrice?.amount &&
+			!!salePrice?.currencyAddress,
 	});
 
 	// Return the active query based on transaction type
