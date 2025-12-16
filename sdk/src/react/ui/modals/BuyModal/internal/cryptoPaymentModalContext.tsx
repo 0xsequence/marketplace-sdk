@@ -17,7 +17,7 @@ type CryptoPaymentModalReturn = {
 	data: {
 		collectible: Awaited<ReturnType<typeof useBuyModalData>>['collectible'];
 		currency: Awaited<ReturnType<typeof useBuyModalData>>['currency'];
-		order: Awaited<ReturnType<typeof useBuyModalData>>['order'];
+		marketOrder: Awaited<ReturnType<typeof useBuyModalData>>['marketOrder'];
 		collection: Awaited<ReturnType<typeof useBuyModalData>>['collection'];
 	};
 	loading: {
@@ -92,10 +92,9 @@ export function useCryptoPaymentModalContext({
 
 	const {
 		collectible,
-		currencyAddress,
 		currency,
-		order,
-		salePrice,
+		marketOrder,
+		primarySaleItem,
 		isMarket,
 		isShop,
 		collection,
@@ -105,16 +104,18 @@ export function useCryptoPaymentModalContext({
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
-	const priceAmount = isMarket ? order?.priceAmount : salePrice?.amount;
+	const priceAmount = isMarket
+		? marketOrder?.priceAmount
+		: primarySaleItem?.priceAmount;
 	const priceCurrencyAddress = isMarket
-		? currencyAddress
-		: (salePrice?.currencyAddress as Address);
+		? marketOrder?.priceCurrencyAddress
+		: (primarySaleItem?.currencyAddress as Address);
 	const isAnyTransactionPending = isApproving || isExecuting;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
 		value: BigInt(priceAmount || 0),
-		tokenAddress: priceCurrencyAddress,
+		tokenAddress: priceCurrencyAddress as Address,
 	});
 
 	const hasSufficientBalance = data?.hasSufficientBalance ?? false;
@@ -256,7 +257,7 @@ export function useCryptoPaymentModalContext({
 	const isFree = formattedPrice === '0';
 
 	const renderPriceUSD = (): ReactNode => {
-		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
+		const priceUSD = marketOrder?.priceUSDFormatted || marketOrder?.priceUSD;
 		if (!priceUSD) return '';
 
 		const numericPrice =
@@ -305,7 +306,7 @@ export function useCryptoPaymentModalContext({
 		data: {
 			collectible,
 			currency,
-			order,
+			marketOrder,
 			collection,
 		},
 		loading: {
