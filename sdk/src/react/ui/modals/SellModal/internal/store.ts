@@ -2,6 +2,7 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address } from 'viem';
 import type { Order } from '../../../../_internal';
+import { useMarketplaceConfig } from '../../../hooks';
 
 export type OpenSellModalArgs = {
 	collectionAddress: Address;
@@ -53,6 +54,11 @@ export const useSellModalState = () => {
 		(state) => state.context,
 	);
 
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const orderbookKind = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === collectionAddress,
+	)?.destinationMarketplace;
+
 	const closeModal = () => sellModalStore.send({ type: 'close' });
 	const currencyAddress = order?.priceCurrencyAddress;
 
@@ -62,6 +68,7 @@ export const useSellModalState = () => {
 		collectionAddress,
 		chainId,
 		order,
+		orderbookKind,
 		closeModal,
 		currencyAddress,
 	};

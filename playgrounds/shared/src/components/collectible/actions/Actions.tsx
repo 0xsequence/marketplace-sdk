@@ -1,11 +1,7 @@
 'use client';
 
 import { Card, Text } from '@0xsequence/design-system';
-import type {
-	ContractType,
-	Order,
-	OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import type { ContractType, Order } from '@0xsequence/marketplace-sdk';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../store';
@@ -17,7 +13,6 @@ export interface ActionsProps {
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
-	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined | null;
 	contractType: ContractType | undefined;
 	collectibleName: string;
@@ -28,7 +23,6 @@ export function Actions({
 	collectionAddress,
 	chainId,
 	tokenId,
-	orderbookKind,
 	lowestListing,
 	contractType,
 	collectibleName,
@@ -62,7 +56,6 @@ export function Actions({
 	return (
 		<MarketActionsCard
 			lowestListing={lowestListing}
-			orderbookKind={orderbookKind}
 			collectionAddress={collectionAddress}
 			chainId={chainId}
 			tokenId={tokenId}

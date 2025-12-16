@@ -1,75 +1,216 @@
+/**
+ * Custom CSS to style the Trails widget to match the Sequence Marketplace SDK design system.
+ *
+ * This CSS overrides the Trails widget's default theme variables with Sequence design tokens.
+ * The CSS is injected into the Trails widget's shadow DOM via the customCss prop.
+ *
+ * Note: The ShadowPortal wraps CSS variables in :root/:host selectors, but we provide
+ * the full CSS string here including both variable declarations and class overrides.
+ *
+ * Color mapping (Sequence Design System -> Trails Variables):
+ * - seq-color-background-primary (#000000 black) -> trails-bg-primary
+ * - seq-color-background-secondary (#18181b zinc-900) -> trails-bg-secondary
+ * - seq-color-background-raised (#27272a zinc-800) -> trails-bg-card, trails-bg-tertiary
+ * - seq-color-background-muted (#09090b zinc-950) -> used for inputs/dropdowns
+ * - seq-color-border-normal (#3f3f46 zinc-700) -> trails-border-primary
+ * - seq-color-border-hover (#52525b zinc-600) -> trails-border-secondary
+ * - seq-color-border-focus (#8b5cf6 violet-500) -> focus borders
+ */
 export const TRAILS_CUSTOM_CSS = `
-:host,
-*,
-[data-theme="dark"],
-[data-theme=dark] {
-  --trails-bg-primary: #000 !important;
-  --trails-bg-secondary: #181818 !important;
-  --trails-bg-tertiary: #ffffff0d !important;
-  --trails-bg-card: #363636b3 !important;
-  --trails-bg-overlay: #000000b3 !important;
+}
+
+/* ========================================
+ * CSS Variable Overrides - Match Sequence Design System
+ * These are wrapped in :root/:host by ShadowPortal
+ * ======================================== */
+
+:root, :host, [data-theme="dark"] {
+  /* Background Colors */
+  --trails-bg-primary: rgb(0 0 0) !important;
+  --trails-bg-secondary: rgb(24 24 27) !important;
+  --trails-bg-secondary-hover: rgb(39 39 42) !important;
+  --trails-bg-secondary-focus-border: rgb(63 63 70) !important;
+  --trails-bg-tertiary: rgb(39 39 42) !important;
+  --trails-bg-card: rgb(24 24 27) !important;
+  --trails-bg-overlay: rgb(0 0 0) !important;
   
-  --trails-text-primary: #fff !important;
-  --trails-text-secondary: #fffc !important;
-  --trails-text-tertiary: #ffffff80 !important;
-  --trails-text-muted: #ffffff80 !important;
-  --trails-text-inverse: #000 !important;
+  /* Text Colors */
+  --trails-text-primary: rgb(255 255 255) !important;
+  --trails-text-secondary: rgba(255 255 255 / 0.8) !important;
+  --trails-text-tertiary: rgba(255 255 255 / 0.6) !important;
+  --trails-text-muted: rgb(113 113 122) !important;
+  --trails-text-inverse: rgb(0 0 0) !important;
   
-  --trails-border-primary: #ffffff40 !important;
-  --trails-border-secondary: #ffffff80 !important;
-  --trails-border-tertiary: #ffffff1a !important;
+  /* Border Colors */
+  --trails-border-primary: rgb(63 63 70) !important;
+  --trails-border-secondary: rgb(82 82 91) !important;
+  --trails-border-tertiary: rgb(39 39 42) !important;
   
-  --trails-hover-bg: #ffffff40 !important;
-  --trails-hover-text: #fff !important;
+  /* Interactive Colors */
+  --trails-hover-bg: rgb(24 24 27) !important;
+  --trails-hover-text: rgb(255 255 255) !important;
   
-  --trails-input-bg: #ffffff1a !important;
-  --trails-input-border: #ffffff40 !important;
-  --trails-input-text: #fff !important;
-  --trails-input-placeholder: #ffffff80 !important;
-  --trails-input-focus-border: #ffffff80 !important;
+  /* Input Field Colors */
+  --trails-input-bg: rgb(0 0 0) !important;
+  --trails-input-border: rgb(39 39 42) !important;
+  --trails-input-text: rgb(255 255 255) !important;
+  --trails-input-placeholder: rgb(113 113 122) !important;
+  --trails-input-focus-border: rgb(139 92 246) !important;
   
-  --trails-dropdown-bg: #363636b3 !important;
-  --trails-dropdown-border: #ffffff40 !important;
-  --trails-dropdown-text: #fff !important;
-  --trails-dropdown-hover-bg: #ffffff40 !important;
-  --trails-dropdown-selected-bg: #ffffff26 !important;
-  --trails-dropdown-selected-text: #fff !important;
-  --trails-dropdown-focus-border: #ffffff80 !important;
+  /* Dropdown Colors */
+  --trails-dropdown-bg: rgb(0 0 0) !important;
+  --trails-dropdown-border: rgb(39 39 42) !important;
+  --trails-dropdown-text: rgb(255 255 255) !important;
+  --trails-dropdown-hover-bg: rgb(24 24 27) !important;
+  --trails-dropdown-selected-bg: rgb(39 39 42) !important;
+  --trails-dropdown-selected-text: rgb(255 255 255) !important;
+  --trails-dropdown-focus-border: rgb(139 92 246) !important;
   
-  --trails-modal-button-bg: #ffffff26 !important;
-  --trails-modal-button-hover-bg: #ffffff40 !important;
-  --trails-modal-button-text: #fff !important;
-  --trails-modal-button-shadow: 0 1px 2px 0 #0000001a !important;
+  /* Modal Button Colors */
+  --trails-modal-button-bg: transparent !important;
+  --trails-modal-button-hover-bg: rgba(255 255 255 / 0.1) !important;
+  --trails-modal-button-text: rgb(255 255 255) !important;
+  --trails-modal-button-shadow: 0 1px 2px 0 rgba(0 0 0 / 0.1) !important;
   
-  --trails-list-bg: #ffffff1a !important;
-  --trails-list-border: #ffffff40 !important;
-  --trails-list-hover-bg: #ffffff40 !important;
+  /* Token List Colors */
+  --trails-list-bg: rgb(0 0 0) !important;
+  --trails-list-border: rgb(39 39 42) !important;
+  --trails-list-hover-bg: rgb(24 24 27) !important;
+  --trails-list-item-bg: transparent !important;
+  --trails-list-item-selected-bg: rgb(39 39 42) !important;
   
+  /* Widget Border and Radius */
   --trails-widget-border: none !important;
-  --trails-border-radius-widget: 32px !important;
-  --trails-border-radius-button: 32px !important;
-  --trails-border-radius-input: 32px !important;
-  --trails-border-radius-dropdown: 32px !important;
+  --trails-border-radius-widget: 24px !important;
+  --trails-border-radius-button: 8px !important;
+  --trails-border-radius-input: 8px !important;
+  --trails-border-radius-dropdown: 8px !important;
   --trails-border-radius-container: 8px !important;
   --trails-border-radius-list: 8px !important;
-  --trails-border-radius-list-button: 12px !important;
-  --trails-border-radius-large-button: 16px !important;
+  --trails-border-radius-list-button: 8px !important;
+  --trails-border-radius-large-button: 8px !important;
   
-  --trails-success-bg: #1fc26633 !important;
-  --trails-success-text: #1fc266 !important;
-  --trails-success-border: #1fc2664d !important;
+  /* Status Colors */
+  --trails-success-bg: rgba(34 197 94 / 0.2) !important;
+  --trails-success-text: rgb(34 197 94) !important;
+  --trails-success-border: rgba(34 197 94 / 0.3) !important;
   
-  --trails-warning-bg: #f4b03e33 !important;
-  --trails-warning-text: #f4b03e !important;
-  --trails-warning-border: #f4b03e4d !important;
+  --trails-warning-bg: rgba(234 179 8 / 0.2) !important;
+  --trails-warning-text: rgb(234 179 8) !important;
+  --trails-warning-border: rgba(234 179 8 / 0.3) !important;
   
-  --trails-error-bg: #c2501f33 !important;
-  --trails-error-text: #c2501f !important;
-  --trails-error-border: #c2501f4d !important;
+  --trails-error-bg: rgba(239 68 68 / 0.2) !important;
+  --trails-error-text: rgb(239 68 68) !important;
+  --trails-error-border: rgba(239 68 68 / 0.3) !important;
   
-  --trails-shadow: 0 1px 3px 0 #0000004d, 0 1px 2px -1px #0000004d !important;
+  /* Shadow */
+  --trails-shadow: 0 4px 6px -1px rgba(0 0 0 / 0.1), 0 2px 4px -1px rgba(0 0 0 / 0.06) !important;
   
-  --trails-gradient-primary: linear-gradient(89.69deg, #4411e1 .27%, #7537f9 99.73%) !important;
-  --trails-gradient-secondary: linear-gradient(32.51deg, #951990 -15.23%, #3a35b1 48.55%, #20a8b0 100%) !important;
-  --trails-gradient-backdrop: linear-gradient(243.18deg, #5634bdd9 0%, #3129dfd9 63.54%, #076295d9 100%) !important;
-}`;
+  /* Primary Button */
+  --trails-primary: rgb(255 255 255) !important;
+  --trails-primary-hover: rgba(255 255 255 / 0.9) !important;
+  --trails-primary-disabled: rgb(63 63 70) !important;
+  --trails-primary-disabled-text: rgb(113 113 122) !important;
+  
+  /* Percentage Button Colors */
+  --trails-percentage-button-bg: rgb(24 24 27) !important;
+  --trails-percentage-button-text: rgb(161 161 170) !important;
+  --trails-percentage-button-hover-bg: rgb(39 39 42) !important;
+  
+  /* Font Family */
+  --trails-font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+/* ========================================
+ * Direct Tailwind Class Overrides
+ * Override hard-coded Tailwind classes used in Trails components
+ * ======================================== */
+
+/* White backgrounds -> black */
+.bg-white,
+.dark\\:bg-gray-900 {
+  background-color: rgb(0 0 0) !important;
+}
+
+/* Gray-800 backgrounds -> black */
+.bg-gray-800,
+.dark\\:bg-gray-800 {
+  background-color: rgb(0 0 0) !important;
+}
+
+/* Gray-700 backgrounds -> zinc-800 */
+.bg-gray-700,
+.dark\\:bg-gray-700 {
+  background-color: rgb(39 39 42) !important;
+}
+
+/* Hover states */
+.hover\\:bg-gray-50:hover {
+  background-color: rgb(24 24 27) !important;
+}
+
+.dark\\:hover\\:bg-gray-800:hover {
+  background-color: rgb(24 24 27) !important;
+}
+
+.dark\\:hover\\:bg-gray-700:hover {
+  background-color: rgb(39 39 42) !important;
+}
+
+/* Focus states */
+.focus-within\\:\\!bg-white:focus-within {
+  background-color: rgb(0 0 0) !important;
+}
+
+.dark\\:focus-within\\:\\!bg-gray-800:focus-within {
+  background-color: rgb(0 0 0) !important;
+}
+
+/* Border colors */
+.border-gray-200 {
+  border-color: rgb(39 39 42) !important;
+}
+
+.dark\\:border-gray-700 {
+  border-color: rgb(39 39 42) !important;
+}
+
+.border-gray-300 {
+  border-color: rgb(63 63 70) !important;
+}
+
+.dark\\:border-gray-600 {
+  border-color: rgb(63 63 70) !important;
+}
+
+/* Text colors */
+.text-gray-900 {
+  color: rgb(255 255 255) !important;
+}
+
+.dark\\:text-white {
+  color: rgb(255 255 255) !important;
+}
+
+.text-gray-500,
+.dark\\:text-gray-400 {
+  color: rgb(161 161 170) !important;
+}
+
+.text-black,
+.dark\\:text-blue-300 {
+  color: rgb(255 255 255) !important;
+}
+
+/* Primary button gradient - Match Sequence design */
+.bg-blue-500 {
+  background: linear-gradient(89.69deg, #4411e1 0.27%, #7537f9 99.73%) !important;
+}
+
+.hover\\:bg-blue-600:hover {
+  background: linear-gradient(89.69deg, #3a0ec7 0.27%, #6229e0 99.73%) !important;
+  opacity: 0.9;
+}
+
+{
+`;

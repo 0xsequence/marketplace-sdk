@@ -40,6 +40,7 @@ export type SdkConfig = {
 				indexer?: ApiConfig;
 				sequenceApi?: ApiConfig;
 				sequenceWallet?: ApiConfig;
+				trails?: ApiConfig;
 			};
 		};
 	};

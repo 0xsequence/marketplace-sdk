@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import type { ContractType } from '../../../../_internal';
+import { type ContractType, OrderbookKind } from '../../../../_internal';
 import {
 	useCollectibleBalance,
 	useCollectibleMetadata,
@@ -42,7 +42,6 @@ export function useCreateListingModalContext() {
 	const state = useCreateListingModalState();
 	const { address } = useAccount();
 	const config = useConfig();
-
 	const collectibleQuery = useCollectibleMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
@@ -70,6 +69,8 @@ export function useCreateListingModalContext() {
 	});
 
 	const { isWaaS, isSequence } = useConnectorMetadata();
+	const canBeBundled =
+		isSequence && state.orderbookKind === OrderbookKind.sequence_marketplace_v2;
 
 	const availableCurrencies = useMemo(() => {
 		if (!currenciesQuery.data) return [];
@@ -176,7 +177,7 @@ export function useCreateListingModalContext() {
 				!!collectionQuery.data?.type &&
 				!!state.orderbookKind &&
 				state.isOpen &&
-				!isSequence,
+				!canBeBundled,
 		});
 
 	const waas = useSelectWaasFeeOptionsStore();
@@ -407,15 +408,16 @@ export function useCreateListingModalContext() {
 			const currenciesBlocked = !this.currencies.isConfigured;
 
 			return {
-				approve: needsApprovalAction
-					? {
-							label: this.steps.approval?.label,
-							onClick: this.steps.approval?.execute || (() => {}),
-							loading: this.steps.approval?.isPending,
-							disabled: this.steps.approval?.isDisabled || currenciesBlocked,
-							testid: 'create-listing-approve-button',
-						}
-					: undefined,
+				approve:
+					needsApprovalAction && !canBeBundled
+						? {
+								label: this.steps.approval?.label,
+								onClick: this.steps.approval?.execute || (() => {}),
+								loading: this.steps.approval?.isPending,
+								disabled: this.steps.approval?.isDisabled || currenciesBlocked,
+								testid: 'create-listing-approve-button',
+							}
+						: undefined,
 				listing: {
 					label: this.steps.listing.label,
 					onClick: this.steps.listing.execute,

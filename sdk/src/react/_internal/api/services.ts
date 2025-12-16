@@ -14,9 +14,15 @@ const SERVICES = {
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	indexerGateway: 'https://${prefix}indexer.sequence.app',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	nodeGateway: 'https://${prefix}nodes.sequence.app',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
 	builderRpcApi: 'https://${prefix}api.sequence.build',
+	// biome-ignore lint/suspicious/noTemplateCurlyInString: template placeholder for stringTemplate function
+	trailsApi: 'https://${prefix}trails-api.sequence${postfix}.app',
 };
 
 type ChainNameOrId = string | number;
@@ -45,6 +51,22 @@ const builderRpcApiURL = (env: Env = 'production') => {
 export const sequenceApiUrl = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.sequenceApi, { prefix });
+};
+
+const trailsApiURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	const postfix = getPostfix(env);
+	return stringTemplate(SERVICES.trailsApi, { prefix, postfix });
+};
+
+const indexerGatewayURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.indexerGateway, { prefix });
+};
+
+const nodeGatewayURL = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.nodeGateway, { prefix });
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
@@ -85,6 +107,26 @@ export const getSequenceApiClient = (config: SdkConfig) => {
 	return new SequenceAPIClient(url, projectAccessKey);
 };
 
+export const getTrailsApiUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.trails;
+	return overrides?.url || trailsApiURL(overrides?.env || 'production');
+};
+
+export const getSequenceIndexerUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.indexer;
+	return overrides?.url || indexerGatewayURL(overrides?.env || 'production');
+};
+
+export const getSequenceNodeGatewayUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.nodeGateway;
+	return overrides?.url || nodeGatewayURL(overrides?.env || 'production');
+};
+
+export const getSequenceApiUrl = (config: SdkConfig) => {
+	const overrides = config._internal?.overrides?.api?.sequenceApi;
+	return overrides?.url || sequenceApiUrl(overrides?.env || 'production');
+};
+
 const getPrefix = (env: ApiConfig['env']) => {
 	switch (env) {
 		case 'development':
@@ -93,5 +135,16 @@ const getPrefix = (env: ApiConfig['env']) => {
 			return '';
 		case 'next':
 			return 'next-';
+	}
+};
+
+const getPostfix = (env: ApiConfig['env']) => {
+	switch (env) {
+		case 'development':
+			return '-dev';
+		case 'production':
+			return '';
+		case 'next':
+			return '-next';
 	}
 };

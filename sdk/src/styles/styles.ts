@@ -106,11 +106,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-slate-800: oklch(27.9% 0.041 260.031);
     --color-slate-950: oklch(12.9% 0.042 264.695);
     --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
     --color-gray-800: oklch(27.8% 0.033 256.848);
+    --color-gray-900: oklch(21% 0.034 264.665);
     --color-zinc-500: oklch(55.2% 0.016 285.938);
     --color-zinc-600: oklch(44.2% 0.017 285.786);
     --color-zinc-700: oklch(37% 0.013 285.805);
@@ -845,6 +847,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-px {
     height: 1px;
   }
+  .h-screen {
+    height: 100vh;
+  }
   .max-h-\(--radix-dropdown-menu-content-available-height\) {
     max-height: var(--radix-dropdown-menu-content-available-height);
   }
@@ -1440,12 +1445,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-amber-500 {
     border-color: var(--color-amber-500);
   }
-  .border-amber-500\/30 {
-    border-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 30%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-amber-500) 30%, transparent);
-    }
-  }
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
@@ -1469,6 +1468,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .border-current {
     border-color: currentcolor;
+  }
+  .border-gray-200 {
+    border-color: var(--color-gray-200);
+  }
+  .border-gray-300 {
+    border-color: var(--color-gray-300);
   }
   .border-orange-900 {
     border-color: var(--color-orange-900);
@@ -1514,12 +1519,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-amber-500 {
     background-color: var(--color-amber-500);
-  }
-  .bg-amber-500\/10 {
-    background-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 10%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
-    }
   }
   .bg-background-active {
     background-color: var(--seq-color-background-active);
@@ -1568,6 +1567,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
+  }
+  .bg-gray-900 {
+    background-color: var(--color-gray-900);
   }
   .bg-green-500 {
     background-color: var(--color-green-500);
@@ -2034,6 +2036,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-gray-600 {
     color: var(--color-gray-600);
   }
+  .text-gray-900 {
+    color: var(--color-gray-900);
+  }
+  .text-green-500 {
+    color: var(--color-green-500);
+  }
   .text-indigo-400 {
     color: var(--color-indigo-400);
   }
@@ -2087,6 +2095,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-secondary {
     color: var(--seq-color-secondary);
+  }
+  .text-success {
+    color: var(--seq-color-positive);
   }
   .text-text-50 {
     color: var(--color-text-50);

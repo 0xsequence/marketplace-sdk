@@ -3,8 +3,15 @@
 import type { ContractType } from '@0xsequence/api-client';
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
+import {
+	getSequenceApiUrl,
+	getSequenceIndexerUrl,
+	getSequenceNodeGatewayUrl,
+	getTrailsApiUrl,
+} from '../../../../_internal/api/services';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
+import { CollectibleMetadataSummary } from './CollectibleMetadataSummary';
 import { CryptoPaymentModal } from './CryptoPaymentModal';
 import SequenceCheckout from './sequence-checkout/SequenceCheckoutNew';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
@@ -15,15 +22,23 @@ export const BuyModalContent = () => {
 		modalProps,
 		close,
 		steps,
+		collectible,
 		buyStep,
 		isLoading,
 		collection,
 		checkoutMode,
 		formattedAmount,
+		salePrice,
+		isShop,
 		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 	} = useBuyModalContext();
+
+	const trailsApiUrl = getTrailsApiUrl(config);
+	const sequenceIndexerUrl = getSequenceIndexerUrl(config);
+	const sequenceNodeGatewayUrl = getSequenceNodeGatewayUrl(config);
+	const sequenceApiUrl = getSequenceApiUrl(config);
 
 	if (
 		typeof checkoutMode === 'object' &&
@@ -50,7 +65,7 @@ export const BuyModalContent = () => {
 				className: 'overflow-y-auto',
 			}}
 		>
-			<div className="relative flex grow flex-col items-center gap-4 p-6">
+			<div className="relative flex grow flex-col items-center p-6">
 				<Text className="w-full text-center font-body font-bold text-large text-text-100">
 					Complete Your Purchase
 				</Text>
@@ -64,32 +79,51 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{checkoutMode === 'trails' && buyStep && (
-					<div className="w-full">
-						<TrailsWidget
-							apiKey={config.projectAccessKey}
-							toChainId={modalProps.chainId}
-							toAddress={buyStep.to}
-							toToken={currencyAddress}
-							toCalldata={buyStep.data}
-							toAmount={formattedAmount}
-							renderInline={true}
-							theme="dark"
-							mode="pay"
-							customCss={TRAILS_CUSTOM_CSS}
-							onDestinationConfirmation={handleTrailsSuccess}
-							payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
+				{!isLoading &&
+					(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
+					steps &&
+					steps.length > 0 && (
+						<CryptoPaymentModal
+							chainId={modalProps.chainId}
+							steps={steps}
+							onSuccess={handleTransactionSuccess}
 						/>
-					</div>
-				)}
+					)}
 
-				{checkoutMode === 'crypto' && steps && (
-					<CryptoPaymentModal
-						chainId={modalProps.chainId}
-						steps={steps}
-						onSuccess={handleTransactionSuccess}
-					/>
-				)}
+				{!isLoading &&
+					checkoutMode === 'trails' &&
+					buyStep &&
+					!(isShop && salePrice?.amount === 0n) && (
+						<div className="w-full">
+							{collectible && (
+								<CollectibleMetadataSummary
+									checkoutMode={'trails'}
+									collectible={collectible}
+									collection={collection}
+								/>
+							)}
+
+							<TrailsWidget
+								apiKey={config.projectAccessKey}
+								trailsApiUrl={trailsApiUrl}
+								sequenceIndexerUrl={sequenceIndexerUrl}
+								sequenceNodeGatewayUrl={sequenceNodeGatewayUrl}
+								sequenceApiUrl={sequenceApiUrl}
+								walletConnectProjectId={config.walletConnectProjectId}
+								toChainId={modalProps.chainId}
+								toAddress={buyStep.to}
+								toToken={currencyAddress}
+								toCalldata={buyStep.data}
+								toAmount={formattedAmount}
+								renderInline={true}
+								theme="dark"
+								mode="pay"
+								customCss={TRAILS_CUSTOM_CSS}
+								onDestinationConfirmation={handleTrailsSuccess}
+								payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
+							/>
+						</div>
+					)}
 			</div>
 		</Modal>
 	);

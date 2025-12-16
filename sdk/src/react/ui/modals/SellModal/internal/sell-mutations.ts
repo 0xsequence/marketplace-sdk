@@ -1,12 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import { useMemo } from 'react';
+import type { Address, Hex } from 'viem';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Step, TransactionType } from '../../../../_internal';
+import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
+import type { ContractType } from '../../../../_internal';
+import {
+	OrderbookKind,
+	type Step,
+	TransactionType,
+} from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
+import {
+	useConfig,
+	useConnectorMetadata,
+	useCurrency,
+	useProcessStep,
+} from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import { useCollectibleApproval } from '../../CreateListingModal/internal/hooks';
 import { useSellModalState } from './store';
 import type { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
@@ -17,15 +30,32 @@ export type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
-export const useSellMutations = (
-	tx: ReturnType<typeof useGenerateSellTransaction>['data'],
-) => {
+type UseSellMutationsArgs = {
+	tx: ReturnType<typeof useGenerateSellTransaction>['data'];
+	collectionAddress: Address;
+	chainId: number;
+	contractType: ContractType;
+	orderbookKind: OrderbookKind;
+	nftApprovalEnabled: boolean;
+};
+
+export const useSellMutations = ({
+	tx,
+	collectionAddress,
+	chainId,
+	contractType,
+	orderbookKind,
+	nftApprovalEnabled,
+}: UseSellMutationsArgs) => {
 	const sdkConfig = useConfig();
 	const { show: showTxModal } = useTransactionStatusModal();
 	const analytics = useAnalytics();
 	const state = useSellModalState();
+	const { isSequence } = useConnectorMetadata();
+	const canBeBundled =
+		isSequence && orderbookKind === OrderbookKind.sequence_marketplace_v2;
 	const { processStep } = useProcessStep();
-	const { address } = useAccount();
+	const { address: ownerAddress } = useAccount();
 	const { data: currency } = useCurrency({
 		chainId: state.chainId,
 		currencyAddress: state.currencyAddress,
@@ -42,6 +72,28 @@ export const useSellMutations = (
 		}
 		return res;
 	}
+	const spenderAddress = getConduitAddressForOrderbook(orderbookKind);
+
+	const collectibleApprovalQuery = useCollectibleApproval({
+		collectionAddress,
+		spenderAddress,
+		chainId,
+		contractType,
+		enabled:
+			nftApprovalEnabled &&
+			!canBeBundled &&
+			!!ownerAddress &&
+			!!contractType &&
+			!!orderbookKind &&
+			!!spenderAddress,
+	});
+
+	const needsApproval = useMemo(() => {
+		if (canBeBundled) return false;
+		if (collectibleApprovalQuery.isApproved === undefined) return true;
+
+		return !collectibleApprovalQuery.isApproved;
+	}, [collectibleApprovalQuery.isApproved, canBeBundled]);
 
 	const approve = useMutation<ProcessStepResult, Error, void>({
 		mutationFn: async () => {
@@ -63,7 +115,7 @@ export const useSellMutations = (
 				analytics.trackSellItems({
 					props: {
 						marketplaceKind: state.order.marketplace,
-						userId: address || '',
+						userId: ownerAddress || '',
 						collectionAddress: state.collectionAddress,
 						currencyAddress: currency.contractAddress,
 						currencySymbol: currency.symbol || '',
@@ -104,5 +156,7 @@ export const useSellMutations = (
 	return {
 		approve,
 		sell,
+		needsApproval,
+		collectibleApprovalQuery,
 	};
 };

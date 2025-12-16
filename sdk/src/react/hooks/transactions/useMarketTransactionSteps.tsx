@@ -43,7 +43,10 @@ export function useMarketTransactionSteps({
 		[config],
 	);
 
-	const useWithTrails = config.checkoutMode === 'trails';
+	// Default to true when checkoutMode is undefined or 'trails'
+	// Only false when explicitly set to 'crypto' or 'sequence-checkout'
+	const useWithTrails =
+		config.checkoutMode === 'trails' || config.checkoutMode === undefined;
 
 	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
 		queryKey: [

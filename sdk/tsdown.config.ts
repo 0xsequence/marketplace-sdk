@@ -28,6 +28,7 @@ export default defineConfig([
 		sourcemap: true,
 		format: ['esm'],
 		noExternal: ['@0xsequence/api-client'],
+		external: ['viem', 'wagmi', '@tanstack/react-query'],
 		outDir: 'dist',
 		clean: true,
 		hash: false,

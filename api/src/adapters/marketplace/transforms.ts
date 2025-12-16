@@ -39,51 +39,69 @@ function toSignature(signature: Gen.Signature): Signature {
 }
 
 export function toStep(raw: Gen.Step): Step {
-	const baseStep = {
-		...raw,
-		to: normalizeAddress(raw.to),
-	};
-
-	// Transaction steps
-	if (
-		raw.id === StepType.tokenApproval ||
-		raw.id === StepType.buy ||
-		raw.id === StepType.sell ||
-		raw.id === StepType.cancel ||
-		raw.id === StepType.createOffer ||
-		raw.id === StepType.createListing
-	) {
-		return {
-			...baseStep,
-			id: raw.id,
-			data: raw.data,
-		} as TransactionStep;
-	}
-
-	// Signature steps
-	if (raw.id === StepType.signEIP191) {
-		return {
-			...baseStep,
-			id: raw.id,
-			// biome-ignore lint/style/noNonNullAssertion: post is required for signature steps
-			post: raw.post!,
-		} as SignatureStep;
-	}
-
-	if (raw.id === StepType.signEIP712) {
-		if (!raw.signature) {
-			throw new Error('EIP-712 step missing signature data');
+	switch (raw.id) {
+		case StepType.tokenApproval:
+		case StepType.buy:
+		case StepType.sell:
+		case StepType.cancel:
+		case StepType.createOffer:
+		case StepType.createListing: {
+			if (!raw.to) {
+				throw new Error(
+					`Transaction step ${raw.id} missing required field: to`,
+				);
+			}
+			if (!raw.data) {
+				throw new Error(
+					`Transaction step ${raw.id} missing required field: data`,
+				);
+			}
+			return {
+				id: raw.id,
+				to: normalizeAddress(raw.to),
+				data: raw.data,
+				value: raw.value,
+				price: raw.price,
+				...(raw.signature && { signature: toSignature(raw.signature) }),
+				...(raw.post && { post: raw.post }),
+				...(raw.executeType && { executeType: raw.executeType }),
+			} as TransactionStep;
 		}
-		return {
-			...baseStep,
-			id: raw.id,
-			// biome-ignore lint/style/noNonNullAssertion: post is required for signature steps
-			post: raw.post!,
-			signature: toSignature(raw.signature),
-		} as SignatureStep;
-	}
 
-	throw new Error(`Unknown step type: ${raw.id}`);
+		case StepType.signEIP191: {
+			if (!raw.post) {
+				throw new Error(
+					`Signature step ${raw.id} missing required field: post`,
+				);
+			}
+			return {
+				id: raw.id,
+				post: raw.post,
+			} as SignatureStep;
+		}
+
+		case StepType.signEIP712: {
+			if (!raw.post) {
+				throw new Error(
+					`Signature step ${raw.id} missing required field: post`,
+				);
+			}
+			if (!raw.signature) {
+				throw new Error(
+					`Signature step ${raw.id} missing required field: signature`,
+				);
+			}
+			return {
+				id: raw.id,
+				post: raw.post,
+				signature: toSignature(raw.signature),
+			} as SignatureStep;
+		}
+
+		default: {
+			throw new Error(`Unknown step type: ${raw.id}`);
+		}
+	}
 }
 
 export function toSteps(raw: Gen.Step[]): Step[] {

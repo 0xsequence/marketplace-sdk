@@ -2,7 +2,7 @@
 
 import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../../types';
-import type { Order, OrderbookKind } from '../../../../../_internal';
+import type { Order } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';
 import { useSellModal } from '../../../../modals/SellModal';
 import { useTransferModal } from '../../../../modals/TransferModal';
@@ -13,7 +13,6 @@ type OwnerActionsProps = {
 	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
-	orderbookKind?: OrderbookKind;
 	highestOffer?: Order;
 	labelOverride?: {
 		listing?: string;
@@ -28,7 +27,6 @@ export function OwnerActions({
 	tokenId,
 	collectionAddress,
 	chainId,
-	orderbookKind,
 	highestOffer,
 	labelOverride,
 	className,
@@ -47,7 +45,6 @@ export function OwnerActions({
 						collectionAddress,
 						chainId,
 						tokenId,
-						orderbookKind,
 					})
 				}
 				className={className}

@@ -4,7 +4,7 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
-import type { ContractType } from '../../../../_internal';
+import { type ContractType, OrderbookKind } from '../../../../_internal';
 import {
 	useCollectibleMarketLowestListing,
 	useCollectibleMetadata,
@@ -69,6 +69,8 @@ export function useMakeOfferModalContext() {
 	});
 
 	const { isWaaS, isSequence } = useConnectorMetadata();
+	const canBeBundled =
+		isSequence && state.orderbookKind === OrderbookKind.sequence_marketplace_v2;
 
 	const availableCurrencies = useMemo(() => {
 		if (!currenciesQuery.data) return [];
@@ -152,13 +154,13 @@ export function useMakeOfferModalContext() {
 			!!address &&
 			!!spenderAddress &&
 			state.isOpen &&
-			!isSequence,
+			!canBeBundled,
 	});
 
 	const totalPriceNeeded = priceRaw * quantityRaw;
 
 	const needsApproval = useMemo(() => {
-		if (isSequence) return false;
+		if (canBeBundled) return false;
 		if (allowanceQuery.allowance === undefined) return true;
 
 		return allowanceQuery.allowance < totalPriceNeeded;
@@ -215,7 +217,7 @@ export function useMakeOfferModalContext() {
 			? approveData.hash
 			: undefined;
 
-	if (needsApproval && !approve.isSuccess) {
+	if (needsApproval && !approve.isSuccess && !canBeBundled) {
 		const approvalGuard = createApprovalGuard({
 			isFormValid: formIsValid,
 			txReady: true,
@@ -426,15 +428,16 @@ export function useMakeOfferModalContext() {
 			const currenciesBlocked = !this.currencies.isConfigured;
 
 			return {
-				approve: needsApprovalAction
-					? {
-							label: this.steps.approval?.label,
-							onClick: this.steps.approval?.execute || (() => {}),
-							loading: this.steps.approval?.isPending,
-							disabled: this.steps.approval?.isDisabled || currenciesBlocked,
-							testid: 'make-offer-approve-button',
-						}
-					: undefined,
+				approve:
+					needsApprovalAction && !canBeBundled
+						? {
+								label: this.steps.approval?.label,
+								onClick: this.steps.approval?.execute || (() => {}),
+								loading: this.steps.approval?.isPending,
+								disabled: this.steps.approval?.isDisabled || currenciesBlocked,
+								testid: 'make-offer-approve-button',
+							}
+						: undefined,
 				offer: {
 					label: this.steps.offer.label,
 					onClick: this.steps.offer.execute,
