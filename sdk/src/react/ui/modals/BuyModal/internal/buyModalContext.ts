@@ -17,11 +17,6 @@ export function useBuyModalContext() {
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
-	const transactionData = useBuyTransaction(modalProps);
-	const steps = transactionData.data?.steps;
-	const canBeUsedWithTrails =
-		transactionData.data?.canBeUsedWithTrails ?? false;
-	const isLoadingSteps = transactionData.isLoading;
 
 	const {
 		collectible,
@@ -32,10 +27,20 @@ export function useBuyModalContext() {
 		collectionAddress,
 		salePrice,
 		marketPriceAmount,
+		primarySaleItem,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 		isShop,
 	} = useBuyModalData();
+
+	const transactionData = useBuyTransaction({
+		modalProps,
+		salePrice,
+	});
+	const steps = transactionData.data?.steps;
+	const canBeUsedWithTrails =
+		transactionData.data?.canBeUsedWithTrails ?? false;
+	const isLoadingSteps = transactionData.isLoading;
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(modalProps.chainId, config);
 
@@ -138,6 +143,7 @@ export function useBuyModalContext() {
 		collectionAddress,
 		salePrice,
 		marketPriceAmount,
+		primarySaleItem,
 		isMarket,
 		isShop,
 		buyStep,

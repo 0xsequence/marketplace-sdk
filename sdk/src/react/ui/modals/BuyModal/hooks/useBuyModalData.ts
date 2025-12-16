@@ -1,6 +1,11 @@
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
+import {
+	useCollectible,
+	useCollection,
+	useCurrency,
+	usePrimarySaleItem,
+} from '../../../../hooks';
 import { useOrders } from '../../../../hooks/data/orders/useOrders';
 import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 
@@ -55,9 +60,27 @@ export const useBuyModalData = () => {
 		},
 	});
 
+	// Fetch primary sale item details for shop type
+	const {
+		data: primarySaleItemData,
+		isLoading: primarySaleItemLoading,
+		isError: primarySaleItemError,
+	} = usePrimarySaleItem({
+		chainId,
+		primarySaleContractAddress: isShop
+			? buyModalProps.salesContractAddress
+			: ('0x0' as Address),
+		tokenId: isShop ? buyModalProps.item.tokenId : 0n,
+		query: {
+			enabled: isShop,
+		},
+	});
+
+	const primarySaleItem = primarySaleItemData?.item?.primarySaleItem;
+
 	const currencyAddress = isMarket
 		? (orders?.orders[0]?.priceCurrencyAddress as Address)
-		: buyModalProps.salePrice.currencyAddress;
+		: primarySaleItem?.currencyAddress;
 
 	const {
 		data: currency,
@@ -68,7 +91,16 @@ export const useBuyModalData = () => {
 		currencyAddress,
 	});
 
-	const salePrice = isShop ? buyModalProps.salePrice : undefined;
+	const salePrice = {
+		amount: primarySaleItem?.priceAmount,
+		currencyAddress: primarySaleItem?.currencyAddress,
+	};
+
+	const quantityRemaining = primarySaleItem?.supply;
+
+	const unlimitedSupply = isShop
+		? (primarySaleItem?.unlimitedSupply ?? false)
+		: undefined;
 
 	const marketPriceAmount = isMarket
 		? (orders?.orders[0]?.priceAmount ?? BigInt(0))
@@ -81,18 +113,26 @@ export const useBuyModalData = () => {
 		currency,
 		order: orders?.orders[0] ?? undefined,
 		salePrice,
+		quantityRemaining,
+		unlimitedSupply,
 		marketPriceAmount,
 		address,
 		isMarket,
 		isShop,
 		collection,
+		primarySaleItem,
 		isLoading:
 			collectableLoading ||
 			(isMarket && ordersLoading) ||
+			(isShop && primarySaleItemLoading) ||
 			walletIsLoading ||
 			collectionLoading ||
 			currencyLoading,
 		isError:
-			collectableError || ordersError || currencyError || collectionError,
+			collectableError ||
+			ordersError ||
+			primarySaleItemError ||
+			currencyError ||
+			collectionError,
 	};
 };

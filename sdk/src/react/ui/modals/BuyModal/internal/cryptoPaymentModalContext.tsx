@@ -114,7 +114,7 @@ export function useCryptoPaymentModalContext({
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
 		value: BigInt(priceAmount || 0),
-		tokenAddress: priceCurrencyAddress,
+		tokenAddress: priceCurrencyAddress as Address,
 	});
 
 	const hasSufficientBalance = data?.hasSufficientBalance ?? false;
