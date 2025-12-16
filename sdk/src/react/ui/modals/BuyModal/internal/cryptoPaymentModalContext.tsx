@@ -92,11 +92,11 @@ export function useCryptoPaymentModalContext({
 
 	const {
 		collectible,
-		currencyAddress,
 		currency,
 		order,
-		salePrice,
 		isMarket,
+		marketOrderPrice,
+		primarySalePrice,
 		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
@@ -105,10 +105,12 @@ export function useCryptoPaymentModalContext({
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
-	const priceAmount = isMarket ? order?.priceAmount : salePrice?.amount;
+	const priceAmount = isMarket
+		? marketOrderPrice?.amount
+		: primarySalePrice?.amount;
 	const priceCurrencyAddress = isMarket
-		? currencyAddress
-		: (salePrice?.currencyAddress as Address);
+		? marketOrderPrice?.currencyAddress
+		: (primarySalePrice?.currencyAddress as Address);
 	const isAnyTransactionPending = isApproving || isExecuting;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({

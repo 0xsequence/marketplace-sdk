@@ -16,7 +16,7 @@ import { useTransactionType } from './useTransactionType';
 
 export interface UseBuyTransactionOptions {
 	modalProps: BuyModalProps;
-	salePrice?: {
+	primarySalePrice?: {
 		amount: bigint | undefined;
 		currencyAddress: Address | undefined;
 	};
@@ -27,7 +27,7 @@ export interface UseBuyTransactionOptions {
  * Automatically selects the appropriate transaction type based on modal props
  */
 export function useBuyTransaction(options: UseBuyTransactionOptions) {
-	const { modalProps, salePrice } = options;
+	const { modalProps, primarySalePrice } = options;
 	const { collectionAddress, chainId } = modalProps;
 	const { address: buyer } = useAccount();
 	const quantity = useQuantity();
@@ -62,8 +62,8 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 			: zeroAddress,
 		tokenIds: isShopProps(modalProps) ? [modalProps.item.tokenId] : [],
 		amounts: isShopProps(modalProps) ? [normalizedQuantity] : [],
-		maxTotal: salePrice?.amount!,
-		paymentToken: salePrice?.currencyAddress!,
+		maxTotal: primarySalePrice?.amount!,
+		paymentToken: primarySalePrice?.currencyAddress!,
 		contractType: ContractType.ERC1155, // TODO: Determine from contract
 		enabled: transactionType === TransactionType.PRIMARY_SALE,
 	});

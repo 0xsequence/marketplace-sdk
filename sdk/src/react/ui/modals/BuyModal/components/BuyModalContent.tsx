@@ -28,13 +28,16 @@ export const BuyModalContent = () => {
 		collection,
 		checkoutMode,
 		formattedAmount,
-		salePrice,
+		primarySalePrice,
+		marketOrderPrice,
 		isShop,
-		currencyAddress,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
 		primarySaleItem,
 	} = useBuyModalContext();
+	const currencyAddress = isShop
+		? primarySaleItem?.currencyAddress
+		: marketOrderPrice?.currencyAddress;
 
 	const trailsApiUrl = getTrailsApiUrl(config);
 	const sequenceIndexerUrl = getSequenceIndexerUrl(config);
@@ -82,7 +85,8 @@ export const BuyModalContent = () => {
 				)}
 
 				{!isLoading &&
-					(checkoutMode === 'crypto' || (isShop && salePrice?.amount === 0n)) &&
+					(checkoutMode === 'crypto' ||
+						(isShop && primarySalePrice?.amount === 0n)) &&
 					steps &&
 					steps.length > 0 && (
 						<CryptoPaymentModal
@@ -95,7 +99,7 @@ export const BuyModalContent = () => {
 				{!isLoading &&
 					checkoutMode === 'trails' &&
 					buyStep &&
-					!(isShop && salePrice?.amount === 0n) && (
+					!(isShop && primarySalePrice?.amount === 0n) && (
 						<div className="w-full">
 							{collectible && (
 								<CollectibleMetadataSummary

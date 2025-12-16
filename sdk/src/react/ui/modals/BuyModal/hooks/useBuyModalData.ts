@@ -21,7 +21,7 @@ export const useBuyModalData = () => {
 	const tokenId = isMarket
 		? buyModalProps.tokenId
 		: buyModalProps.item?.tokenId;
-	const { address, isConnecting, isReconnecting } = useAccount();
+	const { isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
 
 	const {
@@ -59,6 +59,11 @@ export const useBuyModalData = () => {
 			enabled: !!orderId && !!marketplace,
 		},
 	});
+	const marketOrder = orders?.orders[0];
+	const marketOrderPrice = {
+		amount: marketOrder?.priceAmount,
+		currencyAddress: marketOrder?.priceCurrencyAddress,
+	};
 
 	// Fetch primary sale item details for shop type
 	const {
@@ -75,8 +80,11 @@ export const useBuyModalData = () => {
 			enabled: isShop,
 		},
 	});
-
 	const primarySaleItem = primarySaleItemData?.item?.primarySaleItem;
+	const primarySalePrice = {
+		amount: primarySaleItem?.priceAmount,
+		currencyAddress: primarySaleItem?.currencyAddress,
+	};
 
 	const currencyAddress = isMarket
 		? (orders?.orders[0]?.priceCurrencyAddress as Address)
@@ -91,32 +99,13 @@ export const useBuyModalData = () => {
 		currencyAddress,
 	});
 
-	const salePrice = {
-		amount: primarySaleItem?.priceAmount,
-		currencyAddress: primarySaleItem?.currencyAddress,
-	};
-
-	const quantityRemaining = primarySaleItem?.supply;
-
-	const unlimitedSupply = isShop
-		? (primarySaleItem?.unlimitedSupply ?? false)
-		: undefined;
-
-	const marketPriceAmount = isMarket
-		? orders?.orders[0]?.priceAmount
-		: undefined;
-
 	return {
 		collectible,
-		currencyAddress,
 		collectionAddress,
 		currency,
-		order: orders?.orders[0] ?? undefined,
-		salePrice,
-		quantityRemaining,
-		unlimitedSupply,
-		marketPriceAmount,
-		address,
+		order: marketOrder,
+		marketOrderPrice,
+		primarySalePrice,
 		isMarket,
 		isShop,
 		collection,

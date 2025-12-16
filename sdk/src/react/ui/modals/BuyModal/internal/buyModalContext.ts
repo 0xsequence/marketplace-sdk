@@ -21,12 +21,11 @@ export function useBuyModalContext() {
 	const {
 		collectible,
 		collection,
-		currencyAddress,
 		currency,
 		order,
 		collectionAddress,
-		salePrice,
-		marketPriceAmount,
+		marketOrderPrice,
+		primarySalePrice,
 		primarySaleItem,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
@@ -35,7 +34,7 @@ export function useBuyModalContext() {
 
 	const transactionData = useBuyTransaction({
 		modalProps,
-		salePrice,
+		primarySalePrice,
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =
@@ -94,7 +93,9 @@ export function useBuyModalContext() {
 		if (isMarket && !order) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
 
-		const amountRaw = isMarket ? marketPriceAmount : salePrice?.amount;
+		const amountRaw = isMarket
+			? marketOrderPrice?.amount
+			: primarySalePrice?.amount;
 		if (!amountRaw) throw new Error('Price amount not found');
 
 		close();
@@ -140,14 +141,9 @@ export function useBuyModalContext() {
 		steps,
 		collectible,
 		collection,
-		currencyAddress,
-		currency,
-		order,
-		collectionAddress,
-		salePrice,
-		marketPriceAmount,
+		primarySalePrice,
+		marketOrderPrice,
 		primarySaleItem,
-		isMarket,
 		isShop,
 		buyStep,
 		isLoading,
@@ -155,7 +151,6 @@ export function useBuyModalContext() {
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,
-		pendingFeeOptionConfirmation,
 	};
 }
 
