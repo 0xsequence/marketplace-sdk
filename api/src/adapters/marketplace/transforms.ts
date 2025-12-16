@@ -60,6 +60,11 @@ export function toStep(raw: Gen.Step): Step {
 				id: raw.id,
 				to: normalizeAddress(raw.to),
 				data: raw.data,
+				value: raw.value,
+				price: raw.price,
+				...(raw.signature && { signature: toSignature(raw.signature) }),
+				...(raw.post && { post: raw.post }),
+				...(raw.executeType && { executeType: raw.executeType }),
 			} as TransactionStep;
 		}
 
