@@ -4548,7 +4548,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 .rdp-outside {
   opacity: var(--rdp-outside-opacity);
 }
-.rdp-disabled:not(.rdp-selected) {
+.rdp-disabled {
   opacity: var(--rdp-disabled-opacity);
 }
 .rdp-hidden {
