@@ -17,7 +17,7 @@ type CryptoPaymentModalReturn = {
 	data: {
 		collectible: Awaited<ReturnType<typeof useBuyModalData>>['collectible'];
 		currency: Awaited<ReturnType<typeof useBuyModalData>>['currency'];
-		order: Awaited<ReturnType<typeof useBuyModalData>>['order'];
+		marketOrder: Awaited<ReturnType<typeof useBuyModalData>>['marketOrder'];
 		collection: Awaited<ReturnType<typeof useBuyModalData>>['collection'];
 	};
 	loading: {
@@ -93,10 +93,9 @@ export function useCryptoPaymentModalContext({
 	const {
 		collectible,
 		currency,
-		order,
+		marketOrder,
+		primarySaleItem,
 		isMarket,
-		marketOrderPrice,
-		primarySalePrice,
 		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
@@ -106,11 +105,11 @@ export function useCryptoPaymentModalContext({
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
 	const priceAmount = isMarket
-		? marketOrderPrice?.amount
-		: primarySalePrice?.amount;
+		? marketOrder?.priceAmount
+		: primarySaleItem?.priceAmount;
 	const priceCurrencyAddress = isMarket
-		? marketOrderPrice?.currencyAddress
-		: (primarySalePrice?.currencyAddress as Address);
+		? marketOrder?.priceCurrencyAddress
+		: (primarySaleItem?.currencyAddress as Address);
 	const isAnyTransactionPending = isApproving || isExecuting;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
@@ -258,7 +257,7 @@ export function useCryptoPaymentModalContext({
 	const isFree = formattedPrice === '0';
 
 	const renderPriceUSD = (): ReactNode => {
-		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
+		const priceUSD = marketOrder?.priceUSDFormatted || marketOrder?.priceUSD;
 		if (!priceUSD) return '';
 
 		const numericPrice =
@@ -307,7 +306,7 @@ export function useCryptoPaymentModalContext({
 		data: {
 			collectible,
 			currency,
-			order,
+			marketOrder,
 			collection,
 		},
 		loading: {

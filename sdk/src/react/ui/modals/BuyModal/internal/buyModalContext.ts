@@ -22,10 +22,8 @@ export function useBuyModalContext() {
 		collectible,
 		collection,
 		currency,
-		order,
+		marketOrder,
 		collectionAddress,
-		marketOrderPrice,
-		primarySalePrice,
 		primarySaleItem,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
@@ -34,7 +32,10 @@ export function useBuyModalContext() {
 
 	const transactionData = useBuyTransaction({
 		modalProps,
-		primarySalePrice,
+		primarySalePrice: {
+			amount: primarySaleItem?.priceAmount,
+			currencyAddress: primarySaleItem?.currencyAddress,
+		},
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =
@@ -90,19 +91,19 @@ export function useBuyModalContext() {
 
 	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
-		if (isMarket && !order) throw new Error('Order not found');
+		if (isMarket && !marketOrder) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
 
 		const amountRaw = isMarket
-			? marketOrderPrice?.amount
-			: primarySalePrice?.amount;
+			? marketOrder?.priceAmount
+			: primarySaleItem?.priceAmount;
 		if (!amountRaw) throw new Error('Price amount not found');
 
 		close();
 
 		transactionStatusModal.show({
 			hash: hash as Hash,
-			orderId: isMarket ? order?.orderId : undefined,
+			orderId: isMarket ? marketOrder?.orderId : undefined,
 			price: {
 				amountRaw,
 				currency,
@@ -141,9 +142,8 @@ export function useBuyModalContext() {
 		steps,
 		collectible,
 		collection,
-		primarySalePrice,
-		marketOrderPrice,
 		primarySaleItem,
+		marketOrder,
 		isShop,
 		buyStep,
 		isLoading,

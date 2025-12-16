@@ -60,10 +60,6 @@ export const useBuyModalData = () => {
 		},
 	});
 	const marketOrder = orders?.orders[0];
-	const marketOrderPrice = {
-		amount: marketOrder?.priceAmount,
-		currencyAddress: marketOrder?.priceCurrencyAddress,
-	};
 
 	// Fetch primary sale item details for shop type
 	const {
@@ -81,10 +77,6 @@ export const useBuyModalData = () => {
 		},
 	});
 	const primarySaleItem = primarySaleItemData?.item?.primarySaleItem;
-	const primarySalePrice = {
-		amount: primarySaleItem?.priceAmount,
-		currencyAddress: primarySaleItem?.currencyAddress,
-	};
 
 	const currencyAddress = isMarket
 		? (orders?.orders[0]?.priceCurrencyAddress as Address)
@@ -103,9 +95,7 @@ export const useBuyModalData = () => {
 		collectible,
 		collectionAddress,
 		currency,
-		order: marketOrder,
-		marketOrderPrice,
-		primarySalePrice,
+		marketOrder,
 		isMarket,
 		isShop,
 		collection,
