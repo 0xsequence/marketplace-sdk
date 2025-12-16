@@ -50,8 +50,6 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		tokenId,
 		collectionAddress,
 		chainId,
-		quantityRemaining,
-		unlimitedSupply,
 		cardType,
 		hideQuantitySelector,
 		labelOverride,
@@ -62,7 +60,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
 	if (cardType === 'shop') {
-		const { salesContractAddress, salePrice } = props;
+		const { salesContractAddress } = props;
 
 		return (
 			<ActionButtonBody
@@ -78,12 +76,6 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							tokenId,
 						},
 						cardType: 'shop',
-						salePrice: {
-							amount: salePrice.amount,
-							currencyAddress: salePrice.currencyAddress,
-						},
-						quantityRemaining: quantityRemaining ?? 0n,
-						unlimitedSupply,
 						hideQuantitySelector,
 					})
 				}

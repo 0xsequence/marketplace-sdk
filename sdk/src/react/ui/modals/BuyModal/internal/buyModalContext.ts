@@ -17,25 +17,30 @@ export function useBuyModalContext() {
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
-	const transactionData = useBuyTransaction(modalProps);
-	const steps = transactionData.data?.steps;
-	const canBeUsedWithTrails =
-		transactionData.data?.canBeUsedWithTrails ?? false;
-	const isLoadingSteps = transactionData.isLoading;
 
 	const {
 		collectible,
 		collection,
-		currencyAddress,
 		currency,
-		order,
+		marketOrder,
 		collectionAddress,
-		salePrice,
-		marketPriceAmount,
+		primarySaleItem,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 		isShop,
 	} = useBuyModalData();
+
+	const transactionData = useBuyTransaction({
+		modalProps,
+		primarySalePrice: {
+			amount: primarySaleItem?.priceAmount,
+			currencyAddress: primarySaleItem?.currencyAddress,
+		},
+	});
+	const steps = transactionData.data?.steps;
+	const canBeUsedWithTrails =
+		transactionData.data?.canBeUsedWithTrails ?? false;
+	const isLoadingSteps = transactionData.isLoading;
 	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
 		useWaasFeeOptions(modalProps.chainId, config);
 
@@ -79,23 +84,28 @@ export function useBuyModalContext() {
 		checkoutMode = undefined;
 	}
 
-	const formattedAmount = currency?.decimals
-		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
-		: '0';
+	const formattedAmount =
+		currency?.decimals && buyStep?.price
+			? formatUnits(BigInt(buyStep.price), currency.decimals)
+			: undefined;
 
 	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
-		if (isMarket && !order) throw new Error('Order not found');
+		if (isMarket && !marketOrder) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
+
+		const amountRaw = isMarket
+			? marketOrder?.priceAmount
+			: primarySaleItem?.priceAmount;
+		if (!amountRaw) throw new Error('Price amount not found');
 
 		close();
 
 		transactionStatusModal.show({
 			hash: hash as Hash,
-			orderId: isMarket ? order?.orderId : undefined,
+			orderId: isMarket ? marketOrder?.orderId : undefined,
 			price: {
-				amountRaw:
-					(isMarket ? marketPriceAmount : salePrice?.amount) ?? BigInt(0),
+				amountRaw,
 				currency,
 			},
 			collectionAddress,
@@ -132,13 +142,8 @@ export function useBuyModalContext() {
 		steps,
 		collectible,
 		collection,
-		currencyAddress,
-		currency,
-		order,
-		collectionAddress,
-		salePrice,
-		marketPriceAmount,
-		isMarket,
+		primarySaleItem,
+		marketOrder,
 		isShop,
 		buyStep,
 		isLoading,
@@ -146,7 +151,6 @@ export function useBuyModalContext() {
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,
-		pendingFeeOptionConfirmation,
 	};
 }
 

@@ -1,3 +1,4 @@
+import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
@@ -13,24 +14,34 @@ import { useMarketTransactionSteps } from './useMarketTransactionSteps';
 import { usePrimarySaleTransactionSteps } from './usePrimarySaleTransactionSteps';
 import { useTransactionType } from './useTransactionType';
 
+export interface UseBuyTransactionOptions {
+	modalProps: BuyModalProps;
+	primarySalePrice?: {
+		amount: bigint | undefined;
+		currencyAddress: Address | undefined;
+	};
+}
+
 /**
  * Unified hook that handles both market and primary sale transactions
  * Automatically selects the appropriate transaction type based on modal props
  */
-export function useBuyTransaction(modalProps: BuyModalProps) {
+export function useBuyTransaction(options: UseBuyTransactionOptions) {
+	const { modalProps, primarySalePrice } = options;
+	const { collectionAddress, chainId } = modalProps;
 	const { address: buyer } = useAccount();
 	const quantity = useQuantity();
 	const transactionType = useTransactionType(modalProps);
 	const marketPlatformFee = useMarketPlatformFee({
-		chainId: modalProps.chainId,
-		collectionAddress: modalProps.collectionAddress,
+		chainId,
+		collectionAddress,
 	});
 	const normalizedQuantity = quantity && quantity > 0 ? quantity : 1;
 
 	// Market transaction query
 	const marketQuery = useMarketTransactionSteps({
-		chainId: modalProps.chainId,
-		collectionAddress: modalProps.collectionAddress,
+		chainId,
+		collectionAddress,
 		buyer: buyer!,
 		marketplace: isMarketProps(modalProps)
 			? modalProps.marketplace
@@ -39,7 +50,7 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 		tokenId: isMarketProps(modalProps) ? modalProps.tokenId : 0n,
 		quantity: 1n, // Single item purchase for now
 		additionalFees: [marketPlatformFee],
-		enabled: transactionType === TransactionType.MARKET_BUY && !!buyer,
+		enabled: transactionType === TransactionType.MARKET_BUY,
 	});
 
 	// Primary sale transaction query
@@ -51,14 +62,10 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 			: zeroAddress,
 		tokenIds: isShopProps(modalProps) ? [modalProps.item.tokenId] : [],
 		amounts: isShopProps(modalProps) ? [normalizedQuantity] : [],
-		maxTotal: isShopProps(modalProps)
-			? modalProps.salePrice.amount * BigInt(normalizedQuantity)
-			: 0n,
-		paymentToken: isShopProps(modalProps)
-			? modalProps.salePrice.currencyAddress
-			: zeroAddress,
+		maxTotal: primarySalePrice?.amount!,
+		paymentToken: primarySalePrice?.currencyAddress!,
 		contractType: ContractType.ERC1155, // TODO: Determine from contract
-		enabled: transactionType === TransactionType.PRIMARY_SALE && !!buyer,
+		enabled: transactionType === TransactionType.PRIMARY_SALE,
 	});
 
 	// Return the active query based on transaction type

@@ -6,6 +6,8 @@ import {
 } from '@0xsequence/checkout';
 import { Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
+import type { PrimarySaleItem } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import { ContractType, type Step } from '../../../../../_internal';
 import { useOrders } from '../../../../../hooks/data/orders/useOrders';
 import { ActionModal } from '../../../_internal/components/baseModal';
@@ -23,9 +25,15 @@ import { usePaymentModalParams } from './usePaymentModalParams';
 type SequenceCheckoutProps = {
 	steps: Step[] | undefined;
 	contractType: ContractType;
+	primarySaleItem?: PrimarySaleItem;
+	quantityRemaining?: bigint;
 };
 
-const SequenceCheckout = ({ steps, contractType }: SequenceCheckoutProps) => {
+const SequenceCheckout = ({
+	steps,
+	contractType,
+	primarySaleItem,
+}: SequenceCheckoutProps) => {
 	const modalProps = useBuyModalProps();
 	const isMarket = isMarketProps(modalProps);
 	const isShop = isShopProps(modalProps);
@@ -53,7 +61,7 @@ const SequenceCheckout = ({ steps, contractType }: SequenceCheckoutProps) => {
 	const quantity = useQuantity();
 	const priceCurrencyAddress = isMarket
 		? marketOrder?.priceCurrencyAddress
-		: modalProps.salePrice.currencyAddress;
+		: primarySaleItem?.currencyAddress;
 
 	const paymentModalParams = usePaymentModalParams({
 		quantity,
@@ -70,15 +78,24 @@ const SequenceCheckout = ({ steps, contractType }: SequenceCheckoutProps) => {
 	) {
 		const quantityRemaining = isMarket
 			? marketOrder?.quantityRemaining
-			: modalProps.quantityRemaining;
+			: primarySaleItem?.supply;
 		const unlimitedSupply =
-			isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
+			isShop && primarySaleItem?.unlimitedSupply
+				? primarySaleItem?.unlimitedSupply
+				: false;
 
 		return (
 			<ERC1155QuantityModal
 				order={marketOrder}
 				cardType={isMarket ? 'market' : 'shop'}
-				salePrice={isShop ? modalProps.salePrice : undefined}
+				salePrice={
+					isShop
+						? {
+								amount: primarySaleItem?.priceAmount || 0n,
+								currencyAddress: primarySaleItem?.currencyAddress as Address,
+							}
+						: undefined
+				}
 				quantityRemaining={quantityRemaining ?? 0n}
 				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}

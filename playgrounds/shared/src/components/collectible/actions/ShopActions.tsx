@@ -107,13 +107,6 @@ export function ShopActions({
 								tokenId: BigInt(tokenId),
 							},
 							cardType: 'shop',
-							salePrice: {
-								amount: primarySaleItem?.priceAmount ?? 0n,
-								currencyAddress:
-									(primarySaleItem?.currencyAddress as Address) ?? '0x',
-							},
-							// TODO: This is 0 for unlimited supply, fix it
-							quantityRemaining: primarySaleItem?.supply ?? 0n,
 						})
 					}
 				>
@@ -169,12 +162,6 @@ export function ShopActions({
 									tokenId: BigInt(tokenId),
 								},
 								cardType: 'shop',
-								salePrice: {
-									amount: primarySaleItem?.priceAmount ?? 0n,
-									currencyAddress:
-										(primarySaleItem?.currencyAddress as Address) ?? '0x',
-								},
-								quantityRemaining: primarySaleItem?.supply ?? 0n,
 							})
 						}
 					>

@@ -1,6 +1,11 @@
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
+import {
+	useCollectible,
+	useCollection,
+	useCurrency,
+	usePrimarySaleItem,
+} from '../../../../hooks';
 import { useOrders } from '../../../../hooks/data/orders/useOrders';
 import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 
@@ -16,7 +21,7 @@ export const useBuyModalData = () => {
 	const tokenId = isMarket
 		? buyModalProps.tokenId
 		: buyModalProps.item?.tokenId;
-	const { address, isConnecting, isReconnecting } = useAccount();
+	const { isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
 
 	const {
@@ -54,10 +59,28 @@ export const useBuyModalData = () => {
 			enabled: !!orderId && !!marketplace,
 		},
 	});
+	const marketOrder = orders?.orders[0];
+
+	// Fetch primary sale item details for shop type
+	const {
+		data: primarySaleItemData,
+		isLoading: primarySaleItemLoading,
+		isError: primarySaleItemError,
+	} = usePrimarySaleItem({
+		chainId,
+		primarySaleContractAddress: isShop
+			? buyModalProps.salesContractAddress
+			: undefined,
+		tokenId: isShop ? buyModalProps.item.tokenId : undefined,
+		query: {
+			enabled: isShop,
+		},
+	});
+	const primarySaleItem = primarySaleItemData?.item?.primarySaleItem;
 
 	const currencyAddress = isMarket
 		? (orders?.orders[0]?.priceCurrencyAddress as Address)
-		: buyModalProps.salePrice.currencyAddress;
+		: primarySaleItem?.currencyAddress;
 
 	const {
 		data: currency,
@@ -68,31 +91,27 @@ export const useBuyModalData = () => {
 		currencyAddress,
 	});
 
-	const salePrice = isShop ? buyModalProps.salePrice : undefined;
-
-	const marketPriceAmount = isMarket
-		? (orders?.orders[0]?.priceAmount ?? BigInt(0))
-		: undefined;
-
 	return {
 		collectible,
-		currencyAddress,
 		collectionAddress,
 		currency,
-		order: orders?.orders[0] ?? undefined,
-		salePrice,
-		marketPriceAmount,
-		address,
+		marketOrder,
 		isMarket,
 		isShop,
 		collection,
+		primarySaleItem,
 		isLoading:
 			collectableLoading ||
 			(isMarket && ordersLoading) ||
+			(isShop && primarySaleItemLoading) ||
 			walletIsLoading ||
 			collectionLoading ||
 			currencyLoading,
 		isError:
-			collectableError || ordersError || currencyError || collectionError,
+			collectableError ||
+			ordersError ||
+			primarySaleItemError ||
+			currencyError ||
+			collectionError,
 	};
 };
