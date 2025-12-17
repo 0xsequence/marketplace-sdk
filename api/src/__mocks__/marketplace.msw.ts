@@ -9,6 +9,7 @@ import {
 	ActivityAction,
 	type CheckoutOptionsMarketplaceResponse,
 	type CollectibleOrder,
+	type CollectiblePrimarySaleItem,
 	type Collection,
 	CollectionPriority,
 	CollectionStatus,
@@ -21,6 +22,8 @@ import {
 	type Order,
 	OrderSide,
 	OrderStatus,
+	type PrimarySaleItem,
+	PrimarySaleItemDetailType,
 	type Step,
 	StepType,
 	type TokenMetadata,
@@ -173,6 +176,31 @@ export const mockCheckoutOptions: CheckoutOptionsMarketplaceResponse = {
 };
 
 export const mockCountListingsForCollectible = 1;
+
+export const mockPrimarySaleItem: PrimarySaleItem = {
+	itemAddress: '0x1234567890123456789012345678901234567890',
+	contractType: ContractType.ERC721,
+	tokenId: 1n,
+	itemType: PrimarySaleItemDetailType.global,
+	startDate: new Date('2024-01-01T00:00:00Z').toISOString(),
+	endDate: new Date('2024-12-31T23:59:59Z').toISOString(),
+	currencyAddress: zeroAddress,
+	priceDecimals: 18,
+	priceAmount: 1000000000000000000n,
+	priceAmountFormatted: '1.0',
+	priceUsd: 1800.0,
+	priceUsdFormatted: '1800.0',
+	supply: 50n,
+	supplyCap: 100n,
+	unlimitedSupply: false,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+};
+
+export const mockCollectiblePrimarySaleItem: CollectiblePrimarySaleItem = {
+	metadata: mockTokenMetadata,
+	primarySaleItem: mockPrimarySaleItem,
+};
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -406,6 +434,19 @@ export const handlers = [
 	}),
 
 	mockMarketplaceHandler('CheckoutOptionsMarketplace', mockCheckoutOptions),
+
+	mockMarketplaceHandler('GetPrimarySaleItem', {
+		item: mockCollectiblePrimarySaleItem,
+	}),
+
+	mockMarketplaceHandler('ListPrimarySaleItems', {
+		primarySaleItems: [mockCollectiblePrimarySaleItem],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('GetCountOfPrimarySaleItems', {
+		count: 1,
+	}),
 ];
 
 export const marketplaceConfigHandlers = handlers;
