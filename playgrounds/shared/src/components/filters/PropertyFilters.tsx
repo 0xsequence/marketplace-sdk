@@ -1,6 +1,6 @@
 'use client';
 
-import { type PropertyFilter, PropertyType } from '@0xsequence/metadata';
+import { type PropertyFilter, PropertyType } from '@0xsequence/marketplace-sdk';
 import {
 	Accordion,
 	AccordionContent,
