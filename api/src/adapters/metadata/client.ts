@@ -5,7 +5,7 @@
  * and automatically convert to/from the raw API types (string chainID, string tokenID).
  */
 
-import { Metadata as RawMetadata } from '@0xsequence/metadata';
+import { SequenceMetadata } from '@0xsequence/metadata';
 import * as Transforms from './transforms';
 import type * as NormalizedTypes from './types';
 
@@ -16,18 +16,10 @@ import type * as NormalizedTypes from './types';
  * and handles conversion to/from the raw API types internally.
  */
 export class MetadataClient {
-	private client: RawMetadata;
+	private client: SequenceMetadata;
 
-	constructor(hostname: string, jwtAuth?: string | typeof globalThis.fetch) {
-		// RawMetadata signature is (hostname: string, fetch?: Fetch)
-		// But SDK passes jwtAuth string. Handle both for compatibility.
-		if (typeof jwtAuth === 'string' || jwtAuth === undefined) {
-			// SDK passes jwtAuth, but Metadata expects fetch
-			// Just use default fetch for now
-			this.client = new RawMetadata(hostname, globalThis.fetch);
-		} else {
-			this.client = new RawMetadata(hostname, jwtAuth);
-		}
+	constructor(hostname: string, projectAccessKey?: string, jwtAuth?: string) {
+		this.client = new SequenceMetadata(hostname, projectAccessKey, jwtAuth);
 	}
 
 	/**
@@ -121,7 +113,7 @@ export class MetadataClient {
 	 * Access the underlying raw client if needed
 	 * (for advanced use cases or methods not yet wrapped)
 	 */
-	get raw(): RawMetadata {
+	get raw(): SequenceMetadata {
 		return this.client;
 	}
 }
