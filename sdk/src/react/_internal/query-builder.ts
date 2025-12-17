@@ -191,7 +191,11 @@ export function buildInfiniteQueryOptions<
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => {
 			const pageInfo = config.getPageInfo(lastPage);
-			return pageInfo?.more ? pageInfo : undefined;
+			if (!pageInfo?.more) return undefined;
+			return {
+				...pageInfo,
+				page: pageInfo.page + 1,
+			};
 		},
 		...params.query,
 		enabled,
