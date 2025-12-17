@@ -50,12 +50,16 @@ describe('useGenerateSellTransaction', () => {
 			    {
 			      "data": "0x...",
 			      "id": "tokenApproval",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
 			      "id": "sell",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": 0n,
 			    },
 			  ],
 			]
@@ -73,7 +77,13 @@ describe('useGenerateSellTransaction', () => {
 			const expectedSteps = createMockSteps([
 				StepType.tokenApproval,
 				StepType.sell,
-			]).map(({ id, data, to }) => ({ id, data, to }));
+			]).map(({ id, data, to, price, value }) => ({
+				id,
+				data,
+				to,
+				price,
+				value,
+			}));
 			expect(mockOnSuccess).toHaveBeenCalledWith(expectedSteps);
 		});
 	});

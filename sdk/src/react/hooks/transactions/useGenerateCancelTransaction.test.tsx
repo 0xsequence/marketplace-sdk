@@ -35,7 +35,9 @@ describe('useGenerateCancelTransaction', () => {
 				{
 					id: StepType.cancel,
 					data: '0x...',
+					price: 0n,
 					to: '0x1234567890123456789012345678901234567890',
+					value: 0n,
 				},
 			]);
 		});
@@ -135,7 +137,9 @@ describe('useGenerateCancelTransaction', () => {
 				{
 					id: StepType.cancel,
 					data: '0x...',
+					price: 0n,
 					to: '0x1234567890123456789012345678901234567890',
+					value: 0n,
 				},
 			]);
 		});
