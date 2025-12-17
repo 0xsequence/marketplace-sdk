@@ -45,6 +45,8 @@ export interface CollectiblePageControllerProps {
 	chainId: number;
 	collectionAddress: Address;
 	tokenId: bigint;
+	cardType?: 'market' | 'shop';
+	salesAddress?: Address;
 }
 
 export function CollectiblePageController({
@@ -55,13 +57,14 @@ export function CollectiblePageController({
 	chainId,
 	collectionAddress,
 	tokenId,
+	cardType = 'market',
 }: CollectiblePageControllerProps) {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
 	const orderbookKind = collectionConfig?.destinationMarketplace;
-	const { orderbookKind: orderbookKindInternal, cardType } = useMarketplace();
+	const { orderbookKind: orderbookKindInternal } = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const isShop = cardType === 'shop';
 
@@ -133,6 +136,7 @@ export function CollectiblePageController({
 						chainId={chainId}
 						collection={collection}
 						onCollectionClick={onCollectionClick}
+						cardType={cardType}
 					/>
 				) : (
 					<div className="flex flex-col gap-1">
@@ -143,6 +147,7 @@ export function CollectiblePageController({
 							chainId={chainId}
 							collection={collection}
 							onCollectionClick={onCollectionClick}
+							cardType={cardType}
 						/>
 					</div>
 				)}
@@ -157,6 +162,7 @@ export function CollectiblePageController({
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
 				collectibleName={collectible?.name ?? ''}
+				cardType={cardType}
 			/>
 
 			{!isShop && (

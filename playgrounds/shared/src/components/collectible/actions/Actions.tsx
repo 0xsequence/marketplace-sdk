@@ -8,7 +8,6 @@ import type {
 } from '@0xsequence/marketplace-sdk';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { useMarketplace } from '../../../store';
 import { MarketActionsCard } from './MarketActions';
 import { ShopActions } from './ShopActions';
 
@@ -21,6 +20,7 @@ export interface ActionsProps {
 	lowestListing: Order | undefined | null;
 	contractType: ContractType | undefined;
 	collectibleName: string;
+	cardType?: 'market' | 'shop';
 }
 
 export function Actions({
@@ -32,9 +32,9 @@ export function Actions({
 	lowestListing,
 	contractType,
 	collectibleName,
+	cardType = 'market',
 }: ActionsProps) {
 	const { isConnected } = useAccount();
-	const { cardType } = useMarketplace();
 	const isShop = cardType === 'shop';
 
 	if (!isConnected) {

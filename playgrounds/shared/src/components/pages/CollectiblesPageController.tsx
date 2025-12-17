@@ -44,11 +44,9 @@ export function CollectiblesPageController({
 	collectionAddress,
 	salesAddress,
 	chainId,
-	cardType: cardTypeProp,
+	cardType = 'market',
 }: CollectiblesPageControllerProps) {
-	const { paginationMode, cardType: cardTypeStore } = useMarketplace();
-
-	const cardType = cardTypeProp ?? cardTypeStore;
+	const { paginationMode } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
