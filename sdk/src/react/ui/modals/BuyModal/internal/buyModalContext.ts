@@ -1,3 +1,4 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useSupportedChains } from '0xtrails';
 import { type Chain, formatUnits, type Hash } from 'viem';
 import { TransactionType } from '../../../../_internal';
@@ -36,6 +37,10 @@ export function useBuyModalContext() {
 			amount: primarySaleItem?.priceAmount,
 			currencyAddress: primarySaleItem?.currencyAddress,
 		},
+		contractType:
+			collection?.type === ContractType.ERC1155
+				? ContractType.ERC1155
+				: ContractType.ERC721,
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =

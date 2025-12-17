@@ -48,6 +48,7 @@ export function usePrimarySaleTransactionSteps({
 		tokenIds.length > 0 &&
 		amounts.length > 0 &&
 		maxTotal !== undefined &&
+		contractType !== undefined &&
 		paymentToken !== undefined;
 	// Get the correct ABI version for this sales contract
 	const {
