@@ -12,7 +12,7 @@ export default function CollectiblesPage() {
 	}>();
 
 	const handleCollectibleClick = (tokenId: bigint) => {
-		const route = createRoute.collectible(
+		const route = createRoute.marketCollectible(
 			Number(chainId),
 			collectionAddress as string,
 			BigInt(tokenId),
