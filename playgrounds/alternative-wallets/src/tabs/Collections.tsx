@@ -10,9 +10,6 @@ export function Collections() {
 	};
 
 	return (
-		<CollectionsPageController
-			onCollectionClick={handleCollectionClick}
-			showMarketTypeToggle={true}
-		/>
+		<CollectionsPageController onCollectionClick={handleCollectionClick} />
 	);
 }
