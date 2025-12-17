@@ -49,12 +49,18 @@ export function toTokenMetadata(
 export function toNativeTokenBalance(
 	raw: IndexerGen.NativeTokenBalance,
 ): Normalized.NativeTokenBalance {
-	return {
+	const result: Normalized.NativeTokenBalance = {
 		accountAddress: normalizeAddress(raw.accountAddress),
 		chainId: normalizeChainId(raw.chainId),
 		balance: BigInt(raw.balance),
-		errorReason: raw.error,
 	};
+
+	// Only include errorReason if provided
+	if (raw.errorReason) {
+		result.errorReason = raw.errorReason;
+	}
+
+	return result;
 }
 
 export function toTokenBalance(
