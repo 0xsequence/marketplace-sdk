@@ -40,11 +40,9 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const minQuantity = 1n;
 	const [quantity, setQuantity] = useState<bigint>(minQuantity);
-	const [localInvalidQuantity, setLocalInvalidQuantity] = useState(false);
+	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	const maxQuantity: bigint = unlimitedSupply ? maxUint256 : quantityRemaining;
-	const maxBelowMin = maxQuantity < minQuantity;
-	const invalidQuantity = maxBelowMin || localInvalidQuantity;
 
 	const handleSetQuantity = () => {
 		buyModalStore.send({
@@ -80,7 +78,8 @@ export const ERC1155QuantityModal = ({
 							quantity={quantity}
 							invalidQuantity={invalidQuantity}
 							onQuantityChange={setQuantity}
-							onInvalidQuantityChange={setLocalInvalidQuantity}
+							onInvalidQuantityChange={setInvalidQuantity}
+							decimals={0}
 							maxQuantity={maxQuantity}
 						/>
 

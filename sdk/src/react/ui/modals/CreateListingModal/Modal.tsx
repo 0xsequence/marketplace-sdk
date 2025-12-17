@@ -47,13 +47,14 @@ const Modal = () => {
 						: undefined
 			}
 			queries={{
+				collectible: ctx.queries.collectible,
 				collection: ctx.queries.collection,
 				currencies: ctx.queries.currencies,
 				collectibleBalance: ctx.queries.collectibleBalance,
 			}}
 			externalError={ctx.error}
 		>
-			{({ collection, currencies, collectibleBalance }) => (
+			{({ collectible, collection, currencies, collectibleBalance }) => (
 				<>
 					{currencies.length === 0 && (
 						<div className="text-center text-gray-400">
@@ -120,6 +121,7 @@ const Modal = () => {
 											ctx.form.quantity.update(quantity.toString())
 										}
 										onInvalidQuantityChange={() => {}}
+										decimals={collectible?.decimals || 0}
 										maxQuantity={BigInt(collectibleBalance.balance)}
 										disabled={ctx.flow.isPending}
 									/>

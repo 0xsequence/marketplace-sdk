@@ -1,6 +1,6 @@
 'use client';
 
-import type { Order } from '@0xsequence/api-client';
+import type { Order, OrderbookKind } from '@0xsequence/api-client';
 import { CartIcon } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../../types';
@@ -31,11 +31,13 @@ type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 		currencyAddress: Address;
 	};
 	lowestListing?: never;
+	orderbookKind?: never;
 };
 
 type MarketNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 	cardType: 'market';
 	lowestListing?: Order;
+	orderbookKind?: OrderbookKind;
 	salesContractAddress?: never;
 	salePrice?: never;
 };
@@ -50,6 +52,8 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		tokenId,
 		collectionAddress,
 		chainId,
+		quantityRemaining,
+		unlimitedSupply,
 		cardType,
 		hideQuantitySelector,
 		labelOverride,
@@ -60,7 +64,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
 	if (cardType === 'shop') {
-		const { salesContractAddress } = props;
+		const { salesContractAddress, salePrice } = props;
 
 		return (
 			<ActionButtonBody
@@ -74,8 +78,15 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						salesContractAddress,
 						item: {
 							tokenId,
+							quantity: 1n,
 						},
 						cardType: 'shop',
+						salePrice: {
+							amount: salePrice.amount,
+							currencyAddress: salePrice.currencyAddress,
+						},
+						quantityRemaining: quantityRemaining ?? 0n,
+						unlimitedSupply,
 						hideQuantitySelector,
 					})
 				}
@@ -116,6 +127,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 	}
 
 	if (action === CollectibleCardAction.OFFER) {
+		const { orderbookKind } = props;
 		return (
 			<ActionButtonBody
 				action={CollectibleCardAction.OFFER}
@@ -126,6 +138,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						collectionAddress,
 						chainId,
 						tokenId,
+						orderbookKind,
 					})
 				}
 				className={className}

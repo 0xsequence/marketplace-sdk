@@ -6,7 +6,7 @@ import {
 	SendIcon,
 	Text,
 } from '@0xsequence/design-system';
-import type { Order } from '@0xsequence/marketplace-sdk';
+import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -17,12 +17,14 @@ import type { Address } from 'viem';
 
 export function MarketActionsCard({
 	lowestListing,
+	orderbookKind,
 	collectionAddress,
 	chainId,
 	tokenId,
 	isOwner,
 }: {
 	lowestListing: Order | undefined | null;
+	orderbookKind: OrderbookKind | undefined;
 	collectionAddress: Address;
 	chainId: number;
 	tokenId: bigint;
@@ -89,6 +91,7 @@ export function MarketActionsCard({
 								collectionAddress,
 								chainId,
 								tokenId,
+								orderbookKind,
 							})
 						}
 						className="w-full"
@@ -109,6 +112,7 @@ export function MarketActionsCard({
 								onClick={() =>
 									openCreateListingModal({
 										...hooksProps,
+										orderbookKind,
 									})
 								}
 								className="w-full"

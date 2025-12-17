@@ -105,8 +105,16 @@ export function ShopActions({
 							salesContractAddress: saleContractAddress as Address,
 							item: {
 								tokenId: BigInt(tokenId),
+								quantity: 1n, // TODO: this is overwritten later, should not be exposed
 							},
 							cardType: 'shop',
+							salePrice: {
+								amount: primarySaleItem?.priceAmount ?? 0n,
+								currencyAddress:
+									(primarySaleItem?.currencyAddress as Address) ?? '0x',
+							},
+							// TODO: This is 0 for unlimited supply, fix it
+							quantityRemaining: primarySaleItem?.supply ?? 0n,
 						})
 					}
 				>
@@ -160,8 +168,15 @@ export function ShopActions({
 								salesContractAddress: saleContractAddress as Address,
 								item: {
 									tokenId: BigInt(tokenId),
+									quantity: 1n, // TODO: this is overwritten later, should not be exposed
 								},
 								cardType: 'shop',
+								salePrice: {
+									amount: primarySaleItem?.priceAmount ?? 0n,
+									currencyAddress:
+										(primarySaleItem?.currencyAddress as Address) ?? '0x',
+								},
+								quantityRemaining: primarySaleItem?.supply ?? 0n,
 							})
 						}
 					>

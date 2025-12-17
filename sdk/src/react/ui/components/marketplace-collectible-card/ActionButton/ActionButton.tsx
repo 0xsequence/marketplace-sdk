@@ -2,7 +2,7 @@
 
 import type { Address } from 'viem';
 import type { CardType, CollectibleCardAction } from '../../../../../types';
-import type { Order } from '../../../../_internal';
+import type { Order, OrderbookKind } from '../../../../_internal';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';
@@ -11,6 +11,7 @@ type ActionButtonProps = {
 	chainId: number;
 	collectionAddress: Address;
 	tokenId: bigint;
+	orderbookKind?: OrderbookKind;
 	isTransfer?: boolean;
 	action: CollectibleCardAction;
 	owned?: boolean;
@@ -43,6 +44,7 @@ export function ActionButton({
 	collectionAddress,
 	chainId,
 	tokenId,
+	orderbookKind,
 	action,
 	owned,
 	highestOffer,
@@ -76,6 +78,7 @@ export function ActionButton({
 				tokenId={tokenId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
+				orderbookKind={orderbookKind}
 				highestOffer={highestOffer}
 				labelOverride={labelOverride}
 				className={className}
@@ -100,6 +103,7 @@ export function ActionButton({
 				}
 			: {
 					cardType: 'market' as const,
+					orderbookKind,
 					lowestListing,
 					action,
 					tokenId,

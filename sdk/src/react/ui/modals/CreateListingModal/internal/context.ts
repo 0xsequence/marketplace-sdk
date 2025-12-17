@@ -6,6 +6,7 @@ import { dateToUnixTime } from '../../../../../utils/date';
 import { type ContractType, OrderbookKind } from '../../../../_internal';
 import {
 	useCollectibleBalance,
+	useCollectibleMetadata,
 	useCollectionMetadata,
 	useConfig,
 	useConnectorMetadata,
@@ -41,6 +42,13 @@ export function useCreateListingModalContext() {
 	const state = useCreateListingModalState();
 	const { address } = useAccount();
 	const config = useConfig();
+
+	const collectibleQuery = useCollectibleMetadata({
+		chainId: state.chainId,
+		collectionAddress: state.collectionAddress,
+		tokenId: state.tokenId,
+	});
+
 	const collectionQuery = useCollectionMetadata({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
@@ -111,22 +119,31 @@ export function useCreateListingModalContext() {
 
 	const quantityDnum: Dnum = useMemo(() => {
 		if (!state.quantityInput || state.quantityInput === '') {
-			return [0n, 0];
+			return [0n, collectibleQuery.data?.decimals ?? 0];
 		}
 		try {
-			return [BigInt(state.quantityInput), 0] as Dnum;
+			return [
+				BigInt(state.quantityInput),
+				collectibleQuery.data?.decimals ?? 0,
+			] as Dnum;
 		} catch {
-			return [0n, 0];
+			return [0n, collectibleQuery.data?.decimals ?? 0];
 		}
-	}, [state.quantityInput]);
+	}, [state.quantityInput, collectibleQuery.data?.decimals]);
 	const quantityRaw = quantityDnum[0];
 
 	const balanceDnum: Dnum | undefined = useMemo(() => {
-		if (collectibleBalanceQuery.data?.balance !== undefined) {
-			return [BigInt(collectibleBalanceQuery.data.balance), 0];
+		if (
+			collectibleBalanceQuery.data?.balance !== undefined &&
+			collectibleQuery.data?.decimals !== undefined
+		) {
+			return [
+				BigInt(collectibleBalanceQuery.data.balance),
+				collectibleQuery.data.decimals,
+			];
 		}
 		return undefined;
-	}, [collectibleBalanceQuery.data?.balance]);
+	}, [collectibleBalanceQuery.data?.balance, collectibleQuery.data?.decimals]);
 
 	const validation = useMemo(
 		() =>
@@ -272,6 +289,7 @@ export function useCreateListingModalContext() {
 
 	const error =
 		nftApprovalQuery.error ||
+		collectibleQuery.error ||
 		collectionQuery.error ||
 		currenciesQuery.error ||
 		collectibleBalanceQuery.error;
@@ -353,6 +371,7 @@ export function useCreateListingModalContext() {
 		flow,
 
 		loading: {
+			collectible: collectibleQuery.isLoading,
 			collection: collectionQuery.isLoading,
 			currencies: currenciesQuery.isLoading,
 			collectibleBalance: collectibleBalanceQuery.isLoading,
@@ -366,6 +385,7 @@ export function useCreateListingModalContext() {
 
 		error,
 		queries: {
+			collectible: collectibleQuery,
 			collection: collectionQuery,
 			currencies: currenciesQuery,
 			collectibleBalance: collectibleBalanceQuery,

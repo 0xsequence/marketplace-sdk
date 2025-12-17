@@ -5,6 +5,7 @@ import type {
 	CollectibleCardAction,
 	CollectibleOrder,
 	ContractType,
+	OrderbookKind,
 	PropertyFilter,
 } from '../../../../types';
 import type { Order, PriceFilter } from '../../../_internal';
@@ -21,6 +22,8 @@ export interface UseMarketCardDataPagedProps {
 	collectionAddress: Address;
 	/** The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) */
 	chainId: number;
+	/** Optional orderbook kind override - used to override marketplace config for internal tests */
+	orderbookKind?: OrderbookKind;
 	/** The contract type of the collection (ERC721, ERC1155, etc.) */
 	collectionType: ContractType;
 	/** Optional property filters to apply to the collectible search */
@@ -162,6 +165,7 @@ export interface UseMarketCardDataPagedProps {
 export function useMarketCardDataPaged({
 	collectionAddress,
 	chainId,
+	orderbookKind,
 	collectionType,
 	filterOptions,
 	searchText,
@@ -228,6 +232,7 @@ export function useMarketCardDataPaged({
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
 				cardType: 'market',
+				orderbookKind,
 				collectible,
 				onCollectibleClick,
 				balance: balanceAmount?.toString(),

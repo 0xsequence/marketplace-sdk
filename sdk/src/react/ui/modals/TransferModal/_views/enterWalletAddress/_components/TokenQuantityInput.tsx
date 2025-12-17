@@ -24,10 +24,9 @@ const TokenQuantityInput = ({
 	onInvalidChange,
 }: TokenQuantityInputProps) => {
 	const [localInvalid, setLocalInvalid] = useState(false);
-	const maxBelowMin = maxQuantity < 1n;
 
 	const insufficientBalance = value > maxQuantity;
-	const invalidQuantity = invalid || localInvalid || maxBelowMin;
+	const invalidQuantity = invalid || localInvalid;
 
 	return (
 		<div className={cn('flex flex-col gap-3', disabled && 'opacity-70')}>
