@@ -1,5 +1,5 @@
+import type { ContractType } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
-import type { ContractType } from '../../../../_internal';
 import {
 	useCollectibleMetadata,
 	useCollectionMetadata,

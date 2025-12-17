@@ -1,4 +1,4 @@
-import { ContractType } from '../../../../_internal';
+import { ContractType } from '@0xsequence/api-client';
 
 export const getSupplyStatusText = ({
 	quantityRemaining,

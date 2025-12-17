@@ -1,15 +1,15 @@
+import {
+	type ContractType,
+	OrderbookKind,
+	type Step,
+} from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { Address, Hex } from 'viem';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
-import type { ContractType } from '../../../../_internal';
-import {
-	OrderbookKind,
-	type Step,
-	TransactionType,
-} from '../../../../_internal';
+import { TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import {
 	useConfig,

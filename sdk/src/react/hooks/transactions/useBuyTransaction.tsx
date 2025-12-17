@@ -1,8 +1,8 @@
+import { ContractType, MarketplaceKind } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
-import { ContractType, MarketplaceKind } from '../../_internal';
 import { useMarketPlatformFee } from '../../ui/modals/BuyModal/hooks/useMarketPlatformFee';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import {

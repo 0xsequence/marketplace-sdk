@@ -1,5 +1,5 @@
+import { ContractType } from '@0xsequence/api-client';
 import type { Address } from 'viem';
-import { ContractType } from '../../../../_internal';
 
 export interface ShopCardStateParams {
 	quantityRemaining?: bigint;

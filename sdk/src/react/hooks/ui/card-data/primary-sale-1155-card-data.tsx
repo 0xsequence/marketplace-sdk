@@ -1,7 +1,7 @@
 import type { CollectiblePrimarySaleItem } from '@0xsequence/api-client';
+import { ContractType } from '@0xsequence/api-client';
 import { type Address, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ContractType } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';

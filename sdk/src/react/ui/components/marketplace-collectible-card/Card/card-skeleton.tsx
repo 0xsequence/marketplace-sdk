@@ -1,7 +1,7 @@
 'use client';
 
+import { ContractType } from '@0xsequence/api-client';
 import { Skeleton } from '@0xsequence/design-system';
-import { ContractType } from '../../../../_internal';
 
 export interface CardSkeletonProps {
 	type?: ContractType;

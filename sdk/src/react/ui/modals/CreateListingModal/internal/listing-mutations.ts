@@ -1,3 +1,10 @@
+import {
+	type ContractType,
+	type CreateReq,
+	type GenerateListingTransactionRequest,
+	type Step,
+	StepType,
+} from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { toNumber } from 'dnum';
 import { useMemo } from 'react';
@@ -6,15 +13,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind } from '../../../../../types';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
-import {
-	type ContractType,
-	type CreateReq,
-	type GenerateListingTransactionRequest,
-	getMarketplaceClient,
-	type Step,
-	StepType,
-	TransactionType,
-} from '../../../../_internal';
+import { getMarketplaceClient, TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import {
 	useConfig,

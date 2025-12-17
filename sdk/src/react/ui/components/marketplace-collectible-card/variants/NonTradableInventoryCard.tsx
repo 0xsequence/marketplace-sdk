@@ -1,7 +1,7 @@
 'use client';
 
+import type { ContractType } from '@0xsequence/api-client';
 import { forwardRef } from 'react';
-import type { ContractType } from '../../../../_internal';
 import { Card } from '../Card';
 import type { NonTradableInventoryCardProps } from '../types';
 import { renderSkeletonIfLoading } from '../utils';

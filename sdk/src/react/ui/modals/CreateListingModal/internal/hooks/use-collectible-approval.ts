@@ -1,7 +1,7 @@
+import { ContractType } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ERC721_ABI, ERC1155_ABI } from '../../../../../../utils/abi';
-import { ContractType } from '../../../../../_internal';
 
 export interface UseCollectibleApprovalArgs {
 	collectionAddress: Address | undefined;

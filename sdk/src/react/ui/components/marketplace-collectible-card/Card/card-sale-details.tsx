@@ -1,8 +1,8 @@
 'use client';
 
+import type { ContractType } from '@0xsequence/api-client';
 import { Text } from '@0xsequence/design-system';
 import { cn } from '../../../../../utils';
-import type { ContractType } from '../../../../_internal';
 import { getSupplyStatusText } from '../utils';
 
 export interface CardSaleDetailsProps {

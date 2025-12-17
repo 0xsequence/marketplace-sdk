@@ -2,11 +2,15 @@ import { ContractType, MarketplaceMocks } from '@0xsequence/api-client';
 
 const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
 
+import {
+	MarketplaceKind,
+	OrderbookKind,
+	StepType,
+} from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MarketplaceKind, OrderbookKind, StepType } from '../../_internal';
 import { useGenerateSellTransaction } from './useGenerateSellTransaction';
 
 describe('useGenerateSellTransaction', () => {

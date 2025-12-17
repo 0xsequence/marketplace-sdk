@@ -1,8 +1,8 @@
+import { ContractType } from '@0xsequence/api-client';
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { type Address, encodeFunctionData, type Hex, toHex } from 'viem';
 import { useAccount } from 'wagmi';
-import { ContractType } from '../../../../../types';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import {
 	getQueryClient,

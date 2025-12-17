@@ -1,3 +1,4 @@
+import { ContractType } from '@0xsequence/api-client';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
@@ -7,7 +8,6 @@ import {
 	ERC1155_SALES_CONTRACT_ABI_V0,
 	ERC1155_SALES_CONTRACT_ABI_V1,
 } from '../../../utils/abi';
-import { ContractType } from '../../_internal';
 
 export enum SalesContractVersion {
 	V0 = 'v0',
