@@ -53,6 +53,7 @@ export function Collectibles() {
 			showSaleControls={true}
 			collectionAddress={collectionAddress as Address}
 			chainId={Number(chainId)}
+			cardType="market"
 		/>
 	);
 }

@@ -19,6 +19,7 @@ export function Collectible() {
 			chainId={Number(chainId)}
 			collectionAddress={collectionAddress as Address}
 			tokenId={BigInt(tokenId as string)}
+			cardType="market"
 		/>
 	);
 }
