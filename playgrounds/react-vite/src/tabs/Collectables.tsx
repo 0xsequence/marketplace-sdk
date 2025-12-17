@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import {
 	CollectiblesPageController,
 	createRoute,
@@ -8,18 +8,33 @@ import type { Address } from 'viem';
 
 export function Collectibles() {
 	const navigate = useNavigate();
-	const { collectionAddress, chainId } = useParams<{
-		collectionAddress: Address;
+	const location = useLocation();
+	const { collectionAddress, chainId, salesAddress, itemAddress } = useParams<{
+		collectionAddress?: Address;
+		salesAddress?: Address;
+		itemAddress?: Address;
 		chainId: string;
 	}>();
 
+	const isShop = location.pathname.startsWith('/shop');
+
 	const handleCollectibleClick = (tokenId: bigint) => {
-		const route = createRoute.collectible(
-			Number(chainId),
-			collectionAddress as string,
-			tokenId,
-		);
-		navigate(route);
+		if (isShop && salesAddress && itemAddress) {
+			const route = createRoute.shopCollectible(
+				Number(chainId),
+				salesAddress,
+				itemAddress,
+				tokenId,
+			);
+			navigate(route);
+		} else if (collectionAddress) {
+			const route = createRoute.marketCollectible(
+				Number(chainId),
+				collectionAddress,
+				tokenId,
+			);
+			navigate(route);
+		}
 	};
 
 	const renderSaleControls = ({
@@ -54,11 +69,13 @@ export function Collectibles() {
 		<CollectiblesPageController
 			onCollectibleClick={handleCollectibleClick}
 			renderSaleControls={renderSaleControls}
-			showMarketTypeToggle={true}
+			showMarketTypeToggle={false}
 			showFilters={true}
-			showSaleControls={true}
-			collectionAddress={collectionAddress as Address}
+			showSaleControls={isShop}
+			collectionAddress={(isShop ? itemAddress : collectionAddress) as Address}
+			salesAddress={isShop ? (salesAddress as Address) : undefined}
 			chainId={Number(chainId)}
+			cardType={isShop ? 'shop' : 'market'}
 		/>
 	);
 }
