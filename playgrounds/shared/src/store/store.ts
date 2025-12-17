@@ -1,6 +1,5 @@
 import {
 	type ApiConfig,
-	type CardType,
 	type ContractType,
 	type MarketplaceConfig,
 	type OrderbookKind,
@@ -11,7 +10,6 @@ import { createStore } from '@xstate/store';
 import type { Address } from 'viem';
 import {
 	DEFAULT_ACTIVE_TAB,
-	DEFAULT_MARKETPLACE_TYPE,
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
@@ -62,7 +60,6 @@ export const defaultContext = {
 			? ((window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab)
 			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
-	marketplaceKind: DEFAULT_MARKETPLACE_TYPE,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
@@ -157,11 +154,6 @@ export const marketplaceStore = createStore({
 		}),
 
 		resetSettings: () => structuredClone(defaultContext),
-
-		setMarketplaceKind: (context, { kind }: { kind: CardType }) => ({
-			...context,
-			marketplaceKind: kind,
-		}),
 
 		setApiOverride: (
 			context,
