@@ -5,7 +5,7 @@ import type { Address } from 'viem';
 export function Collectible() {
 	const navigate = useNavigate();
 	const { collectionAddress, chainId, tokenId } = useParams();
-	const route = createRoute.collectibles(
+	const route = createRoute.marketCollectibles(
 		Number(chainId),
 		collectionAddress as string,
 	);
