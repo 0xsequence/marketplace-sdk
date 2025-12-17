@@ -14,6 +14,7 @@ import {
 	isSameDay,
 	startOfDay,
 } from 'date-fns';
+import { cn } from '../../../../../ssr';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
 import { TimeSelector } from './TimeSelector';
@@ -73,7 +74,10 @@ export default function CalendarDropdown({
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				<Button
-					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
+					className={cn(
+						'h-9 flex-1 rounded-sm border-border-normal p-2 font-medium text-xs',
+						isOpen && 'border-border-focus outline-1 outline-border-focus',
+					)}
 					variant="outline"
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
