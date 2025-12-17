@@ -144,7 +144,6 @@ export {
 	isSellStep,
 	isSignatureStep,
 	isTransactionStep,
-	MarketplaceContractType,
 	MarketplaceKind,
 	MetadataStatus,
 	OfferType,
@@ -160,6 +159,7 @@ export {
 	TransactionCrypto,
 	type TransactionStep,
 } from './adapters/marketplace';
+// ContractType is already exported from @0xsequence/indexer above
 
 export { MarketplaceClient } from './adapters/marketplace/client';
 
