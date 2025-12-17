@@ -2,7 +2,7 @@ import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
-import { ContractType, MarketplaceKind } from '../../_internal';
+import { type ContractType, MarketplaceKind } from '../../_internal';
 import { useMarketPlatformFee } from '../../ui/modals/BuyModal/hooks/useMarketPlatformFee';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import {
@@ -20,6 +20,7 @@ export interface UseBuyTransactionOptions {
 		amount: bigint | undefined;
 		currencyAddress: Address | undefined;
 	};
+	contractType: ContractType.ERC721 | ContractType.ERC1155;
 }
 
 /**
@@ -27,7 +28,7 @@ export interface UseBuyTransactionOptions {
  * Automatically selects the appropriate transaction type based on modal props
  */
 export function useBuyTransaction(options: UseBuyTransactionOptions) {
-	const { modalProps, primarySalePrice } = options;
+	const { modalProps, primarySalePrice, contractType } = options;
 	const { collectionAddress, chainId } = modalProps;
 	const { address: buyer } = useAccount();
 	const quantity = useQuantity();
@@ -64,7 +65,7 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 		amounts: isShopProps(modalProps) ? [normalizedQuantity] : [],
 		maxTotal: primarySalePrice?.amount!,
 		paymentToken: primarySalePrice?.currencyAddress!,
-		contractType: ContractType.ERC1155, // TODO: Determine from contract
+		contractType,
 		enabled: transactionType === TransactionType.PRIMARY_SALE,
 	});
 
