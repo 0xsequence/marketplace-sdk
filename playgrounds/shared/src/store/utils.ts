@@ -10,12 +10,7 @@ export function validateStoreSnapshot(
 	if (typeof s.projectId !== 'string' || typeof s.marketplaceKind !== 'string')
 		return false;
 
-	if (
-		!['collections', 'collectibles', 'collectible', 'debug'].includes(
-			s.activeTab,
-		)
-	)
-		return false;
+	if (typeof s.activeTab !== 'string') return false;
 
 	if (!['infinite', 'paginated'].includes(s.paginationMode)) return false;
 
