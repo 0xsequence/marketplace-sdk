@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@test';
+import { isAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { TEST_COLLECTIBLE } from '../../../../test/const';
 import { ContractType } from '../../_internal';
 import { useERC721Owner } from './useERC721Owner';
-import { isAddress } from 'viem';
 
 describe('useERC721Owner', () => {
 	const defaultArgs = {
@@ -20,9 +20,12 @@ describe('useERC721Owner', () => {
 		expect(result.current.isLoading).toBe(true);
 
 		// Wait for the data to be loaded
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		}, { timeout: 10000 });
+		await waitFor(
+			() => {
+				expect(result.current.isLoading).toBe(false);
+			},
+			{ timeout: 10000 },
+		);
 
 		expect(result.current.error).toBeNull();
 		expect(result.current.owner).toBeDefined();

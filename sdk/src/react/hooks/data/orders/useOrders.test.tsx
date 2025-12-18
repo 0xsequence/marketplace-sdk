@@ -13,7 +13,8 @@ describe('useOrders', () => {
 		input: [
 			{
 				contractAddress: zeroAddress,
-				tokenId: '1',
+				orderId: mockOrder.orderId,
+				marketplace: mockOrder.marketplace,
 			},
 		],
 	};
@@ -82,7 +83,7 @@ describe('useOrders', () => {
 		await waitFor(() => {
 			expect((result.current as any).isSuccess).toBe(true);
 		});
-		
+
 		// Reset call counter after initial load to specifically track the refetch
 		callCount = 0;
 
