@@ -634,8 +634,8 @@ importers:
         specifier: 'catalog:'
         version: 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       0xtrails:
-        specifier: ^0.8.9
-        version: 0.8.9(0xsequence@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@emotion/is-prop-valid@1.4.0)(@react-oauth/google@0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(wagmi@2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76))(zod@3.25.76)
+        specifier: ^0.9.3
+        version: 0.9.3(0xsequence@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@emotion/is-prop-valid@1.4.0)(@react-oauth/google@0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(wagmi@2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76))(zod@3.25.76)
       '@0xsequence/api':
         specifier: 'catalog:'
         version: 2.3.38
@@ -831,8 +831,8 @@ packages:
     peerDependencies:
       ethers: '>=6'
 
-  0xtrails@0.8.9:
-    resolution: {integrity: sha512-IVF1LtvpC9DJMYzwQy5TNvBX2FGkeRF8H0PIHVLqZsx9EdN9NezRCU6GtYfTqgFd5Z8RwSzeXlOyWmULpU2JLQ==}
+  0xtrails@0.9.3:
+    resolution: {integrity: sha512-TFj8x2H6jndKYzi55LTSOHjJvqJs1vBdVAJPVbcEecoyIXLspdu01knqzwpngso1qbtfaTXpCTj8DkYEfNDdeQ==}
     peerDependencies:
       '@tanstack/react-query': 5.90.9
       ethers: 6.15.0
@@ -1055,8 +1055,8 @@ packages:
     peerDependencies:
       ethers: '>=6'
 
-  '@0xtrails/api@0.8.7':
-    resolution: {integrity: sha512-q/md3UhwW/AMKTVYV0nD0SbexQtSWiTCmcDPpP9E5rhpX9z+KuXqGaf9Hi3O5/kc3OEhLc4KFSq8J98HmIpKsQ==}
+  '@0xtrails/api@0.9.1':
+    resolution: {integrity: sha512-JQ0+VL2Ik/BeUOfcA63cENi9NyGKxUstmZUxunqIm8dZBI67LqfZO5pFaT/FhWmgP0/ptMYiEl3DXgIthM/h1A==}
 
   '@adobe/css-tools@4.4.4':
     resolution: {integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==}
@@ -9704,13 +9704,13 @@ snapshots:
       '@0xsequence/wallet': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  0xtrails@0.8.9(0xsequence@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@emotion/is-prop-valid@1.4.0)(@react-oauth/google@0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(wagmi@2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76))(zod@3.25.76):
+  0xtrails@0.9.3(0xsequence@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.38)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@emotion/is-prop-valid@1.4.0)(@react-oauth/google@0.11.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(wagmi@2.18.0(@tanstack/query-core@5.90.10)(@tanstack/react-query@5.90.9(react@19.2.0))(@types/react@19.2.6)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76))(zod@3.25.76):
     dependencies:
       '@0xsequence/connect': 5.4.4(ce3bc6a6f2a66fbcc8fac384d541f207)
       '@0xsequence/hooks': 5.4.4(@0xsequence/api@2.3.38)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.38)(@0xsequence/network@2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.9(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@0xsequence/indexer': 3.0.0-beta.4
       '@0xsequence/wallet-primitives': 3.0.0-beta.4(typescript@5.9.3)(zod@3.25.76)
-      '@0xtrails/api': 0.8.7
+      '@0xtrails/api': 0.9.1
       '@databeat/tracker': 0.9.3
       '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tanstack/react-query': 5.90.9(react@19.2.0)
@@ -10184,7 +10184,7 @@ snapshots:
       '@0xsequence/utils': 2.3.38(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  '@0xtrails/api@0.8.7': {}
+  '@0xtrails/api@0.9.1': {}
 
   '@adobe/css-tools@4.4.4': {}
 

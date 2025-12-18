@@ -2212,11 +2212,18 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     outline-style: var(--tw-outline-style);
     outline-width: 1px;
   }
+  .outline-1 {
+    outline-style: var(--tw-outline-style);
+    outline-width: 1px;
+  }
   .outline-offset-1 {
     outline-offset: 1px;
   }
   .outline-offset-\[-2px\] {
     outline-offset: -2px;
+  }
+  .outline-border-focus {
+    outline-color: var(--color-border-focus);
   }
   .blur {
     --tw-blur: blur(8px);
