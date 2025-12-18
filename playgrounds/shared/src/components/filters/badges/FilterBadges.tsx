@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from '@0xsequence/design-system';
+import { type PropertyFilter, PropertyType } from '@0xsequence/marketplace-sdk';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
-import { type PropertyFilter, PropertyType } from '@0xsequence/metadata';
 import { useCallback } from 'react';
 import type { Address } from 'viem';
 import { IntBadge } from './IntBadge';

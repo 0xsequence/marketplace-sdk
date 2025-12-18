@@ -17,15 +17,24 @@ createRoot(document.getElementById('root')!).render(
 		<BrowserRouter>
 			<Providers>
 				<Routes>
-					<Route path="/" element={<Navigate to={'/'} replace />} />
+					<Route path="/" element={<Navigate to={'/market'} replace />} />
 					<Route path="/*" element={<App />}>
-						<Route index element={<Collections />} />
+						<Route path="market" element={<Collections />} />
+						<Route path="shop" element={<Collections />} />
 						<Route
-							path=":chainId/:collectionAddress"
+							path="market/:chainId/:collectionAddress"
 							element={<Collectibles />}
 						/>
 						<Route
-							path=":chainId/:collectionAddress/:tokenId"
+							path="market/:chainId/:collectionAddress/:tokenId"
+							element={<Collectible />}
+						/>
+						<Route
+							path="shop/:chainId/:salesAddress/:itemAddress"
+							element={<Collectibles />}
+						/>
+						<Route
+							path="shop/:chainId/:salesAddress/:itemAddress/:tokenId"
 							element={<Collectible />}
 						/>
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />

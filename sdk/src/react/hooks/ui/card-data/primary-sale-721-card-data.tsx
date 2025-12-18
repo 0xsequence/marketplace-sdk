@@ -70,20 +70,12 @@ export function usePrimarySale721CardData({
 		enabled,
 	});
 	const config = useConfig();
-
-	const tokenSuppliesEnabled = Boolean(
-		chainId && contractAddress && config && (enabled ?? true),
-	);
-	// TODO: Find a way to remove this and use enabled in tokenSuppliesQueryOptions
 	const tokenSuppliesQuery = useInfiniteQuery({
 		...tokenSuppliesQueryOptions({
 			chainId,
 			collectionAddress: contractAddress,
 			includeMetadata: true,
 			config,
-			query: {
-				enabled: tokenSuppliesEnabled,
-			},
 		}),
 	});
 
@@ -97,8 +89,6 @@ export function usePrimarySale721CardData({
 
 	useEffect(() => {
 		async function fetchAllPages() {
-			if (!tokenSuppliesEnabled) return;
-
 			if (!hasNextSuppliesPage && tokenSuppliesData) {
 				setAllTokenSuppliesFetched(true);
 				return;
@@ -115,7 +105,6 @@ export function usePrimarySale721CardData({
 		isFetchingNextSuppliesPage,
 		tokenSuppliesLoading,
 		fetchNextTokenSuppliesPage,
-		tokenSuppliesEnabled,
 	]);
 
 	const allTokenSupplies = tokenSuppliesData?.pages.flatMap(

@@ -30,7 +30,9 @@ export interface CollectiblesPageControllerProps {
 		};
 	}) => React.ReactNode;
 	collectionAddress: Address;
+	salesAddress?: Address;
 	chainId: number;
+	cardType?: 'market' | 'shop';
 }
 
 export function CollectiblesPageController({
@@ -40,16 +42,19 @@ export function CollectiblesPageController({
 	showSaleControls = false,
 	renderSaleControls,
 	collectionAddress,
+	salesAddress,
 	chainId,
+	cardType = 'market',
 }: CollectiblesPageControllerProps) {
-	const { paginationMode, cardType } = useMarketplace();
+	const { paginationMode } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
-	const isShop = showMarketTypeToggle && cardType === 'shop';
-	const saleContractAddress = saleConfig?.saleAddress as Address;
+	const isShop = cardType === 'shop';
+	const saleContractAddress = (salesAddress ??
+		saleConfig?.saleAddress) as Address;
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		collectionAddress,
@@ -69,10 +74,10 @@ export function CollectiblesPageController({
 		});
 	const ERC721SalePrice = {
 		amount:
-			primarySaleItems?.pages[0].primarySaleItems[0]?.primarySaleItem
-				?.priceAmount,
+			primarySaleItems?.pages[0].primarySaleItems[0].primarySaleItem
+				.priceAmount,
 		currencyAddress: primarySaleItems?.pages[0].primarySaleItems[0]
-			?.primarySaleItem?.currencyAddress as Address,
+			.primarySaleItem.currencyAddress as Address,
 	};
 
 	const saleItemIds = isShop
@@ -87,9 +92,7 @@ export function CollectiblesPageController({
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<Text variant="large">
-					{showMarketTypeToggle ? (isShop ? 'Shop' : 'Market') : 'Collectibles'}
-				</Text>
+				<Text variant="large">{isShop ? 'Shop' : 'Market'}</Text>
 				<Text variant="small" color="text80">
 					Mode: {paginationMode === 'paged' ? 'Paginated' : 'Infinite Scroll'}
 				</Text>

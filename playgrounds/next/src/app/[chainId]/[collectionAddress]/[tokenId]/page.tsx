@@ -11,10 +11,9 @@ export default function CollectiblePage() {
 		chainId: string;
 		tokenId: string;
 	}>();
-	const route = createRoute.collectible(
+	const route = createRoute.marketCollectibles(
 		Number(chainId),
 		collectionAddress as string,
-		BigInt(tokenId),
 	);
 
 	return (

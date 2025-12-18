@@ -66,7 +66,9 @@ try {
 
 	if (changes.length > 0) {
 		console.log('\n📋 Dependency version changes:');
-		changes.forEach((change) => console.log(change));
+		for (const change of changes) {
+			console.log(change);
+		}
 	} else {
 		console.log('ℹ️  No dependency version changes needed');
 	}

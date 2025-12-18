@@ -14,7 +14,7 @@ export function Collectibles() {
 	}>();
 
 	const handleCollectibleClick = (tokenId: bigint) => {
-		const route = createRoute.collectible(
+		const route = createRoute.marketCollectible(
 			Number(chainId),
 			collectionAddress as string,
 			tokenId,
@@ -53,6 +53,7 @@ export function Collectibles() {
 			showSaleControls={true}
 			collectionAddress={collectionAddress as Address}
 			chainId={Number(chainId)}
+			cardType="market"
 		/>
 	);
 }

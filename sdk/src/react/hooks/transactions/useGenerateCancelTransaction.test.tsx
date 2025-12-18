@@ -4,7 +4,7 @@ import {
 	StepType,
 } from '@0xsequence/api-client';
 
-const { mockMarketplaceEndpoint } = MarketplaceMocks;
+const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
 
 import { act, renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
