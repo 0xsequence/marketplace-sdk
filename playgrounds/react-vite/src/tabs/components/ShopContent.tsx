@@ -21,7 +21,12 @@ export function ShopContent({
 	const navigate = useNavigate();
 
 	function handleCollectibleClick(tokenId: bigint) {
-		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
+		const route = createRoute.shopCollectible(
+			chainId,
+			saleContractAddress,
+			collectionAddress,
+			tokenId,
+		);
 		navigate(route);
 	}
 

@@ -11,7 +11,6 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { useMarketplace } from '../../store';
 import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
@@ -44,6 +43,8 @@ export interface CollectiblePageControllerProps {
 	chainId: number;
 	collectionAddress: Address;
 	tokenId: bigint;
+	cardType?: 'market' | 'shop';
+	salesAddress?: Address;
 }
 
 export function CollectiblePageController({
@@ -54,8 +55,8 @@ export function CollectiblePageController({
 	chainId,
 	collectionAddress,
 	tokenId,
+	cardType = 'market',
 }: CollectiblePageControllerProps) {
-	const { cardType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const isShop = cardType === 'shop';
 
@@ -127,6 +128,7 @@ export function CollectiblePageController({
 						chainId={chainId}
 						collection={collection}
 						onCollectionClick={onCollectionClick}
+						cardType={cardType}
 					/>
 				) : (
 					<div className="flex flex-col gap-1">
@@ -137,6 +139,7 @@ export function CollectiblePageController({
 							chainId={chainId}
 							collection={collection}
 							onCollectionClick={onCollectionClick}
+							cardType={cardType}
 						/>
 					</div>
 				)}
@@ -150,6 +153,7 @@ export function CollectiblePageController({
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
 				collectibleName={collectible?.name ?? ''}
+				cardType={cardType}
 			/>
 
 			{!isShop && (

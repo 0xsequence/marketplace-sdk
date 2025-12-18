@@ -47,8 +47,6 @@ export function useMarketTransactionSteps({
 	// Only false when explicitly set to 'crypto' or 'sequence-checkout'
 	const useWithTrails =
 		config.checkoutMode === 'trails' || config.checkoutMode === undefined;
-	const queryEnabled =
-		enabled && !!buyer && !!orderId && tokenId !== undefined && !!quantity;
 
 	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
 		queryKey: [
@@ -86,6 +84,6 @@ export function useMarketTransactionSteps({
 				canBeUsedWithTrails: response.resp?.canBeUsedWithTrails ?? false,
 			};
 		},
-		enabled: queryEnabled,
+		enabled: enabled && !!buyer,
 	});
 }

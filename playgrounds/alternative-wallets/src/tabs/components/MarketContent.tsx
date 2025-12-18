@@ -15,7 +15,7 @@ export function MarketContent() {
 	function handleCollectibleClick(tokenId: bigint) {
 		if (!collectionAddress || !chainId) return;
 
-		const route = createRoute.collectible(
+		const route = createRoute.marketCollectible(
 			Number(chainId),
 			collectionAddress,
 			tokenId,

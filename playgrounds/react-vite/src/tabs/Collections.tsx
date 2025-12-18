@@ -1,18 +1,41 @@
 import type { ContractInfo } from '@0xsequence/marketplace-sdk';
-import { useNavigate } from 'react-router';
-import { CollectionsPageController } from 'shared-components';
+import { useLocation, useNavigate } from 'react-router';
+import { CollectionsPageController, createRoute } from 'shared-components';
 
 export function Collections() {
 	const navigate = useNavigate();
+	const location = useLocation();
 
-	const handleCollectionClick = (collection: ContractInfo) => {
-		navigate(`/${collection.chainId}/${collection.address}`);
+	const collectionType: 'market' | 'shop' = location.pathname.startsWith(
+		'/shop',
+	)
+		? 'shop'
+		: 'market';
+
+	const handleCollectionClick = (
+		collection: ContractInfo,
+		cardType: 'market' | 'shop',
+		salesAddress?: string,
+	) => {
+		if (cardType === 'shop' && salesAddress) {
+			navigate(
+				createRoute.shopCollectibles(
+					collection.chainId,
+					salesAddress,
+					collection.address,
+				),
+			);
+		} else {
+			navigate(
+				createRoute.marketCollectibles(collection.chainId, collection.address),
+			);
+		}
 	};
 
 	return (
 		<CollectionsPageController
 			onCollectionClick={handleCollectionClick}
-			showMarketTypeToggle={true}
+			collectionType={collectionType}
 		/>
 	);
 }

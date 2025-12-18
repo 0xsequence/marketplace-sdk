@@ -1,23 +1,15 @@
 import { Button, Separator, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
-import {
-	Navigation,
-	ROUTES,
-	Settings,
-	useMarketplace,
-} from 'shared-components';
+import { Navigation, ROUTES, Settings } from 'shared-components';
 import type { Address } from 'viem';
 
 function App() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { cardType, setCardType } = useMarketplace();
 	const { collectionAddress } = useParams<{ collectionAddress: string }>();
 
-	function handleChangeMarketplaceType(type: 'market' | 'shop') {
-		setCardType(type);
-		navigate('/');
-	}
+	const isShop = location.pathname.startsWith('/shop');
+	const isMarket = location.pathname.startsWith('/market');
 
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
@@ -27,14 +19,14 @@ function App() {
 				<div className="flex gap-3">
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 						<Button
-							variant={cardType === 'market' ? 'secondary' : 'outline'}
-							onClick={() => handleChangeMarketplaceType('market')}
+							variant={isMarket ? 'secondary' : 'outline'}
+							onClick={() => navigate('/market')}
 						>
 							Market
 						</Button>
 						<Button
-							variant={cardType === 'shop' ? 'secondary' : 'outline'}
-							onClick={() => handleChangeMarketplaceType('shop')}
+							variant={isShop ? 'secondary' : 'outline'}
+							onClick={() => navigate('/shop')}
 						>
 							Shop
 						</Button>
