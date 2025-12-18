@@ -62,7 +62,6 @@ export interface UseMarketCardDataPagedProps {
  * @param props - Configuration parameters
  * @param props.collectionAddress - The collection contract address
  * @param props.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
- * @param props.orderbookKind - Optional orderbook kind override for internal tests
  * @param props.collectionType - The contract type of the collection (ERC721, ERC1155, etc.)
  * @param props.filterOptions - Optional property filters to apply to the collectible search
  * @param props.searchText - Optional search text to filter collectibles by name or metadata

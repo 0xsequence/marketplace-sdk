@@ -166,7 +166,11 @@ export function InventoryPageController({
 		collectionAddress: Address,
 		tokenId: bigint,
 	) => {
-		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
+		const route = createRoute.marketCollectible(
+			chainId,
+			collectionAddress,
+			tokenId,
+		);
 
 		onNavigate(route);
 	};

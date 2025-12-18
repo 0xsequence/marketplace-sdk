@@ -50,7 +50,7 @@ export function ShopContent({
 		primarySaleItems?.pages.flatMap((page) => page.primarySaleItems) ?? [];
 
 	const contractType = allPrimarySaleItems[0]?.primarySaleItem
-		.contractType as ContractType;
+		.contractType as unknown as ContractType;
 
 	const tokenIds = allPrimarySaleItems.map((item) => item.metadata.tokenId);
 

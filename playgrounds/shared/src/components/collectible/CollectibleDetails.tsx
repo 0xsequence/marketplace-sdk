@@ -6,7 +6,6 @@ import {
 	useLowestListing,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from '../../store';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -15,6 +14,7 @@ export interface CollectibleDetailsProps {
 	chainId: number;
 	collection: ContractInfo | undefined;
 	onCollectionClick: () => void;
+	cardType?: 'market' | 'shop';
 }
 
 export const CollectibleDetails = ({
@@ -24,8 +24,8 @@ export const CollectibleDetails = ({
 	chainId,
 	collection,
 	onCollectionClick,
+	cardType = 'market',
 }: CollectibleDetailsProps) => {
-	const { cardType } = useMarketplace();
 	const isMarket = cardType === 'market';
 
 	const { data: lowestListing } = useLowestListing({
