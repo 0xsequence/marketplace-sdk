@@ -1,5 +1,6 @@
 'use client';
 
+import { ContractType, type Step } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
@@ -8,7 +9,6 @@ import { Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { PrimarySaleItem } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
-import { ContractType, type Step } from '../../../../../_internal';
 import { useOrders } from '../../../../../hooks/data/orders/useOrders';
 import { ActionModal } from '../../../_internal/components/baseModal';
 import {

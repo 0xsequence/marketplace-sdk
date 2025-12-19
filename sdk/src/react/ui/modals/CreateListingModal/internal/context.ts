@@ -1,9 +1,9 @@
+import { type ContractType, OrderbookKind } from '@0xsequence/api-client';
 import type { Dnum } from 'dnum';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import { type ContractType, OrderbookKind } from '../../../../_internal';
 import {
 	useCollectibleBalance,
 	useCollectionMetadata,

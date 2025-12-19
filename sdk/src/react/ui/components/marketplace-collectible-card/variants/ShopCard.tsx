@@ -1,7 +1,7 @@
 'use client';
 
+import { ContractType } from '@0xsequence/api-client';
 import type { CardType } from '../../../../../types';
-import { ContractType } from '../../../../_internal';
 import { useCurrency } from '../../../../hooks/currency/currency';
 import type { ShopCollectibleCardProps } from '../types';
 import { getShopCardState, renderSkeletonIfLoading } from '../utils';

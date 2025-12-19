@@ -1,3 +1,11 @@
+import {
+	type ContractType,
+	type CreateReq,
+	type GenerateOfferTransactionRequest,
+	OfferType,
+	type Step,
+	StepType,
+} from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { toNumber } from 'dnum';
 import type { Address, Hex } from 'viem';
@@ -6,16 +14,7 @@ import { useAccount } from 'wagmi';
 import { OrderbookKind } from '../../../../../types';
 import { ERC20_ABI } from '../../../../../utils/abi';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
-import {
-	type ContractType,
-	type CreateReq,
-	type GenerateOfferTransactionRequest,
-	getMarketplaceClient,
-	OfferType,
-	type Step,
-	StepType,
-	TransactionType,
-} from '../../../../_internal';
+import { getMarketplaceClient, TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import {
 	useConfig,

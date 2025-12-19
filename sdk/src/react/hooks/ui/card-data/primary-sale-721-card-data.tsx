@@ -2,12 +2,12 @@ import type {
 	CollectiblePrimarySaleItem,
 	TokenMetadata,
 } from '@0xsequence/api-client';
+import { ContractType } from '@0xsequence/api-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { useFilterState } from '../../..';
-import { ContractType } from '../../../_internal';
 import { tokenSuppliesQueryOptions } from '../../../queries/token/supplies';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useConfig } from '../../config';

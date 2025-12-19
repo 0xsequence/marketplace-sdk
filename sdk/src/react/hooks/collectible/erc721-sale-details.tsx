@@ -1,3 +1,4 @@
+import { ContractType } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import {
@@ -5,7 +6,6 @@ import {
 	ERC721_SALE_ABI_V0,
 	ERC721_SALE_ABI_V1,
 } from '../../../utils';
-import { ContractType } from '../../_internal';
 import {
 	SalesContractVersion,
 	useSalesContractABI,

@@ -1,10 +1,9 @@
-import { type Step, StepType } from '@0xsequence/api-client';
+import { type ContractType, type Step, StepType } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../utils/abi';
-import type { ContractType } from '../../_internal';
 import {
 	SalesContractVersion,
 	useSalesContractABI,

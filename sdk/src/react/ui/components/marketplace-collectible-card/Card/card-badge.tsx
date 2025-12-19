@@ -1,9 +1,9 @@
 'use client';
 
+import { ContractType } from '@0xsequence/api-client';
 import { Text } from '@0xsequence/design-system';
 import { forwardRef } from 'react';
 import { cn } from '../../../../../utils';
-import { ContractType } from '../../../../_internal';
 
 export interface CardBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 	type: ContractType;

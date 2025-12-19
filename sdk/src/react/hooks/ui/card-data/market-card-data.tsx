@@ -1,14 +1,14 @@
-import { OrderSide } from '@0xsequence/api-client';
-import { useMemo } from 'react';
-import type { Address } from 'viem';
-import { useAccount } from 'wagmi';
 import type {
-	CollectibleCardAction,
 	CollectibleOrder,
 	ContractType,
 	Order,
 	PropertyFilter,
-} from '../../../../types';
+} from '@0xsequence/api-client';
+import { OrderSide } from '@0xsequence/api-client';
+import { useMemo } from 'react';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
+import type { CollectibleCardAction } from '../../../../types';
 import type { PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';

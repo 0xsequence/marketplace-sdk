@@ -40,14 +40,11 @@ type AssertIdentical<T, U> = [T] extends [U]
 		: never
 	: never;
 
-// import { ContractType as IndexerContractType } from '@0xsequence/indexer';
-// import { ContractType as MetadataContractType } from '@0xsequence/metadata';
 import type { ResourceStatus as IndexerResourceStatus } from '@0xsequence/indexer';
 import type {
 	PropertyType as MetadataPropertyType,
 	ResourceStatus as MetadataResourceStatus,
 } from '@0xsequence/metadata';
-// Import the types we want to verify
 import type { PropertyType as MarketplacePropertyType } from '../adapters/marketplace/marketplace.gen';
 
 /**
@@ -60,21 +57,16 @@ const _assertPropertyTypeMatch: AssertIdentical<
 > = true;
 
 /**
- * ContractType - NOT identical across indexer and metadata
+ * ContractType - Different across packages
  *
- * WARNING: These enums have different structures/values!
- * We export the one from indexer in the main index.ts
+ * ContractType exists in multiple packages with different structures:
+ * - @0xsequence/indexer: Most comprehensive (includes NATIVE, SEQUENCE_WALLET, BRIDGE types, etc.)
+ * - @0xsequence/metadata: Limited set (UNKNOWN, ERC20, ERC721, ERC1155, ERC6909, MISC)
+ * - marketplace.gen.ts: Limited set (UNKNOWN, ERC20, ERC721, ERC1155)
  *
- * TODO: Investigate if this causes issues. The enums may have:
- * - Different member names
- * - Different values
- * - Different member counts
- *
- * Uncomment to see the type error:
- * const _assertContractTypeMatch: AssertIdentical<
- *   typeof IndexerContractType,
- *   typeof MetadataContractType
- * > = true;
+ * We export ContractType from @0xsequence/indexer in the main index.ts as it's the most
+ * general and includes all the values from the other packages. This ensures consumers
+ * always get the same type and prevents type conflicts (ContractType$1, ContractType$2, etc).
  */
 
 /**
@@ -89,6 +81,5 @@ const _assertResourceStatusMatch: AssertIdentical<
 // Silence "declared but never used" warnings
 export const TYPE_ASSERTIONS = {
 	propertyType: _assertPropertyTypeMatch,
-	// contractType: _assertContractTypeMatch, // Not identical!
 	resourceStatus: _assertResourceStatusMatch,
 } as const;

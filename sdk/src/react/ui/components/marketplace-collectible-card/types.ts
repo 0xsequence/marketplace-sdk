@@ -1,7 +1,11 @@
-import type { Metadata } from '@0xsequence/api-client';
+import type {
+	CollectibleOrder,
+	ContractType,
+	Metadata,
+	Order,
+} from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import type { CardType, CollectibleCardAction } from '../../../../types';
-import type { CollectibleOrder, ContractType, Order } from '../../../_internal';
 
 export type CardClassNames = {
 	cardRoot?: string;

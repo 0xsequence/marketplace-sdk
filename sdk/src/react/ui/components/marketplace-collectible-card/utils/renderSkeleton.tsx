@@ -1,4 +1,4 @@
-import type { ContractType } from '../../../../_internal';
+import type { ContractType } from '@0xsequence/api-client';
 import { Card } from '../Card';
 
 /**

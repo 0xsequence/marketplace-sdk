@@ -1,7 +1,7 @@
+import { ContractType } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC721_ABI } from '../../../utils/abi';
-import { ContractType } from '../../_internal';
 
 interface UseERC721OwnerParams {
 	chainId: number;

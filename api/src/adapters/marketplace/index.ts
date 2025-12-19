@@ -88,7 +88,6 @@ export type {
 export * as MarketplaceAPI from './marketplace.gen';
 export {
 	CollectionStatus,
-	ContractType as MarketplaceContractType,
 	CurrencyStatus,
 	ExecuteType,
 	MarketplaceKind,
@@ -102,6 +101,8 @@ export {
 	StepType,
 	TransactionCrypto,
 } from './marketplace.gen';
+// ContractType is NOT exported here - it's exported from the main index.ts from @0xsequence/indexer
+// This ensures a single source of truth and prevents type conflicts
 // Re-export normalized types from types.ts (with Address instead of string)
 export type { CollectiblePrimarySaleItem, PrimarySaleItem } from './types';
 
