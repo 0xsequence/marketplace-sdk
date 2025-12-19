@@ -103,8 +103,7 @@ export const CryptoPaymentModal = ({
 
 				{!isLoadingBalance &&
 					!isLoadingBuyModalData &&
-					!hasSufficientBalance &&
-					isOnCorrectChain && (
+					!hasSufficientBalance && (
 						<Text className="text-sm text-warning">
 							You do not have enough{' '}
 							<Text className="font-bold">{currency?.name}</Text> to purchase
@@ -128,7 +127,9 @@ export const CryptoPaymentModal = ({
 							await executeApproval();
 						}}
 						disabled={
-							isAnyTransactionPending || (isOnCorrectChain && !canApprove)
+							isAnyTransactionPending ||
+							(isOnCorrectChain && !canApprove) ||
+							!hasSufficientBalance
 						}
 						variant="primary"
 						size="lg"
@@ -153,7 +154,11 @@ export const CryptoPaymentModal = ({
 
 							await executeBuy();
 						}}
-						disabled={isAnyTransactionPending || (isOnCorrectChain && !canBuy)}
+						disabled={
+							isAnyTransactionPending ||
+							(isOnCorrectChain && !canBuy) ||
+							!hasSufficientBalance
+						}
 						variant="primary"
 						size="lg"
 						className="w-full"
