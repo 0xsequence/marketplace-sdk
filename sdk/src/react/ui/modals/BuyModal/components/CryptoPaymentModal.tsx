@@ -27,12 +27,7 @@ export const CryptoPaymentModal = ({
 		loading: { isLoadingBuyModalData, isLoadingBalance },
 		chain: { isOnCorrectChain, currentChainId },
 		balance: { hasSufficientBalance },
-		transaction: {
-			isApproving,
-			isExecuting,
-			isExecutingBundledTransactions,
-			isAnyTransactionPending,
-		},
+		transaction: { isApproving, isExecuting, isExecutingBundledTransactions },
 		error: { error, dismissError },
 		steps: { approvalStep },
 		connector: { isSequenceConnector },
@@ -60,6 +55,23 @@ export const CryptoPaymentModal = ({
 
 	const dismissChainSwitchError = () => {
 		setChainSwitchError(null);
+	};
+
+	const executeWithChainSwitch = async (action: 'approval' | 'buy') => {
+		dismissChainSwitchError();
+		try {
+			await ensureCorrectChainAsync(chainId);
+		} catch (error) {
+			if (error instanceof Error) {
+				handleChainSwitchError(error);
+			}
+		}
+
+		if (action === 'approval') {
+			await executeApproval();
+		} else {
+			await executeBuy();
+		}
 	};
 
 	const approvalButtonLabel = isApproving ? (
@@ -103,8 +115,7 @@ export const CryptoPaymentModal = ({
 
 				{!isLoadingBalance &&
 					!isLoadingBuyModalData &&
-					!hasSufficientBalance &&
-					isOnCorrectChain && (
+					!hasSufficientBalance && (
 						<Text className="text-sm text-warning">
 							You do not have enough{' '}
 							<Text className="font-bold">{currency?.name}</Text> to purchase
@@ -115,21 +126,9 @@ export const CryptoPaymentModal = ({
 				{approvalStep && !isSequenceConnector && (
 					<Button
 						onClick={async () => {
-							dismissChainSwitchError();
-							try {
-								await ensureCorrectChainAsync(chainId);
-							} catch (error) {
-								if (error instanceof Error) {
-									handleChainSwitchError(error);
-								}
-								return; // Don't proceed with transaction if chain switch failed
-							}
-
-							await executeApproval();
+							await executeWithChainSwitch('approval');
 						}}
-						disabled={
-							isAnyTransactionPending || (isOnCorrectChain && !canApprove)
-						}
+						disabled={!canApprove}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -141,19 +140,9 @@ export const CryptoPaymentModal = ({
 				{!isLoadingBalance && !isLoadingBuyModalData && (
 					<Button
 						onClick={async () => {
-							dismissChainSwitchError();
-							try {
-								await ensureCorrectChainAsync(chainId);
-							} catch (error) {
-								if (error instanceof Error) {
-									handleChainSwitchError(error);
-								}
-								return; // Don't proceed with transaction if chain switch failed
-							}
-
-							await executeBuy();
+							await executeWithChainSwitch('buy');
 						}}
-						disabled={isAnyTransactionPending || (isOnCorrectChain && !canBuy)}
+						disabled={!canBuy}
 						variant="primary"
 						size="lg"
 						className="w-full"

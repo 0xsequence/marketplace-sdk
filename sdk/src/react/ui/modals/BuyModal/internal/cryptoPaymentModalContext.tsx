@@ -35,7 +35,6 @@ type CryptoPaymentModalReturn = {
 		isApproving: boolean;
 		isExecuting: boolean;
 		isExecutingBundledTransactions: boolean;
-		isAnyTransactionPending: boolean;
 	};
 	error: {
 		error: {
@@ -294,13 +293,14 @@ export function useCryptoPaymentModalContext({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		isOnCorrectChain;
+		!isAnyTransactionPending;
+
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		isOnCorrectChain &&
-		(isSequenceConnector ? true : !approvalStep);
+		(isSequenceConnector ? true : !approvalStep) &&
+		!isAnyTransactionPending;
 
 	const result: CryptoPaymentModalReturn = {
 		data: {
@@ -324,7 +324,6 @@ export function useCryptoPaymentModalContext({
 			isApproving,
 			isExecuting,
 			isExecutingBundledTransactions,
-			isAnyTransactionPending,
 		},
 		error: {
 			error,
