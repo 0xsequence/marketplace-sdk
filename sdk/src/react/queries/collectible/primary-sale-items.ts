@@ -87,7 +87,13 @@ export const primarySaleItemsQueryOptions = (
 		queryFn,
 		initialPageParam: initialPage,
 		getNextPageParam: (lastPage) =>
-			lastPage.page?.more ? lastPage.page : undefined,
+			lastPage.page?.more
+				? {
+						page: lastPage.page.page + 1,
+						pageSize: lastPage.page.pageSize,
+						more: true,
+					}
+				: undefined,
 		...params.query,
 		enabled,
 	});

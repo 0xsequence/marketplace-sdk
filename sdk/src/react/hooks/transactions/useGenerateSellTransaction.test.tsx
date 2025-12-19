@@ -74,9 +74,17 @@ describe('useGenerateSellTransaction', () => {
 		result.current.generateSellTransaction(mockTransactionProps);
 
 		await waitFor(() => {
-			expect(mockOnSuccess).toHaveBeenCalledWith(
-				createMockSteps([StepType.tokenApproval, StepType.sell]),
-			);
+			const expectedSteps = createMockSteps([
+				StepType.tokenApproval,
+				StepType.sell,
+			]).map(({ id, data, to, price, value }) => ({
+				id,
+				data,
+				to,
+				price,
+				value,
+			}));
+			expect(mockOnSuccess).toHaveBeenCalledWith(expectedSteps);
 		});
 	});
 

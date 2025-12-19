@@ -1,8 +1,7 @@
 import type { GetOrdersInput, Page } from '@0xsequence/api-client';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+import { getMarketplaceClient, type SdkQueryParams } from '../_internal';
 
 export interface FetchOrdersParams {
 	chainId: number;
@@ -25,9 +24,9 @@ export async function fetchOrders(params: FetchOrdersParams) {
 	});
 }
 
-export type OrdersQueryOptions = ValuesOptional<FetchOrdersParams> & {
-	query?: StandardQueryOptions;
-};
+export type OrdersQueryOptions = SdkQueryParams<
+	Omit<FetchOrdersParams, 'config'>
+>;
 
 export function ordersQueryOptions(params: OrdersQueryOptions) {
 	const enabled = Boolean(

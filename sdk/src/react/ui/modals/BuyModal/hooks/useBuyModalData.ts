@@ -60,6 +60,7 @@ export const useBuyModalData = () => {
 		},
 	});
 	const marketOrder = orders?.orders[0];
+	console.log(marketOrder);
 
 	// Fetch primary sale item details for shop type
 	const {
