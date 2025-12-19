@@ -1,7 +1,7 @@
 import { type ContractType, type Step, StepType } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import { encodeFunctionData, zeroAddress } from 'viem';
+import { encodeFunctionData, maxUint256, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../utils/abi';
 import {
@@ -102,7 +102,7 @@ export function usePrimarySaleTransactionSteps({
 				const approvalCalldata = encodeFunctionData({
 					abi: ERC20_ABI,
 					functionName: 'approve',
-					args: [salesContractAddress, maxTotal],
+					args: [salesContractAddress, maxUint256],
 				});
 
 				steps.push({

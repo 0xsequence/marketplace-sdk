@@ -1,4 +1,4 @@
-import { ContractType, MarketplaceKind } from '@0xsequence/api-client';
+import { type ContractType, MarketplaceKind } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';

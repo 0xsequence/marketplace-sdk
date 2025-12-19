@@ -2,7 +2,6 @@ import {
 	type CollectiblePrimarySaleItem,
 	type ListPrimarySaleItemsResponse,
 	MarketplaceAPI,
-	MarketplaceContractType,
 	MarketplaceMocks,
 	type PrimarySaleItem,
 } from '@0xsequence/api-client';
@@ -11,6 +10,7 @@ import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
+import { ContractType } from '../../../../../api/src/adapters/marketplace/marketplace.gen';
 import { usePrimarySaleItems } from './primary-sale-items';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
@@ -30,7 +30,7 @@ const createMockPrimarySaleItem = (
 	overrides?: Partial<PrimarySaleItem>,
 ): PrimarySaleItem => ({
 	itemAddress: '0x1234567890123456789012345678901234567890' as Address,
-	contractType: MarketplaceContractType.ERC721,
+	contractType: ContractType.ERC721,
 	tokenId: 1n,
 	itemType: 'global' as any,
 	startDate: new Date('2024-01-01T00:00:00Z').toISOString(),
