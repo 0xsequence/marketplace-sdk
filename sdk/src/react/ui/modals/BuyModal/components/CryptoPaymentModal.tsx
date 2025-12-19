@@ -27,12 +27,7 @@ export const CryptoPaymentModal = ({
 		loading: { isLoadingBuyModalData, isLoadingBalance },
 		chain: { isOnCorrectChain, currentChainId },
 		balance: { hasSufficientBalance },
-		transaction: {
-			isApproving,
-			isExecuting,
-			isExecutingBundledTransactions,
-			isAnyTransactionPending,
-		},
+		transaction: { isApproving, isExecuting, isExecutingBundledTransactions },
 		error: { error, dismissError },
 		steps: { approvalStep },
 		connector: { isSequenceConnector },
@@ -126,11 +121,7 @@ export const CryptoPaymentModal = ({
 
 							await executeApproval();
 						}}
-						disabled={
-							isAnyTransactionPending ||
-							(isOnCorrectChain && !canApprove) ||
-							!hasSufficientBalance
-						}
+						disabled={!canApprove}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -154,11 +145,7 @@ export const CryptoPaymentModal = ({
 
 							await executeBuy();
 						}}
-						disabled={
-							isAnyTransactionPending ||
-							(isOnCorrectChain && !canBuy) ||
-							!hasSufficientBalance
-						}
+						disabled={!canBuy}
 						variant="primary"
 						size="lg"
 						className="w-full"
