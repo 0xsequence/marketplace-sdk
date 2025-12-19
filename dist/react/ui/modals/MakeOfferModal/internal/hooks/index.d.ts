@@ -1,0 +1,188 @@
+import * as viem0 from "viem";
+import { Address } from "viem";
+import * as _tanstack_react_query0 from "@tanstack/react-query";
+
+//#region src/react/ui/modals/MakeOfferModal/internal/hooks/use-erc20-allowance.d.ts
+interface UseERC20AllowanceArgs {
+  tokenAddress: Address | undefined;
+  spenderAddress: Address | undefined;
+  chainId: number;
+  enabled?: boolean;
+}
+declare function useERC20Allowance({
+  tokenAddress,
+  spenderAddress,
+  chainId,
+  enabled
+}: UseERC20AllowanceArgs): {
+  error: viem0.ReadContractErrorType;
+  isError: true;
+  isPending: false;
+  isLoading: false;
+  isLoadingError: false;
+  isRefetchError: true;
+  isSuccess: false;
+  isPlaceholderData: false;
+  status: "error";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+} | {
+  error: null;
+  isError: false;
+  isPending: false;
+  isLoading: false;
+  isLoadingError: false;
+  isRefetchError: false;
+  isSuccess: true;
+  isPlaceholderData: false;
+  status: "success";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+} | {
+  error: viem0.ReadContractErrorType;
+  isError: true;
+  isPending: false;
+  isLoading: false;
+  isLoadingError: true;
+  isRefetchError: false;
+  isSuccess: false;
+  isPlaceholderData: false;
+  status: "error";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+} | {
+  error: null;
+  isError: false;
+  isPending: true;
+  isLoading: true;
+  isLoadingError: false;
+  isRefetchError: false;
+  isSuccess: false;
+  isPlaceholderData: false;
+  status: "pending";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+} | {
+  error: null;
+  isError: false;
+  isPending: true;
+  isLoadingError: false;
+  isRefetchError: false;
+  isSuccess: false;
+  isPlaceholderData: false;
+  status: "pending";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isLoading: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+} | {
+  isError: false;
+  error: null;
+  isPending: false;
+  isLoading: false;
+  isLoadingError: false;
+  isRefetchError: false;
+  isSuccess: true;
+  isPlaceholderData: true;
+  status: "success";
+  dataUpdatedAt: number;
+  errorUpdatedAt: number;
+  failureCount: number;
+  failureReason: viem0.ReadContractErrorType | null;
+  errorUpdateCount: number;
+  isFetched: boolean;
+  isFetchedAfterMount: boolean;
+  isFetching: boolean;
+  isInitialLoading: boolean;
+  isPaused: boolean;
+  isRefetching: boolean;
+  isStale: boolean;
+  isEnabled: boolean;
+  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<bigint, viem0.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query0.FetchStatus;
+  promise: Promise<bigint>;
+  queryKey: _tanstack_react_query0.QueryKey;
+  allowance: bigint | undefined;
+};
+//#endregion
+export { useERC20Allowance };
+//# sourceMappingURL=index.d.ts.map
