@@ -57,6 +57,23 @@ export const CryptoPaymentModal = ({
 		setChainSwitchError(null);
 	};
 
+	const executeWithChainSwitch = async (action: 'approval' | 'buy') => {
+		dismissChainSwitchError();
+		try {
+			await ensureCorrectChainAsync(chainId);
+		} catch (error) {
+			if (error instanceof Error) {
+				handleChainSwitchError(error);
+			}
+		}
+
+		if (action === 'approval') {
+			await executeApproval();
+		} else {
+			await executeBuy();
+		}
+	};
+
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
 			<Spinner size="sm" /> Approving Token...
@@ -109,17 +126,7 @@ export const CryptoPaymentModal = ({
 				{approvalStep && !isSequenceConnector && (
 					<Button
 						onClick={async () => {
-							dismissChainSwitchError();
-							try {
-								await ensureCorrectChainAsync(chainId);
-							} catch (error) {
-								if (error instanceof Error) {
-									handleChainSwitchError(error);
-								}
-								return; // Don't proceed with transaction if chain switch failed
-							}
-
-							await executeApproval();
+							await executeWithChainSwitch('approval');
 						}}
 						disabled={!canApprove}
 						variant="primary"
@@ -133,17 +140,7 @@ export const CryptoPaymentModal = ({
 				{!isLoadingBalance && !isLoadingBuyModalData && (
 					<Button
 						onClick={async () => {
-							dismissChainSwitchError();
-							try {
-								await ensureCorrectChainAsync(chainId);
-							} catch (error) {
-								if (error instanceof Error) {
-									handleChainSwitchError(error);
-								}
-								return; // Don't proceed with transaction if chain switch failed
-							}
-
-							await executeBuy();
+							await executeWithChainSwitch('buy');
 						}}
 						disabled={!canBuy}
 						variant="primary"
