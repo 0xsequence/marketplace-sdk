@@ -18,7 +18,13 @@ import type * as Normalized from './types';
 
 export function toContractInfo(
 	raw: IndexerGen.ContractInfo,
-): Normalized.ContractInfo {
+): Normalized.ContractInfo | undefined {
+	// Handle missing or invalid address - return undefined instead of throwing
+	// The Indexer API sometimes returns contractInfo with empty address field
+	if (!raw.address || !raw.address.startsWith('0x') || raw.address.length !== 42) {
+		return undefined;
+	}
+
 	return spreadWith(raw, {
 		chainId: normalizeChainId(raw.chainId),
 		address: normalizeAddress(raw.address),
