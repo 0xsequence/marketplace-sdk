@@ -19,6 +19,8 @@
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
+		"test:e2e": "playwright test --config=e2e/playwright.config.ts",
+		"test:e2e:ui": "playwright test --config=e2e/playwright.config.ts --ui",
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
 		"tailwind": "pnpm --filter \"./sdk\" tailwind",
 		"resolve-deps-and-build": "node scripts/resolve-deps-and-build.cjs"
@@ -36,10 +38,12 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
+		"@playwright/test": "^1.57.0",
 		"@types/node": "^24.10.1",
 		"knip": "^5.69.1",
 		"lefthook": "^2.0.4",
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"viem": "catalog:"
 	},
 	"prepare": "lefthook install",
 	"dependencies": {
