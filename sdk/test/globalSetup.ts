@@ -1,8 +1,7 @@
 import { execSync } from 'node:child_process';
-import { createServer } from 'prool';
-import { anvil } from 'prool/instances';
+import { Instance, Server } from 'prool';
 
-let server: any;
+let server: Server.CreateServerReturnType;
 
 export default async function setup() {
 	try {
@@ -13,10 +12,10 @@ export default async function setup() {
 			// Ignore if no process is running on port 8545
 		}
 
-		server = createServer({
+		server = Server.create({
 			host: '127.0.0.1',
 			port: 8545,
-			instance: anvil({
+			instance: Instance.anvil({
 				chainId: 1,
 				forkUrl: 'https://nodes.sequence.app/mainnet',
 				forkBlockNumber: 19868020n,

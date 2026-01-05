@@ -62,7 +62,7 @@
 	"dependencies": {
 		"0xtrails": "^0.9.5",
 		"@0xsequence/api-client": "workspace:*",
-		"@0xsequence/design-system-v2": "npm:@0xsequence/design-system@3.1.7",
+
 		"@0xsequence/indexer-v2": "npm:@0xsequence/indexer@2.3.39",
 		"@databeat/tracker": "^0.9.3",
 		"@tailwindcss/cli": "^4.1.18",
