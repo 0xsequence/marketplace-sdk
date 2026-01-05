@@ -47,6 +47,16 @@ function groupCollectionsByChain(
 	}, {});
 }
 
+const MAX_ADDRESSES_PER_BATCH = 15;
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+	const chunks: T[][] = [];
+	for (let i = 0; i < array.length; i += size) {
+		chunks.push(array.slice(i, i + size));
+	}
+	return chunks;
+}
+
 export interface FetchListCollectionsParams {
 	collectionType?: 'market' | 'shop';
 	marketplaceConfig: MarketplaceConfig;
@@ -75,19 +85,24 @@ export async function fetchListCollections(
 
 	collections = filterCollectionsByType(collections, collectionType);
 
-	// Group collections by chainId for batch fetching
 	const collectionsByChain = groupCollectionsByChain(collections);
 
-	// Fetch collections for each chain
-	const promises = Object.entries(collectionsByChain).map(
-		([chainId, addresses]) =>
-			metadataClient
-				.getContractInfoBatch({
-					chainId: Number(chainId),
-					contractAddresses: addresses,
-				})
-				.then((resp) => Object.values(resp.contractInfoMap)),
-	);
+	const promises: Promise<ContractInfo[]>[] = [];
+
+	for (const [chainId, addresses] of Object.entries(collectionsByChain)) {
+		const addressChunks = chunkArray(addresses, MAX_ADDRESSES_PER_BATCH);
+
+		for (const chunk of addressChunks) {
+			promises.push(
+				metadataClient
+					.getContractInfoBatch({
+						chainId: Number(chainId),
+						contractAddresses: chunk,
+					})
+					.then((resp) => Object.values(resp.contractInfoMap)),
+			);
+		}
+	}
 
 	const settled = await Promise.allSettled(promises);
 
