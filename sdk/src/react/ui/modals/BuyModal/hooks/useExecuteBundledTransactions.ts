@@ -1,11 +1,10 @@
 import { sendTransactions } from '@0xsequence/connect';
-import { SequenceIndexer as SequenceIndexerV2 } from '@0xsequence/indexer-v2';
 import type { FeeOption } from '@0xsequence/waas';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { useConfig } from '../../../..';
-import { getIndexerClient, indexerURL, type Step } from '../../../../_internal';
+import { getIndexerClient, type Step } from '../../../../_internal';
 import { useBuyModalData } from './useBuyModalData';
 
 // https://github.com/0xsequence/web-sdk/blob/620b6fe7681ae49efd4eb3fa7607ef01dd7ede54/packages/connect/src/utils/transactions.ts#L11-L19
@@ -36,14 +35,6 @@ const useExecuteBundledTransactions = ({
 	const publicClient = usePublicClient();
 	const { data: walletClient } = useWalletClient({ chainId });
 	const indexerClient = getIndexerClient(chainId, config);
-
-	// Create a v2 indexer client for compatibility with @0xsequence/connect
-	// which expects @0xsequence/indexer@2.3.38, while the rest of the SDK uses v3
-	const overrides = config._internal?.overrides?.api?.indexer;
-	const url =
-		overrides?.url || indexerURL(chainId, overrides?.env || 'production');
-	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
-	const indexerClientV2 = new SequenceIndexerV2(url, projectAccessKey);
 
 	const { collection, currency } = useBuyModalData();
 
@@ -111,9 +102,11 @@ const useExecuteBundledTransactions = ({
 			senderAddress: address,
 			publicClient,
 			walletClient,
-			// Use v2 indexer client for compatibility with @0xsequence/connect
-			// which expects @0xsequence/indexer@2.3.38, while the rest of the SDK uses v3
-			indexerClient: indexerClientV2,
+			// TODO: Remove @ts-expect-error once @0xsequence/connect is updated to support
+			// the latest @0xsequence/indexer types. Currently there's a type mismatch
+			// between the indexer client version expected by connect and the one we use.
+			// @ts-expect-error - Temporary: indexer client type mismatch, remove when deps updated
+			indexerClient,
 			connector,
 			transactions,
 			transactionConfirmations: 1,

@@ -31,7 +31,7 @@ const createMockPrimarySaleItem = (
 	overrides?: Partial<PrimarySaleItem>,
 ): PrimarySaleItem => ({
 	itemAddress: '0x1234567890123456789012345678901234567890' as Address,
-	contractType: ContractType.ERC721,
+	contractType: MarketplaceAPI.ContractType.ERC721,
 	tokenId: 1n,
 	itemType: 'global' as any,
 	startDate: new Date('2024-01-01T00:00:00Z').toISOString(),
@@ -336,7 +336,7 @@ describe('usePrimarySaleItem', () => {
 
 	it('should handle items with different contract types', async () => {
 		const mockItem = createMockCollectiblePrimarySaleItem({
-			contractType: ContractType.ERC1155,
+			contractType: MarketplaceAPI.ContractType.ERC1155,
 			tokenId: 5n,
 		});
 
@@ -353,7 +353,7 @@ describe('usePrimarySaleItem', () => {
 		});
 
 		expect(result.current.data?.item.primarySaleItem.contractType).toBe(
-			ContractType.ERC1155,
+			MarketplaceAPI.ContractType.ERC1155,
 		);
 	});
 

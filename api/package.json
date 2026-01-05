@@ -45,8 +45,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"msw": "^2.12.1",
-		"tsdown": "^0.16.4",
+		"msw": "^2.12.4",
+		"tsdown": "0.17.0-beta.6",
 		"typescript": "catalog:"
 	}
 }
