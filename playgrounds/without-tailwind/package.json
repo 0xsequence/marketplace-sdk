@@ -16,24 +16,24 @@
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
-		"@chakra-ui/react": "^3.29.0",
+		"@chakra-ui/react": "^3.30.0",
 		"@emotion/react": "^11.14.0",
 		"@tanstack/react-query": "catalog:",
 		"date-fns": "catalog:",
-		"framer-motion": "^12.23.24",
-		"react": "^19.2.0",
-		"react-dom": "^19.2.0",
+		"framer-motion": "^12.23.26",
+		"react": "catalog:",
+		"react-dom": "catalog:",
 		"viem": "catalog:",
-		"wagmi": "catalog:"
+		"wagmi": "^2.19.5"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vitejs/plugin-react": "^5.1.1",
+		"@vitejs/plugin-react": "^5.1.2",
 		"globals": "^16.5.0",
 		"typescript": "catalog:",
-		"vite": "^7.2.2",
+		"vite": "catalog:",
 		"vite-tsconfig-paths": "catalog:"
 	}
 }
