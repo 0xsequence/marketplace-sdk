@@ -5,39 +5,39 @@ packages:
 
 catalog:
   0xsequence: ^2.3.38
-  '@0xsequence/api': ^2.3.38
+  '@0xsequence/api': ^2.3.39
   '@0xsequence/checkout': ^5.4.8
   '@0xsequence/connect': ^5.4.8
   '@0xsequence/design-system': ^3.1.7
   '@0xsequence/hooks': ^5.4.8
-  '@0xsequence/indexer': ^2.3.38
-  '@0xsequence/metadata': ^2.3.38
-  '@0xsequence/network': ^2.3.38
+  '@0xsequence/indexer': ^2.3.39
+  '@0xsequence/metadata': ^2.3.39
+  '@0xsequence/network': ^2.3.39
   '@0xsequence/waas': ^2.3.38
   '@0xsequence/wallet-widget': ^5.4.8
   '@arethetypeswrong/cli': ^0.18.2
   '@biomejs/biome': ^2.3.10
-  '@changesets/cli': ^2.29.7
+  '@changesets/cli': ^2.29.8
   '@google/model-viewer': ^4.1.0
-  '@tanstack/react-query': 5.90.9
-  '@tanstack/react-query-devtools': ^5.90.2
-  '@types/react': ^19.2.4
+  '@tanstack/react-query': 5.90.12
+  '@tanstack/react-query-devtools': ^5.91.1
+  '@types/react': ^19.2.7
   '@types/react-dom': ^19.2.3
-  '@xstate/store': ^3.11.2
+  '@xstate/store': ^3.14.0
   ctix: ^2.7.1
   date-fns: ^4.1.0
-  dnum: ^2.15.0
-  nuqs: ^2.7.3
-  react: ^19.2.0
-  react-day-picker: ^9.11.1
-  react-dom: ^19.2.0
-  tailwindcss: ^4.1.17
+  dnum: ^2.17.0
+  nuqs: ^2.8.5
+  react: ^19.2.3
+  react-day-picker: ^9.13.0
+  react-dom: ^19.2.3
+  tailwindcss: ^4.1.18
   tsup: ^8.5.1
   typescript: ^5.9.3
-  viem: 2.41.2
-  vite: ^7.2.2
-  vite-tsconfig-paths: ^5.1.4
-  wagmi: 2.18.0
+  viem: ^2.43.5
+  vite: ^7.3.0
+  vite-tsconfig-paths: ^6.0.3
+  wagmi: ^2.19.5
 
 ignoredBuiltDependencies:
   - sharp
