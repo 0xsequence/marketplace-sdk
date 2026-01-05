@@ -2,7 +2,6 @@ import {
 	type CollectiblePrimarySaleItem,
 	type ListPrimarySaleItemsResponse,
 	MarketplaceAPI,
-	MarketplaceContractType,
 	MarketplaceMocks,
 	type PrimarySaleItem,
 } from '@0xsequence/api-client';
@@ -30,7 +29,7 @@ const createMockPrimarySaleItem = (
 	overrides?: Partial<PrimarySaleItem>,
 ): PrimarySaleItem => ({
 	itemAddress: '0x1234567890123456789012345678901234567890' as Address,
-	contractType: MarketplaceContractType.ERC721,
+	contractType: MarketplaceAPI.ContractType.ERC721,
 	tokenId: 1n,
 	itemType: 'global' as any,
 	startDate: new Date('2024-01-01T00:00:00Z').toISOString(),
