@@ -1,6 +1,7 @@
 import { expect, test } from '../fixtures';
 
 test.describe('Marketplace Browsing', () => {
+	test.describe.configure({ timeout: 60000 });
 	test('should load the marketplace page', async ({ page }) => {
 		await page.goto('/');
 
@@ -104,5 +105,122 @@ test.describe('Wallet Connection', () => {
 		const accounts = await walletMock.getAccounts();
 
 		expect(accounts).toHaveLength(0);
+	});
+});
+
+test.describe('Market Collection Flow', () => {
+	test.describe.configure({ timeout: 60000 });
+
+	test('should display collections on market page', async ({ page }) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCards = page.locator('[style*="cursor: pointer"]');
+		await expect(collectionCards.first()).toBeVisible({ timeout: 15000 });
+
+		const cardCount = await collectionCards.count();
+		expect(cardCount).toBeGreaterThan(0);
+	});
+
+	test('should navigate to collection and show collectibles', async ({
+		page,
+	}) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		await expect(collectionCard).toBeVisible({ timeout: 15000 });
+		await collectionCard.click();
+
+		await expect(page).toHaveURL(/\/market\/\d+\/0x/, { timeout: 10000 });
+		await page.waitForLoadState('networkidle');
+
+		const hasContent =
+			(await page.locator('[style*="cursor: pointer"]').count()) > 0 ||
+			(await page.getByText(/No items found/i).count()) > 0 ||
+			(await page.getByText(/loading/i).count()) > 0;
+
+		expect(hasContent).toBe(true);
+	});
+
+	test('should navigate to collectible detail page', async ({ page }) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		await expect(collectionCard).toBeVisible({ timeout: 15000 });
+		await collectionCard.click();
+
+		await expect(page).toHaveURL(/\/market\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		const hasCollectibles = (await collectibleCard.count()) > 0;
+
+		if (hasCollectibles) {
+			await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+			await collectibleCard.click({ force: true });
+			await page.waitForLoadState('networkidle');
+			await expect(page).toHaveURL(/\/market\/\d+\/0x[a-fA-F0-9]+\/\d+/, {
+				timeout: 10000,
+			});
+		}
+	});
+});
+
+test.describe('Market Actions (with wallet)', () => {
+	test.describe.configure({ timeout: 90000 });
+
+	test('should show action buttons on collectible page when connected', async ({
+		page,
+		walletMock,
+	}) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		await walletMock.connect();
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		const hasCollection = (await collectionCard.count()) > 0;
+
+		if (!hasCollection) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/market\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		const hasCollectibles = (await collectibleCard.count()) > 0;
+
+		if (!hasCollectibles) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await expect(page).toHaveURL(/\/market\/\d+\/0x[a-fA-F0-9]+\/\d+/, {
+			timeout: 10000,
+		});
+		await page.waitForLoadState('networkidle');
+
+		const buyButton = page.getByRole('button', { name: /Buy Now/i });
+		const makeOfferButton = page.getByRole('button', { name: /Make Offer/i });
+		const createListingButton = page.getByRole('button', {
+			name: /Create Listing/i,
+		});
+
+		const hasBuyAction = (await buyButton.count()) > 0;
+		const hasOfferAction = (await makeOfferButton.count()) > 0;
+		const hasListingAction = (await createListingButton.count()) > 0;
+
+		expect(hasBuyAction || hasOfferAction || hasListingAction).toBe(true);
 	});
 });

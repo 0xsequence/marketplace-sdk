@@ -10,7 +10,7 @@ export default defineConfig({
 	reporter: [['html', { outputFolder: '../playwright-report' }], ['list']],
 
 	use: {
-		baseURL: process.env.E2E_BASE_URL || 'http://localhost:4444',
+		baseURL: process.env.E2E_BASE_URL || 'http://localhost:4445',
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
 		video: 'on-first-retry',
@@ -25,8 +25,8 @@ export default defineConfig({
 
 	webServer: {
 		command:
-			'pnpm --filter "sequence-marketplace-sdk-playground-react-vite" dev',
-		url: 'http://localhost:4444',
+			'pnpm --filter "sequence-marketplace-sdk-playground-react-vite" dev --port 4445',
+		url: 'http://localhost:4445',
 		reuseExistingServer: !process.env.CI,
 		timeout: 120000,
 		cwd: '..',
