@@ -29,13 +29,14 @@ export function toContractInfo(
 		chainId: normalizeChainId(raw.chainId),
 		address: normalizeAddress(raw.address),
 		extensions: transformOptional(raw.extensions, (ext) => {
-			// Build extensions object without adding undefined for missing fields
 			const result: any = { ...ext };
 			if (ext.originChainId !== undefined) {
 				result.originChainId = normalizeChainId(ext.originChainId);
 			}
-			if (ext.originAddress !== undefined) {
+			if (ext.originAddress && ext.originAddress.length === 42) {
 				result.originAddress = normalizeAddress(ext.originAddress);
+			} else {
+				delete result.originAddress;
 			}
 			return result;
 		}),
