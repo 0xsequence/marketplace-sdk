@@ -39,9 +39,9 @@
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@playwright/test": "^1.57.0",
-		"@types/node": "^24.10.1",
-		"knip": "^5.69.1",
-		"lefthook": "^2.0.4",
+		"@types/node": "^24.10.4",
+		"knip": "^5.76.3",
+		"lefthook": "^2.0.12",
 		"typescript": "catalog:",
 		"viem": "catalog:"
 	},
