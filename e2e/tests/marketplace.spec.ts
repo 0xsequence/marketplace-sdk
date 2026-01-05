@@ -223,4 +223,263 @@ test.describe('Market Actions (with wallet)', () => {
 
 		expect(hasBuyAction || hasOfferAction || hasListingAction).toBe(true);
 	});
+
+	test('should open create listing modal when clicking Create Listing button', async ({
+		page,
+		walletMock,
+	}) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		await walletMock.connect();
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/market\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectibleCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await expect(page).toHaveURL(/\/market\/\d+\/0x[a-fA-F0-9]+\/\d+/, {
+			timeout: 10000,
+		});
+		await page.waitForLoadState('networkidle');
+
+		const createListingButton = page.getByRole('button', {
+			name: /Create Listing/i,
+		});
+
+		if ((await createListingButton.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await createListingButton.click();
+
+		const modal = page.locator('[role="dialog"]');
+		await expect(modal).toBeVisible({ timeout: 10000 });
+	});
+
+	test('should open make offer modal when clicking Make Offer button', async ({
+		page,
+		walletMock,
+	}) => {
+		await page.goto('/market');
+		await page.waitForLoadState('networkidle');
+
+		await walletMock.connect();
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/market\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectibleCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await expect(page).toHaveURL(/\/market\/\d+\/0x[a-fA-F0-9]+\/\d+/, {
+			timeout: 10000,
+		});
+		await page.waitForLoadState('networkidle');
+
+		const makeOfferButton = page.getByRole('button', { name: /Make Offer/i });
+
+		if ((await makeOfferButton.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await makeOfferButton.click();
+
+		const modal = page.locator('[role="dialog"]');
+		await expect(modal).toBeVisible({ timeout: 10000 });
+	});
+});
+
+test.describe('Shop (Primary Sale) Flow', () => {
+	test.describe.configure({ timeout: 90000 });
+
+	test('should display collections on shop page', async ({ page }) => {
+		await page.goto('/shop');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCards = page.locator('[style*="cursor: pointer"]');
+		const hasCollections = (await collectionCards.count()) > 0;
+
+		const noShopMessage = page.getByText(/No shop/i);
+		const hasNoShopMessage = (await noShopMessage.count()) > 0;
+
+		expect(hasCollections || hasNoShopMessage).toBe(true);
+	});
+
+	test('should navigate to shop collection and show items', async ({
+		page,
+	}) => {
+		await page.goto('/shop');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectionCard).toBeVisible({ timeout: 15000 });
+		await collectionCard.click();
+
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x/, { timeout: 10000 });
+		await page.waitForLoadState('networkidle');
+
+		const hasContent =
+			(await page.locator('[style*="cursor: pointer"]').count()) > 0 ||
+			(await page.getByText(/No items/i).count()) > 0 ||
+			(await page.getByText(/Out of stock/i).count()) > 0;
+
+		expect(hasContent).toBe(true);
+	});
+
+	test('should navigate to shop collectible detail page', async ({ page }) => {
+		await page.goto('/shop');
+		await page.waitForLoadState('networkidle');
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectibleCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await page.waitForLoadState('networkidle');
+
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x[a-fA-F0-9]+\/0x[a-fA-F0-9]+/, {
+			timeout: 10000,
+		});
+	});
+
+	test('should show buy button on shop collectible page when connected', async ({
+		page,
+		walletMock,
+	}) => {
+		await page.goto('/shop');
+		await page.waitForLoadState('networkidle');
+
+		await walletMock.connect();
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectibleCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await page.waitForLoadState('networkidle');
+
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x[a-fA-F0-9]+\/0x[a-fA-F0-9]+/, {
+			timeout: 10000,
+		});
+
+		const buyButton = page.getByRole('button', { name: /Buy now/i });
+		const outOfStock = page.getByText(/Out of stock/i);
+		const connectWallet = page.getByText(/Connect your wallet/i);
+
+		const hasBuyButton = (await buyButton.count()) > 0;
+		const hasOutOfStock = (await outOfStock.count()) > 0;
+		const hasConnectPrompt = (await connectWallet.count()) > 0;
+
+		expect(hasBuyButton || hasOutOfStock || hasConnectPrompt).toBe(true);
+	});
+
+	test('should open buy modal when clicking Buy now in shop', async ({
+		page,
+		walletMock,
+	}) => {
+		await page.goto('/shop');
+		await page.waitForLoadState('networkidle');
+
+		await walletMock.connect();
+
+		const collectionCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectionCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await collectionCard.click();
+		await expect(page).toHaveURL(/\/shop\/\d+\/0x/, { timeout: 10000 });
+
+		await page.waitForTimeout(2000);
+		await page.waitForLoadState('networkidle');
+
+		const collectibleCard = page.locator('[style*="cursor: pointer"]').first();
+		if ((await collectibleCard.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await expect(collectibleCard).toBeVisible({ timeout: 10000 });
+		await collectibleCard.click({ force: true });
+		await page.waitForLoadState('networkidle');
+
+		const buyButton = page.getByRole('button', { name: /Buy now/i });
+		if ((await buyButton.count()) === 0) {
+			test.skip();
+			return;
+		}
+
+		await buyButton.click();
+
+		const modal = page.locator('[role="dialog"]');
+		await expect(modal).toBeVisible({ timeout: 10000 });
+	});
 });
