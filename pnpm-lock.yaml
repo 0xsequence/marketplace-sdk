@@ -651,9 +651,6 @@ importers:
       '@0xsequence/indexer':
         specifier: 'catalog:'
         version: 2.3.38
-      '@0xsequence/indexer-v2':
-        specifier: npm:@0xsequence/indexer@2.3.39
-        version: '@0xsequence/indexer@2.3.39'
       '@0xsequence/metadata':
         specifier: 'catalog:'
         version: 2.3.38
