@@ -29,12 +29,11 @@ export function toContractInfo(
 		chainId: normalizeChainId(raw.chainId),
 		address: normalizeAddress(raw.address),
 		extensions: transformOptional(raw.extensions, (ext) => {
-			// Build extensions object without adding undefined for missing fields
 			const result: any = { ...ext };
 			if (ext.originChainId !== undefined) {
 				result.originChainId = normalizeChainId(ext.originChainId);
 			}
-			if (ext.originAddress !== undefined) {
+			if (ext.originAddress && ext.originAddress.startsWith('0x') && ext.originAddress.length === 42) {
 				result.originAddress = normalizeAddress(ext.originAddress);
 			}
 			return result;
@@ -119,11 +118,10 @@ export function toTransactionReceipt(
 		})),
 	};
 
-	// Only add optional Address fields if they exist (don't add undefined)
-	if (raw.from !== undefined) {
+	if (raw.from && raw.from.startsWith('0x') && raw.from.length === 42) {
 		result.from = normalizeAddress(raw.from);
 	}
-	if (raw.to !== undefined) {
+	if (raw.to && raw.to.startsWith('0x') && raw.to.length === 42) {
 		result.to = normalizeAddress(raw.to);
 	}
 	// chainId is not in raw API, so we don't set it (it's optional in our type)
