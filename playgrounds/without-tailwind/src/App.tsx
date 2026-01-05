@@ -1,12 +1,12 @@
+import type { MarketplaceCollection } from '@0xsequence/marketplace-sdk';
 import { Container, Heading, Separator, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import { CollectionSelector } from './components/CollectionSelector';
 import { MarketplaceListingsTable } from './components/MarketplaceListingsTable';
-import type { Collection } from './types';
 
 function App() {
 	const [selectedCollection, setSelectedCollection] =
-		useState<Collection | null>(null);
+		useState<MarketplaceCollection | null>(null);
 
 	return (
 		<Container maxW="container.xl" py={8}>
