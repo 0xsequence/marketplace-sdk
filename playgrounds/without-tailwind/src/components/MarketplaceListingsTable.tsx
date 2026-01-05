@@ -1,3 +1,4 @@
+import type { MarketplaceCollection } from '@0xsequence/marketplace-sdk';
 import {
 	type CollectibleOrder,
 	formatPrice,
@@ -18,18 +19,16 @@ import {
 	Text,
 } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
-
 import type { Address } from 'viem';
-import type { Collection } from '../types';
 
 export function MarketplaceListingsTable({
 	collection,
 }: {
-	collection: Collection;
+	collection: MarketplaceCollection;
 }) {
 	const { show: openBuyModal } = useBuyModal();
 
-	const collectionAddress = collection.address as Address;
+	const collectionAddress = collection.itemsAddress as Address;
 	const chainId = collection.chainId;
 
 	const {

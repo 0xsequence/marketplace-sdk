@@ -1,10 +1,10 @@
+import type { MarketplaceCollection } from '@0xsequence/marketplace-sdk';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { Field, NativeSelect } from '@chakra-ui/react';
-import type { Collection } from '../types';
 
 interface CollectionSelectorProps {
-	selectedCollection: Collection | null;
-	onCollectionChange: (collection: Collection) => void;
+	selectedCollection: MarketplaceCollection | null;
+	onCollectionChange: (collection: MarketplaceCollection) => void;
 }
 
 export function CollectionSelector({
@@ -31,7 +31,7 @@ export function CollectionSelector({
 			<Field.Label>Select Collection</Field.Label>
 			<NativeSelect.Root>
 				<NativeSelect.Field
-					value={selectedCollection?.address || ''}
+					value={selectedCollection?.itemsAddress || ''}
 					onChange={handleCollectionChange}
 					placeholder="Choose a collection"
 				>
