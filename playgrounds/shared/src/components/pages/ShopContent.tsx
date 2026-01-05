@@ -98,14 +98,21 @@ export function ShopContent({
 		if (!card) return null;
 
 		return (
-			<button
-				type="button"
+			<div
 				key={index}
+				role="button"
+				tabIndex={0}
 				onClick={() => handleCollectibleClick(card.tokenId)}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						handleCollectibleClick(card.tokenId);
+					}
+				}}
 				className={cn('w-full cursor-pointer')}
 			>
 				<CollectibleCard {...card} />
-			</button>
+			</div>
 		);
 	};
 
