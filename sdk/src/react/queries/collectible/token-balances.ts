@@ -1,3 +1,4 @@
+import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { Address } from 'viem';
 import {
 	buildQueryOptions,
@@ -34,13 +35,13 @@ export async function fetchTokenBalances(
 		params;
 	const indexerClient = getIndexerClient(chainId, config);
 	return indexerClient
-		.getTokenBalances({
-			accountAddress: userAddress,
-			contractAddress: collectionAddress,
-			includeMetadata: includeMetadata ?? false,
-			metadataOptions: {
-				verifiedOnly: true,
+		.getTokenBalancesByContract({
+			filter: {
+				accountAddresses: [userAddress],
+				contractAddresses: [collectionAddress],
+				contractStatus: ContractVerificationStatus.VERIFIED,
 			},
+			omitMetadata: !includeMetadata,
 		})
 		.then((res) => res.balances || []);
 }
