@@ -22,7 +22,6 @@ import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { ContractType } from '../../../../../api/src/adapters/marketplace/marketplace.gen';
 import type { UsePrimarySaleItemParams } from './primary-sale-item';
 import { usePrimarySaleItem } from './primary-sale-item';
 
