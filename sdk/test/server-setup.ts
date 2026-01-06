@@ -1,9 +1,7 @@
-import {
-	BuilderMocks,
-	IndexerMocks,
-	MarketplaceMocks,
-	MetadataMocks,
-} from '@0xsequence/api-client';
+import * as BuilderMocks from '@0xsequence/api-client/mocks/builder';
+import * as IndexerMocks from '@0xsequence/api-client/mocks/indexer';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
+import * as MetadataMocks from '@0xsequence/api-client/mocks/metadata';
 import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
 

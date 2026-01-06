@@ -2,9 +2,9 @@ import {
 	type CollectiblePrimarySaleItem,
 	type ListPrimarySaleItemsResponse,
 	MarketplaceAPI,
-	MarketplaceMocks,
 	type PrimarySaleItem,
 } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';

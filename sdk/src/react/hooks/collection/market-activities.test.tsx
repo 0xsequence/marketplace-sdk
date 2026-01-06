@@ -1,5 +1,6 @@
 import type { ListCollectionActivitiesRequest } from '@0xsequence/api-client';
-import { MarketplaceMocks, SortOrder } from '@0xsequence/api-client';
+import { SortOrder } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { mockActivity, mockMarketplaceEndpoint } = MarketplaceMocks;
 

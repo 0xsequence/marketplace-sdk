@@ -1,4 +1,4 @@
-import { IndexerMocks } from '@0xsequence/api-client';
+import * as IndexerMocks from '@0xsequence/api-client/mocks/indexer';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';

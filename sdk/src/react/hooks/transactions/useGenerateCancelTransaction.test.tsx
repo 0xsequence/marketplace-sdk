@@ -1,8 +1,5 @@
-import {
-	MarketplaceKind,
-	MarketplaceMocks,
-	StepType,
-} from '@0xsequence/api-client';
+import { MarketplaceKind, StepType } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 

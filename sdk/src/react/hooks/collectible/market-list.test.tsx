@@ -1,8 +1,5 @@
-import {
-	MarketplaceKind,
-	MarketplaceMocks,
-	OrderSide,
-} from '@0xsequence/api-client';
+import { MarketplaceKind, OrderSide } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
 
