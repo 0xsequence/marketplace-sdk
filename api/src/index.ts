@@ -8,8 +8,6 @@ export {
 	TransactionType,
 } from '@0xsequence/indexer';
 
-
-
 export type {
 	CollectionFilterSettings,
 	LookupMarketplaceReturn,

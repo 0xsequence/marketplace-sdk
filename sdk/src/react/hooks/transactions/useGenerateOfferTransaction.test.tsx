@@ -1,4 +1,9 @@
-import { ContractType, OfferType, OrderbookKind, StepType } from '@0xsequence/api-client';
+import {
+	ContractType,
+	OfferType,
+	OrderbookKind,
+	StepType,
+} from '@0xsequence/api-client';
 import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
