@@ -1,4 +1,4 @@
-import { MarketplaceMocks } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { renderHook, server, testMarketplaceSdkConfig, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';

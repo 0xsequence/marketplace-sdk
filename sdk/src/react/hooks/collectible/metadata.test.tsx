@@ -1,4 +1,4 @@
-import { MetadataMocks } from '@0xsequence/api-client';
+import * as MetadataMocks from '@0xsequence/api-client/mocks/metadata';
 
 const { mockMetadataEndpoint, mockTokenMetadataNormalized } = MetadataMocks;
 

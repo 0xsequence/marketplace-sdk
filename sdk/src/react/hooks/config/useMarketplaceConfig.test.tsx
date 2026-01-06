@@ -1,4 +1,4 @@
-import { BuilderMocks } from '@0xsequence/api-client';
+import * as BuilderMocks from '@0xsequence/api-client/mocks/builder';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 

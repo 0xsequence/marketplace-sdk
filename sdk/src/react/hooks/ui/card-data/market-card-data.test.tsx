@@ -1,10 +1,6 @@
-import {
-	ContractType,
-	IndexerMocks,
-	MarketplaceMocks,
-	OrderbookKind,
-	PropertyType,
-} from '@0xsequence/api-client';
+import { ContractType, OrderbookKind, PropertyType } from '@0xsequence/api-client';
+import * as IndexerMocks from '@0xsequence/api-client/mocks/indexer';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
 const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;

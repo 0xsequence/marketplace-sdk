@@ -1,4 +1,4 @@
-import { MarketplaceMocks } from '@0xsequence/api-client';
+import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 
 const { mockCurrencies, mockMarketplaceEndpoint } = MarketplaceMocks;
 

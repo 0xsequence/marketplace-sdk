@@ -1,4 +1,4 @@
-import { IndexerMocks } from '@0xsequence/api-client';
+import * as IndexerMocks from '@0xsequence/api-client/mocks/indexer';
 
 const { mockIndexerEndpoint, mockIndexerHandler, mockTokenBalance } =
 	IndexerMocks;

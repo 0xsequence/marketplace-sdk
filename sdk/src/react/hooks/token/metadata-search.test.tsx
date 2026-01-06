@@ -1,4 +1,5 @@
-import { IndexerMocks, MetadataMocks } from '@0xsequence/api-client';
+import * as IndexerMocks from '@0xsequence/api-client/mocks/indexer';
+import * as MetadataMocks from '@0xsequence/api-client/mocks/metadata';
 
 const { mockIndexerEndpoint, mockTokenSupply } = IndexerMocks;
 const { mockMetadataEndpoint, mockTokenMetadata, mockTokenMetadataNormalized } =
