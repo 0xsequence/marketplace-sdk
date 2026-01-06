@@ -67,12 +67,6 @@ function isCollectibleContractType(
 function collectibleFromTokenBalance(
 	token: TokenBalance,
 ): CollectibleWithBalance {
-	if (!isCollectibleContractType(token.contractType)) {
-		throw new Error(
-			`Invalid collectible type: ${token.contractType}. Only ERC721 and ERC1155 tokens are supported.`,
-		);
-	}
-
 	return {
 		metadata: {
 			tokenId: token.tokenId ?? 0n,
@@ -85,7 +79,9 @@ function collectibleFromTokenBalance(
 			status: MetadataStatus.AVAILABLE,
 		},
 		contractInfo: token.contractInfo,
-		contractType: token.contractType,
+		contractType: token.contractType as
+			| ContractType.ERC721
+			| ContractType.ERC1155,
 		balance: token.balance.toString(),
 	};
 }
@@ -108,9 +104,9 @@ async function fetchIndexerTokens(
 		}),
 	);
 
-	const collectibles = balances.map((balance) =>
-		collectibleFromTokenBalance(balance),
-	);
+	const collectibles = balances
+		.filter((balance) => isCollectibleContractType(balance.contractType))
+		.map((balance) => collectibleFromTokenBalance(balance));
 
 	return {
 		collectibles,
