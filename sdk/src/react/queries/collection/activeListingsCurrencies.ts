@@ -1,4 +1,5 @@
 import type { Currency } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -58,6 +59,8 @@ export function collectionActiveListingsCurrenciesQueryOptions(
 			getQueryKey: getCollectionActiveListingsCurrenciesQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
 			fetcher: fetchCollectionActiveListingsCurrencies,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

@@ -1,3 +1,4 @@
+import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesRequest,
@@ -66,6 +67,8 @@ export function listItemsOrdersForCollectionQueryOptions(
 			] as const,
 			fetcher: fetchListItemsOrdersForCollection,
 			getPageInfo: (response) => response.page,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

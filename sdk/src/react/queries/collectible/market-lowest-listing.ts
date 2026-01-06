@@ -1,4 +1,5 @@
 import type { Order } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	type GetLowestPriceListingForCollectibleRequest,
@@ -64,6 +65,8 @@ export function lowestListingQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchLowestListing,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

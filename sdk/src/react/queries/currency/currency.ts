@@ -1,4 +1,5 @@
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	type Currency,
@@ -74,6 +75,8 @@ export function currencyQueryOptions(
 			getQueryKey: getCurrencyQueryKey,
 			requiredParams: ['chainId', 'currencyAddress', 'config'] as const,
 			fetcher: fetchCurrency,
+			customValidation: (p) =>
+				!!p.currencyAddress && isAddress(p.currencyAddress),
 		},
 		params,
 	);

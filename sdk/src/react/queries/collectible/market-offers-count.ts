@@ -2,6 +2,7 @@ import type {
 	GetCountOfOffersForCollectibleRequest,
 	OrderFilter,
 } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -66,6 +67,8 @@ export function countOffersForCollectibleQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchCountOffersForCollectible,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

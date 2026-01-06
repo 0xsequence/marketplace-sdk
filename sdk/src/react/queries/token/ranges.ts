@@ -1,5 +1,6 @@
 import type { Indexer } from '@0xsequence/api-client';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getIndexerClient,
@@ -59,7 +60,11 @@ export function getTokenRangesQueryOptions(
 			getQueryKey: getTokenRangesQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'],
 			fetcher: fetchGetTokenRanges,
-			customValidation: (p) => !!p.chainId && p.chainId > 0,
+			customValidation: (p) =>
+				!!p.chainId &&
+				p.chainId > 0 &&
+				!!p.collectionAddress &&
+				isAddress(p.collectionAddress),
 		},
 		params,
 	);

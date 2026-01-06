@@ -1,3 +1,4 @@
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	type GetFloorOrderRequest,
@@ -49,6 +50,8 @@ export function floorOrderQueryOptions(
 			getQueryKey: getFloorOrderQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
 			fetcher: fetchFloorOrder,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

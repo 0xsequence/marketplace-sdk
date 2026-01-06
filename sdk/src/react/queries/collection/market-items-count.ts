@@ -2,6 +2,7 @@ import type {
 	GetCountOfAllOrdersRequest,
 	OrderSide,
 } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -65,6 +66,8 @@ export function countItemsOrdersForCollectionQueryOptions(
 				'side',
 			] as const,
 			fetcher: fetchCountItemsOrdersForCollection,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

@@ -1,4 +1,5 @@
 import type { Address, GetTokenMetadataArgs } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -71,7 +72,11 @@ export function collectibleQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchCollectible,
-			customValidation: (p) => !!p.chainId && p.chainId > 0,
+			customValidation: (p) =>
+				!!p.chainId &&
+				p.chainId > 0 &&
+				!!p.collectionAddress &&
+				isAddress(p.collectionAddress),
 		},
 		params,
 	);

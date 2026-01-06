@@ -1,4 +1,5 @@
 import type { Order } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	type GetHighestPriceOfferForCollectibleRequest,
@@ -67,6 +68,8 @@ export function highestOfferQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchHighestOffer,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

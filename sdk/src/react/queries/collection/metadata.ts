@@ -1,4 +1,5 @@
 import type { Address } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -54,6 +55,8 @@ export function collectionQueryOptions(
 			getQueryKey: getCollectionQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
 			fetcher: fetchCollection,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

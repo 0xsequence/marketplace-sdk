@@ -1,4 +1,5 @@
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getIndexerClient,
@@ -101,6 +102,13 @@ export function balanceOfCollectibleOptions(
 				'config',
 			] as const,
 			fetcher: fetchBalanceOfCollectible,
+			customValidation: (p) =>
+				!!p.collectionAddress &&
+				isAddress(p.collectionAddress) &&
+				!!p.tokenId &&
+				p.tokenId > 0n &&
+				!!p.userAddress &&
+				isAddress(p.userAddress),
 		},
 		params,
 	);
