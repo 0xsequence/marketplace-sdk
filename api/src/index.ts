@@ -8,10 +8,7 @@ export {
 	TransactionType,
 } from '@0xsequence/indexer';
 
-export * as BuilderMocks from './__mocks__/builder.msw';
-export * as IndexerMocks from './__mocks__/indexer.msw';
-export * as MarketplaceMocks from './__mocks__/marketplace.msw';
-export * as MetadataMocks from './__mocks__/metadata.msw';
+
 
 export type {
 	CollectionFilterSettings,
