@@ -332,7 +332,7 @@ export default function PriceInput({
 				modalType === 'offer' &&
 				!openseaDecimalError && (
 					<Text
-						className="-bottom-5 absolute font-body font-medium text-xs"
+						className="absolute -bottom-5 font-body font-medium text-xs"
 						color="negative"
 					>
 						Lowest price must be at least $0.01

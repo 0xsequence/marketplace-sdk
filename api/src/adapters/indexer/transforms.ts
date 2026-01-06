@@ -21,7 +21,11 @@ export function toContractInfo(
 ): Normalized.ContractInfo | undefined {
 	// Handle missing or invalid address - return undefined instead of throwing
 	// The Indexer API sometimes returns contractInfo with empty address field
-	if (!raw.address || !raw.address.startsWith('0x') || raw.address.length !== 42) {
+	if (
+		!raw.address ||
+		!raw.address.startsWith('0x') ||
+		raw.address.length !== 42
+	) {
 		return undefined;
 	}
 
@@ -33,7 +37,10 @@ export function toContractInfo(
 			if (ext.originChainId !== undefined) {
 				result.originChainId = normalizeChainId(ext.originChainId);
 			}
-			if (ext.originAddress && ext.originAddress.startsWith('0x') && ext.originAddress.length === 42) {
+			if (
+				ext.originAddress?.startsWith('0x') &&
+				ext.originAddress.length === 42
+			) {
 				result.originAddress = normalizeAddress(ext.originAddress);
 			}
 			return result;
@@ -118,10 +125,10 @@ export function toTransactionReceipt(
 		})),
 	};
 
-	if (raw.from && raw.from.startsWith('0x') && raw.from.length === 42) {
+	if (raw.from?.startsWith('0x') && raw.from.length === 42) {
 		result.from = normalizeAddress(raw.from);
 	}
-	if (raw.to && raw.to.startsWith('0x') && raw.to.length === 42) {
+	if (raw.to?.startsWith('0x') && raw.to.length === 42) {
 		result.to = normalizeAddress(raw.to);
 	}
 	// chainId is not in raw API, so we don't set it (it's optional in our type)

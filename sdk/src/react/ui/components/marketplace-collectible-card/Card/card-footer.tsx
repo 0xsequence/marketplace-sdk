@@ -24,7 +24,7 @@ export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
 			<div
 				ref={ref}
 				className={cn(
-					'-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]',
+					'absolute -bottom-16 flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]',
 					className ?? '',
 				)}
 				{...props}

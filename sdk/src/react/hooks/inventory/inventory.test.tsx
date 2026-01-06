@@ -50,7 +50,7 @@ describe('useInventory', () => {
 			http.post(mockMarketplaceEndpoint('ListCollectibles'), () => {
 				return new HttpResponse(null, { status: 500 });
 			}),
-			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+			http.post(mockIndexerEndpoint('GetTokenBalancesByContract'), () => {
 				return new HttpResponse(null, { status: 500 });
 			}),
 		);
@@ -135,7 +135,7 @@ describe('useInventory', () => {
 				});
 			}),
 			// Mock indexer with data
-			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+			http.post(mockIndexerEndpoint('GetTokenBalancesByContract'), () => {
 				return HttpResponse.json({
 					balances: [mockTokenBalance],
 					page: {
