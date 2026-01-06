@@ -153,6 +153,7 @@ const debugLog = (endpoint: string, request: unknown, response: unknown) => {
 // Define available endpoints
 const ENDPOINTS = [
 	'GetTokenBalances',
+	'GetTokenBalancesByContract',
 	'GetTokenBalancesDetails',
 	'GetTokenSupplies',
 	'FetchTransactionReceipt',
@@ -179,6 +180,11 @@ export const mockIndexerHandler = <T extends Record<string, unknown>>(
 // MSW handlers
 export const handlers = Object.values({
 	GetTokenBalances: mockIndexerHandler('GetTokenBalances', {
+		page: { page: 1, pageSize: 10, more: false },
+		balances: [mockTokenBalance],
+	}),
+
+	GetTokenBalancesByContract: mockIndexerHandler('GetTokenBalancesByContract', {
 		page: { page: 1, pageSize: 10, more: false },
 		balances: [mockTokenBalance],
 	}),

@@ -20,7 +20,7 @@ describe('useCollectibleTokenBalances', () => {
 		// Override the handler specifically for this test
 		// MSW returns RAW format, which gets transformed to normalized by the client
 		server.use(
-			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+			http.post(mockIndexerEndpoint('GetTokenBalancesByContract'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
 					balances: [mockTokenBalance, { ...mockTokenBalance, tokenID: '2' }],
@@ -75,7 +75,7 @@ describe('useCollectibleTokenBalances', () => {
 	it('should handle error states', async () => {
 		// Override the handler to return an error
 		server.use(
-			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+			http.post(mockIndexerEndpoint('GetTokenBalancesByContract'), () => {
 				return HttpResponse.json(
 					{ error: { message: 'Invalid address format' } },
 					{ status: 400 },
@@ -143,7 +143,7 @@ describe('useCollectibleTokenBalances', () => {
 		];
 
 		server.use(
-			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+			http.post(mockIndexerEndpoint('GetTokenBalancesByContract'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
 					balances: balancesRaw,
