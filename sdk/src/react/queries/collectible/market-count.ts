@@ -4,6 +4,7 @@ import type {
 	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
 } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -87,6 +88,8 @@ export function countOfCollectablesQueryOptions(
 			getQueryKey: getCountOfCollectablesQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
 			fetcher: fetchCountOfCollectables,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

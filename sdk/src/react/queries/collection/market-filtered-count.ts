@@ -3,6 +3,7 @@ import type {
 	OrderSide,
 	OrdersFilter,
 } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -65,6 +66,8 @@ export function getCountOfFilteredOrdersQueryOptions(
 				'side',
 			] as const,
 			fetcher: fetchGetCountOfFilteredOrders,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

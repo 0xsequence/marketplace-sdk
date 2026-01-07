@@ -2,6 +2,7 @@ import type {
 	ListCollectibleListingsResponse,
 	ListListingsForCollectibleRequest,
 } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -62,6 +63,8 @@ export function listListingsForCollectibleQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchListListingsForCollectible,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

@@ -1,5 +1,6 @@
 import type { PropertyFilter } from '@0xsequence/api-client';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
@@ -136,6 +137,8 @@ export function filtersQueryOptions(
 			getQueryKey: getFiltersQueryKey,
 			requiredParams: ['chainId', 'collectionAddress', 'config'] as const,
 			fetcher: fetchFilters,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

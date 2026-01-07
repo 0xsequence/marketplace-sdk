@@ -1,5 +1,6 @@
 import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getIndexerClient,
@@ -86,6 +87,11 @@ export function tokenBalancesOptions(
 				'config',
 			] as const,
 			fetcher: fetchTokenBalances,
+			customValidation: (p) =>
+				!!p.collectionAddress &&
+				isAddress(p.collectionAddress) &&
+				!!p.userAddress &&
+				isAddress(p.userAddress),
 		},
 		params,
 	);

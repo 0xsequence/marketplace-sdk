@@ -4,6 +4,7 @@ import type {
 	CheckoutOptionsSalesContractResponse,
 } from '@0xsequence/api-client';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -101,7 +102,10 @@ export function primarySaleCheckoutOptionsQueryOptions(
 				'config',
 			] as const,
 			fetcher: fetchPrimarySaleCheckoutOptions,
-			customValidation: (params) => (params.items?.length ?? 0) > 0,
+			customValidation: (params) =>
+				(params.items?.length ?? 0) > 0 &&
+				!!params.collectionAddress &&
+				isAddress(params.collectionAddress),
 		},
 		params,
 	);

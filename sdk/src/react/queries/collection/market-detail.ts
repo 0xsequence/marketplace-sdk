@@ -1,4 +1,5 @@
 import type { GetCollectionDetailRequest } from '@0xsequence/api-client';
+import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -51,6 +52,8 @@ export function collectionMarketDetailQueryOptions(
 			getQueryKey: getCollectionMarketDetailQueryKey,
 			requiredParams: ['collectionAddress', 'chainId', 'config'] as const,
 			fetcher: fetchMarketCollectionDetail,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

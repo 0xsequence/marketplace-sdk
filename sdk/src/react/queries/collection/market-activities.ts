@@ -1,3 +1,4 @@
+import { isAddress } from 'viem';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
@@ -75,6 +76,8 @@ export function listCollectionActivitiesQueryOptions(
 			getQueryKey: getListCollectionActivitiesQueryKey,
 			requiredParams: ['collectionAddress', 'chainId', 'config'] as const,
 			fetcher: fetchListCollectionActivities,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

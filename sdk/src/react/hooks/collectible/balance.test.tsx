@@ -79,15 +79,12 @@ describe('useCollectibleBalance', () => {
 			}),
 		);
 
-		const invalidArgs = {
-			...defaultArgs,
-			collectionAddress: '0xinvalid' as `0x${string}`, // Invalid address format
-		};
-
-		const { result } = renderHook(() => useCollectibleBalance(invalidArgs));
+		const { result } = renderHook(() => useCollectibleBalance(defaultArgs));
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
+			expect(result.current.error).toBeDefined();
+			expect(result.current.data).toBeUndefined();
 		});
 	});
 

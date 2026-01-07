@@ -4,6 +4,7 @@ import type {
 } from '@0xsequence/api-client';
 import { ContractType } from '@0xsequence/api-client';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
@@ -199,6 +200,8 @@ export function inventoryOptions(
 				'config',
 			] as const,
 			fetcher: fetchInventory,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

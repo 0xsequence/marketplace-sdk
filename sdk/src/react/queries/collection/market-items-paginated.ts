@@ -1,4 +1,5 @@
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import type {
 	ListOrdersWithCollectiblesRequest,
 	ListOrdersWithCollectiblesResponse,
@@ -75,6 +76,8 @@ export function listItemsOrdersForCollectionPaginatedQueryOptions(
 				'side',
 			] as const,
 			fetcher: fetchListItemsOrdersForCollectionPaginated,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);

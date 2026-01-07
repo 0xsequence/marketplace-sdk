@@ -1,3 +1,4 @@
+import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import type { CardType } from '../../../types/types';
 import { compareAddress } from '../../../utils';
@@ -96,6 +97,8 @@ export function listCollectiblesQueryOptions(
 			] as const,
 			fetcher: fetchListCollectibles,
 			getPageInfo: (response) => response.page,
+			customValidation: (p) =>
+				!!p.collectionAddress && isAddress(p.collectionAddress),
 		},
 		params,
 	);
