@@ -18,7 +18,7 @@ export const updateQueriesOnCancel = ({
 	queryClient,
 }: OptimisticCancelUpdatesParams) => {
 	queryClient.setQueriesData(
-		{ queryKey: ['collectible', 'market-count-offers'], exact: false },
+		{ queryKey: ['collectible', 'market-offers-count'], exact: false },
 		(oldData: GetCountOfOffersForCollectibleResponse | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
@@ -27,7 +27,7 @@ export const updateQueriesOnCancel = ({
 
 	// remove the offer with matching orderId
 	queryClient.setQueriesData(
-		{ queryKey: ['collectible', 'market-list-offers'], exact: false },
+		{ queryKey: ['collectible', 'market-offers'], exact: false },
 		(oldData: ListOffersForCollectibleResponse | undefined) => {
 			if (!oldData || !oldData.offers) return oldData;
 			return {
@@ -47,7 +47,7 @@ export const updateQueriesOnCancel = ({
 	}, 2 * SECOND);
 
 	queryClient.setQueriesData(
-		{ queryKey: ['collectible', 'market-count-listings'], exact: false },
+		{ queryKey: ['collectible', 'market-listings-count'], exact: false },
 		(oldData: GetCountOfListingsForCollectibleResponse | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
@@ -55,7 +55,7 @@ export const updateQueriesOnCancel = ({
 	);
 
 	queryClient.setQueriesData(
-		{ queryKey: ['collectible', 'market-list-listings'], exact: false },
+		{ queryKey: ['collectible', 'market-listings'], exact: false },
 		(oldData: ListListingsForCollectibleResponse | undefined) => {
 			if (!oldData || !oldData.listings) return oldData;
 			return {
@@ -82,22 +82,22 @@ export const invalidateQueriesOnCancel = ({
 	queryClient: QueryClient;
 }) => {
 	queryClient.invalidateQueries({
-		queryKey: ['collectible', 'market-list-offers'],
+		queryKey: ['collectible', 'market-offers'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: ['collectible', 'market-count-offers'],
+		queryKey: ['collectible', 'market-offers-count'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: ['collectible', 'market-list-listings'],
+		queryKey: ['collectible', 'market-listings'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: ['collectible', 'market-count-listings'],
+		queryKey: ['collectible', 'market-listings-count'],
 		exact: false,
 	});
 

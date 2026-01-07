@@ -215,8 +215,8 @@ export const useOfferMutations = ({
 				tokenId: state.tokenId,
 				queriesToInvalidate: [
 					['collectible', 'market-highest-offer'],
-					['collectible', 'market-list-offers'],
-					['collectible', 'market-count-offers'],
+					['collectible', 'market-offers'],
+					['collectible', 'market-offers-count'],
 				],
 			});
 		},
