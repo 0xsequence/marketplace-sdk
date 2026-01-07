@@ -6,11 +6,17 @@ import {
 	useQueryState,
 } from 'nuqs';
 import { useMemo } from 'react';
-import {
-	type PriceFilter,
-	type PropertyFilter,
-	PropertyType,
-} from '../../../_internal';
+import { type PropertyFilter, PropertyType } from '../../../_internal';
+
+/**
+ * URL-safe price filter type that uses strings instead of BigInt
+ * to avoid JSON serialization issues with URL state management
+ */
+export interface UrlPriceFilter {
+	contractAddress: string;
+	min?: string;
+	max?: string;
+}
 
 interface StringFilterValues {
 	type: PropertyType.STRING;
@@ -35,10 +41,10 @@ const validateFilters = (value: unknown): PropertyFilter[] => {
 	);
 };
 
-const validatePriceFilters = (value: unknown): PriceFilter[] => {
+const validatePriceFilters = (value: unknown): UrlPriceFilter[] => {
 	if (!Array.isArray(value)) return [];
 	return value.filter(
-		(f): f is PriceFilter =>
+		(f): f is UrlPriceFilter =>
 			typeof f === 'object' &&
 			typeof f.contractAddress === 'string' &&
 			(f.min === undefined || typeof f.min === 'string') &&
@@ -197,16 +203,16 @@ export function useFilterState() {
 					return;
 				}
 
-				const newPriceFilter: PriceFilter = {
+				const newPriceFilter: UrlPriceFilter = {
 					contractAddress,
-					...(min && { min: BigInt(min) }),
-					...(max && { max: BigInt(max) }),
+					...(min && { min }),
+					...(max && { max }),
 				};
 
 				setPriceFilters([...otherPriceFilters, newPriceFilter]);
 			},
 
-			getPriceFilter: (contractAddress: string): PriceFilter | undefined => {
+			getPriceFilter: (contractAddress: string): UrlPriceFilter | undefined => {
 				return priceFilters?.find((f) => f.contractAddress === contractAddress);
 			},
 

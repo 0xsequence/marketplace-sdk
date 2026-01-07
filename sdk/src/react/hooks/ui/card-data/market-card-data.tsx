@@ -9,11 +9,12 @@ import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../types';
-import type { PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
+import { normalizePriceFilters } from '../../../utils/normalizePriceFilters';
 import { useCollectibleMarketList } from '../../collectible/market-list';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
+import type { UrlPriceFilter } from '../url-state/filter-state';
 
 interface UseMarketCardDataProps {
 	collectionAddress: Address;
@@ -22,7 +23,7 @@ interface UseMarketCardDataProps {
 	filterOptions?: PropertyFilter[];
 	searchText?: string;
 	showListedOnly?: boolean;
-	priceFilters?: PriceFilter[];
+	priceFilters?: UrlPriceFilter[];
 	onCollectibleClick?: (tokenId: bigint) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
@@ -65,7 +66,7 @@ export function useMarketCardData({
 			includeEmpty: !showListedOnly,
 			searchText,
 			properties: filterOptions,
-			prices: priceFilters,
+			prices: normalizePriceFilters(priceFilters),
 		},
 		query: {
 			enabled:

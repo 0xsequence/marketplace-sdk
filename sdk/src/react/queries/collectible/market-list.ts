@@ -13,6 +13,7 @@ import {
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
+import { normalizePriceFilters } from '../../utils/normalizePriceFilters';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export type ListCollectiblesQueryOptions = SdkInfiniteQueryParams<
@@ -32,7 +33,8 @@ export async function fetchListCollectibles(
 	>,
 	page: Page,
 ): Promise<ListCollectiblesResponse> {
-	const { chainId, collectionAddress, config, ...additionalApiParams } = params;
+	const { chainId, collectionAddress, config, filter, ...additionalApiParams } =
+		params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
 	const isMarketCollection = marketplaceConfig?.market.collections.some(
@@ -51,10 +53,19 @@ export async function fetchListCollectibles(
 		};
 	}
 
+	// Transform price filters from strings to BigInt for API
+	const transformedFilter = filter
+		? {
+				...filter,
+				prices: normalizePriceFilters(filter.prices),
+			}
+		: undefined;
+
 	return await marketplaceClient.listCollectibles({
 		chainId,
 		collectionAddress,
 		page,
+		filter: transformedFilter,
 		...additionalApiParams,
 	});
 }
