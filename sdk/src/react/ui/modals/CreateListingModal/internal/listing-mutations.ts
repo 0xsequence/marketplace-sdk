@@ -249,7 +249,7 @@ export const useListingMutations = ({
 				tokenId: state.tokenId,
 				queriesToInvalidate: [
 					['collectible', 'market-lowest-listing'],
-					['collectible', 'market-list-listings'],
+					['collectible', 'market-listings'],
 					['collectible', 'market-count-listings'],
 					['token', 'balances'],
 				],

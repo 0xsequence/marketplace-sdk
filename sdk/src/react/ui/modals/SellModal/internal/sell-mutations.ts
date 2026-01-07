@@ -142,8 +142,8 @@ export const useSellMutations = ({
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
 				queriesToInvalidate: [
 					['collectible', 'market-highest-offer'],
-					['collectible', 'market-list-offers'],
-					['collectible', 'market-count-offers'],
+					['collectible', 'market-offers'],
+					['collectible', 'market-offers-count'],
 					['token', 'balances'],
 					['collection', 'balance-details'],
 				],
