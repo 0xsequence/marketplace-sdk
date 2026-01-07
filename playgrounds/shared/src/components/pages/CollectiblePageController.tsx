@@ -124,7 +124,7 @@ export function CollectiblePageController({
 					<CollectibleDetails
 						name={collectible?.name}
 						id={tokenId}
-						balance={Number(balance?.balance)}
+						balance={Number(balance?.balance) || 0}
 						chainId={chainId}
 						collection={collection}
 						onCollectionClick={onCollectionClick}
@@ -135,7 +135,7 @@ export function CollectiblePageController({
 						<CollectibleDetails
 							name={collectible?.name}
 							id={tokenId}
-							balance={Number(balance?.balance)}
+							balance={Number(balance?.balance) || 0}
 							chainId={chainId}
 							collection={collection}
 							onCollectionClick={onCollectionClick}
