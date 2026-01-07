@@ -11,7 +11,7 @@ import {
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
-import { transformPriceFilters } from '../../utils/priceFilterTransformations';
+import { normalizePriceFilters } from '../../utils/normalizePriceFilters';
 
 export interface FetchListCollectiblesPaginatedParams
 	extends Omit<ListCollectiblesRequest, 'page'> {
@@ -47,7 +47,7 @@ export async function fetchListCollectiblesPaginated(
 	const transformedFilter = filter
 		? {
 				...filter,
-				prices: transformPriceFilters(filter.prices),
+				prices: normalizePriceFilters(filter.prices),
 			}
 		: undefined;
 

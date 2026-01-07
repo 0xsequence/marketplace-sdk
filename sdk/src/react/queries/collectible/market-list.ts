@@ -13,7 +13,7 @@ import {
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
-import { transformPriceFilters } from '../../utils/priceFilterTransformations';
+import { normalizePriceFilters } from '../../utils/normalizePriceFilters';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export type ListCollectiblesQueryOptions = SdkInfiniteQueryParams<
@@ -57,7 +57,7 @@ export async function fetchListCollectibles(
 	const transformedFilter = filter
 		? {
 				...filter,
-				prices: transformPriceFilters(filter.prices),
+				prices: normalizePriceFilters(filter.prices),
 			}
 		: undefined;
 

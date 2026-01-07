@@ -11,7 +11,7 @@ import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../types';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
-import { convertUrlPriceFiltersToApi } from '../../../utils/priceFilterTransformations';
+import { normalizePriceFilters } from '../../../utils/normalizePriceFilters';
 import { useCollectibleMarketList } from '../../collectible/market-list';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 import type { UrlPriceFilter } from '../url-state/filter-state';
@@ -66,7 +66,7 @@ export function useMarketCardData({
 			includeEmpty: !showListedOnly,
 			searchText,
 			properties: filterOptions,
-			prices: convertUrlPriceFiltersToApi(priceFilters),
+			prices: normalizePriceFilters(priceFilters),
 		},
 		query: {
 			enabled:

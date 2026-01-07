@@ -10,7 +10,7 @@ import type { CollectibleCardAction } from '../../../../types';
 import type { Order } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
-import { convertUrlPriceFiltersToApi } from '../../../utils/priceFilterTransformations';
+import { normalizePriceFilters } from '../../../utils/normalizePriceFilters';
 import { useCollectibleMarketListPaginated } from '../../collectible/market-list-paginated';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
 import type { UrlPriceFilter } from '../url-state/filter-state';
@@ -192,7 +192,7 @@ export function useMarketCardDataPaged({
 			includeEmpty: !showListedOnly,
 			searchText,
 			properties: filterOptions,
-			prices: convertUrlPriceFiltersToApi(priceFilters),
+			prices: normalizePriceFilters(priceFilters),
 			inAccounts: inAccounts ?? [],
 		},
 		query: {
