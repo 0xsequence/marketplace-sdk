@@ -73,7 +73,7 @@ const useExecuteBundledTransactions = ({
 			throw new Error('Collection address not found');
 		}
 
-		if (!priceAmount) {
+		if (priceAmount == null) {
 			throw new Error('Price amount not found');
 		}
 

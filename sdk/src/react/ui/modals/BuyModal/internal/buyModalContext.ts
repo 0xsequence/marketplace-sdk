@@ -102,7 +102,7 @@ export function useBuyModalContext() {
 		const amountRaw = isMarket
 			? marketOrder?.priceAmount
 			: primarySaleItem?.priceAmount;
-		if (!amountRaw) throw new Error('Price amount not found');
+		if (amountRaw == null) throw new Error('Price amount not found');
 
 		close();
 
