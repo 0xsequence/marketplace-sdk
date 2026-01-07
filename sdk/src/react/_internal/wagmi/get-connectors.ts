@@ -52,7 +52,7 @@ export function getConnectors({
 function commonConnectors(
 	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
-	ssr?: boolean,
+	_ssr?: boolean,
 ): Wallet[] {
 	const wallets: Wallet[] = [];
 	const { title: appName } = marketplaceConfig.settings;
