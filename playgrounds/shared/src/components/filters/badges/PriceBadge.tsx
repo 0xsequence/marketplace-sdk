@@ -1,15 +1,15 @@
 'use client';
 
 import { CloseIcon, Text } from '@0xsequence/design-system';
-import type { PriceFilter } from '@0xsequence/marketplace-sdk';
 import {
+	type UrlPriceFilter,
 	useFilterState,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import { type Address, formatUnits } from 'viem';
 
 type PriceBadgeProps = {
-	priceFilter: PriceFilter;
+	priceFilter: UrlPriceFilter;
 	chainId: number;
 	collectionAddress: Address;
 };

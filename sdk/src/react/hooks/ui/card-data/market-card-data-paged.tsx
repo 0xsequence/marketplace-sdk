@@ -7,11 +7,13 @@ import { type Indexer, OrderSide } from '@0xsequence/api-client';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../types';
-import type { Order, PriceFilter } from '../../../_internal';
+import type { Order } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
+import { convertUrlPriceFiltersToApi } from '../../../utils/priceFilterTransformations';
 import { useCollectibleMarketListPaginated } from '../../collectible/market-list-paginated';
 import { useCollectionBalanceDetails } from '../../collection/balance-details';
+import type { UrlPriceFilter } from '../url-state/filter-state';
 
 /**
  * Props for the useMarketCardDataPaged hook
@@ -32,7 +34,7 @@ export interface UseMarketCardDataPagedProps {
 	/** Optional array of account addresses to filter collectibles by owner */
 	inAccounts?: Address[];
 	/** Optional price filters to apply to the collectible search */
-	priceFilters?: PriceFilter[];
+	priceFilters?: UrlPriceFilter[];
 	/** Optional callback function called when a collectible card is clicked */
 	onCollectibleClick?: (tokenId: bigint) => void;
 	/** Optional callback function called when an action cannot be performed on a collectible */
@@ -190,7 +192,7 @@ export function useMarketCardDataPaged({
 			includeEmpty: !showListedOnly,
 			searchText,
 			properties: filterOptions,
-			prices: priceFilters,
+			prices: convertUrlPriceFiltersToApi(priceFilters),
 			inAccounts: inAccounts ?? [],
 		},
 		query: {

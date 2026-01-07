@@ -11,6 +11,7 @@ import {
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
+import { transformPriceFilters } from '../../utils/priceFilterTransformations';
 
 export interface FetchListCollectiblesPaginatedParams
 	extends Omit<ListCollectiblesRequest, 'page'> {
@@ -37,9 +38,18 @@ export async function fetchListCollectiblesPaginated(
 		config,
 		page = 1,
 		pageSize = 30,
+		filter,
 		...additionalApiParams
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
+
+	// Transform price filters from strings to BigInt for API
+	const transformedFilter = filter
+		? {
+				...filter,
+				prices: transformPriceFilters(filter.prices),
+			}
+		: undefined;
 
 	return await marketplaceClient.listCollectibles({
 		collectionAddress,
@@ -48,6 +58,7 @@ export async function fetchListCollectiblesPaginated(
 			page,
 			pageSize,
 		},
+		filter: transformedFilter,
 		...additionalApiParams,
 	});
 }
