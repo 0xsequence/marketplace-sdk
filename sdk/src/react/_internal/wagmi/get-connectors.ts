@@ -67,19 +67,11 @@ function commonConnectors(
 		);
 	}
 
-	// Skip WalletConnect during SSR to avoid localStorage errors
-	// WalletConnect accesses localStorage at module evaluation time, causing:
-	// "Failed to create a CookieStore: `localStorage` is not available" in Edge runtime
-	// See: https://github.com/WalletConnect/walletconnect-monorepo/issues/6841 (closed as "not planned")
-	//
-	// This is safe because:
-	// 1. SSR config is only used for initial hydration state (cookie-based reconnection)
-	// 2. Client-side config (ssr=false) recreates the full connector list WITH WalletConnect
-	// 3. WalletConnect connections only happen client-side anyway
+	const isBrowser = typeof window !== 'undefined';
 	if (
 		walletConnectProjectId &&
 		walletOptions.connectors.includes('walletconnect') &&
-		!ssr
+		isBrowser
 	) {
 		wallets.push(
 			walletConnect({
