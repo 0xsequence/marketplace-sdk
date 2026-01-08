@@ -1,10 +1,10 @@
-import type { Indexer } from '@0xsequence/api-client';
-import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import {
+	buildInfiniteQueryOptions,
 	getIndexerClient,
 	type Optional,
 	type SdkQueryParams,
+	type WithOptionalInfiniteParams,
 	type WithRequired,
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
@@ -21,7 +21,6 @@ export interface FetchBalancesParams {
 		includeContracts?: Hex[];
 	};
 	includeCollectionTokens?: boolean;
-	page?: Indexer.Page;
 }
 
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
@@ -42,7 +41,7 @@ export async function fetchBalances(
 		ListBalancesQueryOptions,
 		'chainId' | 'accountAddress' | 'contractAddress' | 'config'
 	>,
-	page: Indexer.Page,
+	page: { page: number; pageSize: number; more?: boolean },
 ) {
 	const {
 		chainId,
@@ -60,7 +59,11 @@ export async function fetchBalances(
 		tokenId,
 		includeMetadata,
 		metadataOptions,
-		page,
+		page: {
+			page: page.page,
+			pageSize: page.pageSize,
+			more: page.more ?? false,
+		},
 	});
 }
 
@@ -84,43 +87,38 @@ export function getListBalancesQueryKey(params: ListBalancesQueryOptions) {
  * @param params - The query parameters including config
  * @returns Query options configuration
  */
-export function listBalancesOptions(params: ListBalancesQueryOptions) {
-	const enabled =
-		!!params.chainId &&
-		!!params.accountAddress &&
-		!!params.contractAddress &&
-		!!params.config;
-
-	const queryFn = ({ pageParam }: { pageParam: Indexer.Page }) => {
-		const requiredParams = params as WithRequired<
+export function listBalancesOptions(
+	params: WithOptionalInfiniteParams<
+		WithRequired<
 			ListBalancesQueryOptions,
 			'chainId' | 'accountAddress' | 'contractAddress' | 'config'
-		>;
-		return fetchBalances(
-			{
-				...params,
-				chainId: requiredParams.chainId,
-				accountAddress: requiredParams.accountAddress,
-				contractAddress: requiredParams.contractAddress,
-				config: requiredParams.config,
+		>
+	>,
+) {
+	return buildInfiniteQueryOptions(
+		{
+			getQueryKey: getListBalancesQueryKey,
+			requiredParams: [
+				'chainId',
+				'accountAddress',
+				'contractAddress',
+				'config',
+			] as const,
+			fetcher: fetchBalances,
+			getPageInfo: (response) => {
+				if (!response.page) return undefined;
+				return {
+					page: response.page.page,
+					pageSize: response.page.pageSize,
+					more: response.page.more ?? false,
+				};
 			},
-			pageParam,
-		);
-	};
-
-	return infiniteQueryOptions({
-		...params.query,
-		enabled: (params.query?.enabled ?? true) && enabled,
-		queryKey: getListBalancesQueryKey(params),
-		queryFn,
-		initialPageParam: { page: 1, pageSize: 30, more: false },
-		getNextPageParam: (lastPage) =>
-			lastPage.page?.more
-				? {
-						page: lastPage.page.page + 1,
-						pageSize: lastPage.page.pageSize,
-						more: true,
-					}
-				: undefined,
-	});
+			customValidation: (p) =>
+				!!p.chainId &&
+				p.chainId > 0 &&
+				!!p.accountAddress &&
+				!!p.contractAddress,
+		},
+		params,
+	);
 }
