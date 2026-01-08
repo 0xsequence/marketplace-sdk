@@ -12,7 +12,7 @@ import { createTokenQueryKey } from './queryKeys';
 export interface FetchBalancesParams {
 	chainId: number;
 	accountAddress: Address;
-	contractAddress: Address;
+	contractAddress?: Address;
 	tokenId?: bigint;
 	includeMetadata?: boolean;
 	metadataOptions?: {
@@ -21,25 +21,28 @@ export interface FetchBalancesParams {
 		includeContracts?: Hex[];
 	};
 	includeCollectionTokens?: boolean;
+	page?: {
+		page?: number;
+		pageSize?: number;
+		more?: boolean;
+	};
 }
 
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
 
 /**
- * Balances query params with accountAddress and contractAddress as required
+ * Balances query params with accountAddress as required, contractAddress is optional
  */
 export type UseListBalancesParams = Optional<
 	ListBalancesQueryOptions,
-	'config'
+	'config' | 'contractAddress'
 > &
-	Required<
-		Pick<ListBalancesQueryOptions, 'accountAddress' | 'contractAddress'>
-	>;
+	Required<Pick<ListBalancesQueryOptions, 'accountAddress'>>;
 
 export async function fetchBalances(
 	params: WithRequired<
 		ListBalancesQueryOptions,
-		'chainId' | 'accountAddress' | 'contractAddress' | 'config'
+		'chainId' | 'accountAddress' | 'config'
 	>,
 	page: { page: number; pageSize: number; more?: boolean },
 ) {
@@ -91,19 +94,14 @@ export function listBalancesOptions(
 	params: WithOptionalInfiniteParams<
 		WithRequired<
 			ListBalancesQueryOptions,
-			'chainId' | 'accountAddress' | 'contractAddress' | 'config'
+			'chainId' | 'accountAddress' | 'config'
 		>
 	>,
 ) {
 	return buildInfiniteQueryOptions(
 		{
 			getQueryKey: getListBalancesQueryKey,
-			requiredParams: [
-				'chainId',
-				'accountAddress',
-				'contractAddress',
-				'config',
-			] as const,
+			requiredParams: ['chainId', 'accountAddress', 'config'] as const,
 			fetcher: fetchBalances,
 			getPageInfo: (response) => {
 				if (!response.page) return undefined;
@@ -114,10 +112,7 @@ export function listBalancesOptions(
 				};
 			},
 			customValidation: (p) =>
-				!!p.chainId &&
-				p.chainId > 0 &&
-				!!p.accountAddress &&
-				!!p.contractAddress,
+				!!p.chainId && p.chainId > 0 && !!p.accountAddress,
 		},
 		params,
 	);
