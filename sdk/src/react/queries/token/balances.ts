@@ -3,6 +3,7 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import {
 	getIndexerClient,
+	type Optional,
 	type SdkQueryParams,
 	type WithRequired,
 } from '../../_internal';
@@ -10,8 +11,8 @@ import { createTokenQueryKey } from './queryKeys';
 
 export interface FetchBalancesParams {
 	chainId: number;
-	accountAddress?: Address;
-	contractAddress?: Address;
+	accountAddress: Address;
+	contractAddress: Address;
 	tokenId?: bigint;
 	includeMetadata?: boolean;
 	metadataOptions?: {
@@ -26,16 +27,20 @@ export interface FetchBalancesParams {
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
 
 /**
- * @deprecated Use ListBalancesQueryOptions instead
+ * Balances query params with accountAddress and contractAddress as required
  */
-export type UseListBalancesArgs = Omit<ListBalancesQueryOptions, 'config'> & {
-	config?: ListBalancesQueryOptions['config'];
-};
+export type UseListBalancesParams = Optional<
+	ListBalancesQueryOptions,
+	'config'
+> &
+	Required<
+		Pick<ListBalancesQueryOptions, 'accountAddress' | 'contractAddress'>
+	>;
 
 export async function fetchBalances(
 	params: WithRequired<
 		ListBalancesQueryOptions,
-		'chainId' | 'accountAddress' | 'config'
+		'chainId' | 'accountAddress' | 'contractAddress' | 'config'
 	>,
 	page: Indexer.Page,
 ) {
@@ -81,18 +86,22 @@ export function getListBalancesQueryKey(params: ListBalancesQueryOptions) {
  */
 export function listBalancesOptions(params: ListBalancesQueryOptions) {
 	const enabled =
-		!!params.chainId && !!params.accountAddress && !!params.config;
+		!!params.chainId &&
+		!!params.accountAddress &&
+		!!params.contractAddress &&
+		!!params.config;
 
 	const queryFn = ({ pageParam }: { pageParam: Indexer.Page }) => {
 		const requiredParams = params as WithRequired<
 			ListBalancesQueryOptions,
-			'chainId' | 'accountAddress' | 'config'
+			'chainId' | 'accountAddress' | 'contractAddress' | 'config'
 		>;
 		return fetchBalances(
 			{
 				...params,
 				chainId: requiredParams.chainId,
 				accountAddress: requiredParams.accountAddress,
+				contractAddress: requiredParams.contractAddress,
 				config: requiredParams.config,
 			},
 			pageParam,
