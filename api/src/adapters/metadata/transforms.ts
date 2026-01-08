@@ -60,6 +60,7 @@ export function toContractInfo(
 	return spreadWith(raw, {
 		address: normalizeAddress(raw.address),
 		chainId: normalizeChainId(raw.chainId),
+		type: raw.type as NormalizedTypes.ContractInfo['type'],
 		extensions,
 	});
 }

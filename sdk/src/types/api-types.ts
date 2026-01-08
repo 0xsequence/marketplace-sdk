@@ -9,6 +9,7 @@ export type {
 	CreateReq,
 	Currency,
 	Filter,
+	IndexerTokenBalance,
 	Order,
 	OrderData,
 	OrderFilter,

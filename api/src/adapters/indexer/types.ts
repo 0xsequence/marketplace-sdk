@@ -1,5 +1,6 @@
 // Normalized Indexer Types
 
+import type { ContractType } from '@0xsequence/indexer';
 import type { Address, Amount, ChainId, TokenId } from '../../types/primitives';
 
 export interface ContractInfo {
@@ -50,7 +51,7 @@ export interface TokenMetadata {
 }
 
 export interface TokenBalance {
-	contractType: string;
+	contractType: ContractType;
 	contractAddress: Address;
 	accountAddress: Address;
 	tokenId: TokenId;
@@ -140,7 +141,7 @@ export type GetTokenSuppliesRequest = {
 );
 
 export interface GetTokenSuppliesResponse {
-	contractType: string;
+	contractType: ContractType;
 	contractAddress: Address;
 	supplies: TokenSupply[];
 	page?: Page;
