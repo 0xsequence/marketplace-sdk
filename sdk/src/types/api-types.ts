@@ -9,6 +9,7 @@ export type {
 	CreateReq,
 	Currency,
 	Filter,
+	IndexerTokenBalance,
 	Order,
 	OrderData,
 	OrderFilter,
@@ -19,7 +20,6 @@ export type {
 	Signature,
 	SortBy,
 	Step,
-	IndexerTokenBalance,
 	TokenMetadata,
 } from '@0xsequence/api-client';
 

@@ -98,9 +98,9 @@ export const useTransferModal = (args?: UseTransferModalArgs) => {
 
 	useListBalances({
 		chainId: args?.prefetch?.chainId ?? 0,
-		contractAddress: args?.prefetch?.collectionAddress,
+		contractAddress: args?.prefetch?.collectionAddress ?? '' as Address,
 		tokenId: args?.prefetch?.tokenId,
-		accountAddress,
+		accountAddress: accountAddress ?? '' as Address,
 		query: { enabled: !!accountAddress && !!args?.prefetch },
 	});
 
