@@ -1,5 +1,6 @@
 // Normalized Metadata Types
 
+import type { ContractType } from '@0xsequence/indexer';
 import type { Filter, PropertyFilter } from '@0xsequence/metadata';
 import type { Address, ChainId, TokenId } from '../../types/primitives';
 export type { Filter, PropertyFilter };
@@ -9,7 +10,7 @@ export interface ContractInfo {
 	address: Address;
 	source: string;
 	name: string;
-	type: string;
+	type: ContractType;
 	symbol: string;
 	decimals?: number;
 	logoURI: string;

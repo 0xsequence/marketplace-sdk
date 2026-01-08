@@ -79,8 +79,9 @@ export function toTokenBalance(
 	raw: IndexerGen.TokenBalance,
 ): Normalized.TokenBalance {
 	// biome-ignore lint/correctness/noUnusedVariables: Destructuring to exclude raw tokenID field
-	const { tokenID, ...rest } = raw;
+	const { tokenID, contractType, ...rest } = raw;
 	return spreadWith(rest, {
+		contractType,
 		contractAddress: normalizeAddress(raw.contractAddress),
 		accountAddress: normalizeAddress(raw.accountAddress),
 		tokenId: raw.tokenID ? normalizeTokenId(raw.tokenID) : 0n,
@@ -170,8 +171,10 @@ export function toGetTokenSuppliesResponse(
 	raw: IndexerGen.GetTokenSuppliesReturn,
 	contractAddress: Address,
 ): Normalized.GetTokenSuppliesResponse {
+	const { contractType, ...rest } = raw;
 	return {
-		contractType: raw.contractType,
+		...rest,
+		contractType,
 		contractAddress,
 		supplies:
 			transformOptionalArray(raw.tokenIDs, (tokenSupply) =>
