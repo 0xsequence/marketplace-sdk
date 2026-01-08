@@ -19,6 +19,7 @@ export type {
 	Signature,
 	SortBy,
 	Step,
+	IndexerTokenBalance,
 	TokenMetadata,
 } from '@0xsequence/api-client';
 
