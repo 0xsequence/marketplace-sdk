@@ -85,7 +85,7 @@ describe('FloorPriceText', () => {
 		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
-			data: undefined,
+			data: null,
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',

@@ -12,20 +12,18 @@ import {
 export type HighestOfferQueryOptions =
 	SdkQueryParams<GetHighestPriceOfferForCollectibleRequest>;
 
-/**
- * Fetches the highest offer for a collectible from the marketplace API
- */
 export async function fetchHighestOffer(
 	params: WithRequired<
 		HighestOfferQueryOptions,
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
-): Promise<Order | undefined> {
+): Promise<Order | null> {
 	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const result =
 		await marketplaceClient.getHighestPriceOfferForCollectible(apiParams);
-	return result.order;
+	// TanStack Query v5 requires non-undefined return values
+	return result.order ?? null;
 }
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
@@ -54,7 +52,7 @@ export function highestOfferQueryOptions(
 			HighestOfferQueryOptions,
 			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 		>,
-		Order | undefined,
+		Order | null,
 		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
 	>
 > {
