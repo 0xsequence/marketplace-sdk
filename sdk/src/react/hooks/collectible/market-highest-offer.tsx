@@ -54,7 +54,7 @@ export type UseCollectibleMarketHighestOfferParams = Optional<
  */
 export function useCollectibleMarketHighestOffer(
 	params: UseCollectibleMarketHighestOfferParams,
-): UseQueryResult<Order | undefined, Error> {
+): UseQueryResult<Order | null, Error> {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
