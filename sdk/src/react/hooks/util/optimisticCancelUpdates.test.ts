@@ -349,12 +349,6 @@ describe('optimisticCancelUpdates', () => {
 				// Fast-forward time by 2 seconds
 				vi.advanceTimersByTime(2000);
 
-				// Check that the persistent query was not invalidated
-				const _persistentQuery = queryClient
-					.getQueryCache()
-					.find({
-						queryKey: ['collectible', 'market-highest-offer', 'persistent'],
-					});
 				const regularQuery = queryClient
 					.getQueryCache()
 					.find({
