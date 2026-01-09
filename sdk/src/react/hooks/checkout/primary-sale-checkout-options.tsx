@@ -2,7 +2,10 @@
 
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import type { CheckoutOptionsItem } from '../../_internal';
+import type {
+	CheckoutOptionsItem,
+	HookParamsFromApiRequest,
+} from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
 	type fetchPrimarySaleCheckoutOptions,
@@ -12,10 +15,12 @@ import {
 import { useConfig } from '../config/useConfig';
 
 export type UsePrimarySaleCheckoutOptionsParams = Omit<
-	FetchPrimarySaleCheckoutOptionsParams,
+	HookParamsFromApiRequest<
+		FetchPrimarySaleCheckoutOptionsParams,
+		Pick<PrimarySaleCheckoutOptionsQueryOptions, 'query' | 'config'>
+	>,
 	'walletAddress'
-> &
-	Partial<Pick<PrimarySaleCheckoutOptionsQueryOptions, 'query' | 'config'>>;
+>;
 
 /**
  * Hook to fetch checkout options for primary sale contract items
