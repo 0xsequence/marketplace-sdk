@@ -2,12 +2,7 @@
 
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import type {
-	CheckoutOptionsItem,
-	Optional,
-	WithOptionalParams,
-	WithRequired,
-} from '../../_internal';
+import type { CheckoutOptionsItem } from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
 	type fetchPrimarySaleCheckoutOptions,
@@ -16,20 +11,11 @@ import {
 } from '../../queries/checkout/primary-sale-checkout-options';
 import { useConfig } from '../config/useConfig';
 
-export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	WithOptionalParams<
-		WithRequired<
-			PrimarySaleCheckoutOptionsQueryOptions,
-			| 'chainId'
-			| 'walletAddress'
-			| 'contractAddress'
-			| 'collectionAddress'
-			| 'items'
-			| 'config'
-		>
-	>,
-	'config' | 'walletAddress'
->;
+export type UsePrimarySaleCheckoutOptionsParams = Omit<
+	FetchPrimarySaleCheckoutOptionsParams,
+	'walletAddress'
+> &
+	Partial<Pick<PrimarySaleCheckoutOptionsQueryOptions, 'query' | 'config'>>;
 
 /**
  * Hook to fetch checkout options for primary sale contract items
