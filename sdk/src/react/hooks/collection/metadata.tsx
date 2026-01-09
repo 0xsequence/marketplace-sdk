@@ -1,18 +1,23 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Optional } from '../../_internal';
+import type { WithRequired } from '../../_internal';
 import {
 	type CollectionQueryOptions,
 	collectionQueryOptions,
 	type FetchCollectionParams,
 } from '../../queries/collection/metadata';
+import type { SdkConfig } from '../../ssr';
+import type { StandardQueryOptions } from '../../types/query';
 import { useConfig } from '../config/useConfig';
 
-export type UseCollectionMetadataParams = Optional<
+export type UseCollectionMetadataParams = WithRequired<
 	CollectionQueryOptions,
-	'config'
->;
+	'chainId' | 'collectionAddress'
+> & {
+	config?: SdkConfig;
+	query?: StandardQueryOptions;
+};
 
 /**
  * Hook to fetch collection information from the metadata API
