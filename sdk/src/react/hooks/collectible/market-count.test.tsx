@@ -1,7 +1,7 @@
 import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 

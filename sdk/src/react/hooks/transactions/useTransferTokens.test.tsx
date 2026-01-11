@@ -1,6 +1,6 @@
 import { ContractType } from '@0xsequence/api-client';
 import { renderHook } from '@test';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount, useWriteContract } from 'wagmi';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
