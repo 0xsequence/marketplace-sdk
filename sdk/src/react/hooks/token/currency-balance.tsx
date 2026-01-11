@@ -1,6 +1,6 @@
 'use client';
 
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { erc20Abi, formatUnits, zeroAddress } from 'viem';
 import { useBalance, useReadContracts } from 'wagmi';
 
@@ -13,14 +13,19 @@ export type UseCurrencyBalanceArgs = {
 	};
 };
 
-export type UseTokenCurrencyBalanceResult = {
-	data: { value: bigint; formatted: string } | undefined;
-	isLoading: boolean;
-	isError: boolean;
-	isSuccess: boolean;
-	error: Error | null;
-	[key: string]: any; // Allow other wagmi properties to pass through
+type CurrencyBalanceData = { value: bigint; formatted: string };
+
+type NativeBalanceResult = ReturnType<typeof useBalance>;
+
+type Erc20BalanceResult = ReturnType<typeof useReadContracts>;
+
+type CurrencyBalanceResult<T> = Omit<T, 'data'> & {
+	data: CurrencyBalanceData | undefined;
 };
+
+export type UseTokenCurrencyBalanceResult =
+	| CurrencyBalanceResult<NativeBalanceResult>
+	| CurrencyBalanceResult<Erc20BalanceResult>;
 
 /**
  * Hook to fetch cryptocurrency balance for a user
@@ -115,7 +120,6 @@ export function useTokenCurrencyBalance(
 		},
 	});
 
-	// Return native balance result if zero address
 	if (isNativeToken) {
 		return {
 			...nativeBalance,
@@ -128,7 +132,6 @@ export function useTokenCurrencyBalance(
 		};
 	}
 
-	// Return ERC-20 balance result with formatted data
 	const [balanceResult, decimalsResult] = erc20Balance.data || [];
 	const balance = balanceResult?.result;
 	const decimals = decimalsResult?.result;

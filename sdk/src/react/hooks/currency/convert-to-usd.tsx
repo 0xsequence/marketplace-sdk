@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import type { Optional } from '../../_internal';
 import {
 	type ConvertPriceToUSDQueryOptions,

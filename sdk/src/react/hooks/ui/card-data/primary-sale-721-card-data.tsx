@@ -1,11 +1,12 @@
 import type {
+	Address,
 	CollectiblePrimarySaleItem,
-	TokenMetadata,
+	MarketplaceTokenMetadata,
 } from '@0xsequence/api-client';
-import { ContractType } from '@0xsequence/api-client';
+import { ContractType, MetadataStatus } from '@0xsequence/api-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import type { Address } from 'viem';
+import { zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { useFilterState } from '../../..';
 import { tokenSuppliesQueryOptions } from '../../../queries/token/supplies';
@@ -21,20 +22,32 @@ interface UsePrimarySale721CardDataProps {
 	enabled?: boolean;
 }
 
-/**
- * Safely normalizes partial token metadata to full TokenMetadata type
- * Used for minted tokens where metadata might be incomplete
- */
+type TokenMetadataInput = {
+	name?: string;
+	attributes?: MarketplaceTokenMetadata['attributes'];
+	status?: string;
+	description?: string;
+	image?: string;
+	video?: string;
+	audio?: string;
+	properties?: MarketplaceTokenMetadata['properties'];
+	image_data?: string;
+	external_url?: string;
+	background_color?: string;
+	animation_url?: string;
+	decimals?: number;
+	updatedAt?: string;
+};
+
 function normalizeTokenMetadata(
-	metadata: Partial<TokenMetadata> | undefined,
+	metadata: TokenMetadataInput | undefined,
 	tokenId: bigint,
-): TokenMetadata {
+): MarketplaceTokenMetadata {
 	return {
 		tokenId,
 		name: metadata?.name ?? '',
-		source: metadata?.source ?? '',
 		attributes: metadata?.attributes ?? [],
-		status: metadata?.status ?? 'active',
+		status: (metadata?.status as MetadataStatus) ?? MetadataStatus.AVAILABLE,
 		description: metadata?.description,
 		image: metadata?.image,
 		video: metadata?.video,
@@ -44,12 +57,8 @@ function normalizeTokenMetadata(
 		external_url: metadata?.external_url,
 		background_color: metadata?.background_color,
 		animation_url: metadata?.animation_url,
+		decimals: metadata?.decimals,
 		updatedAt: metadata?.updatedAt,
-		assets: metadata?.assets,
-		queuedAt: metadata?.queuedAt,
-		lastFetched: metadata?.lastFetched,
-		chainId: metadata?.chainId,
-		contractAddress: metadata?.contractAddress,
 	};
 }
 
@@ -162,11 +171,10 @@ export function usePrimarySale721CardData({
 				chainId,
 				collectionAddress: contractAddress,
 				collectionType: ContractType.ERC721,
-				tokenMetadata: {
-					...metadata,
-					tokenId: BigInt(metadata.tokenId),
-					source: '',
-				},
+			tokenMetadata: {
+				...metadata,
+				tokenId: BigInt(metadata.tokenId),
+			},
 				cardLoading: saleDetailsLoading,
 				salesContractAddress,
 				salePrice,
@@ -190,7 +198,7 @@ export function usePrimarySale721CardData({
 			salesContractAddress,
 			salePrice: {
 				amount: 0n,
-				currencyAddress: '0x0000000000000000000000000000000000000000',
+				currencyAddress: zeroAddress,
 			},
 			quantityInitial: undefined,
 			quantityRemaining: undefined,
