@@ -1,4 +1,5 @@
-import { type Address, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type Currency,

@@ -1,6 +1,12 @@
-import type { Indexer } from '@0xsequence/api-client';
+import type {
+	Address,
+	ChainId,
+	GetTokenBalancesRequest,
+	IndexerPage,
+	TokenId,
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import {
 	getIndexerClient,
 	type SdkQueryParams,
@@ -8,20 +14,21 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchBalancesParams {
-	chainId: number;
-	accountAddress?: Address;
+export type FetchBalancesParams = Pick<
+	GetTokenBalancesRequest,
+	'accountAddress' | 'includeMetadata'
+> & {
+	chainId: ChainId;
 	contractAddress?: Address;
-	tokenId?: bigint;
-	includeMetadata?: boolean;
+	tokenId?: TokenId;
 	metadataOptions?: {
 		verifiedOnly?: boolean;
 		unverifiedOnly?: boolean;
 		includeContracts?: Hex[];
 	};
 	includeCollectionTokens?: boolean;
-	page?: Indexer.Page;
-}
+	page?: IndexerPage;
+};
 
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
 
@@ -37,7 +44,7 @@ export async function fetchBalances(
 		ListBalancesQueryOptions,
 		'chainId' | 'accountAddress' | 'config'
 	>,
-	page: Indexer.Page,
+	page: IndexerPage,
 ) {
 	const {
 		chainId,
@@ -83,7 +90,7 @@ export function listBalancesOptions(params: ListBalancesQueryOptions) {
 	const enabled =
 		!!params.chainId && !!params.accountAddress && !!params.config;
 
-	const queryFn = ({ pageParam }: { pageParam: Indexer.Page }) => {
+	const queryFn = ({ pageParam }: { pageParam: IndexerPage }) => {
 		const requiredParams = params as WithRequired<
 			ListBalancesQueryOptions,
 			'chainId' | 'accountAddress' | 'config'
@@ -108,7 +115,7 @@ export function listBalancesOptions(params: ListBalancesQueryOptions) {
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more
 				? {
-						page: lastPage.page.page + 1,
+						page: (lastPage.page.page ?? 0) + 1,
 						pageSize: lastPage.page.pageSize,
 						more: true,
 					}

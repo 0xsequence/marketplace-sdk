@@ -1,16 +1,15 @@
 import type {
-	IndexerContractInfo as ContractInfo,
 	IndexerTokenBalance as TokenBalance,
+	IndexerTokenMetadata,
 } from '@0xsequence/api-client';
-import { ContractType } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import { ContractType, MetadataStatus } from '@0xsequence/api-client';
+import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
 	getQueryClient,
-	MetadataStatus,
 	type SdkQueryParams,
 	type WithOptionalParams,
 	type WithRequired,
@@ -18,36 +17,33 @@ import {
 import { tokenBalancesOptions } from '../collectible/token-balances';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
-export interface FetchInventoryParams {
+export type FetchInventoryParams = {
 	accountAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
 	includeNonTradable?: boolean;
 	page?: number;
 	pageSize?: number;
-}
+};
 
-export interface CollectibleWithBalance {
-	metadata: {
-		tokenId: bigint;
-		attributes: Array<any>;
-		image?: string;
-		name: string;
-		description?: string;
-		video?: string;
-		audio?: string;
-		status: MetadataStatus;
-	};
+export type CollectibleMetadata = Pick<
+	IndexerTokenMetadata,
+	'tokenId' | 'attributes' | 'image' | 'name' | 'description' | 'video' | 'audio'
+> & {
+	status: MetadataStatus;
+};
+
+export type CollectibleWithBalance = Pick<TokenBalance, 'contractInfo'> & {
+	metadata: CollectibleMetadata;
 	balance: string;
-	contractInfo?: ContractInfo;
 	contractType: ContractType.ERC1155 | ContractType.ERC721;
-}
+};
 
-export interface CollectiblesResponse {
+export type CollectiblesResponse = {
 	collectibles: CollectibleWithBalance[];
 	page: Page;
 	isTradable: boolean;
-}
+};
 
 /**
  * Validates if a contract type is a valid collectible type (ERC721 or ERC1155)
@@ -55,10 +51,8 @@ export interface CollectiblesResponse {
 function isCollectibleContractType(
 	contractType: string,
 ): contractType is ContractType.ERC721 | ContractType.ERC1155 {
-	return (
-		contractType === ContractType.ERC721 ||
-		contractType === ContractType.ERC1155
-	);
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- Intentional type guard comparing string with enum
+	return contractType === ContractType.ERC721 || contractType === ContractType.ERC1155;
 }
 
 /**

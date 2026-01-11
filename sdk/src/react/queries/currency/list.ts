@@ -1,5 +1,9 @@
-import type { Currency } from '@0xsequence/api-client';
-import { type Address, zeroAddress } from 'viem';
+import type {
+	Address,
+	Currency,
+	ListCurrenciesRequest,
+} from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
@@ -11,11 +15,10 @@ import {
 } from '../../_internal';
 import { marketplaceConfigOptions } from '../marketplace/config';
 
-export interface FetchMarketCurrenciesParams {
-	chainId: number;
+export type FetchMarketCurrenciesParams = ListCurrenciesRequest & {
 	includeNativeCurrency?: boolean;
 	collectionAddress?: Address;
-}
+};
 
 export type MarketCurrenciesQueryOptions =
 	SdkQueryParams<FetchMarketCurrenciesParams>;

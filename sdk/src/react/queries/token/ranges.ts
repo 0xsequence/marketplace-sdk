@@ -1,5 +1,8 @@
-import type { Indexer } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import {
+	type Address,
+	type GetTokenIDRangesRequest,
+	type GetTokenIDRangesResponse,
+} from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -10,10 +13,10 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchGetTokenRangesParams {
-	chainId: number;
-	collectionAddress: Address;
-}
+export type FetchGetTokenRangesParams = Extract<
+	GetTokenIDRangesRequest,
+	{ collectionAddress: Address }
+> & { chainId: number };
 
 export type GetTokenRangesQueryOptions =
 	SdkQueryParams<FetchGetTokenRangesParams>;
@@ -26,7 +29,7 @@ export async function fetchGetTokenRanges(
 		GetTokenRangesQueryOptions,
 		'chainId' | 'collectionAddress' | 'config'
 	>,
-): Promise<Indexer.GetTokenIDRangesResponse> {
+): Promise<GetTokenIDRangesResponse> {
 	const { chainId, collectionAddress, config } = params;
 	const indexerClient = getIndexerClient(chainId, config);
 	const response = await indexerClient.getTokenIDRanges({ collectionAddress });

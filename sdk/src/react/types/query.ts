@@ -10,6 +10,7 @@ export interface StandardQueryOptions<TError = Error> {
 	staleTime?: number;
 	gcTime?: number;
 	// biome-ignore lint/suspicious/noExplicitAny: TanStack Query requires any type for query parameter
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TanStack Query requires any type for query parameter
 	refetchInterval?: number | false | ((query: any) => number | false);
 	refetchOnWindowFocus?: boolean;
 	refetchOnMount?: boolean;

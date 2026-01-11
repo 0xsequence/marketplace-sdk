@@ -1,4 +1,8 @@
-import type { Currency } from '@0xsequence/api-client';
+import type {
+	Currency,
+	GetCollectionActiveListingsCurrenciesRequest,
+} from '@0xsequence/api-client';
+import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -9,10 +13,13 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchCollectionActiveListingsCurrenciesParams {
+export type FetchCollectionActiveListingsCurrenciesParams = Omit<
+	GetCollectionActiveListingsCurrenciesRequest,
+	'chainId' | 'contractAddress'
+> & {
 	chainId: number;
-	collectionAddress: string;
-}
+	collectionAddress: Address;
+};
 
 export type CollectionActiveListingsCurrenciesQueryOptions =
 	SdkQueryParams<FetchCollectionActiveListingsCurrenciesParams>;

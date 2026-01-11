@@ -1,10 +1,10 @@
 import type {
-	Filter,
-	Page,
+	Address,
+	MetadataPage,
+	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
 } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import {
 	getMetadataClient,
 	type SdkInfiniteQueryParams,
@@ -12,12 +12,13 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchSearchTokenMetadataParams {
-	chainId: number;
+export type FetchSearchTokenMetadataParams = Pick<
+	SearchTokenMetadataArgs,
+	'chainId' | 'filter'
+> & {
 	collectionAddress: Address;
-	filter?: Filter;
-	page?: Page;
-}
+	page?: MetadataPage;
+};
 
 export type SearchTokenMetadataQueryOptions =
 	SdkInfiniteQueryParams<FetchSearchTokenMetadataParams>;

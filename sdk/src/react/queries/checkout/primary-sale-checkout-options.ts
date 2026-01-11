@@ -1,9 +1,8 @@
 import type {
-	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractRequest,
 	CheckoutOptionsSalesContractResponse,
+	GetPrimarySaleCheckoutOptionsRequest,
 } from '@0xsequence/api-client';
-import type { Address } from 'viem';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -13,13 +12,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchPrimarySaleCheckoutOptionsParams {
-	chainId: number;
-	walletAddress: Address;
-	contractAddress: Address;
-	collectionAddress: Address;
-	items: CheckoutOptionsItem[];
-}
+export type FetchPrimarySaleCheckoutOptionsParams =
+	GetPrimarySaleCheckoutOptionsRequest;
 
 /**
  * Fetches checkout options for primary sales contract from the Marketplace API
