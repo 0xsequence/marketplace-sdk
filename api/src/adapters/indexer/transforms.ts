@@ -196,7 +196,13 @@ export function toGetTokenBalancesArgs(
 ): IndexerGen.GetTokenBalancesArgs {
 	const { tokenId, ...rest } = req;
 
-	// Handle collectionAddress → contractAddress transformation
+	const accountAddress =
+		'userAddress' in req && req.userAddress
+			? req.userAddress
+			: 'accountAddress' in req
+				? req.accountAddress
+				: undefined;
+
 	const contractAddress =
 		'collectionAddress' in req && req.collectionAddress
 			? req.collectionAddress
@@ -206,8 +212,8 @@ export function toGetTokenBalancesArgs(
 
 	return {
 		...rest,
+		...(accountAddress && { accountAddress }),
 		...(contractAddress && { contractAddress }),
-		// Convert tokenId (bigint) → tokenID (string) for API
 		...(tokenId !== undefined && { tokenID: tokenId.toString() }),
 	};
 }
@@ -228,5 +234,17 @@ export function toGetTokenIDRangesArgs(
 	const contractAddress = req.contractAddress || req.collectionAddress;
 	return {
 		contractAddress,
+	};
+}
+
+export function toGetUserCollectionBalancesArgs(
+	req: Normalized.GetUserCollectionBalancesRequest,
+): IndexerGen.GetTokenBalancesByContractArgs {
+	return {
+		filter: {
+			accountAddresses: [req.userAddress],
+			contractAddresses: [req.collectionAddress],
+		},
+		omitMetadata: req.includeMetadata === false ? true : undefined,
 	};
 }

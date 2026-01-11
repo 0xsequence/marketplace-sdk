@@ -88,6 +88,7 @@ export type {
 export * as MarketplaceAPI from './marketplace.gen';
 export {
 	CollectionStatus,
+	ContractType,
 	CurrencyStatus,
 	ExecuteType,
 	MarketplaceKind,
@@ -96,14 +97,15 @@ export {
 	OrderbookKind,
 	OrderSide,
 	OrderStatus,
-	PropertyType, // Also exists in metadata package, but same values
+	PropertyType,
 	SortOrder,
 	StepType,
 	TransactionCrypto,
 } from './marketplace.gen';
-// ContractType is NOT exported here - it's exported from the main index.ts from @0xsequence/indexer
-// This ensures a single source of truth and prevents type conflicts
-// Re-export normalized types from types.ts (with Address instead of string)
-export type { CollectiblePrimarySaleItem, PrimarySaleItem } from './types';
+export type {
+	CollectiblePrimarySaleItem,
+	GetPrimarySaleCheckoutOptionsRequest,
+	PrimarySaleItem,
+} from './types';
 
 export * from './types';

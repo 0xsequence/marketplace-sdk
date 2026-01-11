@@ -126,6 +126,18 @@ export class IndexerClient {
 	}
 
 	/**
+	 * Get token balances for a user in a specific collection
+	 * Convenience method with user-friendly parameter names
+	 */
+	async getUserCollectionBalances(
+		args: Normalized.GetUserCollectionBalancesRequest,
+	): Promise<Normalized.TokenBalance[]> {
+		const apiArgs = transforms.toGetUserCollectionBalancesArgs(args);
+		const rawResponse = await this.client.getTokenBalancesByContract(apiArgs);
+		return rawResponse.balances.map(transforms.toTokenBalance);
+	}
+
+	/**
 	 * Get native token balance with normalized types (bigint)
 	 */
 	async getNativeTokenBalance(

@@ -1,5 +1,6 @@
 import type { Address, Hash, TypedDataDomain } from 'viem';
 import {
+	type CheckoutOptionsSalesContractRequest as GenCheckoutOptionsSalesContractRequest,
 	type CollectibleOrder as GenCollectibleOrder,
 	type CollectiblePrimarySaleItem as GenCollectiblePrimarySaleItem,
 	type Currency as GenCurrency,
@@ -10,6 +11,7 @@ import {
 	type PostRequest,
 	StepType,
 } from './marketplace.gen';
+import type { ChainId } from '../../types/primitives';
 
 export type {
 	Collectible,
@@ -17,31 +19,37 @@ export type {
 	TokenMetadata,
 } from './marketplace.gen';
 
-export interface Currency extends Omit<GenCurrency, 'contractAddress'> {
+export type Currency = Omit<GenCurrency, 'contractAddress'> & {
 	contractAddress: Address;
-}
+};
 
-export interface PrimarySaleItem
-	extends Omit<GenPrimarySaleItem, 'currencyAddress' | 'itemAddress'> {
+export type PrimarySaleItem = Omit<
+	GenPrimarySaleItem,
+	'currencyAddress' | 'itemAddress'
+> & {
 	currencyAddress: Address;
 	itemAddress: Address;
-}
+};
 
-export interface CollectiblePrimarySaleItem
-	extends Omit<GenCollectiblePrimarySaleItem, 'primarySaleItem'> {
+export type CollectiblePrimarySaleItem = Omit<
+	GenCollectiblePrimarySaleItem,
+	'primarySaleItem'
+> & {
 	primarySaleItem: PrimarySaleItem;
-}
+};
 
-export interface Order extends Omit<GenOrder, 'priceCurrencyAddress'> {
+export type Order = Omit<GenOrder, 'priceCurrencyAddress'> & {
 	priceCurrencyAddress: Address;
-}
+};
 
-export interface CollectibleOrder
-	extends Omit<GenCollectibleOrder, 'order' | 'listing' | 'offer'> {
+export type CollectibleOrder = Omit<
+	GenCollectibleOrder,
+	'order' | 'listing' | 'offer'
+> & {
 	order?: Order;
 	listing?: Order;
 	offer?: Order;
-}
+};
 
 type StepBase = Omit<GenStep, 'to'> & {
 	to: Address;
@@ -167,3 +175,13 @@ export function findSellStep(steps: Step[]): SellStep | undefined {
 export function hasPendingApproval(steps: Step[]): boolean {
 	return steps.some(isApprovalStep);
 }
+
+export type GetPrimarySaleCheckoutOptionsRequest = Omit<
+	GenCheckoutOptionsSalesContractRequest,
+	'chainId' | 'wallet' | 'contractAddress' | 'collectionAddress'
+> & {
+	chainId: ChainId;
+	walletAddress: Address;
+	contractAddress: Address;
+	collectionAddress: Address;
+};
