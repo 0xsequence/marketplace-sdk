@@ -4,9 +4,7 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import type {
 	CheckoutOptionsItem,
-	Optional,
-	WithOptionalParams,
-	WithRequired,
+	HookParamsFromApiRequest,
 } from '../../_internal';
 import {
 	type FetchPrimarySaleCheckoutOptionsParams,
@@ -16,19 +14,12 @@ import {
 } from '../../queries/checkout/primary-sale-checkout-options';
 import { useConfig } from '../config/useConfig';
 
-export type UsePrimarySaleCheckoutOptionsParams = Optional<
-	WithOptionalParams<
-		WithRequired<
-			PrimarySaleCheckoutOptionsQueryOptions,
-			| 'chainId'
-			| 'walletAddress'
-			| 'contractAddress'
-			| 'collectionAddress'
-			| 'items'
-			| 'config'
-		>
+export type UsePrimarySaleCheckoutOptionsParams = Omit<
+	HookParamsFromApiRequest<
+		FetchPrimarySaleCheckoutOptionsParams,
+		Pick<PrimarySaleCheckoutOptionsQueryOptions, 'query' | 'config'>
 	>,
-	'config' | 'walletAddress'
+	'walletAddress'
 >;
 
 /**
