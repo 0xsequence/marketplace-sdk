@@ -1,5 +1,5 @@
-import type { AdditionalFee, MarketplaceKind } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address, AdditionalFee, MarketplaceKind } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
 
 /**
  * Transaction types supported by the new buy modal
@@ -65,5 +65,4 @@ export interface TransactionStepsParams extends BaseTransactionParams {
 /**
  * Native token address constant
  */
-export const NATIVE_TOKEN_ADDRESS =
-	'0x0000000000000000000000000000000000000000' as Address;
+export const NATIVE_TOKEN_ADDRESS = zeroAddress;

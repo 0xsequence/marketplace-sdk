@@ -1,3 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
+
 // Enhanced error types with price context and better debugging information
 export type BuyModalError =
 	| PriceOverflowError
@@ -63,7 +66,7 @@ export interface NetworkError {
 
 export interface ContractError {
 	type: 'CONTRACT_ERROR';
-	contractAddress: `0x${string}`;
+	contractAddress: Address;
 	message: string;
 	method?: string;
 	chainId?: number;
@@ -190,7 +193,7 @@ export class BuyModalErrorFactory {
 	}
 
 	static contractError(
-		contractAddress: `0x${string}`,
+		contractAddress: Address,
 		message: string,
 		method?: string,
 		chainId?: number,
@@ -356,8 +359,7 @@ export class BuyModalErrorFormatter {
 				// Extract contract address from error message if available
 				const addressMatch = error.message.match(/0x[a-fA-F0-9]{40}/);
 				return BuyModalErrorFactory.contractError(
-					(addressMatch?.[0] as `0x${string}`) ||
-						'0x0000000000000000000000000000000000000000',
+					(addressMatch?.[0] as Address) || zeroAddress,
 					error.message,
 				);
 			}

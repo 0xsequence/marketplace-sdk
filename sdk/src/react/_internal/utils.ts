@@ -25,6 +25,7 @@ export function serializeBigInts<T>(obj: T): T {
 	}
 
 	if (typeof obj === 'object') {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic object reconstruction requires any
 		const result: any = {};
 		for (const key in obj) {
 			if (Object.hasOwn(obj, key)) {

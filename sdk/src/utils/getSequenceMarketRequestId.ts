@@ -1,9 +1,5 @@
-import {
-	type Address,
-	type Hex,
-	type PublicClient,
-	parseEventLogs,
-} from 'viem';
+import type { Address } from '@0xsequence/api-client';
+import { type Hex, type PublicClient, parseEventLogs } from 'viem';
 import { SequenceMarketplaceV1_ABI } from '..';
 
 export const getSequenceMarketplaceRequestId = async (

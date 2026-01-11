@@ -1,6 +1,6 @@
 export type ErrorType<name extends string = 'Error'> = Error & { name: name };
 
-export type Compute<type> = { [key in keyof type]: type[key] } & unknown;
+export type Compute<type> = { [key in keyof type]: type[key] };
 
 type BaseErrorOptions = Compute<
 	{ details?: string | undefined } | { cause: BaseError | Error }

@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,
