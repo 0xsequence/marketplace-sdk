@@ -1,8 +1,8 @@
 'use client';
 
-import type { TokenMetadata } from '@0xsequence/api-client';
+import type { Address, TokenMetadata } from '@0xsequence/api-client';
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
-import { type Address, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollectionDetail } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';

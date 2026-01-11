@@ -1,7 +1,7 @@
 import type { Step } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import type {
 	CardType,
 	CheckoutOptionsItem,

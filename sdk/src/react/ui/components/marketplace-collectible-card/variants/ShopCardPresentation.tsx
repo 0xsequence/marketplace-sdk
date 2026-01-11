@@ -1,7 +1,7 @@
 'use client';
 
 import { ContractType, type Currency } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { type CardType, CollectibleCardAction } from '../../../../../types';
 import { cn } from '../../../../../utils';
 import { ActionButton } from '../ActionButton/ActionButton';

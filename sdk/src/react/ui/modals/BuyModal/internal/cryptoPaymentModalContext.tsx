@@ -1,7 +1,8 @@
+import type { Address, Hash } from '@0xsequence/api-client';
 import { ChevronLeftIcon, Text } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import type { Address, Hash, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice } from '../../../../../utils/price';
 import { type Step, StepType } from '../../../../_internal';
@@ -75,7 +76,7 @@ export function useCryptoPaymentModalContext({
 }: {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex | string) => void;
+	onSuccess: (hash: Hex) => void;
 }): CryptoPaymentModalReturn {
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
@@ -135,7 +136,7 @@ export function useCryptoPaymentModalContext({
 
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
-		const to = step.to as Address;
+		const to = step.to;
 		const value = BigInt(step.value);
 
 		if (!data || !to) {

@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/checkout';
 import { Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import type { PrimarySaleItem } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import { useOrders } from '../../../../../hooks/data/orders/useOrders';
 import { ActionModal } from '../../../_internal/components/baseModal';
@@ -45,15 +45,18 @@ const SequenceCheckout = ({
 
 	const { data: marketOrders } = useOrders({
 		chainId,
-		input: [
-			{
-				contractAddress: collectionAddress,
-				orderId,
-				marketplace: marketplaceKind!,
-			},
-		],
+		input:
+			marketplaceKind && orderId
+				? [
+						{
+							contractAddress: collectionAddress,
+							orderId,
+							marketplace: marketplaceKind,
+						},
+					]
+				: [],
 		query: {
-			enabled: isMarket && !!orderId,
+			enabled: isMarket && !!orderId && !!marketplaceKind,
 		},
 	});
 	const marketOrder = marketOrders?.orders[0];

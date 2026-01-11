@@ -1,6 +1,6 @@
 'use client';
 
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { CollectibleCardAction } from '../../../../../../types';
 import type { Order } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';

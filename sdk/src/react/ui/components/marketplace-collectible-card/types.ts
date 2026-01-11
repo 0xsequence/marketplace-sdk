@@ -1,10 +1,11 @@
 import type {
 	CollectibleOrder,
 	ContractType,
-	Metadata,
+	MarketplaceTokenMetadata,
+	MetadataTokenMetadata,
 	Order,
 } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import type { CardType, CollectibleCardAction } from '../../../../types';
 
 export type CardClassNames = {
@@ -19,8 +20,6 @@ export type CardClassNames = {
 	cardSaleDetails?: string;
 	cardSkeleton?: string;
 };
-
-type TokenMetadataType = Metadata.TokenMetadata;
 
 // Base properties shared by all collectible card types
 type MarketplaceCardBaseProps = {
@@ -37,7 +36,7 @@ type MarketplaceCardBaseProps = {
 
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
-	tokenMetadata: TokenMetadataType;
+	tokenMetadata: MarketplaceTokenMetadata;
 	salePrice:
 		| {
 				amount: bigint;
@@ -87,7 +86,7 @@ type MarketCardSpecificProps = {
 type NonTradableInventoryCardSpecificProps = {
 	balance: string;
 	balanceIsLoading: boolean;
-	collectibleMetadata: TokenMetadataType;
+	collectibleMetadata: MetadataTokenMetadata;
 };
 
 // Complete CollectibleCardProps with all possible properties and card type

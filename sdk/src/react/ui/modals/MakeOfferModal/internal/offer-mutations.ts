@@ -1,4 +1,5 @@
 import {
+	type Address,
 	type ContractType,
 	type CreateReq,
 	type GenerateOfferTransactionRequest,
@@ -8,7 +9,7 @@ import {
 } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { toNumber } from 'dnum';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { encodeFunctionData, maxUint256 } from 'viem';
 import { useAccount } from 'wagmi';
 import { OrderbookKind } from '../../../../../types';

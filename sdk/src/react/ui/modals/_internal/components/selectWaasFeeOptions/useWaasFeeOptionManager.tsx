@@ -1,5 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { useEffect, useState } from 'react';
-import { type Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { useConfig } from '../../../../../hooks';

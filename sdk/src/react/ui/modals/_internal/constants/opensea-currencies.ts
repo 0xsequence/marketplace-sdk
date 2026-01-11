@@ -2,7 +2,8 @@
  * OpenSea supported chains and their currency configurations
  */
 
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
 
 export interface ChainCurrency {
 	chainId: number | null;
@@ -33,7 +34,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Ethereum',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -44,7 +45,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Optimism
@@ -54,7 +55,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Optimism',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -65,7 +66,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	'137': {
@@ -74,7 +75,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Polygon',
 		nativeCurrency: {
 			symbol: 'POL',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
@@ -95,7 +96,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Shape',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -106,7 +107,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// HyperEVM
@@ -116,7 +117,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'HyperEVM',
 		nativeCurrency: {
 			symbol: 'HYPE',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x5555555555555555555555555555555555555555',
@@ -127,7 +128,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'HYPE',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Unichain
@@ -137,7 +138,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Unichain',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -148,7 +149,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Sei
@@ -158,7 +159,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Sei',
 		nativeCurrency: {
 			symbol: 'SEI',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0xe30fedd158a2e3b13e9badaeabafc5516e95e8c7',
@@ -169,7 +170,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'SEI',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Soneium
@@ -179,7 +180,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Soneium',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -190,7 +191,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Ronin
@@ -200,7 +201,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Ronin',
 		nativeCurrency: {
 			symbol: 'RON',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0xe514d9deb7966c8be0ca922de8a064264ea6bcd4',
@@ -211,7 +212,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'RON',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Abstract
@@ -221,7 +222,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Abstract',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x3439153eb7af838ad19d56e1571fbd09333c2809',
@@ -232,7 +233,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// B3
@@ -242,7 +243,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'B3',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -253,7 +254,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Base
@@ -263,7 +264,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Base',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -274,7 +275,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// ApeChain
@@ -284,7 +285,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'ApeChain',
 		nativeCurrency: {
 			symbol: 'APE',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
@@ -295,7 +296,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'APE',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Arbitrum One
@@ -305,7 +306,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Arbitrum',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
@@ -316,7 +317,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Arbitrum Nova
@@ -326,7 +327,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Arbitrum Nova',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
@@ -337,7 +338,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Avalanche C-Chain
@@ -347,7 +348,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Avalanche',
 		nativeCurrency: {
 			symbol: 'AVAX',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7',
@@ -358,7 +359,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'AVAX',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// GUNZ
@@ -368,7 +369,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'GUNZ',
 		nativeCurrency: {
 			symbol: 'GUN',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x5aad7bba61d95c2c4e525a35f4062040264611f1',
@@ -379,7 +380,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'GUN',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Somnia
@@ -389,7 +390,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Somnia',
 		nativeCurrency: {
 			symbol: 'SOMI',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x046ede9564a72571df6f5e44d0405360c0f4dcab',
@@ -400,7 +401,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'SOMI',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Berachain mainnet
@@ -410,7 +411,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Berachain',
 		nativeCurrency: {
 			symbol: 'BERA',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x6969696969696969696969696969696969696969',
@@ -421,7 +422,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'BERA',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Blast
@@ -431,7 +432,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Blast',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4300000000000000000000000000000000000004',
@@ -442,7 +443,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 	// Zora
@@ -452,7 +453,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		name: 'Zora',
 		nativeCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 		wrappedNativeCurrency: {
 			address: '0x4200000000000000000000000000000000000006',
@@ -463,7 +464,7 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 		listingCurrency: {
 			symbol: 'ETH',
-			address: '0x0000000000000000000000000000000000000000',
+			address: zeroAddress,
 		},
 	},
 };

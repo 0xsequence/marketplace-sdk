@@ -1,6 +1,6 @@
-import { ContractType } from '@0xsequence/api-client';
+import { ContractType, type Hash } from '@0xsequence/api-client';
 import { useSupportedChains } from '0xtrails';
-import { type Chain, formatUnits, type Hash } from 'viem';
+import { type Chain, formatUnits } from 'viem';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
@@ -94,7 +94,7 @@ export function useBuyModalContext() {
 			? formatUnits(BigInt(buyStep.price), currency.decimals)
 			: undefined;
 
-	const handleTransactionSuccess = (hash: Hash | string) => {
+	const handleTransactionSuccess = (hash: Hash) => {
 		if (!collectible) throw new Error('Collectible not found');
 		if (isMarket && !marketOrder) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
@@ -107,7 +107,7 @@ export function useBuyModalContext() {
 		close();
 
 		transactionStatusModal.show({
-			hash: hash as Hash,
+			hash,
 			orderId: isMarket ? marketOrder?.orderId : undefined,
 			price: {
 				amountRaw,

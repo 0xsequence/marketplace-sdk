@@ -42,7 +42,7 @@ export function getStepEntries(
 	);
 
 	if (finalStepKey) {
-		const finalStep = steps[finalStepKey as keyof typeof steps];
+		const finalStep = steps[finalStepKey];
 		if (finalStep) {
 			entries.push({
 				name: finalStepKey,
