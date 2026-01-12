@@ -29,10 +29,12 @@ import type {
 	Step,
 } from './types';
 
-export interface CheckoutOptionsItem {
+export type CheckoutOptionsItem = Omit<
+	Gen.CheckoutOptionsItem,
+	'tokenId'
+> & {
 	tokenId: TokenId;
-	quantity: bigint;
-}
+};
 
 function transformCheckoutItem(
 	item: CheckoutOptionsItem,
@@ -43,13 +45,10 @@ function transformCheckoutItem(
 	};
 }
 
-export interface CreateReq {
-	tokenId: TokenId;
-	quantity: bigint;
-	expiry: string;
+export type CreateReq = Omit<Gen.CreateReq, 'currencyAddress' | 'tokenId'> & {
 	currencyAddress: Address;
-	pricePerToken: bigint;
-}
+	tokenId: TokenId;
+};
 
 function transformCreateReq(req: CreateReq): Gen.CreateReq {
 	return {
@@ -199,11 +198,9 @@ export type GenerateOfferTransactionRequest = Omit<
 /**
  * SDK-facing OrderData type with bigint quantity
  */
-export interface OrderData {
-	orderId: string;
-	quantity: bigint;
+export type OrderData = Omit<Gen.OrderData, 'tokenId'> & {
 	tokenId?: TokenId;
-}
+};
 
 export type GenerateSellTransactionRequest = Omit<
 	Gen.GenerateSellTransactionRequest,
