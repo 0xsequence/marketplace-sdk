@@ -417,7 +417,6 @@ export type TransactionErrorTypes =
 	| MissingSignatureDataError
 	| MissingStepDataError
 	| OrderNotFoundError
-	 
 	| InvalidStepError
 	| PaymentModalError
 	| StepGenerationError

@@ -1,7 +1,7 @@
 'use client';
 
-import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Address } from '@0xsequence/api-client';
+import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { useCollectibleDetail } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 

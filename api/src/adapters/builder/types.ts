@@ -1,7 +1,14 @@
 import type { ContractType } from '@0xsequence/indexer';
 import type {
-	CollectionFilterSettings as GenCollectionFilterSettings,
+	Address,
+	ChainId,
+	ProjectId,
+	TokenId,
+} from '../../types/primitives';
+import type { OrderbookKind } from '../marketplace';
+import type {
 	FilterCondition,
+	CollectionFilterSettings as GenCollectionFilterSettings,
 	LookupMarketplaceArgs as GenLookupMarketplaceArgs,
 	LookupMarketplaceReturn as GenLookupMarketplaceReturn,
 	MarketCollection as GenMarketCollection,
@@ -11,19 +18,12 @@ import type {
 	MarketplaceSettings as GenMarketplaceSettings,
 	MarketplaceSocials as GenMarketplaceSocials,
 	MarketplaceWallet as GenMarketplaceWallet,
-	MarketplaceWalletEmbedded as GenMarketplaceWalletEmbedded,
 	MarketplaceWalletEcosystem as GenMarketplaceWalletEcosystem,
+	MarketplaceWalletEmbedded as GenMarketplaceWalletEmbedded,
 	MetadataFilterRule as GenMetadataFilterRule,
 	OpenIdProvider as GenOpenIdProvider,
 	ShopCollection as GenShopCollection,
 } from './builder.gen';
-import type {
-	Address,
-	ChainId,
-	ProjectId,
-	TokenId,
-} from '../../types/primitives';
-import type { OrderbookKind } from '../marketplace';
 
 export {
 	FilterCondition,
@@ -59,7 +59,10 @@ export type LookupMarketplaceReturn = Omit<
 	shopCollections: ShopCollection[];
 };
 
-export type Marketplace = Omit<GenMarketplace, 'projectId' | 'market' | 'shop'> & {
+export type Marketplace = Omit<
+	GenMarketplace,
+	'projectId' | 'market' | 'shop'
+> & {
 	projectId: ProjectId;
 	market: MarketPage;
 	shop: ShopPage;

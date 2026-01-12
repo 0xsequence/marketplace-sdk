@@ -5,8 +5,8 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import rscPlugin from './eslint/use-client.js';
 import sequenceTypesPlugin from './eslint/sequence-types.js';
+import rscPlugin from './eslint/use-client.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -106,13 +106,13 @@ export default [
 				{
 					selector: 'TSTemplateLiteralType',
 					message:
-						'Don\'t use `0x${string}` directly. Import and use `Address` from @0xsequence/api-client instead.',
+						"Don't use `0x${string}` directly. Import and use `Address` from @0xsequence/api-client instead.",
 				},
 				{
 					selector:
 						'Literal[value="0x0000000000000000000000000000000000000000"]',
 					message:
-						'Don\'t use literal zero address. Import and use `zeroAddress` from viem instead.',
+						"Don't use literal zero address. Import and use `zeroAddress` from viem instead.",
 				},
 			],
 			'@typescript-eslint/ban-ts-comment': [
@@ -143,7 +143,11 @@ export default [
 	},
 
 	{
-		files: ['src/**/*databeat*/**', 'src/**/*analytics*/**', 'src/**/*tracking*/**'],
+		files: [
+			'src/**/*databeat*/**',
+			'src/**/*analytics*/**',
+			'src/**/*tracking*/**',
+		],
 		rules: {
 			'@sequence/types/enforce-address-type': 'off',
 			'@sequence/types/enforce-token-id-type': 'off',
@@ -162,7 +166,10 @@ export default [
 	},
 
 	{
-		files: ['src/**/queries/currency/*.ts', 'src/**/queries/collection/list.ts'],
+		files: [
+			'src/**/queries/currency/*.ts',
+			'src/**/queries/collection/list.ts',
+		],
 		rules: {
 			'@sequence/types/no-domain-field-definition': 'off',
 			'@sequence/types/require-api-type-source': 'off',
@@ -246,20 +253,14 @@ export default [
 	},
 
 	{
-		files: [
-			'src/react/_internal/types.ts',
-			'src/types/transactions.ts',
-		],
+		files: ['src/react/_internal/types.ts', 'src/types/transactions.ts'],
 		rules: {
 			'@sequence/types/enforce-amount-type': 'off',
 		},
 	},
 
 	{
-		files: [
-			'src/utils/_internal/error/*.ts',
-			'src/utils/decode/*.ts',
-		],
+		files: ['src/utils/_internal/error/*.ts', 'src/utils/decode/*.ts'],
 		rules: {
 			'@sequence/types/enforce-address-type': 'off',
 			'@sequence/types/enforce-token-id-type': 'off',
@@ -305,10 +306,7 @@ export default [
 	},
 
 	{
-		files: [
-			'src/react/_internal/api/*.ts',
-			'src/react/_internal/utils.ts',
-		],
+		files: ['src/react/_internal/api/*.ts', 'src/react/_internal/utils.ts'],
 		rules: {
 			'@typescript-eslint/no-unsafe-argument': 'off',
 			'@typescript-eslint/no-unsafe-member-access': 'off',

@@ -29,10 +29,7 @@ import type {
 	Step,
 } from './types';
 
-export type CheckoutOptionsItem = Omit<
-	Gen.CheckoutOptionsItem,
-	'tokenId'
-> & {
+export type CheckoutOptionsItem = Omit<Gen.CheckoutOptionsItem, 'tokenId'> & {
 	tokenId: TokenId;
 };
 

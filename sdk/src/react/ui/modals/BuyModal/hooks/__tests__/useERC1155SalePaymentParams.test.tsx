@@ -1,5 +1,5 @@
-import { renderHook } from '@test';
 import type { Address } from '@0xsequence/api-client';
+import { renderHook } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ERC1155_SALES_CONTRACT_ABI_V0 } from '../../../../../../utils/abi';
 import {

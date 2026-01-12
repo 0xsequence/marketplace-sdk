@@ -1,6 +1,5 @@
-import type { Currency } from '@0xsequence/api-client';
+import type { Address, Currency } from '@0xsequence/api-client';
 import { render } from '@test';
-import type { Address } from '@0xsequence/api-client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	useCollectibleMarketLowestListing,

@@ -11,9 +11,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export type FetchCountOfCollectablesParams =
-	GetCountOfAllCollectiblesRequest &
-		Partial<Pick<GetCountOfFilteredCollectiblesRequest, 'filter' | 'side'>>;
+export type FetchCountOfCollectablesParams = GetCountOfAllCollectiblesRequest &
+	Partial<Pick<GetCountOfFilteredCollectiblesRequest, 'filter' | 'side'>>;
 
 export type CountOfCollectablesQueryOptions =
 	SdkQueryParams<FetchCountOfCollectablesParams>;

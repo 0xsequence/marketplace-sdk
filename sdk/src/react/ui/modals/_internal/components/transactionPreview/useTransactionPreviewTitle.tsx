@@ -5,7 +5,7 @@ import { TRANSACTION_TITLES } from './consts';
 export function useTransactionPreviewTitle(
 	orderId: string | undefined,
 	status: ConfirmationStatus,
-	type?: TransactionType  ,
+	type?: TransactionType,
 ): string {
 	if (!type) return '';
 

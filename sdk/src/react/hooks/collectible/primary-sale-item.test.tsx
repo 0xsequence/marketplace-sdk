@@ -18,9 +18,9 @@ const mockTokenMetadata: MarketplaceTokenMetadata = {
 	status: MetadataStatus.AVAILABLE,
 };
 
+import type { Address } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
-import type { Address } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import type { UsePrimarySaleItemParams } from './primary-sale-item';

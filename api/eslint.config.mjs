@@ -24,7 +24,7 @@ export default [
 				{
 					selector: 'TSInterfaceDeclaration',
 					message:
-						"Don't declare interfaces. Use `type X = Omit<GenType, \"field\"> & {...}` to derive from generated types.",
+						'Don\'t declare interfaces. Use `type X = Omit<GenType, "field"> & {...}` to derive from generated types.',
 				},
 				{
 					selector: 'TSTypeAliasDeclaration > TSTypeLiteral',

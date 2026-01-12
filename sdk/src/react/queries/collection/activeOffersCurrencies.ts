@@ -1,8 +1,8 @@
 import type {
+	Address,
 	Currency,
 	GetCollectionActiveOffersCurrenciesRequest,
 } from '@0xsequence/api-client';
-import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,

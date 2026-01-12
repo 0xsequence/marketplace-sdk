@@ -1,5 +1,6 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import {
 	ChevronRightIcon,
 	Image,
@@ -8,7 +9,6 @@ import {
 	Tooltip,
 } from '@0xsequence/design-system';
 import { useEffect, useState } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
 import { calculateEarningsAfterFees } from '../../../../../../utils/price';

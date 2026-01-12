@@ -15,10 +15,7 @@ export function filterCurrenciesForOrderbook(
 		const openseaCurrency = getOpenseaCurrencyForChain(chainId, 'listing');
 		if (openseaCurrency) {
 			return currencies.filter((currency) =>
-				compareAddress(
-					currency.contractAddress,
-					openseaCurrency.address,
-				),
+				compareAddress(currency.contractAddress, openseaCurrency.address),
 			);
 		}
 	}

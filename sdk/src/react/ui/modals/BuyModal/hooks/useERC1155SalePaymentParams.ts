@@ -1,4 +1,4 @@
-import { ContractType, type Address } from '@0xsequence/api-client';
+import { type Address, ContractType } from '@0xsequence/api-client';
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { encodeFunctionData, type Hex, toHex } from 'viem';
@@ -155,7 +155,9 @@ export const getERC1155SalePaymentParams = async ({
 		const wrappedError = new Error(
 			`${buyModalError.type}: ${buyModalError.operation}`,
 		);
-		(wrappedError as Error & { buyModalError: typeof buyModalError }).buyModalError = buyModalError;
+		(
+			wrappedError as Error & { buyModalError: typeof buyModalError }
+		).buyModalError = buyModalError;
 		throw wrappedError;
 	}
 };

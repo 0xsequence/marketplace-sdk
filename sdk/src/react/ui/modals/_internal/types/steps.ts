@@ -65,28 +65,25 @@ export type TransactionStep = BaseStep & {
 
 export type BaseStepName = 'form' | 'fee' | 'approval';
 
-export type FlowStepInfo<TFinalStepName extends string = 'transaction'> =
-	{
-		name: BaseStepName | TFinalStepName;
-		status: StepStatus;
-	};
+export type FlowStepInfo<TFinalStepName extends string = 'transaction'> = {
+	name: BaseStepName | TFinalStepName;
+	status: StepStatus;
+};
 
-
-export type FlowState<TFinalStepName extends string = 'transaction'> =
-	{
-		status: 'idle' | 'pending' | 'success' | 'error';
-		isPending: boolean;
-		isSuccess: boolean;
-		currentStep: BaseStepName | TFinalStepName;
-		nextStep: BaseStepName | TFinalStepName | null;
-		progress: {
-			current: number;
-			total: number;
-			percent: number;
-		};
-		allSteps: FlowStepInfo<TFinalStepName>[];
-		hasInvalidatedSteps: boolean;
+export type FlowState<TFinalStepName extends string = 'transaction'> = {
+	status: 'idle' | 'pending' | 'success' | 'error';
+	isPending: boolean;
+	isSuccess: boolean;
+	currentStep: BaseStepName | TFinalStepName;
+	nextStep: BaseStepName | TFinalStepName | null;
+	progress: {
+		current: number;
+		total: number;
+		percent: number;
 	};
+	allSteps: FlowStepInfo<TFinalStepName>[];
+	hasInvalidatedSteps: boolean;
+};
 
 export type ModalSteps<TFinalStepName extends string = 'transaction'> = {
 	form?: FormStep;
@@ -124,7 +121,7 @@ export function isApprovalStep(step: unknown): step is ApprovalStep {
 	return (
 		isTransactionStep(step) &&
 		'reset' in step &&
-		typeof (step).reset === 'function'
+		typeof step.reset === 'function'
 	);
 }
 

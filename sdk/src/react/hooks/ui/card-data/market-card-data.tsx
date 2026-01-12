@@ -1,4 +1,5 @@
 import type {
+	Address,
 	CollectibleOrder,
 	ContractType,
 	Order,
@@ -6,7 +7,6 @@ import type {
 } from '@0xsequence/api-client';
 import { OrderSide } from '@0xsequence/api-client';
 import { useMemo } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../types';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';

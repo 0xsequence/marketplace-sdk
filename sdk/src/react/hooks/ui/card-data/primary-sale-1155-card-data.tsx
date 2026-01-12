@@ -1,4 +1,7 @@
-import type { Address, CollectiblePrimarySaleItem } from '@0xsequence/api-client';
+import type {
+	Address,
+	CollectiblePrimarySaleItem,
+} from '@0xsequence/api-client';
 import { ContractType } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';

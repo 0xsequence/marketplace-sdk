@@ -1,8 +1,8 @@
+import type { Address } from '@0xsequence/api-client';
 import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { skipToken } from '@tanstack/react-query';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
-import type { Address } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';

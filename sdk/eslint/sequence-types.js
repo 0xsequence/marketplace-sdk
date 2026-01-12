@@ -84,7 +84,7 @@ function isStringType(typeText) {
  * @param {string} typeText - The type annotation text
  * @returns {boolean}
  */
-function isNumberType(typeText) {
+function _isNumberType(typeText) {
 	const parts = typeText.split(/\s*\|\s*/);
 	return parts.some((p) => p === 'number');
 }
@@ -260,7 +260,8 @@ function addImportIfMissing(context, fixer, typeName, source) {
 		if (node.source.value !== source) continue;
 
 		const hasType = node.specifiers.some(
-			(spec) => spec.type === 'ImportSpecifier' && spec.imported.name === typeName,
+			(spec) =>
+				spec.type === 'ImportSpecifier' && spec.imported.name === typeName,
 		);
 		if (hasType) return null;
 
@@ -291,8 +292,7 @@ const enforceAddressType = createTypeEnforcementRule({
 	forbiddenType: 'string',
 	isForbiddenType: isStringType,
 	expectedType: 'Address',
-	description:
-		'Enforce Address type for address-like parameters and variables',
+	description: 'Enforce Address type for address-like parameters and variables',
 	fixToType: 'Address',
 	fixRequiresImport: true,
 	fixImportSource: '@0xsequence/api-client',
@@ -632,11 +632,7 @@ const noDomainFieldDefinition = {
 			'primarySaleContractAddress',
 		]);
 
-		const sdkAllowedFields = new Set([
-			'config',
-			'query',
-			'enabled',
-		]);
+		const sdkAllowedFields = new Set(['config', 'query', 'enabled']);
 
 		return {
 			TSPropertySignature(node) {
@@ -721,7 +717,9 @@ const requireApiTypeSource = {
 					const hasTypeImport = node.specifiers.some(
 						(spec) =>
 							spec.type === 'ImportSpecifier' &&
-							/^(Get|List|Create|Update|Delete|Check)/.test(spec.imported?.name || ''),
+							/^(Get|List|Create|Update|Delete|Check)/.test(
+								spec.imported?.name || '',
+							),
 					);
 					if (hasTypeImport) {
 						hasApiClientImport = true;
@@ -779,7 +777,8 @@ const noPickForRequestTypes = {
 		schema: [],
 	},
 	create(context) {
-		const requestTypePattern = /^(Fetch\w+Params|\w+Params|\w+Request|\w+Args|\w+Input)$/;
+		const requestTypePattern =
+			/^(Fetch\w+Params|\w+Params|\w+Request|\w+Args|\w+Input)$/;
 		const responseTypePattern = /^(\w+Response|\w+Result|\w+Output|\w+Return)$/;
 		const utilityTypePattern = /^(With\w+|Optional\w+|Required\w+|Partial\w+)$/;
 
@@ -857,7 +856,7 @@ const noPartialApiTypes = {
 			return apiTypePatterns.some((p) => p.test(typeName));
 		}
 
-		function checkPartialUsage(node, typeAnnotation) {
+		function checkPartialUsage(_node, typeAnnotation) {
 			const sourceCode = context.sourceCode || context.getSourceCode();
 			const typeText = sourceCode.getText(typeAnnotation);
 

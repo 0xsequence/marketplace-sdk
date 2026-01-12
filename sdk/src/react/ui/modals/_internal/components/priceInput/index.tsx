@@ -1,6 +1,6 @@
 'use client';
 
-import { OrderbookKind, type Address } from '@0xsequence/api-client';
+import { type Address, OrderbookKind } from '@0xsequence/api-client';
 import {
 	Field,
 	FieldLabel,

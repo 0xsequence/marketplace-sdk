@@ -1,5 +1,5 @@
-import { formatUnits } from 'viem';
 import type { Address, ChainId } from '@0xsequence/api-client';
+import { formatUnits } from 'viem';
 import {
 	buildQueryOptions,
 	type Currency,

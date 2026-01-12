@@ -43,24 +43,23 @@ export type EnsureAllRequiredKeys<
 	TKeys extends ReadonlyArray<RequiredKeys<TParams>>,
 > = RequiredKeys<TParams> extends TKeys[number] ? TKeys : never;
 
-export type QueryBuilderConfig<TParams extends BaseQueryParams, TData> =
-	{
-		getQueryKey: (params: WithOptionalParams<TParams>) => QueryKey;
-		/**
-		 * Type-safe: Must include ALL required keys from TParams
-		 * Example: ['chainId', 'collectionAddress', 'tokenId', 'config']
-		 */
-		requiredParams: EnsureAllRequiredKeys<
-			TParams,
-			ReadonlyArray<RequiredKeys<TParams>>
-		>;
-		fetcher: (params: TParams) => Promise<TData>;
-		/**
-		 * Optional custom validation beyond truthiness checks
-		 * Example: (params) => (params.orders?.length ?? 0) > 0
-		 */
-		customValidation?: (params: WithOptionalParams<TParams>) => boolean;
-	};
+export type QueryBuilderConfig<TParams extends BaseQueryParams, TData> = {
+	getQueryKey: (params: WithOptionalParams<TParams>) => QueryKey;
+	/**
+	 * Type-safe: Must include ALL required keys from TParams
+	 * Example: ['chainId', 'collectionAddress', 'tokenId', 'config']
+	 */
+	requiredParams: EnsureAllRequiredKeys<
+		TParams,
+		ReadonlyArray<RequiredKeys<TParams>>
+	>;
+	fetcher: (params: TParams) => Promise<TData>;
+	/**
+	 * Optional custom validation beyond truthiness checks
+	 * Example: (params) => (params.orders?.length ?? 0) > 0
+	 */
+	customValidation?: (params: WithOptionalParams<TParams>) => boolean;
+};
 
 export type InfiniteQueryBuilderConfig<
 	TParams extends BaseInfiniteQueryParams,

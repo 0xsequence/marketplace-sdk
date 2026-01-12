@@ -164,38 +164,37 @@ export {
 	TransactionCrypto,
 	type TransactionStep,
 } from './adapters/marketplace';
+
 // ContractType is already exported from @0xsequence/indexer above
 
+export type { TokenMetadata as IndexerTokenMetadata } from './adapters/indexer';
 export { MarketplaceClient } from './adapters/marketplace/client';
-
 export type {
 	Asset as MarketplaceAsset,
+	GetCollectibleHighestListingRequest,
+	GetCollectibleHighestListingResponse,
+	GetCollectibleLowestListingRequest,
+	GetCollectibleLowestOfferRequest,
+	GetCollectibleLowestOfferResponse,
 	GetCollectionActiveListingsCurrenciesRequest,
 	GetCollectionActiveListingsCurrenciesResponse,
 	GetCollectionActiveOffersCurrenciesRequest,
 	GetCollectionActiveOffersCurrenciesResponse,
 	GetCollectionRequest,
 	GetCollectionResponse,
-	GetCollectibleLowestOfferRequest,
-	GetCollectibleLowestOfferResponse,
-	GetCollectibleHighestListingRequest,
-	GetCollectibleHighestListingResponse,
-	GetCollectibleLowestListingRequest,
-	GetLowestPriceOfferForCollectibleRequest,
-	GetLowestPriceOfferForCollectibleResponse,
 	GetHighestPriceListingForCollectibleRequest,
 	GetHighestPriceListingForCollectibleResponse,
+	GetLowestPriceOfferForCollectibleRequest,
+	GetLowestPriceOfferForCollectibleResponse,
 	PostRequest,
+	TokenMetadata as MarketplaceTokenMetadata,
 } from './adapters/marketplace/marketplace.gen';
-
 /** @deprecated Use direct type imports or Marketplace namespace instead */
 export * as MarketplaceAPI from './adapters/marketplace/marketplace.gen';
-
 export {
 	TransactionOnRampProvider,
 	WalletKind,
 } from './adapters/marketplace/marketplace.gen';
-
 export type {
 	Asset as MetadataAsset,
 	ContractInfo,
@@ -216,14 +215,11 @@ export type {
 	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
 	SearchTokenMetadataSdkArgs,
+	TokenMetadata,
+	TokenMetadata as MetadataTokenMetadata,
 } from './adapters/metadata';
 export * as Metadata from './adapters/metadata';
-
 export { MetadataClient as SequenceMetadata } from './adapters/metadata';
-
-export type { TokenMetadata as IndexerTokenMetadata } from './adapters/indexer';
-export type { TokenMetadata, TokenMetadata as MetadataTokenMetadata } from './adapters/metadata';
-export type { TokenMetadata as MarketplaceTokenMetadata } from './adapters/marketplace/marketplace.gen';
 
 export * from './types';
 export * from './utils/normalize';

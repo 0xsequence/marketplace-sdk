@@ -1,10 +1,10 @@
 import type {
+	Address,
 	CollectibleOrder,
 	ContractType,
 	MarketplaceTokenMetadata,
 	Order,
 } from '@0xsequence/api-client';
-import type { Address } from '@0xsequence/api-client';
 import type { CardType, CollectibleCardAction } from '../../../../types';
 
 export type CardClassNames = {

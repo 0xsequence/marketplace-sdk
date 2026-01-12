@@ -1,6 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { type ContractType, type Step, StepType } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from '@0xsequence/api-client';
 import { encodeFunctionData, maxUint256, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../utils/abi';

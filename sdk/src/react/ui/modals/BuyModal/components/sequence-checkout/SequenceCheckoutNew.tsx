@@ -1,5 +1,6 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import { ContractType, type Step } from '@0xsequence/api-client';
 import {
 	type SelectPaymentSettings,
@@ -7,7 +8,6 @@ import {
 } from '@0xsequence/checkout';
 import { Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import type { PrimarySaleItem } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import { useOrders } from '../../../../../hooks/data/orders/useOrders';
 import { ActionModal } from '../../../_internal/components/baseModal';

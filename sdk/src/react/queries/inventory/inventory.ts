@@ -1,8 +1,8 @@
 import type {
 	ChainId,
 	GetUserCollectionBalancesRequest,
-	IndexerTokenBalance as TokenBalance,
 	IndexerTokenMetadata,
+	IndexerTokenBalance as TokenBalance,
 } from '@0xsequence/api-client';
 import { ContractType, MetadataStatus } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
@@ -27,7 +27,13 @@ export type FetchInventoryParams = GetUserCollectionBalancesRequest & {
 
 export type CollectibleMetadata = Pick<
 	IndexerTokenMetadata,
-	'tokenId' | 'attributes' | 'image' | 'name' | 'description' | 'video' | 'audio'
+	| 'tokenId'
+	| 'attributes'
+	| 'image'
+	| 'name'
+	| 'description'
+	| 'video'
+	| 'audio'
 > & {
 	status: MetadataStatus;
 };
@@ -51,7 +57,10 @@ function isCollectibleContractType(
 	contractType: string,
 ): contractType is ContractType.ERC721 | ContractType.ERC1155 {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- Intentional type guard comparing string with enum
-	return contractType === ContractType.ERC721 || contractType === ContractType.ERC1155;
+	return (
+		contractType === ContractType.ERC721 ||
+		contractType === ContractType.ERC1155
+	);
 }
 
 /**

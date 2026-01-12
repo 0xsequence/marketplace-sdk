@@ -11,11 +11,13 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export type FetchListItemsOrdersForCollectionPaginatedParams =
-	Omit<ListOrdersWithCollectiblesRequest, 'page'> & {
-		page?: number;
-		pageSize?: number;
-	};
+export type FetchListItemsOrdersForCollectionPaginatedParams = Omit<
+	ListOrdersWithCollectiblesRequest,
+	'page'
+> & {
+	page?: number;
+	pageSize?: number;
+};
 
 export type ListItemsOrdersForCollectionPaginatedQueryOptions =
 	SdkQueryParams<FetchListItemsOrdersForCollectionPaginatedParams>;

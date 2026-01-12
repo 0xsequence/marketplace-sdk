@@ -349,11 +349,9 @@ describe('optimisticCancelUpdates', () => {
 				// Fast-forward time by 2 seconds
 				vi.advanceTimersByTime(2000);
 
-				const regularQuery = queryClient
-					.getQueryCache()
-					.find({
-						queryKey: ['collectible', 'market-highest-offer', 'regular'],
-					});
+				const regularQuery = queryClient.getQueryCache().find({
+					queryKey: ['collectible', 'market-highest-offer', 'regular'],
+				});
 
 				// The regular query should be invalidated (stale)
 				expect(regularQuery?.isStale()).toBe(true);

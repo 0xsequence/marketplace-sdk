@@ -1,6 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { ContractType } from '@0xsequence/api-client';
 import { useCallback, useMemo } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { compareAddress } from '../../../../../utils';

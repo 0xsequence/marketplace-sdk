@@ -1,26 +1,26 @@
 import type {
-	ContractInfo as GenContractInfo,
-	ContractInfoExtensions as GenContractInfoExtensions,
-	ContractInfoExtensionBridgeInfo as GenContractInfoExtensionBridgeInfo,
-	TokenMetadata as GenTokenMetadata,
-	Asset as GenAsset,
-	Page as GenPage,
 	Filter,
-	PropertyFilter,
+	Asset as GenAsset,
+	ContractInfo as GenContractInfo,
+	ContractInfoExtensionBridgeInfo as GenContractInfoExtensionBridgeInfo,
+	ContractInfoExtensions as GenContractInfoExtensions,
 	GetContractInfoArgs as GenGetContractInfoArgs,
-	GetContractInfoReturn as GenGetContractInfoReturn,
 	GetContractInfoBatchArgs as GenGetContractInfoBatchArgs,
 	GetContractInfoBatchReturn as GenGetContractInfoBatchReturn,
+	GetContractInfoReturn as GenGetContractInfoReturn,
 	GetTokenMetadataArgs as GenGetTokenMetadataArgs,
-	GetTokenMetadataReturn as GenGetTokenMetadataReturn,
 	GetTokenMetadataBatchArgs as GenGetTokenMetadataBatchArgs,
 	GetTokenMetadataBatchReturn as GenGetTokenMetadataBatchReturn,
+	GetTokenMetadataPropertyFiltersArgs as GenGetTokenMetadataPropertyFiltersArgs,
+	GetTokenMetadataPropertyFiltersReturn as GenGetTokenMetadataPropertyFiltersReturn,
+	GetTokenMetadataReturn as GenGetTokenMetadataReturn,
+	Page as GenPage,
 	RefreshTokenMetadataArgs as GenRefreshTokenMetadataArgs,
 	RefreshTokenMetadataReturn as GenRefreshTokenMetadataReturn,
 	SearchTokenMetadataArgs as GenSearchTokenMetadataArgs,
 	SearchTokenMetadataReturn as GenSearchTokenMetadataReturn,
-	GetTokenMetadataPropertyFiltersArgs as GenGetTokenMetadataPropertyFiltersArgs,
-	GetTokenMetadataPropertyFiltersReturn as GenGetTokenMetadataPropertyFiltersReturn,
+	TokenMetadata as GenTokenMetadata,
+	PropertyFilter,
 } from '@0xsequence/metadata';
 
 import type { Address, ChainId, TokenId } from '../../types/primitives';
@@ -76,9 +76,9 @@ export type GetContractInfoArgs = Omit<
 > & {
 	chainId: ChainId;
 } & (
-	| { contractAddress: string; collectionAddress?: never }
-	| { collectionAddress: string; contractAddress?: never }
-);
+		| { contractAddress: string; collectionAddress?: never }
+		| { collectionAddress: string; contractAddress?: never }
+	);
 
 export type GetContractInfoReturn = Omit<
 	GenGetContractInfoReturn,
@@ -112,9 +112,9 @@ export type GetTokenMetadataArgs = Omit<
 	chainId: ChainId;
 	tokenIds: TokenId[];
 } & (
-	| { contractAddress: string; collectionAddress?: never }
-	| { collectionAddress: string; contractAddress?: never }
-);
+		| { contractAddress: string; collectionAddress?: never }
+		| { collectionAddress: string; contractAddress?: never }
+	);
 
 export type GetTokenMetadataReturn = Omit<
 	GenGetTokenMetadataReturn,
@@ -152,9 +152,9 @@ export type RefreshTokenMetadataArgs = Omit<
 	tokenIds?: TokenId[];
 	refreshAll?: boolean;
 } & (
-	| { contractAddress: string; collectionAddress?: never }
-	| { collectionAddress: string; contractAddress?: never }
-);
+		| { contractAddress: string; collectionAddress?: never }
+		| { collectionAddress: string; contractAddress?: never }
+	);
 
 export type RefreshTokenMetadataReturn = GenRefreshTokenMetadataReturn;
 
@@ -164,9 +164,9 @@ export type SearchTokenMetadataArgs = Omit<
 > & {
 	chainId: ChainId;
 } & (
-	| { contractAddress: string; collectionAddress?: never }
-	| { collectionAddress: string; contractAddress?: never }
-);
+		| { contractAddress: string; collectionAddress?: never }
+		| { collectionAddress: string; contractAddress?: never }
+	);
 
 export type SearchTokenMetadataReturn = Omit<
 	GenSearchTokenMetadataReturn,
@@ -182,9 +182,9 @@ export type GetTokenMetadataPropertyFiltersArgs = Omit<
 > & {
 	chainId: ChainId;
 } & (
-	| { contractAddress: string; collectionAddress?: never }
-	| { collectionAddress: string; contractAddress?: never }
-);
+		| { contractAddress: string; collectionAddress?: never }
+		| { collectionAddress: string; contractAddress?: never }
+	);
 
 export type GetTokenMetadataPropertyFiltersReturn =
 	GenGetTokenMetadataPropertyFiltersReturn;
