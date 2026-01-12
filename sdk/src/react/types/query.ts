@@ -3,7 +3,7 @@
  *
  * Based on TanStack Query v5 UseQueryOptions, but simplified, the type from TanStack is hard to modify
  */
-export interface StandardQueryOptions<TError = Error> {
+export type StandardQueryOptions<TError = Error> = {
 	/** Whether the query should be enabled/disabled */
 	enabled?: boolean;
 	/** Time in milliseconds that  data is considered fresh */
@@ -22,14 +22,14 @@ export interface StandardQueryOptions<TError = Error> {
 	suspense?: boolean;
 	/** Placeholder data is not supported for now */
 	// placeholderData?: TData | (() => TData);
-}
+};
 
 /**
  * Standard infinite query options that can be used across all marketplace SDK hooks
  * that support infinite pagination
  */
-export interface StandardInfiniteQueryOptions<TError = Error>
-	extends StandardQueryOptions<TError> {
-	/** Maximum number of pages to fetch */
-	maxPages?: number;
-}
+export type StandardInfiniteQueryOptions<TError = Error> =
+	StandardQueryOptions<TError> & {
+		/** Maximum number of pages to fetch */
+		maxPages?: number;
+	};

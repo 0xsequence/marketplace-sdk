@@ -12,36 +12,32 @@ export enum EventType {
 	BUY_MODAL_OPENED = 7,
 }
 
-interface PropsEvent {
-	[key: string]: string;
-}
+type PropsEvent = Record<string, string>;
 
-interface NumsEvent {
-	[key: string]: number;
-}
+type NumsEvent = Record<string, number>;
 
-interface Transaction extends PropsEvent {
+type Transaction = PropsEvent & {
 	chainId: string;
 	txnHash: string;
-}
+};
 
-interface TradeItemsInfo extends PropsEvent {
+type TradeItemsInfo = PropsEvent & {
 	marketplaceKind: MarketplaceKind;
 	userId: string;
 	collectionAddress: string;
 	currencyAddress: string;
 	currencySymbol: string;
-}
+};
 
-interface TradeItemsValues extends NumsEvent {
+type TradeItemsValues = NumsEvent & {
 	currencyValueDecimal: number;
 	currencyValueRaw: number;
-}
+};
 
-export interface TrackBuyItems {
+export type TrackBuyItems = {
 	props: TradeItemsInfo & Transaction;
 	nums: TradeItemsValues;
-}
+};
 
 type BuyModalOpenedProps = Omit<
 	BuyModalProps,
@@ -60,36 +56,36 @@ type BuyModalOpenedNums = {
 	chainId: number;
 };
 
-export interface TrackBuyModalOpened {
+export type TrackBuyModalOpened = {
 	props: BuyModalOpenedProps;
 	nums: BuyModalOpenedNums;
-}
+};
 
-export interface TrackSellItems {
+export type TrackSellItems = {
 	props: TradeItemsInfo & Transaction;
 	nums: TradeItemsValues;
-}
+};
 
-interface ListOfferItemsInfo extends PropsEvent {
+type ListOfferItemsInfo = PropsEvent & {
 	orderbookKind: OrderbookKind;
 	collectionAddress: string;
 	currencyAddress: string;
 	currencySymbol: string;
-}
+};
 
-interface ListOfferItemsValues extends NumsEvent {
+type ListOfferItemsValues = NumsEvent & {
 	currencyValueDecimal: number;
 	currencyValueRaw: number;
-}
+};
 
-export interface TrackCreateListing {
+export type TrackCreateListing = {
 	props: ListOfferItemsInfo & Transaction;
 	nums: ListOfferItemsValues;
-}
+};
 
-export interface TrackCreateOffer {
+export type TrackCreateOffer = {
 	props: ListOfferItemsInfo & Transaction;
 	nums: ListOfferItemsValues;
-}
+};
 
-export interface TrackTransactionFailed extends Transaction, PropsEvent {}
+export type TrackTransactionFailed = Transaction & PropsEvent;
