@@ -5,7 +5,7 @@
 import type { Address } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 
-export interface ChainCurrency {
+export type ChainCurrency = {
 	chainId: number | null;
 	openseaId: string;
 	name: string;
@@ -24,7 +24,7 @@ export interface ChainCurrency {
 		symbol: string;
 		address: Address;
 	};
-}
+};
 
 export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 	// Ethereum
