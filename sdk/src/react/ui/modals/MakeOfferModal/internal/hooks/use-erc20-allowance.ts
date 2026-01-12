@@ -3,12 +3,12 @@ import { zeroAddress } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../../../../utils/abi';
 
-export interface UseERC20AllowanceArgs {
+export type UseERC20AllowanceArgs = {
 	tokenAddress: Address | undefined;
 	spenderAddress: Address | undefined;
 	chainId: number;
 	enabled?: boolean;
-}
+};
 
 export function useERC20Allowance({
 	tokenAddress,

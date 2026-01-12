@@ -32,15 +32,15 @@ export type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
-export interface OfferParams {
+export type OfferParams = {
 	tokenId: bigint;
 	quantity: bigint;
 	expiry: string;
 	currencyAddress: Address;
 	pricePerToken: bigint;
-}
+};
 
-export interface UseOfferMutationsArgs {
+export type UseOfferMutationsArgs = {
 	chainId: number;
 	collectionAddress: Address;
 	contractType: ContractType | undefined;
@@ -48,7 +48,7 @@ export interface UseOfferMutationsArgs {
 	offer: OfferParams;
 	currencyDecimals: number;
 	needsApproval: boolean;
-}
+};
 
 export const useOfferMutations = ({
 	chainId,
