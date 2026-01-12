@@ -9,7 +9,7 @@ import {
 	useSalesContractABI,
 } from '../contracts/useSalesContractABI';
 
-export interface UsePrimarySaleTransactionStepsParams {
+export type UsePrimarySaleTransactionStepsParams = {
 	chainId: number;
 	buyer: Address;
 	recipient?: Address;
@@ -21,7 +21,7 @@ export interface UsePrimarySaleTransactionStepsParams {
 	merkleProof?: string[];
 	contractType: ContractType.ERC721 | ContractType.ERC1155;
 	enabled?: boolean;
-}
+};
 
 /**
  * Hook to generate transaction steps for primary sale transactions (minting/shop)
