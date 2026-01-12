@@ -1,5 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-
 import pluginJs from '@eslint/js';
 import biome from 'eslint-config-biome';
 import pluginReact from 'eslint-plugin-react';
@@ -17,7 +15,6 @@ export default [
 			'.storybook/**',
 			'**/*.gen.ts',
 			'dist/**',
-			// Config files not in tsconfig - skip type-checked rules
 			'*.config.js',
 			'*.config.mjs',
 			'compile-tailwind.js',
@@ -44,9 +41,6 @@ export default [
 	rscPlugin.configs.recommended,
 	biome,
 
-	// ============================================================
-	// SEQUENCE TYPE ENFORCEMENT PLUGIN
-	// ============================================================
 	{
 		plugins: {
 			'@sequence/types': sequenceTypesPlugin,
@@ -62,37 +56,18 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// GLOBAL RULES
-	// ============================================================
 	{
 		rules: {
 			'react/react-in-jsx-scope': 'off',
 			'@typescript-eslint/no-unused-vars': 'off',
-
-			// ============================================================
-			// TYPE SAFETY RULES
-			// ============================================================
-
-			// Ban explicit `any` everywhere
 			'@typescript-eslint/no-explicit-any': 'error',
-
-			// Ban non-null assertions (!) - forces proper null handling
 			'@typescript-eslint/no-non-null-assertion': 'error',
-
-			// Unsafe operations on `any` values - warn for now, fix incrementally
-			// Many of these come from external libraries with incomplete types
 			'@typescript-eslint/no-unsafe-assignment': 'warn',
 			'@typescript-eslint/no-unsafe-member-access': 'warn',
 			'@typescript-eslint/no-unsafe-call': 'warn',
 			'@typescript-eslint/no-unsafe-return': 'warn',
 			'@typescript-eslint/no-unsafe-argument': 'warn',
-
-			// Enum comparisons - warn for now, requires api-client type fixes
 			'@typescript-eslint/no-unsafe-enum-comparison': 'warn',
-
-			// Require consistent type assertions style
-			// 'allow' permits object literals with 'as' - common for React Query options
 			'@typescript-eslint/consistent-type-assertions': [
 				'warn',
 				{
@@ -100,15 +75,8 @@ export default [
 					objectLiteralTypeAssertions: 'allow',
 				},
 			],
-
-			// Redundant type constituents - warn, many are intentional for readability
 			'@typescript-eslint/no-redundant-type-constituents': 'warn',
-
-			// require-await - warn, some functions need async for API consistency
 			'@typescript-eslint/require-await': 'warn',
-
-			// Ban deprecated namespace imports (MarketplaceAPI, BuilderAPI)
-			// Use direct type imports instead: import type { Order } from '@0xsequence/api-client'
 			'no-restricted-imports': [
 				'error',
 				{
@@ -128,19 +96,13 @@ export default [
 					],
 				},
 			],
-
-			// ============================================================
-			// TYPE CONSISTENCY: Ban raw hex string patterns
-			// ============================================================
 			'no-restricted-syntax': [
 				'warn',
-				// Ban `0x${string}` template literal - use Address type instead
 				{
 					selector: 'TSTemplateLiteralType',
 					message:
 						'Don\'t use `0x${string}` directly. Import and use `Address` from @0xsequence/api-client instead.',
 				},
-				// Ban literal zero address - use zeroAddress from viem instead
 				{
 					selector:
 						'Literal[value="0x0000000000000000000000000000000000000000"]',
@@ -148,8 +110,6 @@ export default [
 						'Don\'t use literal zero address. Import and use `zeroAddress` from viem instead.',
 				},
 			],
-
-			// Ban @ts-ignore (use @ts-expect-error with description instead)
 			'@typescript-eslint/ban-ts-comment': [
 				'error',
 				{
@@ -158,10 +118,6 @@ export default [
 					'ts-nocheck': true,
 				},
 			],
-
-			// ============================================================
-			// REACT COMPILER RULES (disabled - not using yet)
-			// ============================================================
 			'react-hooks/static-components': 'off',
 			'react-hooks/use-memo': 'off',
 			'react-hooks/void-use-memo': 'off',
@@ -181,9 +137,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// ANALYTICS/TRACKING FILES: String serialization is intentional
-	// ============================================================
 	{
 		files: ['src/**/*databeat*/**', 'src/**/*analytics*/**', 'src/**/*tracking*/**'],
 		rules: {
@@ -195,9 +148,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// URL STATE FILES: URL params are strings by design
-	// ============================================================
 	{
 		files: ['src/**/*url-state*/**', 'src/**/*url*state*/**'],
 		rules: {
@@ -206,9 +156,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// UI COMPONENTS: Display values (balance, quantity) are strings
-	// ============================================================
 	{
 		files: [
 			'src/**/ui/components/**/*.{ts,tsx}',
@@ -220,9 +167,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// MODAL HOOKS & CHECKOUT: Props from external sources are strings
-	// ============================================================
 	{
 		files: [
 			'src/**/ui/modals/**/hooks/*.ts',
@@ -235,9 +179,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// EXTERNAL TYPES: Copied from external packages, can't change
-	// ============================================================
 	{
 		files: ['src/types/waas-types.ts'],
 		rules: {
@@ -247,9 +188,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// DISPLAY UTILITIES: Work with any string for formatting
-	// ============================================================
 	{
 		files: ['src/utils/address.ts'],
 		rules: {
@@ -257,9 +195,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// WAAS/FEE HOOKS: External API types are strings
-	// ============================================================
 	{
 		files: [
 			'src/**/hooks/utils/useWaasFeeOptions.tsx',
@@ -272,9 +207,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// LEGACY TYPES & INPUT NORMALIZERS: Backward compatibility strings
-	// ============================================================
 	{
 		files: [
 			'src/**/hooks/checkout/primary-sale-checkout-options.tsx',
@@ -288,9 +220,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// QUERY DATA TYPES: Serialized response values
-	// ============================================================
 	{
 		files: [
 			'src/**/queries/inventory/inventory.ts',
@@ -302,9 +231,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// API INPUT TYPES: Values passed to APIs as strings
-	// ============================================================
 	{
 		files: [
 			'src/react/_internal/types.ts',
@@ -315,9 +241,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// ERROR TYPES & DECODERS: String for display/raw data
-	// ============================================================
 	{
 		files: [
 			'src/utils/_internal/error/*.ts',
@@ -329,9 +252,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// TRANSACTION HOOKS: Heavy wagmi/viem interaction with any types
-	// ============================================================
 	{
 		files: ['src/**/hooks/transactions/*.{ts,tsx}'],
 		rules: {
@@ -341,9 +261,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// WAAS HOOKS: External SDK types have weak typing
-	// ============================================================
 	{
 		files: ['src/**/hooks/utils/useWaasFeeOptions.tsx'],
 		rules: {
@@ -352,9 +269,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// MEDIA COMPONENT: External media handling with dynamic types
-	// ============================================================
 	{
 		files: ['src/**/ui/components/media/Media.tsx'],
 		rules: {
@@ -362,9 +276,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// MODAL INTERNAL COMPONENTS: Complex external integrations
-	// ============================================================
 	{
 		files: [
 			'src/**/ui/modals/_internal/components/**/*.{ts,tsx}',
@@ -379,9 +290,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// INTERNAL API & UTILS: Dynamic object handling
-	// ============================================================
 	{
 		files: [
 			'src/react/_internal/api/*.ts',
@@ -393,9 +301,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// NETWORK UTILS: Enum comparisons with external data
-	// ============================================================
 	{
 		files: ['src/utils/network.ts'],
 		rules: {
@@ -403,9 +308,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// BUILD CONFIG FILES: JS imports with weak types
-	// ============================================================
 	{
 		files: ['tsdown.config.ts'],
 		rules: {
@@ -413,9 +315,6 @@ export default [
 		},
 	},
 
-	// ============================================================
-	// TEST FILES: Relaxed rules for testing
-	// ============================================================
 	{
 		files: [
 			'src/**/*.test.ts',
