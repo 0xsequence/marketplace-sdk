@@ -304,15 +304,8 @@ function CollectionInventory({
 					return (
 						<div key={`${collectionAddress}-${card.tokenId}`}>
 							<CollectibleCard
-								tokenId={card.tokenId}
-								chainId={card.chainId}
-								collectionAddress={card.collectionAddress}
-								collectionType={card.collectionType}
-								assetSrcPrefixUrl={card.assetSrcPrefixUrl}
-								cardLoading={card.cardLoading}
-								cardType="inventory-non-tradable"
-								balance={card.balance}
-								balanceIsLoading={card.balanceIsLoading}
+								{...card}
+								cardType={'inventory-non-tradable'}
 								collectibleMetadata={card.collectible?.metadata}
 							/>
 						</div>

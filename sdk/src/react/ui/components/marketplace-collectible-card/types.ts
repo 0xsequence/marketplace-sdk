@@ -2,7 +2,6 @@ import type {
 	CollectibleOrder,
 	ContractType,
 	MarketplaceTokenMetadata,
-	MetadataTokenMetadata,
 	Order,
 } from '@0xsequence/api-client';
 import type { Address } from '@0xsequence/api-client';
@@ -86,7 +85,7 @@ type MarketCardSpecificProps = {
 type NonTradableInventoryCardSpecificProps = {
 	balance: string;
 	balanceIsLoading: boolean;
-	collectibleMetadata: MetadataTokenMetadata;
+	collectibleMetadata: MarketplaceTokenMetadata;
 };
 
 // Complete CollectibleCardProps with all possible properties and card type
