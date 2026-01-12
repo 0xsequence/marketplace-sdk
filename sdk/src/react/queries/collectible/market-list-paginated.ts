@@ -1,4 +1,3 @@
-import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import type {
 	ListCollectiblesRequest,
@@ -13,12 +12,11 @@ import {
 } from '../../_internal';
 import { normalizePriceFilters } from '../../utils/normalizePriceFilters';
 
-export interface FetchListCollectiblesPaginatedParams
-	extends Omit<ListCollectiblesRequest, 'page'> {
-	collectionAddress: Address;
-	page?: number;
-	pageSize?: number;
-}
+export type FetchListCollectiblesPaginatedParams =
+	Omit<ListCollectiblesRequest, 'page'> & {
+		page?: number;
+		pageSize?: number;
+	};
 
 export type ListCollectiblesPaginatedQueryOptions =
 	SdkQueryParams<FetchListCollectiblesPaginatedParams>;

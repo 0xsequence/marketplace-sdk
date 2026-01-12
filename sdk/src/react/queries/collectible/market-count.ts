@@ -1,8 +1,6 @@
 import type {
-	CollectiblesFilter,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfFilteredCollectiblesRequest,
-	OrderSide,
 } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
@@ -13,11 +11,9 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchCountOfCollectablesParams
-	extends GetCountOfAllCollectiblesRequest {
-	filter?: CollectiblesFilter;
-	side?: OrderSide;
-}
+export type FetchCountOfCollectablesParams =
+	GetCountOfAllCollectiblesRequest &
+		Partial<Pick<GetCountOfFilteredCollectiblesRequest, 'filter' | 'side'>>;
 
 export type CountOfCollectablesQueryOptions =
 	SdkQueryParams<FetchCountOfCollectablesParams>;
