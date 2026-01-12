@@ -1,7 +1,7 @@
 import { sendTransactions } from '@0xsequence/connect';
 import type { FeeOption } from '@0xsequence/waas';
 import { useState } from 'react';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { useConfig } from '../../../..';
 import { getIndexerClient, type Step } from '../../../../_internal';
@@ -79,14 +79,14 @@ const useExecuteBundledTransactions = ({
 
 		const approvalData = approvalStep
 			? {
-					to: approvalStep.to as Address,
+					to: approvalStep.to,
 					data: approvalStep.data as Hex,
 					chainId,
 				}
 			: undefined;
 
 		const transactionData = {
-			to: step.to as Address,
+			to: step.to,
 			data: step.data as Hex,
 			chainId,
 			...(currency?.nativeCurrency ? { value: priceAmount } : {}),

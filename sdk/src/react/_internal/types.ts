@@ -11,19 +11,19 @@ import type {
 } from '../types/query';
 import type { RequiredKeys } from './query-builder';
 
-export interface QueryArg {
+export type QueryArg = {
 	enabled?: boolean;
-}
+};
 
 export type CollectableId = string | number;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 
-export interface Transaction {
+export type Transaction = {
 	to: Hex;
 	data?: Hex;
 	value?: bigint;
-}
+};
 
 type TransactionStep = {
 	exist: boolean;
@@ -45,32 +45,32 @@ export enum TransactionType {
 	CANCEL = 'CANCEL',
 }
 
-export interface BuyInput {
+export type BuyInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
 	quantity: string;
-}
+};
 
-export interface SellInput {
+export type SellInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
 	quantity?: string;
-}
+};
 
-export interface ListingInput {
+export type ListingInput = {
 	contractType: ContractType;
 	listing: CreateReq;
-}
+};
 
-export interface OfferInput {
+export type OfferInput = {
 	contractType: ContractType;
 	offer: CreateReq;
-}
+};
 
-export interface CancelInput {
+export type CancelInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
-}
+};
 
 export type ValuesOptional<T> = {
 	[K in keyof T]: T[K] | undefined;

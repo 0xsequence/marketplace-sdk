@@ -1,5 +1,5 @@
 import { ContractType } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { useReadContract } from 'wagmi';
 import { ERC721_ABI } from '../../../utils/abi';
 
@@ -40,7 +40,7 @@ export function useERC721Owner({
 	});
 
 	return {
-		owner: owner as Address | undefined,
+		owner: owner,
 		isLoading,
 		error,
 	};

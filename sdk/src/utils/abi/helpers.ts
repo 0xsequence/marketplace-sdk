@@ -24,8 +24,8 @@ export const getSaleContractABI = (
 		'ERC1155-v1': ERC1155_SALES_CONTRACT_ABI_V1,
 	} as const;
 
-	const key = `${tokenType}-${version}` as keyof typeof abiMap;
-	return abiMap[key];
+	const key = `${tokenType}-${version}`;
+	return abiMap[key as keyof typeof abiMap];
 };
 
 /**

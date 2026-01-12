@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
 import {
 	useCollectible,
@@ -48,13 +48,16 @@ export const useBuyModalData = () => {
 		isError: ordersError,
 	} = useOrders({
 		chainId,
-		input: [
-			{
-				contractAddress: collectionAddress,
-				orderId: orderId!,
-				marketplace: marketplace!,
-			},
-		],
+		input:
+			orderId && marketplace
+				? [
+						{
+							contractAddress: collectionAddress,
+							orderId,
+							marketplace,
+						},
+					]
+				: [],
 		query: {
 			enabled: !!orderId && !!marketplace,
 		},

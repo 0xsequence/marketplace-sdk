@@ -20,8 +20,7 @@ const createMarketplaceLogo = (
 			<Suspense
 				fallback={<div style={{ width: props.width, height: props.height }} />}
 			>
-				{/* @ts-ignore */}
-				<LazyLogo {...props} />
+					<LazyLogo {...props} />
 			</Suspense>
 		);
 	};

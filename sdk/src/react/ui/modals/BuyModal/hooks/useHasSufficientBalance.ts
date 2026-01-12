@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
 import { useCurrencyBalance } from '../../../hooks';
 

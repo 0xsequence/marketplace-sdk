@@ -4,7 +4,7 @@ import type {
 	PropertyFilter,
 } from '@0xsequence/api-client';
 import { type Indexer, OrderSide } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../types';
 import type { Order } from '../../../_internal';

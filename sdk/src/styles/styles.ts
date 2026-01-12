@@ -464,6 +464,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .z-\[1000\] {
     z-index: 1000;
   }
+  .order-1 {
+    order: 1;
+  }
+  .order-2 {
+    order: 2;
+  }
+  .order-3 {
+    order: 3;
+  }
   .order-123 {
     order: 123;
   }

@@ -3,7 +3,7 @@
 import type { Order } from '@0xsequence/api-client';
 import { Skeleton, Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { CardType } from '../../../../../../types';

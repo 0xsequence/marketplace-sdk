@@ -1,7 +1,7 @@
 import { type ContractType, OrderbookKind } from '@0xsequence/api-client';
 import type { Dnum } from 'dnum';
 import { useMemo } from 'react';
-import type { Address } from 'viem';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
@@ -97,7 +97,7 @@ export function useMakeOfferModalContext() {
 	}, [state.currencyAddress, availableCurrencies, state.orderbookKind]);
 
 	const currencyBalanceQuery = useTokenCurrencyBalance({
-		currencyAddress: selectedCurrency?.contractAddress as Address | undefined,
+		currencyAddress: selectedCurrency?.contractAddress,
 		chainId: state.chainId,
 		userAddress: address,
 		query: {
@@ -146,7 +146,7 @@ export function useMakeOfferModalContext() {
 	const spenderAddress = getConduitAddressForOrderbook(state.orderbookKind);
 
 	const allowanceQuery = useERC20Allowance({
-		tokenAddress: selectedCurrency?.contractAddress as Address | undefined,
+		tokenAddress: selectedCurrency?.contractAddress,
 		spenderAddress,
 		chainId: state.chainId,
 		enabled:
@@ -175,9 +175,7 @@ export function useMakeOfferModalContext() {
 			tokenId: state.tokenId,
 			quantity: quantityRaw,
 			expiry: dateToUnixTime(expiryDate),
-			currencyAddress:
-				selectedCurrency?.contractAddress ??
-				('0x0000000000000000000000000000000000000000' as Address),
+			currencyAddress: selectedCurrency?.contractAddress ?? zeroAddress,
 			pricePerToken: priceRaw,
 		},
 		currencyDecimals: selectedCurrency?.decimals ?? 18,

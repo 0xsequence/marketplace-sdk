@@ -31,12 +31,21 @@ export { MarketplaceService } from './adapters/builder/builder.gen';
 
 export type {
 	ContractInfo as IndexerContractInfo,
+	GetBalanceOfCollectibleRequest,
+	GetTokenBalancesDetailsRequest,
 	GetTokenBalancesDetailsResponse,
+	GetTokenBalancesRequest,
 	GetTokenBalancesResponse,
+	GetTokenBalancesSdkRequest,
+	GetTokenIDRangesRequest,
 	GetTokenIDRangesResponse,
+	GetTokenSuppliesRequest,
 	GetTokenSuppliesResponse,
+	GetUserCollectionBalancesRequest,
+	MetadataOptions,
+	Page as IndexerPage,
 	TokenBalance as IndexerTokenBalance,
-	TokenMetadata as IndexerTokenMetadata,
+	TokenBalancesFilter,
 	TokenSupply as IndexerTokenSupply,
 } from './adapters/indexer';
 export * as Indexer from './adapters/indexer';
@@ -81,6 +90,7 @@ export type {
 	GetLowestPriceListingForCollectibleRequest,
 	GetOrdersInput,
 	GetOrdersRequest,
+	GetPrimarySaleCheckoutOptionsRequest,
 	GetPrimarySaleItemRequest,
 	GetPrimarySaleItemResponse,
 	ListCollectibleActivitiesRequest,
@@ -160,8 +170,25 @@ export { MarketplaceClient } from './adapters/marketplace/client';
 
 export type {
 	Asset as MarketplaceAsset,
+	GetCollectionActiveListingsCurrenciesRequest,
+	GetCollectionActiveListingsCurrenciesResponse,
+	GetCollectionActiveOffersCurrenciesRequest,
+	GetCollectionActiveOffersCurrenciesResponse,
+	GetCollectionRequest,
+	GetCollectionResponse,
+	GetCollectibleLowestOfferRequest,
+	GetCollectibleLowestOfferResponse,
+	GetCollectibleHighestListingRequest,
+	GetCollectibleHighestListingResponse,
+	GetCollectibleLowestListingRequest,
+	GetLowestPriceOfferForCollectibleRequest,
+	GetLowestPriceOfferForCollectibleResponse,
+	GetHighestPriceListingForCollectibleRequest,
+	GetHighestPriceListingForCollectibleResponse,
 	PostRequest,
 } from './adapters/marketplace/marketplace.gen';
+
+/** @deprecated Use direct type imports or Marketplace namespace instead */
 export * as MarketplaceAPI from './adapters/marketplace/marketplace.gen';
 
 export {
@@ -177,18 +204,26 @@ export type {
 	Filter,
 	GetContractInfoArgs,
 	GetContractInfoBatchArgs,
+	GetContractInfoSdkArgs,
+	GetFiltersArgs,
+	GetSingleTokenMetadataArgs,
 	GetTokenMetadataArgs,
 	GetTokenMetadataPropertyFiltersArgs,
 	GetTokenMetadataPropertyFiltersReturn,
 	GetTokenMetadataReturn,
+	GetTokenMetadataSdkArgs,
 	Page as MetadataPage,
 	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
-	TokenMetadata,
+	SearchTokenMetadataSdkArgs,
 } from './adapters/metadata';
 export * as Metadata from './adapters/metadata';
 
 export { MetadataClient as SequenceMetadata } from './adapters/metadata';
+
+export type { TokenMetadata as IndexerTokenMetadata } from './adapters/indexer';
+export type { TokenMetadata, TokenMetadata as MetadataTokenMetadata } from './adapters/metadata';
+export type { TokenMetadata as MarketplaceTokenMetadata } from './adapters/marketplace/marketplace.gen';
 
 export * from './types';
 export * from './utils/normalize';

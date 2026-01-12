@@ -1,3 +1,5 @@
+import type { Address } from '@0xsequence/api-client';
+
 /**
  * SDK-specific error classes with name-based discrimination
  * Following wagmi/viem pattern for error handling
@@ -52,12 +54,12 @@ export class ChainMismatchError extends SequenceMarketplaceError {
 }
 
 export class InvalidContractTypeError extends SequenceMarketplaceError {
-	readonly contractAddress: `0x${string}`;
+	readonly contractAddress: Address;
 	readonly expectedType: string;
 	readonly actualType?: string;
 
 	constructor(
-		contractAddress: `0x${string}`,
+		contractAddress: Address,
 		expectedType: string,
 		actualType?: string,
 	) {
@@ -101,10 +103,10 @@ export class TransactionStepNotFoundError extends SequenceMarketplaceError {
 }
 
 export class ApprovalStepMissingError extends SequenceMarketplaceError {
-	readonly tokenAddress: `0x${string}`;
-	readonly spenderAddress?: `0x${string}`;
+	readonly tokenAddress: Address;
+	readonly spenderAddress?: Address;
 
-	constructor(tokenAddress: `0x${string}`, spenderAddress?: `0x${string}`) {
+	constructor(tokenAddress: Address, spenderAddress?: Address) {
 		super(
 			`Approval step missing for token ${tokenAddress}${
 				spenderAddress ? ` to spender ${spenderAddress}` : ''

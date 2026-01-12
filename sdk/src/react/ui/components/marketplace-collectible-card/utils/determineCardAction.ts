@@ -3,14 +3,14 @@ import { CollectibleCardAction } from '../../../../../types';
 /**
  * Parameters for determining the appropriate card action
  */
-export interface DetermineCardActionParams {
+export type DetermineCardActionParams = {
 	/** Whether the user owns the collectible (balance > 0) */
 	hasBalance: boolean;
 	/** Whether there's a highest offer on the collectible */
 	hasOffer: boolean;
 	/** Whether the collectible is listed for sale */
 	hasListing: boolean;
-}
+};
 
 /**
  * Determines the appropriate action for a card based on ownership and market state.

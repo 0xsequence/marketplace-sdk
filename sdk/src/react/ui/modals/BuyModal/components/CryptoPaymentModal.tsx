@@ -14,7 +14,7 @@ import { CryptoPaymentModalSkeleton } from './CryptoPaymentModalSkeleton';
 export interface CryptoPaymentModalProps {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex | string) => void;
+	onSuccess: (hash: Hex) => void;
 }
 
 export const CryptoPaymentModal = ({

@@ -2,7 +2,7 @@
 
 import { TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import type { Price } from '../../../../../../types';
 
 function CurrencyImage({ price }: { price: Price | undefined }) {

@@ -1,6 +1,9 @@
 import type {
+	Address,
+	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractRequest,
 	CheckoutOptionsSalesContractResponse,
+	GetPrimarySaleCheckoutOptionsRequest,
 } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
@@ -11,13 +14,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-// Use the SDK-facing request type directly as the params interface
-export type FetchPrimarySaleCheckoutOptionsParams = Omit<
-	CheckoutOptionsSalesContractRequest,
-	'wallet'
-> & {
-	walletAddress: CheckoutOptionsSalesContractRequest['wallet'];
-};
+export type FetchPrimarySaleCheckoutOptionsParams =
+	GetPrimarySaleCheckoutOptionsRequest;
 
 /**
  * Fetches checkout options for primary sales contract from the Marketplace API
@@ -61,15 +59,25 @@ export type PrimarySaleCheckoutOptionsQueryOptions =
 
 export function getPrimarySaleCheckoutOptionsQueryKey(
 	params: PrimarySaleCheckoutOptionsQueryOptions,
-) {
+): readonly [
+	'checkout',
+	'primary-sale',
+	{
+		chainId: number;
+		walletAddress: Address;
+		contractAddress: Address;
+		collectionAddress: Address;
+		items: ReadonlyArray<CheckoutOptionsItem>;
+	},
+] {
 	return [
 		'checkout',
 		'primary-sale',
 		{
 			chainId: params.chainId ?? 0,
-			walletAddress: params.walletAddress ?? '0x',
-			contractAddress: params.contractAddress ?? '',
-			collectionAddress: params.collectionAddress ?? '',
+			walletAddress: params.walletAddress ?? ('0x' as Address),
+			contractAddress: params.contractAddress ?? ('' as Address),
+			collectionAddress: params.collectionAddress ?? ('' as Address),
 			items: params.items ?? [],
 		},
 	] as const;

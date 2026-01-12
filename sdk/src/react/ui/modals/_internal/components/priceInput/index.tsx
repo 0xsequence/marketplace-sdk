@@ -1,6 +1,6 @@
 'use client';
 
-import { OrderbookKind } from '@0xsequence/api-client';
+import { OrderbookKind, type Address } from '@0xsequence/api-client';
 import {
 	Field,
 	FieldLabel,
@@ -10,7 +10,7 @@ import {
 	Tooltip,
 } from '@0xsequence/design-system';
 import { useEffect, useRef, useState } from 'react';
-import { type Address, formatUnits, parseUnits } from 'viem';
+import { formatUnits, parseUnits, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
@@ -75,9 +75,7 @@ export default function PriceInput({
 	const { data: conversion, isLoading: isConversionLoading } =
 		useConvertPriceToUSD({
 			chainId,
-			currencyAddress:
-				currencyAddress ??
-				('0x0000000000000000000000000000000000000000' as Address),
+			currencyAddress: currencyAddress ?? zeroAddress,
 			amountRaw: priceAmountRaw?.toString(),
 			query: {
 				enabled:

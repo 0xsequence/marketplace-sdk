@@ -1,7 +1,4 @@
-import type {
-	GetCountOfOffersForCollectibleRequest,
-	OrderFilter,
-} from '@0xsequence/api-client';
+import type { GetCountOfOffersForCollectibleRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -11,10 +8,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchCountOffersForCollectibleParams
-	extends GetCountOfOffersForCollectibleRequest {
-	filter?: OrderFilter;
-}
+export type FetchCountOffersForCollectibleParams =
+	GetCountOfOffersForCollectibleRequest;
 
 export type CountOffersForCollectibleQueryOptions =
 	SdkQueryParams<FetchCountOffersForCollectibleParams>;

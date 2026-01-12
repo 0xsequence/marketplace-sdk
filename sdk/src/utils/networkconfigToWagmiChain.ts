@@ -1,5 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import type { NetworkConfig } from '@0xsequence/network';
-import type { Address, Chain } from 'viem';
+import type { Chain } from 'viem';
 
 export const networkToWagmiChain = (network: NetworkConfig): Chain => ({
 	...network,

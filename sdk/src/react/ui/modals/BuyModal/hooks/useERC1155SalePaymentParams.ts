@@ -1,7 +1,7 @@
-import { ContractType } from '@0xsequence/api-client';
+import { ContractType, type Address } from '@0xsequence/api-client';
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import { type Address, encodeFunctionData, type Hex, toHex } from 'viem';
+import { encodeFunctionData, type Hex, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import {
@@ -83,6 +83,7 @@ export const getERC1155SalePaymentParams = async ({
 	onRampProvider,
 	saleAnalyticsId,
 	abi,
+	// eslint-disable-next-line @typescript-eslint/require-await -- Called with await for interface consistency
 }: GetERC1155SalePaymentParams) => {
 	try {
 		const totalPrice = price * BigInt(quantity);
@@ -145,11 +146,17 @@ export const getERC1155SalePaymentParams = async ({
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
-		throw BuyModalErrorFactory.priceCalculation(
+		const buyModalError = BuyModalErrorFactory.priceCalculation(
 			'ERC1155 payment params calculation',
 			[price.toString(), quantity.toString(), tokenId],
 			error instanceof Error ? error.message : 'Unknown error',
 		);
+		// Wrap in Error for proper error handling
+		const wrappedError = new Error(
+			`${buyModalError.type}: ${buyModalError.operation}`,
+		);
+		(wrappedError as Error & { buyModalError: typeof buyModalError }).buyModalError = buyModalError;
+		throw wrappedError;
 	}
 };
 

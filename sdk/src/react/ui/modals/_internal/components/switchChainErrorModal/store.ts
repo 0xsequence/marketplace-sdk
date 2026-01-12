@@ -2,11 +2,11 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { ShowSwitchChainModalArgs } from '.';
 
-export interface SwitchChainErrorModalState {
+export type SwitchChainErrorModalState = {
 	isOpen: boolean;
 	chainIdToSwitchTo: number | undefined;
 	isSwitching: boolean;
-}
+};
 
 const initialContext: SwitchChainErrorModalState = {
 	isOpen: false,

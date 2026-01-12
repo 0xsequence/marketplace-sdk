@@ -57,10 +57,10 @@ function chunkArray<T>(array: T[], size: number): T[][] {
 	return chunks;
 }
 
-export interface FetchListCollectionsParams {
+export type FetchListCollectionsParams = {
 	collectionType?: 'market' | 'shop';
 	marketplaceConfig: MarketplaceConfig;
-}
+};
 
 export type ListCollectionsQueryOptions =
 	SdkQueryParams<FetchListCollectionsParams>;

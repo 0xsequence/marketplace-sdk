@@ -53,24 +53,24 @@ export function spreadWith<TObj, TOverrides>(
 	} as Omit<TObj, keyof TOverrides> & TOverrides;
 }
 
-export interface Page {
+export type Page = {
 	page: number;
 	pageSize: number;
 	more?: boolean;
 	sort?: Array<SortBy>;
-}
+};
 
-export interface SortBy {
+export type SortBy = {
 	column: string;
 	order: 'ASC' | 'DESC';
-}
+};
 
-export interface BuildPageParams {
+export type BuildPageParams = {
 	page?: number;
 	pageSize?: number;
 	more?: boolean;
 	sort?: Array<SortBy>;
-}
+};
 
 export function buildPage(params: BuildPageParams): Page | undefined {
 	// If no pagination params are provided, return undefined

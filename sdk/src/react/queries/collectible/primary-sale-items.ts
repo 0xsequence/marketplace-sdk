@@ -1,8 +1,6 @@
 import type {
 	ListPrimarySaleItemsRequest,
 	ListPrimarySaleItemsResponse,
-	Page,
-	PrimarySaleItemsFilter,
 } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import {
@@ -11,11 +9,7 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchPrimarySaleItemsParams
-	extends Omit<ListPrimarySaleItemsRequest, 'page'> {
-	filter?: PrimarySaleItemsFilter;
-	page?: Page;
-}
+export type FetchPrimarySaleItemsParams = ListPrimarySaleItemsRequest;
 
 export type ListPrimarySaleItemsQueryOptions =
 	SdkInfiniteQueryParams<FetchPrimarySaleItemsParams>;

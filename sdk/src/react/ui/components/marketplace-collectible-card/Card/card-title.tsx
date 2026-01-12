@@ -64,7 +64,12 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 			highestOffer,
 			balance,
 		);
-		const name = typeof children === 'string' ? children : String(children);
+		const name =
+			typeof children === 'string'
+				? children
+				: typeof children === 'number'
+					? String(children)
+					: '';
 
 		const truncateAt = maxLength
 			? collectibleCardOfferState

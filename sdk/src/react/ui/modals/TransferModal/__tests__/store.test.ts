@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { ShowTransferModalArgs } from '../internal/store';
 import { transferModalStore } from '../internal/store';

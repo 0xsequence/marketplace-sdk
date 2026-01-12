@@ -1,4 +1,4 @@
-import type { Address, Hex } from 'viem';
+import type { GetTokenBalancesSdkRequest, IndexerPage } from '@0xsequence/api-client';
 import {
 	buildInfiniteQueryOptions,
 	getIndexerClient,
@@ -9,24 +9,9 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchBalancesParams {
-	chainId: number;
-	accountAddress: Address;
-	contractAddress?: Address;
-	tokenId?: bigint;
-	includeMetadata?: boolean;
-	metadataOptions?: {
-		verifiedOnly?: boolean;
-		unverifiedOnly?: boolean;
-		includeContracts?: Hex[];
-	};
+export type FetchBalancesParams = GetTokenBalancesSdkRequest & {
 	includeCollectionTokens?: boolean;
-	page?: {
-		page?: number;
-		pageSize?: number;
-		more?: boolean;
-	};
-}
+};
 
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
 
@@ -44,7 +29,7 @@ export async function fetchBalances(
 		ListBalancesQueryOptions,
 		'chainId' | 'accountAddress' | 'config'
 	>,
-	page: { page: number; pageSize: number; more?: boolean },
+	page: IndexerPage,
 ) {
 	const {
 		chainId,
@@ -106,8 +91,8 @@ export function listBalancesOptions(
 			getPageInfo: (response) => {
 				if (!response.page) return undefined;
 				return {
-					page: response.page.page,
-					pageSize: response.page.pageSize,
+					page: response.page.page ?? 1,
+					pageSize: response.page.pageSize ?? 30,
 					more: response.page.more ?? false,
 				};
 			},

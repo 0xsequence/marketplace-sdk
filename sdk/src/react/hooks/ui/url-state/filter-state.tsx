@@ -31,25 +31,33 @@ interface IntFilterValues {
 
 type FilterValues = StringFilterValues | IntFilterValues;
 
+const isPropertyFilter = (f: unknown): f is PropertyFilter => {
+	if (typeof f !== 'object' || f === null) return false;
+	const obj = f as Record<string, unknown>;
+	return (
+		typeof obj.name === 'string' &&
+		Object.values(PropertyType).includes(obj.type as PropertyType)
+	);
+};
+
 const validateFilters = (value: unknown): PropertyFilter[] => {
 	if (!Array.isArray(value)) return [];
-	return value.filter(
-		(f): f is PropertyFilter =>
-			typeof f === 'object' &&
-			typeof f.name === 'string' &&
-			Object.values(PropertyType).includes(f.type),
+	return value.filter(isPropertyFilter);
+};
+
+const isUrlPriceFilter = (f: unknown): f is UrlPriceFilter => {
+	if (typeof f !== 'object' || f === null) return false;
+	const obj = f as Record<string, unknown>;
+	return (
+		typeof obj.contractAddress === 'string' &&
+		(obj.min === undefined || typeof obj.min === 'string') &&
+		(obj.max === undefined || typeof obj.max === 'string')
 	);
 };
 
 const validatePriceFilters = (value: unknown): UrlPriceFilter[] => {
 	if (!Array.isArray(value)) return [];
-	return value.filter(
-		(f): f is UrlPriceFilter =>
-			typeof f === 'object' &&
-			typeof f.contractAddress === 'string' &&
-			(f.min === undefined || typeof f.min === 'string') &&
-			(f.max === undefined || typeof f.max === 'string'),
-	);
+	return value.filter(isUrlPriceFilter);
 };
 
 const filtersParser = parseAsJson(validateFilters).withDefault([]);

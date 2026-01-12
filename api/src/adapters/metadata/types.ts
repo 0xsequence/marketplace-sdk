@@ -1,125 +1,114 @@
-// Normalized Metadata Types
+import type {
+	ContractInfo as GenContractInfo,
+	ContractInfoExtensions as GenContractInfoExtensions,
+	ContractInfoExtensionBridgeInfo as GenContractInfoExtensionBridgeInfo,
+	TokenMetadata as GenTokenMetadata,
+	Asset as GenAsset,
+	Page as GenPage,
+	Filter,
+	PropertyFilter,
+	GetContractInfoArgs as GenGetContractInfoArgs,
+	GetContractInfoReturn as GenGetContractInfoReturn,
+	GetContractInfoBatchArgs as GenGetContractInfoBatchArgs,
+	GetContractInfoBatchReturn as GenGetContractInfoBatchReturn,
+	GetTokenMetadataArgs as GenGetTokenMetadataArgs,
+	GetTokenMetadataReturn as GenGetTokenMetadataReturn,
+	GetTokenMetadataBatchArgs as GenGetTokenMetadataBatchArgs,
+	GetTokenMetadataBatchReturn as GenGetTokenMetadataBatchReturn,
+	RefreshTokenMetadataArgs as GenRefreshTokenMetadataArgs,
+	RefreshTokenMetadataReturn as GenRefreshTokenMetadataReturn,
+	SearchTokenMetadataArgs as GenSearchTokenMetadataArgs,
+	SearchTokenMetadataReturn as GenSearchTokenMetadataReturn,
+	GetTokenMetadataPropertyFiltersArgs as GenGetTokenMetadataPropertyFiltersArgs,
+	GetTokenMetadataPropertyFiltersReturn as GenGetTokenMetadataPropertyFiltersReturn,
+} from '@0xsequence/metadata';
 
-import type { ContractType } from '@0xsequence/indexer';
-import type { Filter, PropertyFilter } from '@0xsequence/metadata';
 import type { Address, ChainId, TokenId } from '../../types/primitives';
+
 export type { Filter, PropertyFilter };
 
-export interface ContractInfo {
-	chainId: ChainId;
-	address: Address;
-	source: string;
-	name: string;
-	type: ContractType;
-	symbol: string;
-	decimals?: number;
-	logoURI: string;
-	deployed: boolean;
-	bytecodeHash: string;
-	extensions: ContractInfoExtensions;
-	updatedAt: string;
-	queuedAt?: string;
-	status: string;
-}
+export type ContractInfoExtensionBridgeInfo = Omit<
+	GenContractInfoExtensionBridgeInfo,
+	'tokenAddress'
+> & {
+	tokenAddress: Address;
+};
 
-export interface ContractInfoExtensions {
-	link?: string;
-	description?: string;
-	categories?: string[];
+export type ContractInfoExtensions = Omit<
+	GenContractInfoExtensions,
+	'originChainId' | 'originAddress' | 'bridgeInfo'
+> & {
+	originChainId?: ChainId;
+	originAddress?: Address;
 	bridgeInfo?: {
 		[key: string]: ContractInfoExtensionBridgeInfo;
 	};
-	ogImage?: string;
-	ogName?: string;
-	originChainId?: ChainId;
-	originAddress?: Address;
-	blacklist?: boolean;
-	verified?: boolean;
-	verifiedBy?: string;
-	featured?: boolean;
-	featureIndex?: number;
-}
+};
 
-export interface ContractInfoExtensionBridgeInfo {
-	tokenAddress: Address;
-}
+export type ContractInfo = Omit<
+	GenContractInfo,
+	'chainId' | 'address' | 'extensions'
+> & {
+	chainId: ChainId;
+	address: Address;
+	extensions: ContractInfoExtensions;
+};
 
-export interface TokenMetadata {
+export type Asset = Omit<GenAsset, 'tokenId'> & {
+	tokenId?: TokenId;
+};
+
+export type TokenMetadata = Omit<
+	GenTokenMetadata,
+	'chainId' | 'contractAddress' | 'tokenId' | 'assets'
+> & {
 	chainId?: ChainId;
 	contractAddress?: Address;
 	tokenId: TokenId;
-	source: string;
-	name: string;
-	description?: string;
-	image?: string;
-	video?: string;
-	audio?: string;
-	properties?: {
-		[key: string]: unknown;
-	};
-	attributes: Array<{
-		[key: string]: unknown;
-	}>;
-	image_data?: string;
-	external_url?: string;
-	background_color?: string;
-	animation_url?: string;
-	decimals?: number;
-	updatedAt?: string;
 	assets?: Asset[];
-	status: string;
-	queuedAt?: string;
-	lastFetched?: string;
-}
+};
 
-export interface Asset {
-	id: number;
-	collectionId: number;
-	tokenId?: TokenId;
-	url?: string;
-	metadataField: string;
-	name?: string;
-	filesize?: number;
-	mimeType?: string;
-	width?: number;
-	height?: number;
-	updatedAt?: string;
-}
+export type Page = GenPage;
 
-export interface Page {
-	page?: number;
-	column?: string;
-	before?: unknown;
-	after?: unknown;
-	pageSize?: number;
-	more?: boolean;
-}
-
-export type GetContractInfoArgs = {
+export type GetContractInfoArgs = Omit<
+	GenGetContractInfoArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
 	| { collectionAddress: string; contractAddress?: never }
 );
 
-export interface GetContractInfoReturn {
+export type GetContractInfoReturn = Omit<
+	GenGetContractInfoReturn,
+	'contractInfo'
+> & {
 	contractInfo: ContractInfo;
 	taskID?: number;
-}
+};
 
-export interface GetContractInfoBatchArgs {
+export type GetContractInfoBatchArgs = Omit<
+	GenGetContractInfoBatchArgs,
+	'chainID'
+> & {
 	chainId: ChainId;
-	contractAddresses: string[];
-}
+};
 
-export interface GetContractInfoBatchReturn {
+export type GetContractInfoBatchReturn = Omit<
+	GenGetContractInfoBatchReturn,
+	'contractInfoMap'
+> & {
 	contractInfoMap: {
 		[key: string]: ContractInfo;
 	};
 	taskID?: number;
-}
+};
 
-export type GetTokenMetadataArgs = {
+export type GetTokenMetadataArgs = Omit<
+	GenGetTokenMetadataArgs,
+	'chainID' | 'contractAddress' | 'tokenIDs'
+> & {
 	chainId: ChainId;
 	tokenIds: TokenId[];
 } & (
@@ -127,26 +116,38 @@ export type GetTokenMetadataArgs = {
 	| { collectionAddress: string; contractAddress?: never }
 );
 
-export interface GetTokenMetadataReturn {
+export type GetTokenMetadataReturn = Omit<
+	GenGetTokenMetadataReturn,
+	'tokenMetadata'
+> & {
 	tokenMetadata: TokenMetadata[];
 	taskID?: number;
-}
+};
 
-export interface GetTokenMetadataBatchArgs {
+export type GetTokenMetadataBatchArgs = Omit<
+	GenGetTokenMetadataBatchArgs,
+	'chainID' | 'contractTokenMap'
+> & {
 	chainId: ChainId;
 	contractTokenMap: {
 		[key: string]: TokenId[];
 	};
-}
+};
 
-export interface GetTokenMetadataBatchReturn {
+export type GetTokenMetadataBatchReturn = Omit<
+	GenGetTokenMetadataBatchReturn,
+	'contractTokenMetadata'
+> & {
 	contractTokenMetadata: {
 		[key: string]: TokenMetadata[];
 	};
 	taskID?: number;
-}
+};
 
-export type RefreshTokenMetadataArgs = {
+export type RefreshTokenMetadataArgs = Omit<
+	GenRefreshTokenMetadataArgs,
+	'chainID' | 'contractAddress' | 'tokenIDs'
+> & {
 	chainId: ChainId;
 	tokenIds?: TokenId[];
 	refreshAll?: boolean;
@@ -155,33 +156,77 @@ export type RefreshTokenMetadataArgs = {
 	| { collectionAddress: string; contractAddress?: never }
 );
 
-export interface RefreshTokenMetadataReturn {
-	taskID: number;
-}
+export type RefreshTokenMetadataReturn = GenRefreshTokenMetadataReturn;
 
-export type SearchTokenMetadataArgs = {
+export type SearchTokenMetadataArgs = Omit<
+	GenSearchTokenMetadataArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
-	filter: Filter;
-	page?: Page;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
 	| { collectionAddress: string; contractAddress?: never }
 );
 
-export interface SearchTokenMetadataReturn {
+export type SearchTokenMetadataReturn = Omit<
+	GenSearchTokenMetadataReturn,
+	'tokenMetadata'
+> & {
 	page: Page;
 	tokenMetadata: TokenMetadata[];
-}
+};
 
-export type GetTokenMetadataPropertyFiltersArgs = {
+export type GetTokenMetadataPropertyFiltersArgs = Omit<
+	GenGetTokenMetadataPropertyFiltersArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
-	excludeProperties: Array<string>;
-	excludePropertyValues?: boolean;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
 	| { collectionAddress: string; contractAddress?: never }
 );
 
-export interface GetTokenMetadataPropertyFiltersReturn {
-	filters: Array<PropertyFilter>;
-}
+export type GetTokenMetadataPropertyFiltersReturn =
+	GenGetTokenMetadataPropertyFiltersReturn;
+
+export type GetSingleTokenMetadataArgs = Omit<
+	GetTokenMetadataArgs,
+	'tokenIds' | 'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+	tokenId: TokenId;
+};
+
+export type GetFiltersArgs = Omit<
+	GetTokenMetadataPropertyFiltersArgs,
+	'excludeProperties' | 'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+	showAllFilters?: boolean;
+};
+
+export type GetContractInfoSdkArgs = Omit<
+	GetContractInfoArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};
+
+export type GetTokenMetadataSdkArgs = Omit<
+	GetTokenMetadataArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};
+
+export type SearchTokenMetadataSdkArgs = Omit<
+	SearchTokenMetadataArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};

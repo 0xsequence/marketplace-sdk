@@ -1,10 +1,10 @@
-import type { Step } from '@0xsequence/api-client';
+import type { Address, Step } from '@0xsequence/api-client';
 import type {
 	SelectPaymentSettings,
 	TransactionOnRampProvider,
 } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { StepType } from '../../../../../../../../api/src/adapters/marketplace/marketplace.gen';
 import type { CheckoutMode, MarketplaceKind } from '../../../../../../types';
@@ -57,6 +57,7 @@ export const getBuyCollectableParams = async ({
 	checkoutMode,
 	steps,
 	marketplaceType,
+	// eslint-disable-next-line @typescript-eslint/require-await -- Called with await for interface consistency
 }: GetBuyCollectableParams) => {
 	const checkoutOptions =
 		typeof checkoutMode === 'object' ? checkoutMode.options : undefined;
@@ -118,7 +119,7 @@ export const getBuyCollectableParams = async ({
 		nativeTokenAddress,
 		...(customCreditCardProviderCallback && {
 			customProviderCallback: () => {
-				customCreditCardProviderCallback(buyStep as Step);
+				customCreditCardProviderCallback(buyStep);
 				buyModalStore.send({ type: 'close' });
 			},
 		}),

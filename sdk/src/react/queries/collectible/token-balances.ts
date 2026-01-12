@@ -1,5 +1,4 @@
-import { ContractVerificationStatus } from '@0xsequence/indexer';
-import type { Address } from 'viem';
+import type { GetUserCollectionBalancesRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -10,22 +9,13 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchTokenBalancesParams {
-	collectionAddress: Address;
-	userAddress: Address;
+export type FetchTokenBalancesParams = GetUserCollectionBalancesRequest & {
 	chainId: number;
-	includeMetadata?: boolean;
-}
+};
 
 export type TokenBalancesQueryOptions =
 	SdkQueryParams<FetchTokenBalancesParams>;
 
-/**
- * Fetches the token balances for a user
- *
- * @param params - Parameters for the API call
- * @returns The balance data
- */
 export async function fetchTokenBalances(
 	params: WithRequired<
 		TokenBalancesQueryOptions,
@@ -35,16 +25,11 @@ export async function fetchTokenBalances(
 	const { chainId, userAddress, collectionAddress, includeMetadata, config } =
 		params;
 	const indexerClient = getIndexerClient(chainId, config);
-	return indexerClient
-		.getTokenBalancesByContract({
-			filter: {
-				accountAddresses: [userAddress],
-				contractAddresses: [collectionAddress],
-				contractStatus: ContractVerificationStatus.VERIFIED,
-			},
-			omitMetadata: !includeMetadata,
-		})
-		.then((res) => res.balances || []);
+	return indexerClient.getUserCollectionBalances({
+		userAddress,
+		collectionAddress,
+		includeMetadata,
+	});
 }
 
 export function getTokenBalancesQueryKey(params: TokenBalancesQueryOptions) {

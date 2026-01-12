@@ -1,21 +1,21 @@
 import { ContractType } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 
-export interface ShopCardStateParams {
+export type ShopCardStateParams = {
 	quantityRemaining?: bigint;
 	quantityInitial?: bigint;
 	unlimitedSupply?: boolean;
 	collectionType?: ContractType;
 	salesContractAddress?: Address;
-}
+};
 
-export interface ShopCardState {
+export type ShopCardState = {
 	isOutOfStock: boolean;
 	isMissingStockInfo: boolean;
 	showActionButton: boolean;
 	mediaClassName: string;
 	titleClassName: string | undefined;
-}
+};
 
 /**
  * Calculates the display state for a shop card based on stock availability

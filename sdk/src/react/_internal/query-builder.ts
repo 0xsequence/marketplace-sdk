@@ -9,15 +9,15 @@ import type {
 	StandardQueryOptions,
 } from '../types/query';
 
-export interface BaseQueryParams {
+export type BaseQueryParams = {
 	config: SdkConfig;
 	query?: StandardQueryOptions;
-}
+};
 
-export interface BaseInfiniteQueryParams {
+export type BaseInfiniteQueryParams = {
 	config: SdkConfig;
 	query?: StandardInfiniteQueryOptions;
-}
+};
 
 export type RequiredKeys<T> = {
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -43,28 +43,29 @@ export type EnsureAllRequiredKeys<
 	TKeys extends ReadonlyArray<RequiredKeys<TParams>>,
 > = RequiredKeys<TParams> extends TKeys[number] ? TKeys : never;
 
-export interface QueryBuilderConfig<TParams extends BaseQueryParams, TData> {
-	getQueryKey: (params: WithOptionalParams<TParams>) => QueryKey;
-	/**
-	 * Type-safe: Must include ALL required keys from TParams
-	 * Example: ['chainId', 'collectionAddress', 'tokenId', 'config']
-	 */
-	requiredParams: EnsureAllRequiredKeys<
-		TParams,
-		ReadonlyArray<RequiredKeys<TParams>>
-	>;
-	fetcher: (params: TParams) => Promise<TData>;
-	/**
-	 * Optional custom validation beyond truthiness checks
-	 * Example: (params) => (params.orders?.length ?? 0) > 0
-	 */
-	customValidation?: (params: WithOptionalParams<TParams>) => boolean;
-}
+export type QueryBuilderConfig<TParams extends BaseQueryParams, TData> =
+	{
+		getQueryKey: (params: WithOptionalParams<TParams>) => QueryKey;
+		/**
+		 * Type-safe: Must include ALL required keys from TParams
+		 * Example: ['chainId', 'collectionAddress', 'tokenId', 'config']
+		 */
+		requiredParams: EnsureAllRequiredKeys<
+			TParams,
+			ReadonlyArray<RequiredKeys<TParams>>
+		>;
+		fetcher: (params: TParams) => Promise<TData>;
+		/**
+		 * Optional custom validation beyond truthiness checks
+		 * Example: (params) => (params.orders?.length ?? 0) > 0
+		 */
+		customValidation?: (params: WithOptionalParams<TParams>) => boolean;
+	};
 
-export interface InfiniteQueryBuilderConfig<
+export type InfiniteQueryBuilderConfig<
 	TParams extends BaseInfiniteQueryParams,
 	TResponse,
-> {
+> = {
 	getQueryKey: (params: WithOptionalInfiniteParams<TParams>) => QueryKey;
 	/**
 	 * Type-safe: Must include ALL required keys from TParams
@@ -81,7 +82,7 @@ export interface InfiniteQueryBuilderConfig<
 	 * Example: (params) => (params.orders?.length ?? 0) > 0
 	 */
 	customValidation?: (params: WithOptionalInfiniteParams<TParams>) => boolean;
-}
+};
 
 export type WithOptionalParams<T extends BaseQueryParams> = {
 	[K in keyof T]?: T[K];

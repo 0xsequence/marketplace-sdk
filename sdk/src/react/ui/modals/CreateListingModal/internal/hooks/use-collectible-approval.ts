@@ -1,15 +1,16 @@
 import { ContractType } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ERC721_ABI, ERC1155_ABI } from '../../../../../../utils/abi';
 
-export interface UseCollectibleApprovalArgs {
+export type UseCollectibleApprovalArgs = {
 	collectionAddress: Address | undefined;
 	spenderAddress: Address | undefined;
 	chainId: number;
 	contractType: ContractType | undefined;
 	enabled?: boolean;
-}
+};
 
 export function useCollectibleApproval({
 	collectionAddress,
@@ -34,7 +35,7 @@ export function useCollectibleApproval({
 		address: collectionAddress,
 		abi,
 		functionName: 'isApprovedForAll',
-		args: [ownerAddress!, spenderAddress!],
+		args: [ownerAddress ?? zeroAddress, spenderAddress ?? zeroAddress],
 		chainId,
 		query: {
 			enabled: isEnabled,
@@ -42,7 +43,7 @@ export function useCollectibleApproval({
 	});
 
 	return {
-		isApproved: isApproved as boolean | undefined,
+		isApproved,
 		...rest,
 	};
 }

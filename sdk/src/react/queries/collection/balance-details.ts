@@ -1,5 +1,9 @@
-import type { Indexer } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type {
+	ChainId,
+	GetTokenBalancesDetailsRequest,
+	Indexer,
+	TokenBalancesFilter,
+} from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getIndexerClient,
@@ -9,16 +13,11 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface CollectionBalanceFilter {
-	accountAddresses: Array<Address>;
-	contractWhitelist?: Array<Address>;
-	omitNativeBalances: boolean;
-}
+export type CollectionBalanceFilter = TokenBalancesFilter;
 
-export interface FetchCollectionBalanceDetailsParams {
-	chainId: number;
-	filter: CollectionBalanceFilter;
-}
+export type FetchCollectionBalanceDetailsParams = GetTokenBalancesDetailsRequest & {
+	chainId: ChainId;
+};
 
 export type CollectionBalanceDetailsQueryOptions =
 	SdkQueryParams<FetchCollectionBalanceDetailsParams>;

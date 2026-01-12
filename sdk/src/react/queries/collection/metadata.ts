@@ -1,4 +1,4 @@
-import type { Address } from '@0xsequence/api-client';
+import type { GetContractInfoSdkArgs } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -9,10 +9,7 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export interface FetchCollectionParams {
-	chainId: number;
-	collectionAddress: Address;
-}
+export type FetchCollectionParams = GetContractInfoSdkArgs;
 
 export type CollectionQueryOptions = SdkQueryParams<FetchCollectionParams>;
 

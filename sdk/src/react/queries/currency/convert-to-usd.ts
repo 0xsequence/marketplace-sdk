@@ -1,4 +1,5 @@
-import { type Address, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
+import type { Address, ChainId } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type Currency,
@@ -9,16 +10,16 @@ import {
 } from '../../_internal';
 import { marketCurrenciesQueryOptions } from './list';
 
-export interface FetchConvertPriceToUSDParams {
-	chainId: number;
+export type FetchConvertPriceToUSDParams = {
+	chainId: ChainId;
 	currencyAddress: Address;
 	amountRaw: string;
-}
+};
 
-export interface ConvertPriceToUSDReturn {
+export type ConvertPriceToUSDReturn = {
 	usdAmount: number;
 	usdAmountFormatted: string;
-}
+};
 
 export type ConvertPriceToUSDQueryOptions =
 	SdkQueryParams<FetchConvertPriceToUSDParams>;

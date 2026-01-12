@@ -1,7 +1,8 @@
+import type { Address } from '@0xsequence/api-client';
 import type { QueryKey } from '@tanstack/react-query';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address, Hex } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 import type { Price } from '../../../../../../types';
 import type { TransactionType } from '../../../../../_internal/types';
 import type { ShowTransactionStatusModalArgs } from '.';
@@ -35,7 +36,7 @@ const initialContext: TransactionStatusModalContext = {
 	status: 'PENDING',
 	transactionType: undefined,
 	price: undefined,
-	collectionAddress: '0x0000000000000000000000000000000000000000',
+	collectionAddress: zeroAddress,
 	chainId: 0,
 	tokenId: 0n,
 	queriesToInvalidate: [],

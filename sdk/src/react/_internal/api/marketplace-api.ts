@@ -42,6 +42,7 @@ export class SequenceMarketplace extends MarketplaceClient {
 				const originalMethod = target[prop as keyof typeof target];
 				if (typeof originalMethod === 'function') {
 					// biome-ignore lint/suspicious/noExplicitAny: Required for proxy wrapper to handle any query key method signature
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Required for proxy wrapper to handle any query key method signature
 					return (req: any) => {
 						const result = originalMethod(req);
 						// Query keys from the RPC client are tuples like ["Marketplace", "methodName", params]

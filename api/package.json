@@ -33,7 +33,9 @@
 		"build": "tsdown",
 		"check": "tsc --noEmit",
 		"lint": "biome lint --write .",
-		"format": "biome format --write ."
+		"format": "biome format --write .",
+		"eslint": "eslint .",
+		"eslint:fix": "eslint --fix ."
 	},
 	"dependencies": {
 		"viem": "catalog:"
@@ -45,8 +47,11 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
+		"@eslint/js": "catalog:",
+		"eslint": "catalog:",
 		"msw": "^2.12.4",
 		"tsdown": "0.17.0-beta.6",
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"typescript-eslint": "catalog:"
 	}
 }

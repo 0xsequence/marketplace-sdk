@@ -13,11 +13,8 @@ import {
 } from '../../_internal';
 import { createCollectionQueryKey } from './queryKeys';
 
-export type FetchListItemsOrdersForCollectionParams =
-	ListOrdersWithCollectiblesRequest;
-
 export type ListItemsOrdersForCollectionQueryOptions =
-	SdkInfiniteQueryParams<FetchListItemsOrdersForCollectionParams>;
+	SdkInfiniteQueryParams<ListOrdersWithCollectiblesRequest>;
 
 export async function fetchListItemsOrdersForCollection(
 	params: WithRequired<

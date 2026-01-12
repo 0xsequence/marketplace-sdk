@@ -77,11 +77,11 @@ export const PriceDisplay = ({
 				/>
 			)}
 
-			{isFree ? (
-				<Text className="font-bold text-sm text-text-100">Free</Text>
-			) : (
-				formatPrice(amount!, currency!, className)
-			)}
+		{isFree ? (
+			<Text className="font-bold text-sm text-text-100">Free</Text>
+		) : amount !== undefined && currency !== undefined ? (
+			formatPrice(amount, currency, className)
+		) : null}
 		</div>
 	);
 };

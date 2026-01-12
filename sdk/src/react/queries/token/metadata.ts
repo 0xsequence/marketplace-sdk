@@ -1,5 +1,7 @@
-import type { GetTokenMetadataArgs } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import type {
+	GetTokenMetadataSdkArgs,
+	TokenMetadata,
+} from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -9,11 +11,7 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchListTokenMetadataParams {
-	chainId: number;
-	contractAddress: Address;
-	tokenIds: bigint[];
-}
+export type FetchListTokenMetadataParams = GetTokenMetadataSdkArgs;
 
 export type ListTokenMetadataQueryOptions =
 	SdkQueryParams<FetchListTokenMetadataParams>;
@@ -26,11 +24,11 @@ export async function fetchListTokenMetadata(
 		ListTokenMetadataQueryOptions,
 		'chainId' | 'contractAddress' | 'tokenIds' | 'config'
 	>,
-) {
+): Promise<TokenMetadata[]> {
 	const { config, contractAddress, chainId, tokenIds } = params;
 	const metadataClient = getMetadataClient(config);
 
-	const apiArgs: GetTokenMetadataArgs = {
+	const apiArgs = {
 		chainId,
 		tokenIds,
 		contractAddress,

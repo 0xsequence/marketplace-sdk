@@ -1,7 +1,7 @@
 import { type ContractType, OrderbookKind } from '@0xsequence/api-client';
 import type { Dnum } from 'dnum';
 import { useMemo } from 'react';
-import type { Address } from 'viem';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
@@ -150,9 +150,7 @@ export function useCreateListingModalContext() {
 				tokenId: state.tokenId,
 				quantity: quantityRaw,
 				expiry: dateToUnixTime(expiryDate).toString(),
-				currencyAddress:
-					selectedCurrency?.contractAddress ??
-					('0x0000000000000000000000000000000000000000' as Address),
+				currencyAddress: selectedCurrency?.contractAddress ?? zeroAddress,
 				pricePerToken: priceRaw,
 			},
 			currencyDecimals: selectedCurrency?.decimals ?? 18,

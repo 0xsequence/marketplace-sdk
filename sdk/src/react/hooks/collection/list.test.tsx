@@ -3,7 +3,7 @@ import * as BuilderMocks from '@0xsequence/api-client/mocks/builder';
 import * as MetadataMocks from '@0xsequence/api-client/mocks/metadata';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { describe, expect, it } from 'vitest';
 
 const { createLookupMarketplaceHandler, mockConfig } = BuilderMocks;
