@@ -5,17 +5,22 @@ import {
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
-import { fetchConvertPriceToUSD } from './convert-to-usd';
+import {
+	fetchConvertPriceToUSD,
+	type FetchConvertPriceToUSDParams,
+} from './convert-to-usd';
 
-export interface FetchComparePricesParams {
-	chainId: number;
+export type FetchComparePricesParams = Pick<
+	FetchConvertPriceToUSDParams,
+	'chainId'
+> & {
 	// First price details
 	priceAmountRaw: string;
 	priceCurrencyAddress: Address;
 	// Second price details (to compare against)
 	compareToPriceAmountRaw: string;
 	compareToPriceCurrencyAddress: Address;
-}
+};
 
 export type ComparePricesReturn = {
 	percentageDifference: number;

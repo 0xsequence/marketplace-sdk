@@ -10,16 +10,16 @@ import {
 } from '../../_internal';
 import { marketCurrenciesQueryOptions } from './list';
 
-export interface FetchConvertPriceToUSDParams {
+export type FetchConvertPriceToUSDParams = {
 	chainId: number;
 	currencyAddress: Address;
 	amountRaw: string;
-}
+};
 
-export interface ConvertPriceToUSDReturn {
+export type ConvertPriceToUSDReturn = {
 	usdAmount: number;
 	usdAmountFormatted: string;
-}
+};
 
 export type ConvertPriceToUSDQueryOptions =
 	SdkQueryParams<FetchConvertPriceToUSDParams>;
