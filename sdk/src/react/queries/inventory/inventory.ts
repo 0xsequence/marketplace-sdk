@@ -1,9 +1,10 @@
 import type {
+	ChainId,
+	GetUserCollectionBalancesRequest,
 	IndexerTokenBalance as TokenBalance,
 	IndexerTokenMetadata,
 } from '@0xsequence/api-client';
 import { ContractType, MetadataStatus } from '@0xsequence/api-client';
-import type { Address } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
@@ -17,10 +18,8 @@ import {
 import { tokenBalancesOptions } from '../collectible/token-balances';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
-export type FetchInventoryParams = {
-	accountAddress: Address;
-	collectionAddress: Address;
-	chainId: number;
+export type FetchInventoryParams = GetUserCollectionBalancesRequest & {
+	chainId: ChainId;
 	includeNonTradable?: boolean;
 	page?: number;
 	pageSize?: number;
@@ -84,15 +83,15 @@ function collectibleFromTokenBalance(
 async function fetchIndexerTokens(
 	params: WithRequired<
 		InventoryQueryOptions,
-		'chainId' | 'accountAddress' | 'collectionAddress' | 'config'
+		'chainId' | 'userAddress' | 'collectionAddress' | 'config'
 	>,
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
-	const { chainId, accountAddress, collectionAddress, config } = params;
+	const { chainId, userAddress, collectionAddress, config } = params;
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
 		tokenBalancesOptions({
 			collectionAddress,
-			userAddress: accountAddress,
+			userAddress,
 			chainId,
 			includeMetadata: true,
 			config,
@@ -125,11 +124,11 @@ export type UseInventoryArgs = Omit<InventoryQueryOptions, 'config'> & {
 export async function fetchInventory(
 	params: WithRequired<
 		InventoryQueryOptions,
-		'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+		'userAddress' | 'collectionAddress' | 'chainId' | 'config'
 	>,
 ): Promise<CollectiblesResponse> {
 	const {
-		accountAddress,
+		userAddress,
 		collectionAddress,
 		chainId,
 		config,
@@ -150,7 +149,7 @@ export async function fetchInventory(
 	// Fetch collectibles from indexer
 	const { collectibles } = await fetchIndexerTokens({
 		chainId,
-		accountAddress,
+		userAddress,
 		collectionAddress,
 		config,
 	});
@@ -168,7 +167,7 @@ export async function fetchInventory(
 export function getInventoryQueryKey(params: InventoryQueryOptions) {
 	return [
 		'inventory',
-		params.accountAddress,
+		params.userAddress,
 		params.collectionAddress,
 		params.chainId,
 		params.page ?? 1,
@@ -180,7 +179,7 @@ export function inventoryOptions(
 	params: WithOptionalParams<
 		WithRequired<
 			InventoryQueryOptions,
-			'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+			'userAddress' | 'collectionAddress' | 'chainId' | 'config'
 		>
 	>,
 ) {
@@ -188,7 +187,7 @@ export function inventoryOptions(
 		{
 			getQueryKey: getInventoryQueryKey,
 			requiredParams: [
-				'accountAddress',
+				'userAddress',
 				'collectionAddress',
 				'chainId',
 				'config',
