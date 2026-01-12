@@ -95,17 +95,7 @@ export class IndexerClient {
 		args: IndexerGen.GetTokenBalancesDetailsArgs,
 	): Promise<Normalized.GetTokenBalancesDetailsResponse> {
 		const rawResponse = await this.client.getTokenBalancesDetails(args);
-		return {
-			page: transforms.toPage(rawResponse.page) || {
-				page: 0,
-				pageSize: 0,
-				more: false,
-			},
-			nativeBalances: (rawResponse.nativeBalances || []).map(
-				transforms.toNativeTokenBalance,
-			),
-			balances: rawResponse.balances.map(transforms.toTokenBalance),
-		};
+		return transforms.toGetTokenBalancesDetailsResponse(rawResponse);
 	}
 
 	/**
@@ -115,14 +105,7 @@ export class IndexerClient {
 		args: IndexerGen.GetTokenBalancesByContractArgs,
 	): Promise<Normalized.GetTokenBalancesByContractResponse> {
 		const rawResponse = await this.client.getTokenBalancesByContract(args);
-		return {
-			page: transforms.toPage(rawResponse.page) || {
-				page: 0,
-				pageSize: 0,
-				more: false,
-			},
-			balances: rawResponse.balances.map(transforms.toTokenBalance),
-		};
+		return transforms.toGetTokenBalancesByContractResponse(rawResponse);
 	}
 
 	/**
@@ -144,9 +127,7 @@ export class IndexerClient {
 		args: IndexerGen.GetNativeTokenBalanceArgs,
 	): Promise<Normalized.GetNativeTokenBalanceResponse> {
 		const rawResponse = await this.client.getNativeTokenBalance(args);
-		return {
-			balance: transforms.toNativeTokenBalance(rawResponse.balance),
-		};
+		return transforms.toGetNativeTokenBalanceResponse(rawResponse);
 	}
 
 	/**

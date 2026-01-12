@@ -16,7 +16,11 @@ import type {
 	GetTokenBalancesDetailsArgs as GenGetTokenBalancesDetailsArgs,
 	GetTokenBalancesByContractReturn as GenGetTokenBalancesByContractReturn,
 	GetTokenBalancesByContractArgs as GenGetTokenBalancesByContractArgs,
+	GetTokenBalancesArgs as GenGetTokenBalancesArgs,
+	GetTokenSuppliesArgs as GenGetTokenSuppliesArgs,
+	GetTokenIDRangesArgs as GenGetTokenIDRangesArgs,
 	GetNativeTokenBalanceReturn as GenGetNativeTokenBalanceReturn,
+	MetadataOptions as GenMetadataOptions,
 	TokenBalancesFilter as GenTokenBalancesFilter,
 	TokenBalancesByContractFilter as GenTokenBalancesByContractFilter,
 } from '@0xsequence/indexer';
@@ -87,15 +91,15 @@ export type TransactionLog = Omit<
 	logIndex: number;
 };
 
-export type TransactionReceipt = Pick<
+export type TransactionReceipt = Omit<
 	GenTransactionReceipt,
-	'txnHash' | 'blockHash' | 'blockNumber' | 'txnIndex' | 'gasUsed'
+	'effectiveGasPrice' | 'from' | 'to' | 'logs'
 > & {
 	chainId?: ChainId;
 	from?: Address;
 	to?: Address;
-	effectiveGasPrice?: Amount;
-	logs?: TransactionLog[];
+	effectiveGasPrice: Amount;
+	logs: TransactionLog[];
 };
 
 export type TokenIDRange = Omit<GenTokenIDRange, 'start' | 'end'> & {
@@ -105,17 +109,17 @@ export type TokenIDRange = Omit<GenTokenIDRange, 'start' | 'end'> & {
 
 export type Page = GenPage;
 
-export type GetTokenBalancesRequest = Pick<GenTokenBalance, never> & {
+export type MetadataOptions = Omit<GenMetadataOptions, 'includeContracts'> & {
+	includeContracts?: Array<Address>;
+};
+
+export type GetTokenBalancesRequest = Omit<
+	GenGetTokenBalancesArgs,
+	'accountAddress' | 'contractAddress' | 'tokenID' | 'page' | 'metadataOptions'
+> & {
 	tokenId?: TokenId;
-	includeMetadata?: boolean;
-	metadataOptions?: {
-		verifiedOnly?: boolean;
-	};
-	page?: {
-		page?: number;
-		pageSize?: number;
-		more?: boolean;
-	};
+	metadataOptions?: MetadataOptions;
+	page?: Page;
 } & (
 	| { accountAddress: Address; userAddress?: never }
 	| { userAddress: Address; accountAddress?: never }
@@ -124,43 +128,50 @@ export type GetTokenBalancesRequest = Pick<GenTokenBalance, never> & {
 	| { collectionAddress?: Address; contractAddress?: never }
 );
 
-export type GetTokenBalancesResponse = Pick<GenGetTokenBalancesReturn, never> & {
+export type GetTokenBalancesResponse = Omit<
+	GenGetTokenBalancesReturn,
+	'balances' | 'page'
+> & {
 	balances: TokenBalance[];
-	page?: Page;
+	page: Page;
 };
 
-export type GetTokenSuppliesRequest = Pick<GenTokenSupply, never> & {
-	includeMetadata?: boolean;
-	metadataOptions?: {
-		verifiedOnly?: boolean;
-	};
-	page?: {
-		page?: number;
-		pageSize?: number;
-		more?: boolean;
-	};
+export type GetTokenSuppliesRequest = Omit<
+	GenGetTokenSuppliesArgs,
+	'contractAddress' | 'page' | 'metadataOptions'
+> & {
+	metadataOptions?: MetadataOptions;
+	page?: Page;
 } & (
 	| { contractAddress: Address; collectionAddress?: never }
 	| { collectionAddress: Address; contractAddress?: never }
 );
 
-export type GetTokenSuppliesResponse = Pick<
+export type GetTokenSuppliesResponse = Omit<
 	GenGetTokenSuppliesReturn,
-	'contractType'
+	'page' | 'tokenIDs'
 > & {
 	contractAddress: Address;
+	tokenIDs: TokenSupply[];
 	supplies: TokenSupply[];
-	page?: Page;
+	page: Page;
 };
 
-export type GetTokenIDRangesRequest = Pick<GenTokenIDRange, never> &
+export type GetTokenIDRangesRequest = Omit<
+	GenGetTokenIDRangesArgs,
+	'contractAddress'
+> &
 	(
 		| { contractAddress: Address; collectionAddress?: never }
 		| { collectionAddress: Address; contractAddress?: never }
 	);
 
-export type GetTokenIDRangesResponse = Pick<GenGetTokenIDRangesReturn, never> & {
-	contractAddress: string;
+export type GetTokenIDRangesResponse = Omit<
+	GenGetTokenIDRangesReturn,
+	'tokenIDRanges'
+> & {
+	contractAddress: Address;
+	tokenIDRanges: TokenIDRange[];
 	ranges: TokenIDRange[];
 };
 
@@ -173,18 +184,18 @@ export type NativeTokenBalance = Omit<
 	balance: Amount;
 };
 
-export type GetTokenBalancesDetailsResponse = Pick<
+export type GetTokenBalancesDetailsResponse = Omit<
 	GenGetTokenBalancesDetailsReturn,
-	never
+	'page' | 'nativeBalances' | 'balances'
 > & {
 	page: Page;
 	nativeBalances: NativeTokenBalance[];
 	balances: TokenBalance[];
 };
 
-export type GetTokenBalancesByContractResponse = Pick<
+export type GetTokenBalancesByContractResponse = Omit<
 	GenGetTokenBalancesByContractReturn,
-	never
+	'page' | 'balances'
 > & {
 	page: Page;
 	balances: TokenBalance[];
@@ -230,9 +241,9 @@ export type GetTokenBalancesDetailsRequest = Omit<
 	filter: TokenBalancesFilter;
 };
 
-export type GetNativeTokenBalanceResponse = Pick<
+export type GetNativeTokenBalanceResponse = Omit<
 	GenGetNativeTokenBalanceReturn,
-	never
+	'balance'
 > & {
 	balance: NativeTokenBalance;
 };
