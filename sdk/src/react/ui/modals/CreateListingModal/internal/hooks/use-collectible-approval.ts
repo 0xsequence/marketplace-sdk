@@ -4,13 +4,13 @@ import { zeroAddress } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ERC721_ABI, ERC1155_ABI } from '../../../../../../utils/abi';
 
-export interface UseCollectibleApprovalArgs {
+export type UseCollectibleApprovalArgs = {
 	collectionAddress: Address | undefined;
 	spenderAddress: Address | undefined;
 	chainId: number;
 	contractType: ContractType | undefined;
 	enabled?: boolean;
-}
+};
 
 export function useCollectibleApproval({
 	collectionAddress,

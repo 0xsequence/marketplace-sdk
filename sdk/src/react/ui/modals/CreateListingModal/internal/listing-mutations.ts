@@ -32,15 +32,15 @@ export type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
-export interface ListingParams {
+export type ListingParams = {
 	tokenId: bigint;
 	quantity: bigint;
 	expiry: string;
 	currencyAddress: Address;
 	pricePerToken: bigint;
-}
+};
 
-export interface UseListingMutationsArgs {
+export type UseListingMutationsArgs = {
 	chainId: number;
 	collectionAddress: Address;
 	contractType: ContractType | undefined;
@@ -49,7 +49,7 @@ export interface UseListingMutationsArgs {
 	currencyDecimals: number;
 	// NFT approval check should be independent of form validation
 	nftApprovalEnabled?: boolean;
-}
+};
 
 export const useListingMutations = ({
 	chainId,
