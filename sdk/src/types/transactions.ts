@@ -12,17 +12,17 @@ export enum TransactionType {
 /**
  * Base transaction parameters
  */
-export interface BaseTransactionParams {
+export type BaseTransactionParams = {
 	chainId: number;
 	buyer: Address;
 	recipient?: Address;
 	transactionType: TransactionType;
-}
+};
 
 /**
  * Market transaction parameters (secondary sales)
  */
-export interface MarketTransactionParams extends BaseTransactionParams {
+export type MarketTransactionParams = BaseTransactionParams & {
 	transactionType: TransactionType.MARKET_BUY;
 	collectionAddress: Address;
 	marketplace: MarketplaceKind;
@@ -30,12 +30,12 @@ export interface MarketTransactionParams extends BaseTransactionParams {
 	collectibleId: string;
 	quantity: string;
 	additionalFees: AdditionalFee[];
-}
+};
 
 /**
  * Primary sale transaction parameters (minting/shop)
  */
-export interface PrimarySaleTransactionParams extends BaseTransactionParams {
+export type PrimarySaleTransactionParams = BaseTransactionParams & {
 	transactionType: TransactionType.PRIMARY_SALE;
 	collectionAddress: Address;
 	salesContractAddress: Address;
@@ -46,7 +46,7 @@ export interface PrimarySaleTransactionParams extends BaseTransactionParams {
 	merkleProof?: string[];
 	contractVersion: 'v1';
 	tokenType: 'ERC721' | 'ERC1155';
-}
+};
 
 /**
  * Union type for all transaction parameters
@@ -58,9 +58,9 @@ export type TransactionParams =
 /**
  * Parameters for the useTransactionSteps hook
  */
-export interface TransactionStepsParams extends BaseTransactionParams {
+export type TransactionStepsParams = BaseTransactionParams & {
 	enabled?: boolean;
-}
+};
 
 /**
  * Native token address constant
