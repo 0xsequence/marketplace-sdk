@@ -173,7 +173,6 @@ export function usePrimarySale721CardData({
 				collectionType: ContractType.ERC721,
 				tokenMetadata: {
 					...metadata,
-					tokenId: BigInt(metadata.tokenId),
 				},
 				cardLoading: saleDetailsLoading,
 				salesContractAddress,
