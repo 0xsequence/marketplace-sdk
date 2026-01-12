@@ -248,3 +248,25 @@ export type GetNativeTokenBalanceResponse = Omit<
 > & {
 	balance: NativeTokenBalance;
 };
+
+export type GetBalanceOfCollectibleRequest = Omit<
+	GetTokenBalancesRequest,
+	'page' | 'contractAddress' | 'collectionAddress' | 'userAddress' | 'accountAddress'
+> & {
+	chainId: ChainId;
+	collectionAddress?: Address;
+	contractAddress?: Address;
+	userAddress?: Address;
+	accountAddress?: Address;
+};
+
+export type GetTokenBalancesSdkRequest = Omit<
+	GetTokenBalancesRequest,
+	'contractAddress' | 'collectionAddress' | 'userAddress' | 'accountAddress'
+> & {
+	chainId: ChainId;
+	collectionAddress?: Address;
+	contractAddress?: Address;
+	userAddress?: Address;
+	accountAddress?: Address;
+};

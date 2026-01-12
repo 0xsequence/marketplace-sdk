@@ -1,11 +1,4 @@
-import type {
-	Address,
-	ChainId,
-	GetTokenBalancesRequest,
-	IndexerPage,
-	TokenId,
-} from '@0xsequence/api-client';
-import type { Hex } from 'viem';
+import type { GetTokenBalancesSdkRequest, IndexerPage } from '@0xsequence/api-client';
 import {
 	buildInfiniteQueryOptions,
 	getIndexerClient,
@@ -16,20 +9,8 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export type FetchBalancesParams = Pick<
-	GetTokenBalancesRequest,
-	'accountAddress' | 'includeMetadata'
-> & {
-	chainId: ChainId;
-	contractAddress?: Address;
-	tokenId?: TokenId;
-	metadataOptions?: {
-		verifiedOnly?: boolean;
-		unverifiedOnly?: boolean;
-		includeContracts?: Hex[];
-	};
+export type FetchBalancesParams = GetTokenBalancesSdkRequest & {
 	includeCollectionTokens?: boolean;
-	page?: IndexerPage;
 };
 
 export type ListBalancesQueryOptions = SdkQueryParams<FetchBalancesParams>;
@@ -110,8 +91,8 @@ export function listBalancesOptions(
 			getPageInfo: (response) => {
 				if (!response.page) return undefined;
 				return {
-					page: response.page.page,
-					pageSize: response.page.pageSize,
+					page: response.page.page ?? 1,
+					pageSize: response.page.pageSize ?? 30,
 					more: response.page.more ?? false,
 				};
 			},

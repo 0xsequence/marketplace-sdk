@@ -53,6 +53,11 @@ export default [
 			'@sequence/types/no-string-bigint-fields': 'warn',
 			'@sequence/types/no-manual-query-params': 'warn',
 			'@sequence/types/no-namespace-type-imports': 'warn',
+			'@sequence/types/no-pick-for-request-types': 'warn',
+			'@sequence/types/no-domain-field-definition': 'warn',
+			'@sequence/types/no-partial-api-types': 'warn',
+			'@sequence/types/require-api-type-source': 'warn',
+			'@sequence/types/sdk-types-must-extend': 'warn',
 		},
 	},
 
@@ -153,6 +158,15 @@ export default [
 		rules: {
 			'@sequence/types/enforce-address-type': 'off',
 			'@sequence/types/enforce-amount-type': 'off',
+		},
+	},
+
+	{
+		files: ['src/**/queries/currency/*.ts', 'src/**/queries/collection/list.ts'],
+		rules: {
+			'@sequence/types/no-domain-field-definition': 'off',
+			'@sequence/types/require-api-type-source': 'off',
+			'@sequence/types/sdk-types-must-extend': 'off',
 		},
 	},
 

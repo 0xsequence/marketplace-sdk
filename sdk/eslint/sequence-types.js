@@ -765,6 +765,148 @@ const requireApiTypeSource = {
 	},
 };
 
+const noPickForRequestTypes = {
+	meta: {
+		type: 'problem',
+		docs: {
+			description:
+				'Ban Pick<> for request/input types. Use Omit<> instead for future-safety.',
+			recommended: true,
+		},
+		messages: {
+			noPickForRequest: `Don't use 'Pick<>' for '{{typeName}}'. Pick is not future-safe for request types - if the API adds required fields, they won't be included. Use 'Omit<>' instead to exclude unwanted fields while automatically including new ones.`,
+		},
+		schema: [],
+	},
+	create(context) {
+		const requestTypePattern = /^(Fetch\w+Params|\w+Params|\w+Request|\w+Args|\w+Input)$/;
+		const responseTypePattern = /^(\w+Response|\w+Result|\w+Output|\w+Return)$/;
+		const utilityTypePattern = /^(With\w+|Optional\w+|Required\w+|Partial\w+)$/;
+
+		return {
+			TSTypeAliasDeclaration(node) {
+				const typeName = node.id?.name || '';
+
+				if (responseTypePattern.test(typeName)) return;
+				if (utilityTypePattern.test(typeName)) return;
+				if (!requestTypePattern.test(typeName)) return;
+
+				const typeAnnotation = node.typeAnnotation;
+				if (!typeAnnotation) return;
+
+				const sourceCode = context.sourceCode || context.getSourceCode();
+				const typeText = sourceCode.getText(typeAnnotation);
+
+				if (/^Pick\s*</.test(typeText)) {
+					context.report({
+						node: typeAnnotation,
+						messageId: 'noPickForRequest',
+						data: { typeName },
+					});
+					return;
+				}
+
+				if (typeAnnotation.type === 'TSIntersectionType') {
+					for (const typeNode of typeAnnotation.types) {
+						const partText = sourceCode.getText(typeNode);
+						if (/^Pick\s*</.test(partText)) {
+							context.report({
+								node: typeNode,
+								messageId: 'noPickForRequest',
+								data: { typeName },
+							});
+						}
+					}
+				}
+			},
+		};
+	},
+};
+
+const noPartialApiTypes = {
+	meta: {
+		type: 'problem',
+		docs: {
+			description:
+				'Ban blanket Partial<APIType> in query files. Use API types directly or Omit<> for explicit field removal.',
+			recommended: true,
+		},
+		messages: {
+			noPartialApi: `Don't wrap '{{innerType}}' in Partial<>. This destroys type information about required vs optional fields. Use the API type directly (SdkQueryParams handles optionality) or use Omit<> to explicitly remove context-provided fields.`,
+		},
+		schema: [],
+	},
+	create(context) {
+		const filename = context.filename || context.getFilename();
+		const isQueryFile = /\/queries\//.test(filename);
+		if (!isQueryFile) return {};
+
+		const apiTypePatterns = [
+			/Request$/,
+			/Args$/,
+			/Input$/,
+			/^Get\w+/,
+			/^List\w+/,
+			/^Create\w+/,
+			/^Update\w+/,
+			/^Delete\w+/,
+			/^Check\w+/,
+		];
+
+		function isApiType(typeName) {
+			return apiTypePatterns.some((p) => p.test(typeName));
+		}
+
+		function checkPartialUsage(node, typeAnnotation) {
+			const sourceCode = context.sourceCode || context.getSourceCode();
+			const typeText = sourceCode.getText(typeAnnotation);
+
+			const partialMatch = typeText.match(/^Partial\s*<\s*([^<>]+)\s*>$/);
+			if (!partialMatch) return;
+
+			const innerType = partialMatch[1].trim();
+
+			if (innerType.startsWith('Pick<')) return;
+
+			if (isApiType(innerType)) {
+				context.report({
+					node: typeAnnotation,
+					messageId: 'noPartialApi',
+					data: { innerType },
+				});
+			}
+		}
+
+		return {
+			TSTypeAliasDeclaration(node) {
+				const typeName = node.id?.name || '';
+				if (!/^Fetch\w+Params$/.test(typeName)) return;
+
+				const typeAnnotation = node.typeAnnotation;
+				if (!typeAnnotation) return;
+
+				if (typeAnnotation.type === 'TSTypeReference') {
+					const sourceCode = context.sourceCode || context.getSourceCode();
+					const typeText = sourceCode.getText(typeAnnotation);
+					if (typeText.startsWith('Partial<')) {
+						checkPartialUsage(node, typeAnnotation);
+					}
+				}
+
+				if (typeAnnotation.type === 'TSIntersectionType') {
+					for (const typeNode of typeAnnotation.types) {
+						const sourceCode = context.sourceCode || context.getSourceCode();
+						const partText = sourceCode.getText(typeNode);
+						if (partText.startsWith('Partial<')) {
+							checkPartialUsage(node, typeNode);
+						}
+					}
+				}
+			},
+		};
+	},
+};
+
 const sdkTypesMustExtend = {
 	meta: {
 		type: 'problem',
@@ -884,6 +1026,8 @@ const plugin = {
 		'no-domain-field-definition': noDomainFieldDefinition,
 		'require-api-type-source': requireApiTypeSource,
 		'sdk-types-must-extend': sdkTypesMustExtend,
+		'no-pick-for-request-types': noPickForRequestTypes,
+		'no-partial-api-types': noPartialApiTypes,
 	},
 	configs: {
 		recommended: {
@@ -899,6 +1043,8 @@ const plugin = {
 				'@sequence/types/no-domain-field-definition': 'off',
 				'@sequence/types/require-api-type-source': 'off',
 				'@sequence/types/sdk-types-must-extend': 'off',
+				'@sequence/types/no-pick-for-request-types': 'warn',
+				'@sequence/types/no-partial-api-types': 'warn',
 			},
 		},
 		strict: {
@@ -914,6 +1060,8 @@ const plugin = {
 				'@sequence/types/no-domain-field-definition': 'error',
 				'@sequence/types/require-api-type-source': 'error',
 				'@sequence/types/sdk-types-must-extend': 'error',
+				'@sequence/types/no-pick-for-request-types': 'error',
+				'@sequence/types/no-partial-api-types': 'error',
 			},
 		},
 	},

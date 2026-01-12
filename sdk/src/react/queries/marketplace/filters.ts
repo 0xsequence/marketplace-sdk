@@ -1,8 +1,4 @@
-import type {
-	Address,
-	GetTokenMetadataPropertyFiltersArgs,
-	PropertyFilter,
-} from '@0xsequence/api-client';
+import type { GetFiltersArgs, PropertyFilter } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import { FilterCondition } from '../../../types';
 import { compareAddress } from '../../../utils';
@@ -17,13 +13,7 @@ import {
 import { marketplaceConfigOptions } from './config';
 import { createMarketplaceQueryKey } from './queryKeys';
 
-export type FetchFiltersParams = Pick<
-	GetTokenMetadataPropertyFiltersArgs,
-	'chainId' | 'excludePropertyValues'
-> & {
-	collectionAddress: Address;
-	showAllFilters?: boolean;
-};
+export type FetchFiltersParams = GetFiltersArgs;
 
 /**
  * Fetches collection filters from the Metadata API with optional marketplace filtering

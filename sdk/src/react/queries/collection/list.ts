@@ -57,7 +57,7 @@ function chunkArray<T>(array: T[], size: number): T[][] {
 	return chunks;
 }
 
-export type FetchListCollectionsParams = Pick<MarketplaceConfig, never> & {
+export type FetchListCollectionsParams = {
 	collectionType?: 'market' | 'shop';
 	marketplaceConfig: MarketplaceConfig;
 };

@@ -1,5 +1,5 @@
 import { formatUnits } from 'viem';
-import type { Address } from '@0xsequence/api-client';
+import type { Address, ChainId } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type Currency,
@@ -11,7 +11,7 @@ import {
 import { marketCurrenciesQueryOptions } from './list';
 
 export type FetchConvertPriceToUSDParams = {
-	chainId: number;
+	chainId: ChainId;
 	currencyAddress: Address;
 	amountRaw: string;
 };

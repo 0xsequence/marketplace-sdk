@@ -188,3 +188,45 @@ export type GetTokenMetadataPropertyFiltersArgs = Omit<
 
 export type GetTokenMetadataPropertyFiltersReturn =
 	GenGetTokenMetadataPropertyFiltersReturn;
+
+export type GetSingleTokenMetadataArgs = Omit<
+	GetTokenMetadataArgs,
+	'tokenIds' | 'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+	tokenId: TokenId;
+};
+
+export type GetFiltersArgs = Omit<
+	GetTokenMetadataPropertyFiltersArgs,
+	'excludeProperties' | 'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+	showAllFilters?: boolean;
+};
+
+export type GetContractInfoSdkArgs = Omit<
+	GetContractInfoArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};
+
+export type GetTokenMetadataSdkArgs = Omit<
+	GetTokenMetadataArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};
+
+export type SearchTokenMetadataSdkArgs = Omit<
+	SearchTokenMetadataArgs,
+	'contractAddress' | 'collectionAddress'
+> & {
+	contractAddress?: Address;
+	collectionAddress?: Address;
+};

@@ -1,7 +1,5 @@
 import type {
-	Address,
-	GetTokenMetadataArgs,
-	TokenId,
+	GetTokenMetadataSdkArgs,
 	TokenMetadata,
 } from '@0xsequence/api-client';
 import {
@@ -13,13 +11,7 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export type FetchListTokenMetadataParams = Pick<
-	GetTokenMetadataArgs,
-	'chainId'
-> & {
-	contractAddress: Address;
-	tokenIds: TokenId[];
-};
+export type FetchListTokenMetadataParams = GetTokenMetadataSdkArgs;
 
 export type ListTokenMetadataQueryOptions =
 	SdkQueryParams<FetchListTokenMetadataParams>;
@@ -36,7 +28,7 @@ export async function fetchListTokenMetadata(
 	const { config, contractAddress, chainId, tokenIds } = params;
 	const metadataClient = getMetadataClient(config);
 
-	const apiArgs: GetTokenMetadataArgs = {
+	const apiArgs = {
 		chainId,
 		tokenIds,
 		contractAddress,

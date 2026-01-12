@@ -1,9 +1,4 @@
-import type {
-	Address,
-	ChainId,
-	GetTokenBalancesRequest,
-	TokenId,
-} from '@0xsequence/api-client';
+import type { GetBalanceOfCollectibleRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -14,15 +9,7 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export type FetchBalanceOfCollectibleParams = Pick<
-	GetTokenBalancesRequest,
-	'includeMetadata'
-> & {
-	collectionAddress?: Address;
-	tokenId?: TokenId;
-	userAddress?: Address;
-	chainId?: ChainId;
-};
+export type FetchBalanceOfCollectibleParams = GetBalanceOfCollectibleRequest;
 
 export type BalanceOfCollectibleQueryOptions =
 	SdkQueryParams<FetchBalanceOfCollectibleParams>;

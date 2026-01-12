@@ -1,25 +1,18 @@
-import type { Address } from '@0xsequence/api-client';
+import type { Address, ChainId } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type SdkQueryParams,
 	type WithOptionalParams,
 	type WithRequired,
 } from '../../_internal';
-import {
-	fetchConvertPriceToUSD,
-	type FetchConvertPriceToUSDParams,
-} from './convert-to-usd';
+import { fetchConvertPriceToUSD } from './convert-to-usd';
 
-export type FetchComparePricesParams = Pick<
-	FetchConvertPriceToUSDParams,
-	'chainId'
-> & {
-	// First price details
-	priceAmountRaw: string;
-	priceCurrencyAddress: Address;
-	// Second price details (to compare against)
-	compareToPriceAmountRaw: string;
-	compareToPriceCurrencyAddress: Address;
+export type FetchComparePricesParams = {
+	chainId?: ChainId;
+	priceAmountRaw?: string;
+	priceCurrencyAddress?: Address;
+	compareToPriceAmountRaw?: string;
+	compareToPriceCurrencyAddress?: Address;
 };
 
 export type ComparePricesReturn = {

@@ -31,10 +31,12 @@ export { MarketplaceService } from './adapters/builder/builder.gen';
 
 export type {
 	ContractInfo as IndexerContractInfo,
+	GetBalanceOfCollectibleRequest,
 	GetTokenBalancesDetailsRequest,
 	GetTokenBalancesDetailsResponse,
 	GetTokenBalancesRequest,
 	GetTokenBalancesResponse,
+	GetTokenBalancesSdkRequest,
 	GetTokenIDRangesRequest,
 	GetTokenIDRangesResponse,
 	GetTokenSuppliesRequest,
@@ -202,13 +204,18 @@ export type {
 	Filter,
 	GetContractInfoArgs,
 	GetContractInfoBatchArgs,
+	GetContractInfoSdkArgs,
+	GetFiltersArgs,
+	GetSingleTokenMetadataArgs,
 	GetTokenMetadataArgs,
 	GetTokenMetadataPropertyFiltersArgs,
 	GetTokenMetadataPropertyFiltersReturn,
 	GetTokenMetadataReturn,
+	GetTokenMetadataSdkArgs,
 	Page as MetadataPage,
 	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
+	SearchTokenMetadataSdkArgs,
 } from './adapters/metadata';
 export * as Metadata from './adapters/metadata';
 

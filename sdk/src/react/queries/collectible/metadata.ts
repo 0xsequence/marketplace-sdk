@@ -1,7 +1,6 @@
 import type {
-	Address,
+	GetSingleTokenMetadataArgs,
 	GetTokenMetadataArgs,
-	TokenId,
 	TokenMetadata,
 } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
@@ -14,10 +13,7 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export type FetchCollectibleParams = Pick<GetTokenMetadataArgs, 'chainId'> & {
-	collectionAddress: Address;
-	tokenId: TokenId;
-};
+export type FetchCollectibleParams = GetSingleTokenMetadataArgs;
 
 export type CollectibleQueryOptions = SdkQueryParams<FetchCollectibleParams>;
 

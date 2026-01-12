@@ -1,8 +1,6 @@
 import type {
-	Address,
-	MetadataPage,
-	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
+	SearchTokenMetadataSdkArgs,
 } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import {
@@ -12,13 +10,7 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export type FetchSearchTokenMetadataParams = Pick<
-	SearchTokenMetadataArgs,
-	'chainId' | 'filter'
-> & {
-	collectionAddress: Address;
-	page?: MetadataPage;
-};
+export type FetchSearchTokenMetadataParams = SearchTokenMetadataSdkArgs;
 
 export type SearchTokenMetadataQueryOptions =
 	SdkInfiniteQueryParams<FetchSearchTokenMetadataParams>;
