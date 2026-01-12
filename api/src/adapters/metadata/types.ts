@@ -7,14 +7,19 @@ import type {
 	Page as GenPage,
 	Filter,
 	PropertyFilter,
+	GetContractInfoArgs as GenGetContractInfoArgs,
 	GetContractInfoReturn as GenGetContractInfoReturn,
 	GetContractInfoBatchArgs as GenGetContractInfoBatchArgs,
 	GetContractInfoBatchReturn as GenGetContractInfoBatchReturn,
+	GetTokenMetadataArgs as GenGetTokenMetadataArgs,
 	GetTokenMetadataReturn as GenGetTokenMetadataReturn,
 	GetTokenMetadataBatchArgs as GenGetTokenMetadataBatchArgs,
 	GetTokenMetadataBatchReturn as GenGetTokenMetadataBatchReturn,
+	RefreshTokenMetadataArgs as GenRefreshTokenMetadataArgs,
 	RefreshTokenMetadataReturn as GenRefreshTokenMetadataReturn,
+	SearchTokenMetadataArgs as GenSearchTokenMetadataArgs,
 	SearchTokenMetadataReturn as GenSearchTokenMetadataReturn,
+	GetTokenMetadataPropertyFiltersArgs as GenGetTokenMetadataPropertyFiltersArgs,
 	GetTokenMetadataPropertyFiltersReturn as GenGetTokenMetadataPropertyFiltersReturn,
 } from '@0xsequence/metadata';
 
@@ -65,7 +70,10 @@ export type TokenMetadata = Omit<
 
 export type Page = GenPage;
 
-export type GetContractInfoArgs = {
+export type GetContractInfoArgs = Omit<
+	GenGetContractInfoArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
@@ -97,7 +105,10 @@ export type GetContractInfoBatchReturn = Omit<
 	taskID?: number;
 };
 
-export type GetTokenMetadataArgs = {
+export type GetTokenMetadataArgs = Omit<
+	GenGetTokenMetadataArgs,
+	'chainID' | 'contractAddress' | 'tokenIDs'
+> & {
 	chainId: ChainId;
 	tokenIds: TokenId[];
 } & (
@@ -133,7 +144,10 @@ export type GetTokenMetadataBatchReturn = Omit<
 	taskID?: number;
 };
 
-export type RefreshTokenMetadataArgs = {
+export type RefreshTokenMetadataArgs = Omit<
+	GenRefreshTokenMetadataArgs,
+	'chainID' | 'contractAddress' | 'tokenIDs'
+> & {
 	chainId: ChainId;
 	tokenIds?: TokenId[];
 	refreshAll?: boolean;
@@ -144,10 +158,11 @@ export type RefreshTokenMetadataArgs = {
 
 export type RefreshTokenMetadataReturn = GenRefreshTokenMetadataReturn;
 
-export type SearchTokenMetadataArgs = {
+export type SearchTokenMetadataArgs = Omit<
+	GenSearchTokenMetadataArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
-	filter: Filter;
-	page?: Page;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
 	| { collectionAddress: string; contractAddress?: never }
@@ -161,10 +176,11 @@ export type SearchTokenMetadataReturn = Omit<
 	tokenMetadata: TokenMetadata[];
 };
 
-export type GetTokenMetadataPropertyFiltersArgs = {
+export type GetTokenMetadataPropertyFiltersArgs = Omit<
+	GenGetTokenMetadataPropertyFiltersArgs,
+	'chainID' | 'contractAddress'
+> & {
 	chainId: ChainId;
-	excludeProperties: Array<string>;
-	excludePropertyValues?: boolean;
 } & (
 	| { contractAddress: string; collectionAddress?: never }
 	| { collectionAddress: string; contractAddress?: never }
