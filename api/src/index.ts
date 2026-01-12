@@ -40,6 +40,7 @@ export type {
 	GetTokenSuppliesRequest,
 	GetTokenSuppliesResponse,
 	GetUserCollectionBalancesRequest,
+	MetadataOptions,
 	Page as IndexerPage,
 	TokenBalance as IndexerTokenBalance,
 	TokenBalancesFilter,
