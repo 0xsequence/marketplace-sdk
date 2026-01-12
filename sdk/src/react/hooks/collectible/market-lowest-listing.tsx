@@ -54,7 +54,7 @@ export type UseCollectibleMarketLowestListingParams = Optional<
  */
 export function useCollectibleMarketLowestListing(
 	params: UseCollectibleMarketLowestListingParams,
-): UseQueryResult<Order | undefined, Error> {
+): UseQueryResult<Order | null, Error> {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;

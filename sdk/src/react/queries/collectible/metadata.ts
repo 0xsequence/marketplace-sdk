@@ -41,7 +41,8 @@ export async function fetchCollectible(
 	};
 
 	const result = await metadataClient.getTokenMetadata(apiArgs);
-	return result.tokenMetadata[0];
+	// TanStack Query v5 requires non-undefined return values
+	return result.tokenMetadata[0] ?? null;
 }
 
 /**

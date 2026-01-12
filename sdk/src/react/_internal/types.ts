@@ -9,6 +9,7 @@ import type {
 	StandardInfiniteQueryOptions,
 	StandardQueryOptions,
 } from '../types/query';
+import type { RequiredKeys } from './query-builder';
 
 export type QueryArg = {
 	enabled?: boolean;
@@ -124,4 +125,24 @@ export type SdkInfiniteQueryParams<TApiRequest> = SdkQueryParams<
  */
 export type WithRequired<T, K extends keyof T = keyof T> = T & {
 	[P in K]-?: T[P];
+};
+
+/**
+ * Creates hook params from API request types:
+ * - Required API fields → key required, value can be undefined
+ * - Optional API fields → key optional (key doesn't need to exist)
+ * - SDK fields (config, query) → key optional
+ */
+export type HookParamsFromApiRequest<
+	TApiRequest,
+	TSdkParams extends Record<string, unknown> = Record<string, never>,
+> = {
+	// Required API fields: key required, value can be undefined
+	[K in RequiredKeys<TApiRequest>]: TApiRequest[K] | undefined;
+} & {
+	// Optional API fields: key optional (key doesn't need to exist)
+	[K in Exclude<keyof TApiRequest, RequiredKeys<TApiRequest>>]?: TApiRequest[K];
+} & {
+	// SDK fields: key optional
+	[K in keyof TSdkParams]?: TSdkParams[K];
 };

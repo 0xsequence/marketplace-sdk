@@ -25,6 +25,7 @@ import type {
 	TokenBalancesByContractFilter as GenTokenBalancesByContractFilter,
 } from '@0xsequence/indexer';
 
+import type { ContractType } from '@0xsequence/indexer';
 import type { Address, Amount, ChainId, TokenId } from '../../types/primitives';
 
 export { ContractType, ResourceStatus } from '@0xsequence/indexer';

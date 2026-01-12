@@ -14,6 +14,7 @@ describe('useTokenBalances', () => {
 			useTokenBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
+				contractAddress: zeroAddress,
 			}),
 		);
 
@@ -31,6 +32,7 @@ describe('useTokenBalances', () => {
 			useTokenBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
+				contractAddress: zeroAddress,
 				page: {
 					page: 1,
 					pageSize: 10,
@@ -76,6 +78,7 @@ describe('useTokenBalances', () => {
 			useTokenBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
+				contractAddress: zeroAddress,
 				query: {
 					enabled: false,
 				},
@@ -90,6 +93,7 @@ describe('useTokenBalances', () => {
 			useTokenBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
+				contractAddress: zeroAddress,
 				metadataOptions: {
 					verifiedOnly: true,
 					includeContracts: [zeroAddress],

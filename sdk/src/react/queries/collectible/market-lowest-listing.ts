@@ -17,12 +17,13 @@ export async function fetchLowestListing(
 		LowestListingQueryOptions,
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
-): Promise<Order | undefined> {
+): Promise<Order | null> {
 	const { config, ...apiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const result =
 		await marketplaceClient.getLowestPriceListingForCollectible(apiParams);
-	return result.order;
+	// TanStack Query v5 requires non-undefined return values
+	return result.order ?? null;
 }
 
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
@@ -51,7 +52,7 @@ export function lowestListingQueryOptions(
 			LowestListingQueryOptions,
 			'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 		>,
-		Order | undefined,
+		Order | null,
 		readonly ['chainId', 'collectionAddress', 'tokenId', 'config']
 	>
 > {
