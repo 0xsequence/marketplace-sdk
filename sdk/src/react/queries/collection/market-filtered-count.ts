@@ -1,8 +1,4 @@
-import type {
-	GetCountOfFilteredOrdersRequest,
-	OrderSide,
-	OrdersFilter,
-} from '@0xsequence/api-client';
+import type { GetCountOfFilteredOrdersRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -12,11 +8,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchGetCountOfFilteredOrdersParams
-	extends GetCountOfFilteredOrdersRequest {
-	side: OrderSide;
-	filter?: OrdersFilter;
-}
+export type FetchGetCountOfFilteredOrdersParams =
+	GetCountOfFilteredOrdersRequest;
 
 export type GetCountOfFilteredOrdersQueryOptions =
 	SdkQueryParams<FetchGetCountOfFilteredOrdersParams>;

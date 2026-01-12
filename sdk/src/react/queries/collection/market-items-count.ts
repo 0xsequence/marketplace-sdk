@@ -1,7 +1,4 @@
-import type {
-	GetCountOfAllOrdersRequest,
-	OrderSide,
-} from '@0xsequence/api-client';
+import type { GetCountOfAllOrdersRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -11,10 +8,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchCountItemsOrdersForCollectionParams
-	extends GetCountOfAllOrdersRequest {
-	side: OrderSide;
-}
+export type FetchCountItemsOrdersForCollectionParams =
+	GetCountOfAllOrdersRequest;
 
 export type CountItemsOrdersForCollectionQueryOptions =
 	SdkQueryParams<FetchCountItemsOrdersForCollectionParams>;
