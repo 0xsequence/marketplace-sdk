@@ -47,11 +47,11 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@eslint/js": "^9.39.2",
-		"eslint": "^9.39.2",
+		"@eslint/js": "catalog:",
+		"eslint": "catalog:",
 		"msw": "^2.12.4",
 		"tsdown": "0.17.0-beta.6",
 		"typescript": "catalog:",
-		"typescript-eslint": "^8.50.0"
+		"typescript-eslint": "catalog:"
 	}
 }
