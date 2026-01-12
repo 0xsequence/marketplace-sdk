@@ -15,9 +15,10 @@ import { createCollectionQueryKey } from './queryKeys';
 
 export type CollectionBalanceFilter = TokenBalancesFilter;
 
-export type FetchCollectionBalanceDetailsParams = GetTokenBalancesDetailsRequest & {
-	chainId: ChainId;
-};
+export type FetchCollectionBalanceDetailsParams =
+	GetTokenBalancesDetailsRequest & {
+		chainId: ChainId;
+	};
 
 export type CollectionBalanceDetailsQueryOptions =
 	SdkQueryParams<FetchCollectionBalanceDetailsParams>;

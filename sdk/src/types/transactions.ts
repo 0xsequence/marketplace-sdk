@@ -1,4 +1,8 @@
-import type { Address, AdditionalFee, MarketplaceKind } from '@0xsequence/api-client';
+import type {
+	AdditionalFee,
+	Address,
+	MarketplaceKind,
+} from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
 
 /**

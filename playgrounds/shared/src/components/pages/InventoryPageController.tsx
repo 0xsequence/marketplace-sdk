@@ -58,8 +58,7 @@ function useListInventoryCardData({
 		error: inventoryError,
 		isSuccess,
 	} = useInventory({
-		// biome-ignore lint/style/noNonNullAssertion: userAddress is required for the inventory query
-		userAddress: userAddress!,
+		userAddress,
 		collectionAddress,
 		chainId,
 		query: {
@@ -304,16 +303,14 @@ function CollectionInventory({
 					return (
 						<div key={`${collectionAddress}-${card.tokenId}`}>
 							<CollectibleCard
-								tokenId={card.tokenId}
-								chainId={card.chainId}
-								collectionAddress={card.collectionAddress}
-								collectionType={card.collectionType}
-								assetSrcPrefixUrl={card.assetSrcPrefixUrl}
-								cardLoading={card.cardLoading}
-								cardType="inventory-non-tradable"
-								balance={card.balance}
-								balanceIsLoading={card.balanceIsLoading}
-								collectibleMetadata={card.collectible?.metadata}
+								{...card}
+								cardType={'inventory-non-tradable'}
+								collectibleMetadata={{
+									name: card.collectible?.metadata.name,
+									image: card.collectible?.metadata.image,
+									video: card.collectible?.metadata.video,
+									animation_url: card.collectible?.metadata.animation_url,
+								}}
 							/>
 						</div>
 					);

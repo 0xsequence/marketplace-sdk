@@ -1,4 +1,5 @@
 import type { Address, Hash, TypedDataDomain } from 'viem';
+import type { ChainId } from '../../types/primitives';
 import {
 	type CheckoutOptionsSalesContractRequest as GenCheckoutOptionsSalesContractRequest,
 	type CollectibleOrder as GenCollectibleOrder,
@@ -11,7 +12,6 @@ import {
 	type PostRequest,
 	StepType,
 } from './marketplace.gen';
-import type { ChainId } from '../../types/primitives';
 
 export type {
 	Collectible,

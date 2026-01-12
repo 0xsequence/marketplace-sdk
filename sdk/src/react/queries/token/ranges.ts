@@ -1,7 +1,7 @@
-import {
-	type Address,
-	type GetTokenIDRangesRequest,
-	type GetTokenIDRangesResponse,
+import type {
+	Address,
+	GetTokenIDRangesRequest,
+	GetTokenIDRangesResponse,
 } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {

@@ -1,28 +1,28 @@
 import type {
 	ContractInfo as GenContractInfo,
 	ContractInfoExtensions as GenContractInfoExtensions,
-	TokenMetadata as GenTokenMetadata,
+	GetNativeTokenBalanceReturn as GenGetNativeTokenBalanceReturn,
+	GetTokenBalancesArgs as GenGetTokenBalancesArgs,
+	GetTokenBalancesByContractArgs as GenGetTokenBalancesByContractArgs,
+	GetTokenBalancesByContractReturn as GenGetTokenBalancesByContractReturn,
+	GetTokenBalancesDetailsArgs as GenGetTokenBalancesDetailsArgs,
+	GetTokenBalancesDetailsReturn as GenGetTokenBalancesDetailsReturn,
+	GetTokenBalancesReturn as GenGetTokenBalancesReturn,
+	GetTokenIDRangesArgs as GenGetTokenIDRangesArgs,
+	GetTokenIDRangesReturn as GenGetTokenIDRangesReturn,
+	GetTokenSuppliesArgs as GenGetTokenSuppliesArgs,
+	GetTokenSuppliesReturn as GenGetTokenSuppliesReturn,
+	MetadataOptions as GenMetadataOptions,
+	NativeTokenBalance as GenNativeTokenBalance,
+	Page as GenPage,
 	TokenBalance as GenTokenBalance,
+	TokenBalancesByContractFilter as GenTokenBalancesByContractFilter,
+	TokenBalancesFilter as GenTokenBalancesFilter,
+	TokenIDRange as GenTokenIDRange,
+	TokenMetadata as GenTokenMetadata,
 	TokenSupply as GenTokenSupply,
 	TransactionLog as GenTransactionLog,
 	TransactionReceipt as GenTransactionReceipt,
-	TokenIDRange as GenTokenIDRange,
-	Page as GenPage,
-	NativeTokenBalance as GenNativeTokenBalance,
-	GetTokenBalancesReturn as GenGetTokenBalancesReturn,
-	GetTokenSuppliesReturn as GenGetTokenSuppliesReturn,
-	GetTokenIDRangesReturn as GenGetTokenIDRangesReturn,
-	GetTokenBalancesDetailsReturn as GenGetTokenBalancesDetailsReturn,
-	GetTokenBalancesDetailsArgs as GenGetTokenBalancesDetailsArgs,
-	GetTokenBalancesByContractReturn as GenGetTokenBalancesByContractReturn,
-	GetTokenBalancesByContractArgs as GenGetTokenBalancesByContractArgs,
-	GetTokenBalancesArgs as GenGetTokenBalancesArgs,
-	GetTokenSuppliesArgs as GenGetTokenSuppliesArgs,
-	GetTokenIDRangesArgs as GenGetTokenIDRangesArgs,
-	GetNativeTokenBalanceReturn as GenGetNativeTokenBalanceReturn,
-	MetadataOptions as GenMetadataOptions,
-	TokenBalancesFilter as GenTokenBalancesFilter,
-	TokenBalancesByContractFilter as GenTokenBalancesByContractFilter,
 } from '@0xsequence/indexer';
 
 import type { Address, Amount, ChainId, TokenId } from '../../types/primitives';
@@ -121,12 +121,13 @@ export type GetTokenBalancesRequest = Omit<
 	metadataOptions?: MetadataOptions;
 	page?: Page;
 } & (
-	| { accountAddress: Address; userAddress?: never }
-	| { userAddress: Address; accountAddress?: never }
-) & (
-	| { contractAddress?: Address; collectionAddress?: never }
-	| { collectionAddress?: Address; contractAddress?: never }
-);
+		| { accountAddress: Address; userAddress?: never }
+		| { userAddress: Address; accountAddress?: never }
+	) &
+	(
+		| { contractAddress?: Address; collectionAddress?: never }
+		| { collectionAddress?: Address; contractAddress?: never }
+	);
 
 export type GetTokenBalancesResponse = Omit<
 	GenGetTokenBalancesReturn,
@@ -143,9 +144,9 @@ export type GetTokenSuppliesRequest = Omit<
 	metadataOptions?: MetadataOptions;
 	page?: Page;
 } & (
-	| { contractAddress: Address; collectionAddress?: never }
-	| { collectionAddress: Address; contractAddress?: never }
-);
+		| { contractAddress: Address; collectionAddress?: never }
+		| { collectionAddress: Address; contractAddress?: never }
+	);
 
 export type GetTokenSuppliesResponse = Omit<
 	GenGetTokenSuppliesReturn,
@@ -250,7 +251,11 @@ export type GetNativeTokenBalanceResponse = Omit<
 
 export type GetBalanceOfCollectibleRequest = Omit<
 	GetTokenBalancesRequest,
-	'page' | 'contractAddress' | 'collectionAddress' | 'userAddress' | 'accountAddress'
+	| 'page'
+	| 'contractAddress'
+	| 'collectionAddress'
+	| 'userAddress'
+	| 'accountAddress'
 > & {
 	chainId: ChainId;
 	collectionAddress?: Address;

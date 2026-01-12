@@ -1,7 +1,7 @@
 'use client';
+import type { Address } from '@0xsequence/api-client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import type * as types from '../../_internal';
 import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';

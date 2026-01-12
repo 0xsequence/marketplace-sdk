@@ -1,3 +1,4 @@
+import type { Address } from '@0xsequence/api-client';
 import {
 	type AdditionalFee,
 	type MarketplaceKind,
@@ -6,7 +7,6 @@ import {
 } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
 

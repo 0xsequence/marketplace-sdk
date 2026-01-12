@@ -1,11 +1,10 @@
 import type {
+	Address,
 	CollectibleOrder,
 	ContractType,
 	MarketplaceTokenMetadata,
-	MetadataTokenMetadata,
 	Order,
 } from '@0xsequence/api-client';
-import type { Address } from '@0xsequence/api-client';
 import type { CardType, CollectibleCardAction } from '../../../../types';
 
 export type CardClassNames = {
@@ -36,7 +35,7 @@ type MarketplaceCardBaseProps = {
 
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
-	tokenMetadata: MarketplaceTokenMetadata;
+	tokenMetadata: Pick<MarketplaceTokenMetadata, 'name' | 'image' | 'video' | 'animation_url'>;
 	salePrice:
 		| {
 				amount: bigint;
@@ -86,7 +85,7 @@ type MarketCardSpecificProps = {
 type NonTradableInventoryCardSpecificProps = {
 	balance: string;
 	balanceIsLoading: boolean;
-	collectibleMetadata: MetadataTokenMetadata;
+	collectibleMetadata: Pick<MarketplaceTokenMetadata, 'name' | 'image' | 'video' | 'animation_url'>;
 };
 
 // Complete CollectibleCardProps with all possible properties and card type

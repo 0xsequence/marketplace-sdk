@@ -1,8 +1,8 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
-import type { Address } from '@0xsequence/api-client';
 import { compareAddress } from '../../../../../../utils';
 import { type Currency, OrderbookKind } from '../../../../../_internal';
 import { useCurrencyList } from '../../../../../hooks';

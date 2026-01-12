@@ -1,7 +1,7 @@
-import {
-	type Address,
-	type GetTokenSuppliesRequest,
-	type IndexerPage,
+import type {
+	Address,
+	GetTokenSuppliesRequest,
+	IndexerPage,
 } from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import {

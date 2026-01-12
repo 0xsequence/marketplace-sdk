@@ -1,8 +1,7 @@
 'use client';
 
-import type { Order } from '@0xsequence/api-client';
+import type { Address, Order } from '@0xsequence/api-client';
 import { CartIcon } from '@0xsequence/design-system';
-import type { Address } from '@0xsequence/api-client';
 import { CollectibleCardAction } from '../../../../../../types';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';

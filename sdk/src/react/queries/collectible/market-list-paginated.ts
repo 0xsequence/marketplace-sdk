@@ -12,11 +12,13 @@ import {
 } from '../../_internal';
 import { normalizePriceFilters } from '../../utils/normalizePriceFilters';
 
-export type FetchListCollectiblesPaginatedParams =
-	Omit<ListCollectiblesRequest, 'page'> & {
-		page?: number;
-		pageSize?: number;
-	};
+export type FetchListCollectiblesPaginatedParams = Omit<
+	ListCollectiblesRequest,
+	'page'
+> & {
+	page?: number;
+	pageSize?: number;
+};
 
 export type ListCollectiblesPaginatedQueryOptions =
 	SdkQueryParams<FetchListCollectiblesPaginatedParams>;

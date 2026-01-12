@@ -1,4 +1,7 @@
-import type { GetTokenBalancesSdkRequest, IndexerPage } from '@0xsequence/api-client';
+import type {
+	GetTokenBalancesSdkRequest,
+	IndexerPage,
+} from '@0xsequence/api-client';
 import {
 	buildInfiniteQueryOptions,
 	getIndexerClient,

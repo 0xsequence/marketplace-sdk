@@ -82,15 +82,11 @@ const Modal = () => {
 									onPriceChange={(newPrice) => {
 										ctx.form.price.update(newPrice.amountRaw.toString());
 										if (newPrice.currency) {
-											ctx.currencies.select(
-												newPrice.currency.contractAddress,
-											);
+											ctx.currencies.select(newPrice.currency.contractAddress);
 										}
 									}}
 									onCurrencyChange={(newCurrency) => {
-										ctx.currencies.select(
-											newCurrency.contractAddress,
-										);
+										ctx.currencies.select(newCurrency.contractAddress);
 									}}
 									includeNativeCurrency={true}
 									orderbookKind={ctx.item.orderbookKind}
