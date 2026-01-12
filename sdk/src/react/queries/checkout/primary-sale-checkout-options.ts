@@ -1,4 +1,6 @@
 import type {
+	Address,
+	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractRequest,
 	CheckoutOptionsSalesContractResponse,
 	GetPrimarySaleCheckoutOptionsRequest,
@@ -57,15 +59,25 @@ export type PrimarySaleCheckoutOptionsQueryOptions =
 
 export function getPrimarySaleCheckoutOptionsQueryKey(
 	params: PrimarySaleCheckoutOptionsQueryOptions,
-) {
+): readonly [
+	'checkout',
+	'primary-sale',
+	{
+		chainId: number;
+		walletAddress: Address;
+		contractAddress: Address;
+		collectionAddress: Address;
+		items: ReadonlyArray<CheckoutOptionsItem>;
+	},
+] {
 	return [
 		'checkout',
 		'primary-sale',
 		{
 			chainId: params.chainId ?? 0,
-			walletAddress: params.walletAddress ?? '0x',
-			contractAddress: params.contractAddress ?? '',
-			collectionAddress: params.collectionAddress ?? '',
+			walletAddress: params.walletAddress ?? ('0x' as Address),
+			contractAddress: params.contractAddress ?? ('' as Address),
+			collectionAddress: params.collectionAddress ?? ('' as Address),
 			items: params.items ?? [],
 		},
 	] as const;
