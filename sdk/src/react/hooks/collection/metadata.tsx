@@ -13,8 +13,9 @@ import { useConfig } from '../config/useConfig';
 
 export type UseCollectionMetadataParams = WithRequired<
 	CollectionQueryOptions,
-	'chainId' | 'collectionAddress'
+	'chainId'
 > & {
+	collectionAddress: CollectionQueryOptions['collectionAddress'];
 	config?: SdkConfig;
 	query?: StandardQueryOptions;
 };
