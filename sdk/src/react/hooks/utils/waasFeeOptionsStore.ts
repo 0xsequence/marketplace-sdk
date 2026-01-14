@@ -57,10 +57,10 @@ export type FeeOptionConfirmationResult = {
 	confirmed: boolean;
 };
 
-export interface WaasFeeOptionsState {
+export type WaasFeeOptionsState = {
 	pendingConfirmation: WaasFeeOptionConfirmation | undefined;
 	deferred: Deferred<FeeOptionConfirmationResult> | undefined;
-}
+};
 
 const initialContext: WaasFeeOptionsState = {
 	pendingConfirmation: undefined,

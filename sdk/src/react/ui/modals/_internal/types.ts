@@ -1,9 +1,9 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 
-export interface ActionButton {
+export type ActionButton = {
 	label: string;
 	action: () => void;
-}
+};
 
 export type BaseModalState = {
 	isOpen: boolean;

@@ -1,6 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { ContractType } from '@0xsequence/api-client';
 import { useCallback, useMemo } from 'react';
-import type { Address, Hex } from 'viem';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { compareAddress } from '../../../../../utils';
@@ -38,7 +38,7 @@ export type TransferModalContext = ModalContext<
 > & {
 	item: {
 		chainId: number;
-		collectionAddress: `0x${string}`;
+		collectionAddress: Address;
 		tokenId: bigint;
 	};
 	form: {
@@ -284,7 +284,7 @@ export function useTransferModalContext(): TransferModalContext {
 		const txHash = await transferTokensAsync(params);
 
 		showTransactionStatusModal({
-			hash: txHash as Hex,
+			hash: txHash,
 			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
 			tokenId: state.tokenId,

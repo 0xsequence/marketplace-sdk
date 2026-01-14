@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
 import { BaseError } from './base';
 
 export type TransactionErrorType<name extends string = 'TransactionError'> =
@@ -262,7 +262,7 @@ export class CollectionNotFoundError extends TransactionError {
 export class InvalidCurrencyOptionsError extends TransactionError {
 	override name = 'InvalidCurrencyOptionsError';
 	constructor(currencyOptions: Address[]) {
-		super(`Invalid currency options: ${currencyOptions}`, {
+		super(`Invalid currency options: ${currencyOptions.join(', ')}`, {
 			details:
 				'The currency options must be an array of valid currency contract addresses.',
 		});
@@ -417,7 +417,6 @@ export type TransactionErrorTypes =
 	| MissingSignatureDataError
 	| MissingStepDataError
 	| OrderNotFoundError
-	| TransactionConfirmationError
 	| InvalidStepError
 	| PaymentModalError
 	| StepGenerationError

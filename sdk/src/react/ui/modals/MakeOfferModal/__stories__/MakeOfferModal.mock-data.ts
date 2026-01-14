@@ -1,4 +1,5 @@
 import type {
+	Address,
 	Collection,
 	Currency,
 	LookupMarketplaceReturn,
@@ -15,7 +16,6 @@ import {
 	WalletKind,
 } from '@0xsequence/api-client';
 import { delay, HttpResponse, http } from 'msw';
-import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 
 export const MOCK_COLLECTION_ADDRESS =

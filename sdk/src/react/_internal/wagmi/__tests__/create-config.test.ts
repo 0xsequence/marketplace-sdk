@@ -44,6 +44,7 @@ describe('createWagmiConfig', () => {
 				logoUrl: '',
 				fontUrl: '',
 				accessKey: undefined,
+				isTrailsEnabled: true,
 			},
 			market: {
 				enabled: true,

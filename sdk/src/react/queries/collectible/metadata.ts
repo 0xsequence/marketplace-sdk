@@ -1,4 +1,8 @@
-import type { Address, GetTokenMetadataArgs } from '@0xsequence/api-client';
+import type {
+	GetSingleTokenMetadataArgs,
+	GetTokenMetadataArgs,
+	TokenMetadata,
+} from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -9,11 +13,7 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchCollectibleParams {
-	chainId: number;
-	collectionAddress: Address;
-	tokenId: bigint;
-}
+export type FetchCollectibleParams = GetSingleTokenMetadataArgs;
 
 export type CollectibleQueryOptions = SdkQueryParams<FetchCollectibleParams>;
 
@@ -25,7 +25,7 @@ export async function fetchCollectible(
 		CollectibleQueryOptions,
 		'chainId' | 'collectionAddress' | 'tokenId' | 'config'
 	>,
-) {
+): Promise<TokenMetadata | undefined> {
 	const { tokenId, chainId, collectionAddress, config } = params;
 
 	const metadataClient = getMetadataClient(config);

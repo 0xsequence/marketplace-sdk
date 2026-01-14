@@ -1,14 +1,18 @@
+import type { Address, Hash } from '@0xsequence/api-client';
 import { ChevronLeftIcon, Text } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import type { Address, Hash, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice } from '../../../../../utils/price';
 import { type Step, StepType } from '../../../../_internal';
 import { useConnectorMetadata } from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
+import type { FeeStep } from '../../_internal/types/steps';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useExecuteBundledTransactions } from '../hooks/useExecuteBundledTransactions';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
@@ -46,9 +50,11 @@ type CryptoPaymentModalReturn = {
 	};
 	steps: {
 		approvalStep: Step | undefined;
+		feeStep?: FeeStep;
 	};
 	connector: {
 		isSequenceConnector: boolean | undefined;
+		isWaaS: boolean | undefined;
 	};
 	flags: {
 		isMarket: boolean;
@@ -75,7 +81,7 @@ export function useCryptoPaymentModalContext({
 }: {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex | string) => void;
+	onSuccess: (hash: Hex) => void;
 }): CryptoPaymentModalReturn {
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
@@ -84,7 +90,7 @@ export function useCryptoPaymentModalContext({
 		message: string;
 		details?: Error;
 	} | null>(null);
-	const { isSequence: isSequenceConnector } = useConnectorMetadata();
+	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
@@ -133,9 +139,16 @@ export function useCryptoPaymentModalContext({
 		priceAmount: BigInt(priceAmount || 0),
 	});
 
+	const waas = useSelectWaasFeeOptionsStore();
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(chainId, sdkConfig);
+	const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+	const isFeeSelectionVisible =
+		waas.isVisible || (!isSponsored && !!pendingFeeOptionConfirmation?.options);
+
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
-		const to = step.to as Address;
+		const to = step.to;
 		const value = BigInt(step.value);
 
 		if (!data || !to) {
@@ -289,18 +302,43 @@ export function useCryptoPaymentModalContext({
 		return `${formattedPrice} ${currency?.symbol}`;
 	};
 
+	// Fee step for WaaS
+	const feeStep: FeeStep | undefined = isWaaS
+		? {
+				label: 'Select Fee',
+				status:
+					isSponsored || !!waas.selectedFeeOption
+						? 'success'
+						: isFeeSelectionVisible
+							? 'selecting'
+							: 'idle',
+				isSponsored,
+				isSelecting: isFeeSelectionVisible,
+				selectedOption: waas.selectedFeeOption,
+				show: () => waas.show(),
+				cancel: () => {
+					waas.hide();
+					if (pendingFeeOptionConfirmation?.id) {
+						rejectPendingFeeOption(pendingFeeOptionConfirmation.id);
+					}
+				},
+			}
+		: undefined;
+
 	const canApprove =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		!isAnyTransactionPending;
+		!isAnyTransactionPending &&
+		!isFeeSelectionVisible;
 
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
 		(isSequenceConnector ? true : !approvalStep) &&
-		!isAnyTransactionPending;
+		!isAnyTransactionPending &&
+		!isFeeSelectionVisible;
 
 	const result: CryptoPaymentModalReturn = {
 		data: {
@@ -331,9 +369,11 @@ export function useCryptoPaymentModalContext({
 		},
 		steps: {
 			approvalStep,
+			feeStep,
 		},
 		connector: {
 			isSequenceConnector,
+			isWaaS,
 		},
 		flags: {
 			isMarket,

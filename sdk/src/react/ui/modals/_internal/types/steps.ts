@@ -121,7 +121,7 @@ export function isApprovalStep(step: unknown): step is ApprovalStep {
 	return (
 		isTransactionStep(step) &&
 		'reset' in step &&
-		typeof (step as ApprovalStep).reset === 'function'
+		typeof step.reset === 'function'
 	);
 }
 

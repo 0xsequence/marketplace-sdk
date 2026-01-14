@@ -1,7 +1,7 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { Optional } from '../../_internal';
 import {
 	type ComparePricesQueryOptions,

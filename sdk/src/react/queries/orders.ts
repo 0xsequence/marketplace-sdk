@@ -1,14 +1,9 @@
-import type { GetOrdersInput, Page } from '@0xsequence/api-client';
+import type { GetOrdersRequest } from '@0xsequence/api-client';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { getMarketplaceClient, type SdkQueryParams } from '../_internal';
 
-export interface FetchOrdersParams {
-	chainId: number;
-	input: GetOrdersInput[];
-	page?: Page;
-	config: SdkConfig;
-}
+export type FetchOrdersParams = GetOrdersRequest & { config: SdkConfig };
 
 /**
  * Fetches orders from the marketplace API
@@ -29,22 +24,24 @@ export type OrdersQueryOptions = SdkQueryParams<
 >;
 
 export function ordersQueryOptions(params: OrdersQueryOptions) {
+	const { chainId, input, config } = params;
 	const enabled = Boolean(
-		params.config &&
-			params.chainId &&
-			params.input &&
-			(params.query?.enabled ?? true),
+		config && chainId && input && (params.query?.enabled ?? true),
 	);
 
 	return queryOptions({
 		queryKey: ['orders', params],
-		queryFn: () =>
-			fetchOrders({
-				chainId: params.chainId!,
-				input: params.input!,
+		queryFn: () => {
+			if (!chainId || !input || !config) {
+				throw new Error('Missing required parameters for orders query');
+			}
+			return fetchOrders({
+				chainId,
+				input,
 				page: params.page,
-				config: params.config!,
-			}),
+				config,
+			});
+		},
 		...params.query,
 		enabled,
 	});

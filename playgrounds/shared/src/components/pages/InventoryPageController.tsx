@@ -49,7 +49,7 @@ function useListInventoryCardData({
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
 }: UseListInventoryCardDataProps) {
-	const { address: accountAddress } = useAccount();
+	const { address: userAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
 
 	const {
@@ -58,12 +58,11 @@ function useListInventoryCardData({
 		error: inventoryError,
 		isSuccess,
 	} = useInventory({
-		// biome-ignore lint/style/noNonNullAssertion: accountAddress is required for the inventory query
-		accountAddress: accountAddress!,
+		userAddress,
 		collectionAddress,
 		chainId,
 		query: {
-			enabled: !!accountAddress && !!collectionAddress && !!chainId,
+			enabled: !!userAddress && !!collectionAddress && !!chainId,
 		},
 	});
 	const collectionType = inventoryData?.collectibles[0]?.contractType;
@@ -98,7 +97,7 @@ function useListInventoryCardData({
 					order?: Order;
 					e: React.MouseEvent<HTMLButtonElement>;
 				}) => {
-					if (!accountAddress) return;
+					if (!userAddress) return;
 
 					if (order) {
 						showSellModal({
@@ -124,7 +123,7 @@ function useListInventoryCardData({
 		onCollectibleClick,
 		onCannotPerformAction,
 		assetSrcPrefixUrl,
-		accountAddress,
+		userAddress,
 		showSellModal,
 	]);
 
@@ -145,7 +144,7 @@ interface InventoryPageControllerProps {
 export function InventoryPageController({
 	onNavigate,
 }: InventoryPageControllerProps) {
-	const { address: accountAddress } = useAccount();
+	const { address: userAddress } = useAccount();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const marketCollections = marketplaceConfig?.market.collections || [];
@@ -175,7 +174,7 @@ export function InventoryPageController({
 		onNavigate(route);
 	};
 
-	if (!accountAddress) {
+	if (!userAddress) {
 		return (
 			<div className="flex justify-center pt-3">
 				<Text variant="large">
@@ -198,7 +197,7 @@ export function InventoryPageController({
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
 							collectionAddress={collection.itemsAddress as Address}
-							accountAddress={accountAddress}
+							userAddress={userAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>
 					))}
@@ -216,7 +215,7 @@ export function InventoryPageController({
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
 							collectionAddress={collection.itemsAddress as Address}
-							accountAddress={accountAddress}
+							userAddress={userAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>
 					))}
@@ -229,7 +228,7 @@ export function InventoryPageController({
 interface CollectionInventoryProps {
 	chainId: number;
 	collectionAddress: Hex;
-	accountAddress: Hex;
+	userAddress: Hex;
 	onCollectibleClick: (
 		chainId: number,
 		collectionAddress: Hex,
@@ -304,16 +303,14 @@ function CollectionInventory({
 					return (
 						<div key={`${collectionAddress}-${card.tokenId}`}>
 							<CollectibleCard
-								tokenId={card.tokenId}
-								chainId={card.chainId}
-								collectionAddress={card.collectionAddress}
-								collectionType={card.collectionType}
-								assetSrcPrefixUrl={card.assetSrcPrefixUrl}
-								cardLoading={card.cardLoading}
-								cardType="inventory-non-tradable"
-								balance={card.balance}
-								balanceIsLoading={card.balanceIsLoading}
-								collectibleMetadata={card.collectible?.metadata}
+								{...card}
+								cardType={'inventory-non-tradable'}
+								collectibleMetadata={{
+									name: card.collectible?.metadata.name,
+									image: card.collectible?.metadata.image,
+									video: card.collectible?.metadata.video,
+									animation_url: card.collectible?.metadata.animation_url,
+								}}
 							/>
 						</div>
 					);

@@ -1,35 +1,35 @@
+import type { Address } from '@0xsequence/api-client';
 import {
 	type CollectiblePrimarySaleItem,
 	type ListPrimarySaleItemsResponse,
-	MarketplaceAPI,
+	Marketplace,
+	type MarketplaceTokenMetadata,
+	MetadataStatus,
 	type PrimarySaleItem,
 } from '@0xsequence/api-client';
 import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
-import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { usePrimarySaleItems } from './primary-sale-items';
 
 const { mockMarketplaceEndpoint } = MarketplaceMocks;
 
-// Mock token metadata
-const mockTokenMetadata: MarketplaceAPI.TokenMetadata = {
+const mockTokenMetadata: MarketplaceTokenMetadata = {
 	tokenId: 1n,
 	name: 'Mock NFT',
 	description: 'A mock NFT for testing',
 	image: 'https://example.com/nft.png',
 	attributes: [{ trait_type: 'Type', value: 'Mock' }],
-	status: MarketplaceAPI.MetadataStatus.AVAILABLE,
+	status: MetadataStatus.AVAILABLE,
 };
 
-// Helper to create mock primary sale item data
 const createMockPrimarySaleItem = (
 	overrides?: Partial<PrimarySaleItem>,
 ): PrimarySaleItem => ({
 	itemAddress: '0x1234567890123456789012345678901234567890' as Address,
-	contractType: MarketplaceAPI.ContractType.ERC721,
+	contractType: Marketplace.ContractType.ERC721,
 	tokenId: 1n,
 	itemType: 'global' as any,
 	startDate: new Date('2024-01-01T00:00:00Z').toISOString(),
@@ -50,7 +50,7 @@ const createMockPrimarySaleItem = (
 
 const createMockCollectiblePrimarySaleItem = (
 	overrides?: Partial<PrimarySaleItem>,
-	metadataOverrides?: Partial<MarketplaceAPI.TokenMetadata>,
+	metadataOverrides?: Partial<MarketplaceTokenMetadata>,
 ): CollectiblePrimarySaleItem => ({
 	metadata: {
 		...mockTokenMetadata,

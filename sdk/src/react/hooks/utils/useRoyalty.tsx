@@ -1,7 +1,8 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { Address, PublicClient } from 'viem';
+import type { PublicClient } from 'viem';
 import { readContract } from 'viem/actions';
 import { usePublicClient } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';

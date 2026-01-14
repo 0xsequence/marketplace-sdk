@@ -7,6 +7,7 @@ import { getPresentableChainName } from '../../../../../utils/network';
 import type { Step } from '../../../../_internal';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
+import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
 import { useCryptoPaymentModalContext } from '../internal/cryptoPaymentModalContext';
 import { CollectibleMetadataSummary } from './CollectibleMetadataSummary';
 import { CryptoPaymentModalSkeleton } from './CryptoPaymentModalSkeleton';
@@ -14,7 +15,7 @@ import { CryptoPaymentModalSkeleton } from './CryptoPaymentModalSkeleton';
 export interface CryptoPaymentModalProps {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex | string) => void;
+	onSuccess: (hash: Hex) => void;
 }
 
 export const CryptoPaymentModal = ({
@@ -29,7 +30,7 @@ export const CryptoPaymentModal = ({
 		balance: { hasSufficientBalance },
 		transaction: { isApproving, isExecuting, isExecutingBundledTransactions },
 		error: { error, dismissError },
-		steps: { approvalStep },
+		steps: { approvalStep, feeStep },
 		connector: { isSequenceConnector },
 		flags: { isMarket },
 		permissions: { canApprove, canBuy },
@@ -149,6 +150,14 @@ export const CryptoPaymentModal = ({
 					>
 						{buyButtonLabel}
 					</Button>
+				)}
+
+				{feeStep?.isSelecting && (
+					<SelectWaasFeeOptions
+						chainId={chainId}
+						onCancel={feeStep.cancel}
+						titleOnConfirm="Processing purchase..."
+					/>
 				)}
 
 				{(chainSwitchError || error) && (

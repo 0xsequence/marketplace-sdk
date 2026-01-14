@@ -16,7 +16,7 @@ mockCollectibleOrder.metadata.tokenId = 1n;
 
 describe('useInventory', () => {
 	const defaultArgs: UseInventoryArgs = {
-		accountAddress: '0x1234567890123456789012345678901234567890' as Address,
+		userAddress: '0x1234567890123456789012345678901234567890' as Address,
 		chainId: 1,
 		collectionAddress: zeroAddress,
 	};

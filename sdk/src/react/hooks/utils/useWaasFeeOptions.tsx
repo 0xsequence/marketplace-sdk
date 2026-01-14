@@ -4,7 +4,7 @@ import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { FeeOption } from '@0xsequence/waas';
 import { useEffect } from 'react';
 import { formatUnits } from 'viem';
-import type { Connector } from 'wagmi';
+import type { Connection, Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient } from '../../_internal';
@@ -82,8 +82,8 @@ export function useWaasFeeOptions(
 ): UseWaasFeeOptionsReturnType {
 	const { skipFeeBalanceCheck = false } = options || {};
 	const connections = useConnections();
-	const waasConnector: Connector | undefined = connections.find((c: any) =>
-		c.connector.id.includes('waas'),
+	const waasConnector: Connector | undefined = connections.find(
+		(c: Connection) => c.connector.id.includes('waas'),
 	)?.connector;
 	const indexerClient = getIndexerClient(chainId, config);
 	const pendingFeeOptionConfirmation = usePendingConfirmation();
@@ -116,6 +116,7 @@ export function useWaasFeeOptions(
 			return;
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- sequenceWaasProvider is not typed on Connector
 		const waasProvider = (waasConnector as any).sequenceWaasProvider;
 		if (!waasProvider) {
 			return;

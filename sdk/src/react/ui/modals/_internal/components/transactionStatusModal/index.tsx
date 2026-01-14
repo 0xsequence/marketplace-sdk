@@ -1,9 +1,10 @@
 'use client';
 
+import type { Address } from '@0xsequence/api-client';
 import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import type { QueryKey } from '@tanstack/react-query';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';

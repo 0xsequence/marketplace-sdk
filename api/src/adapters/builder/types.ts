@@ -1,5 +1,3 @@
-// Normalized Builder Types
-
 import type { ContractType } from '@0xsequence/indexer';
 import type {
 	Address,
@@ -8,7 +6,24 @@ import type {
 	TokenId,
 } from '../../types/primitives';
 import type { OrderbookKind } from '../marketplace';
-import type { FilterCondition, MarketplaceWalletType } from './builder.gen';
+import type {
+	FilterCondition,
+	CollectionFilterSettings as GenCollectionFilterSettings,
+	LookupMarketplaceArgs as GenLookupMarketplaceArgs,
+	LookupMarketplaceReturn as GenLookupMarketplaceReturn,
+	MarketCollection as GenMarketCollection,
+	Marketplace as GenMarketplace,
+	MarketplacePage as GenMarketplacePage,
+	MarketplaceService as GenMarketplaceService,
+	MarketplaceSettings as GenMarketplaceSettings,
+	MarketplaceSocials as GenMarketplaceSocials,
+	MarketplaceWallet as GenMarketplaceWallet,
+	MarketplaceWalletEcosystem as GenMarketplaceWalletEcosystem,
+	MarketplaceWalletEmbedded as GenMarketplaceWalletEmbedded,
+	MetadataFilterRule as GenMetadataFilterRule,
+	OpenIdProvider as GenOpenIdProvider,
+	ShopCollection as GenShopCollection,
+} from './builder.gen';
 
 export {
 	FilterCondition,
@@ -27,137 +42,118 @@ export {
 	WebrpcStreamLostError,
 } from './builder.gen';
 
-export interface LookupMarketplaceArgs {
+export type LookupMarketplaceArgs = Omit<
+	GenLookupMarketplaceArgs,
+	'projectId' | 'userAddress'
+> & {
 	projectId?: ProjectId;
-	domain?: string;
-	userAddress?: string;
-}
+	userAddress?: Address;
+};
 
-export interface LookupMarketplaceReturn {
+export type LookupMarketplaceReturn = Omit<
+	GenLookupMarketplaceReturn,
+	'marketplace' | 'marketCollections' | 'shopCollections'
+> & {
 	marketplace: Marketplace;
 	marketCollections: MarketCollection[];
 	shopCollections: ShopCollection[];
-}
+};
 
-export interface Marketplace {
+export type Marketplace = Omit<
+	GenMarketplace,
+	'projectId' | 'market' | 'shop'
+> & {
 	projectId: ProjectId;
-	settings: MarketplaceSettings;
 	market: MarketPage;
 	shop: ShopPage;
-	createdAt?: string;
-	updatedAt?: string;
-}
+};
 
-export interface MarketplaceSettings {
-	// biome-ignore lint/suspicious/noExplicitAny: Style object accepts arbitrary CSS properties
-	style: { [key: string]: any };
-	publisherId: string;
-	title: string;
-	socials: MarketplaceSocials;
-	faviconUrl: string;
+export type MarketplaceSettings = Omit<
+	GenMarketplaceSettings,
+	'style' | 'walletOptions'
+> & {
+	style: Record<string, unknown>;
 	walletOptions: MarketplaceWallet;
-	logoUrl: string;
-	fontUrl: string;
-	accessKey?: string;
-}
+};
 
-export interface MarketplacePage {
-	enabled: boolean;
-	bannerUrl: string;
-	ogImage: string;
-	private: boolean;
-}
+export type MarketplacePage = GenMarketplacePage;
 
-export interface MarketPage extends MarketplacePage {
+export type MarketPage = MarketplacePage & {
 	collections: MarketCollection[];
-}
+};
 
-export interface ShopPage extends MarketplacePage {
+export type ShopPage = MarketplacePage & {
 	collections: ShopCollection[];
-}
+};
 
-export interface MarketplaceSocials {
-	twitter: string;
-	discord: string;
-	website: string;
-	tiktok: string;
-	instagram: string;
-	youtube: string;
-}
+export type MarketplaceSocials = GenMarketplaceSocials;
 
-export interface MarketplaceWallet {
-	walletType: MarketplaceWalletType;
-	oidcIssuers: { [key: string]: string };
-	connectors: string[];
-	includeEIP6963Wallets: boolean;
+export type MarketplaceWallet = Omit<
+	GenMarketplaceWallet,
+	'ecosystem' | 'embedded'
+> & {
 	ecosystem?: MarketplaceWalletEcosystem;
 	embedded?: MarketplaceWalletEmbedded;
-}
+};
 
-export interface MarketplaceWalletEcosystem {
-	walletUrl: string;
-	walletAppName: string;
-	logoLightUrl?: string;
-	logoDarkUrl?: string;
-}
+export type MarketplaceWalletEcosystem = GenMarketplaceWalletEcosystem;
 
-export interface MarketplaceWalletEmbedded {
-	tenantKey: string;
-	emailEnabled: boolean;
+export type MarketplaceWalletEmbedded = Omit<
+	GenMarketplaceWalletEmbedded,
+	'providers'
+> & {
 	providers: OpenIdProvider[];
-}
+};
 
-export interface OpenIdProvider {
-	iss: string;
-	aud: string[];
-}
+export type OpenIdProvider = GenOpenIdProvider;
 
-interface BaseMarketplaceCollection {
-	id: number;
+export type CollectionFilterSettings = Omit<
+	GenCollectionFilterSettings,
+	'exclusions'
+> & {
+	exclusions: MetadataFilterRule[];
+};
+
+export type MetadataFilterRule = Omit<GenMetadataFilterRule, 'condition'> & {
+	condition: FilterCondition;
+};
+
+export type MarketCollection = Omit<
+	GenMarketCollection,
+	| 'projectId'
+	| 'chainId'
+	| 'itemsAddress'
+	| 'contractType'
+	| 'destinationMarketplace'
+	| 'filterSettings'
+> & {
+	marketplaceCollectionType: 'market';
 	projectId: ProjectId;
 	chainId: ChainId;
 	itemsAddress: Address;
-	bannerUrl: string;
-	sortOrder?: number;
-	private: boolean;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
-export interface MarketCollection extends BaseMarketplaceCollection {
-	marketplaceCollectionType: 'market';
 	contractType: ContractType;
-	feePercentage: number;
-	currencyOptions: string[];
 	destinationMarketplace: OrderbookKind;
 	filterSettings?: CollectionFilterSettings;
-}
+};
 
-export interface CollectionFilterSettings {
-	filterOrder: string[];
-	exclusions: MetadataFilterRule[];
-}
-
-export interface MetadataFilterRule {
-	key: string;
-	condition: FilterCondition;
-	value?: string;
-}
-
-export interface ShopCollection extends BaseMarketplaceCollection {
+export type ShopCollection = Omit<
+	GenShopCollection,
+	| 'projectId'
+	| 'chainId'
+	| 'itemsAddress'
+	| 'saleAddress'
+	| 'tokenIds'
+	| 'customTokenIds'
+> & {
 	marketplaceCollectionType: 'shop';
+	projectId: ProjectId;
+	chainId: ChainId;
+	itemsAddress: Address;
 	saleAddress: Address;
-	name: string;
 	tokenIds: TokenId[];
 	customTokenIds: TokenId[];
-}
+};
 
 export type MarketplaceCollection = MarketCollection | ShopCollection;
 
-export interface MarketplaceService {
-	lookupMarketplace(
-		args: LookupMarketplaceArgs,
-		headers?: object,
-		signal?: AbortSignal,
-	): Promise<LookupMarketplaceReturn>;
-}
+export type MarketplaceService = GenMarketplaceService;

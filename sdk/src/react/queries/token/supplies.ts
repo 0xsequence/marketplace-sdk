@@ -1,6 +1,9 @@
-import type { Indexer } from '@0xsequence/api-client';
+import type {
+	Address,
+	GetTokenSuppliesRequest,
+	IndexerPage,
+} from '@0xsequence/api-client';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import {
 	getIndexerClient,
 	type SdkInfiniteQueryParams,
@@ -8,15 +11,14 @@ import {
 } from '../../_internal';
 import { createTokenQueryKey } from './queryKeys';
 
-export interface FetchTokenSuppliesParams
-	extends Omit<
-		Indexer.GetTokenSuppliesRequest,
-		'contractAddress' | 'collectionAddress'
-	> {
+export type FetchTokenSuppliesParams = Omit<
+	GetTokenSuppliesRequest,
+	'contractAddress' | 'collectionAddress'
+> & {
 	chainId: number;
 	collectionAddress: Address;
-	page?: Indexer.Page;
-}
+	page?: IndexerPage;
+};
 
 export type TokenSuppliesQueryOptions =
 	SdkInfiniteQueryParams<FetchTokenSuppliesParams>;
@@ -55,7 +57,7 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
-	const initialPageParam: Indexer.Page = { page: 1, pageSize: 30, more: false };
+	const initialPageParam: IndexerPage = { page: 1, pageSize: 30, more: false };
 
 	const queryFn = async ({ pageParam = initialPageParam }) => {
 		const requiredParams = params as WithRequired<

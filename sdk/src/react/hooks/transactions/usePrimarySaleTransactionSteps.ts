@@ -1,6 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { type ContractType, type Step, StepType } from '@0xsequence/api-client';
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import { encodeFunctionData, maxUint256, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../utils/abi';
@@ -9,7 +9,7 @@ import {
 	useSalesContractABI,
 } from '../contracts/useSalesContractABI';
 
-export interface UsePrimarySaleTransactionStepsParams {
+export type UsePrimarySaleTransactionStepsParams = {
 	chainId: number;
 	buyer: Address;
 	recipient?: Address;
@@ -21,7 +21,7 @@ export interface UsePrimarySaleTransactionStepsParams {
 	merkleProof?: string[];
 	contractType: ContractType.ERC721 | ContractType.ERC1155;
 	enabled?: boolean;
-}
+};
 
 /**
  * Hook to generate transaction steps for primary sale transactions (minting/shop)
@@ -86,6 +86,7 @@ export function usePrimarySaleTransactionSteps({
 				paymentToken,
 			},
 		],
+		// eslint-disable-next-line @typescript-eslint/require-await -- React Query expects async queryFn
 		queryFn: async () => {
 			if (!abi) {
 				throw new Error('Unable to determine sales contract ABI');
@@ -122,14 +123,15 @@ export function usePrimarySaleTransactionSteps({
 				paymentToken,
 				maxTotal,
 				merkleProof,
-				version: version!,
+				version,
 			});
 
 			// Add mint step
 			const mintCalldata = encodeFunctionData({
 				abi,
 				functionName: 'mint',
-				args: mintArgs as any, // Type assertion needed due to complex ABI types
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Type assertion needed due to complex ABI types
+				args: mintArgs as any,
 			});
 
 			steps.push({

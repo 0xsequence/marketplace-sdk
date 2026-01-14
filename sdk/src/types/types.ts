@@ -22,12 +22,12 @@ export type {
 
 // Marketplace Configuration
 
-export interface MarketplaceConfig {
+export type MarketplaceConfig = {
 	projectId: number;
 	settings: MarketplaceSettings;
 	market: MarketPage;
 	shop: ShopPage;
-}
+};
 
 /**
  * Type guard to check if a collection is a ShopCollection
@@ -51,40 +51,40 @@ export function isMarketCollection(
 
 // Wallet Configuration
 
-export interface EcosystemWalletSettings {
+export type EcosystemWalletSettings = {
 	walletUrl: string;
 	walletAppName: string;
 	logoLightUrl?: string;
 	logoDarkUrl?: string;
-}
+};
 
-export interface MarketplaceWalletOptions {
+export type MarketplaceWalletOptions = {
 	walletType: MarketplaceWalletType;
 	oidcIssuers: { [key: string]: string };
 	connectors: Array<string>;
 	includeEIP6963Wallets: boolean;
 	ecosystem?: EcosystemWalletSettings;
 	waas?: MarketplaceWalletWaasSettings;
-}
+};
 
-export interface MarketplaceWalletWaasSettings {
+export type MarketplaceWalletWaasSettings = {
 	tenantKey: string;
 	emailEnabled: boolean;
 	providers: Array<OpenIdProvider>;
-}
+};
 
 // Filtering & Metadata
 
-export interface MetadataFilterRule {
+export type MetadataFilterRule = {
 	key: string;
 	condition: FilterCondition;
 	value?: string;
-}
+};
 
-export interface CollectionFilterSettings {
+export type CollectionFilterSettings = {
 	filterOrder: Array<string>;
 	exclusions: Array<MetadataFilterRule>;
-}
+};
 
 // UI Types
 

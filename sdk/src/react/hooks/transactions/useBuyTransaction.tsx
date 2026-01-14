@@ -1,5 +1,5 @@
+import type { Address } from '@0xsequence/api-client';
 import { type ContractType, MarketplaceKind } from '@0xsequence/api-client';
-import type { Address } from 'viem';
 import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
@@ -43,7 +43,7 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 	const marketQuery = useMarketTransactionSteps({
 		chainId,
 		collectionAddress,
-		buyer: buyer!,
+		buyer: buyer ?? zeroAddress,
 		marketplace: isMarketProps(modalProps)
 			? modalProps.marketplace
 			: MarketplaceKind.sequence_marketplace_v2,
@@ -51,22 +51,27 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 		tokenId: isMarketProps(modalProps) ? modalProps.tokenId : 0n,
 		quantity: 1n, // Single item purchase for now
 		additionalFees: [marketPlatformFee],
-		enabled: transactionType === TransactionType.MARKET_BUY,
+		enabled: transactionType === TransactionType.MARKET_BUY && !!buyer,
 	});
 
 	// Primary sale transaction query
 	const primaryQuery = usePrimarySaleTransactionSteps({
 		chainId: modalProps.chainId,
-		buyer: buyer!,
+		buyer: buyer ?? zeroAddress,
 		salesContractAddress: isShopProps(modalProps)
 			? modalProps.salesContractAddress
 			: zeroAddress,
 		tokenIds: isShopProps(modalProps) ? [modalProps.item.tokenId] : [],
 		amounts: isShopProps(modalProps) ? [normalizedQuantity] : [],
-		maxTotal: primarySalePrice?.amount!,
-		paymentToken: primarySalePrice?.currencyAddress!,
+		maxTotal: primarySalePrice?.amount ?? 0n,
+		paymentToken: primarySalePrice?.currencyAddress ?? zeroAddress,
 		contractType,
-		enabled: transactionType === TransactionType.PRIMARY_SALE,
+		enabled:
+			transactionType === TransactionType.PRIMARY_SALE &&
+			!!buyer &&
+			primarySalePrice?.amount !== undefined &&
+			primarySalePrice?.amount !== null &&
+			!!primarySalePrice?.currencyAddress,
 	});
 
 	// Return the active query based on transaction type

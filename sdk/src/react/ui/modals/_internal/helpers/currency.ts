@@ -1,4 +1,4 @@
-import { type Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { OrderbookKind } from '../../../../../types';
 import { compareAddress } from '../../../../../utils';
 import type { Currency } from '../../../../_internal';
@@ -15,10 +15,7 @@ export function filterCurrenciesForOrderbook(
 		const openseaCurrency = getOpenseaCurrencyForChain(chainId, 'listing');
 		if (openseaCurrency) {
 			return currencies.filter((currency) =>
-				compareAddress(
-					currency.contractAddress,
-					openseaCurrency.address as Address,
-				),
+				compareAddress(currency.contractAddress, openseaCurrency.address),
 			);
 		}
 	}

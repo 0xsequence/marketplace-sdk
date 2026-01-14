@@ -95,17 +95,7 @@ export class IndexerClient {
 		args: IndexerGen.GetTokenBalancesDetailsArgs,
 	): Promise<Normalized.GetTokenBalancesDetailsResponse> {
 		const rawResponse = await this.client.getTokenBalancesDetails(args);
-		return {
-			page: transforms.toPage(rawResponse.page) || {
-				page: 0,
-				pageSize: 0,
-				more: false,
-			},
-			nativeBalances: (rawResponse.nativeBalances || []).map(
-				transforms.toNativeTokenBalance,
-			),
-			balances: rawResponse.balances.map(transforms.toTokenBalance),
-		};
+		return transforms.toGetTokenBalancesDetailsResponse(rawResponse);
 	}
 
 	/**
@@ -115,14 +105,19 @@ export class IndexerClient {
 		args: IndexerGen.GetTokenBalancesByContractArgs,
 	): Promise<Normalized.GetTokenBalancesByContractResponse> {
 		const rawResponse = await this.client.getTokenBalancesByContract(args);
-		return {
-			page: transforms.toPage(rawResponse.page) || {
-				page: 0,
-				pageSize: 0,
-				more: false,
-			},
-			balances: rawResponse.balances.map(transforms.toTokenBalance),
-		};
+		return transforms.toGetTokenBalancesByContractResponse(rawResponse);
+	}
+
+	/**
+	 * Get token balances for a user in a specific collection
+	 * Convenience method with user-friendly parameter names
+	 */
+	async getUserCollectionBalances(
+		args: Normalized.GetUserCollectionBalancesRequest,
+	): Promise<Normalized.TokenBalance[]> {
+		const apiArgs = transforms.toGetUserCollectionBalancesArgs(args);
+		const rawResponse = await this.client.getTokenBalancesByContract(apiArgs);
+		return rawResponse.balances.map(transforms.toTokenBalance);
 	}
 
 	/**
@@ -132,9 +127,7 @@ export class IndexerClient {
 		args: IndexerGen.GetNativeTokenBalanceArgs,
 	): Promise<Normalized.GetNativeTokenBalanceResponse> {
 		const rawResponse = await this.client.getNativeTokenBalance(args);
-		return {
-			balance: transforms.toNativeTokenBalance(rawResponse.balance),
-		};
+		return transforms.toGetNativeTokenBalanceResponse(rawResponse);
 	}
 
 	/**

@@ -1,4 +1,5 @@
-import type { Address, Hex } from 'viem';
+import type { Address } from '@0xsequence/api-client';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import {

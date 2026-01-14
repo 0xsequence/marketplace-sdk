@@ -1,13 +1,14 @@
-import type { Address } from 'viem';
+import type { Address } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ERC20_ABI } from '../../../../../../utils/abi';
 
-export interface UseERC20AllowanceArgs {
+export type UseERC20AllowanceArgs = {
 	tokenAddress: Address | undefined;
 	spenderAddress: Address | undefined;
 	chainId: number;
 	enabled?: boolean;
-}
+};
 
 export function useERC20Allowance({
 	tokenAddress,
@@ -28,7 +29,7 @@ export function useERC20Allowance({
 		address: tokenAddress,
 		abi: ERC20_ABI,
 		functionName: 'allowance',
-		args: [ownerAddress!, spenderAddress!],
+		args: [ownerAddress ?? zeroAddress, spenderAddress ?? zeroAddress],
 		chainId,
 		query: {
 			enabled: isEnabled,
@@ -36,7 +37,7 @@ export function useERC20Allowance({
 	});
 
 	return {
-		allowance: allowance as bigint | undefined,
+		allowance,
 		...rest,
 	};
 }

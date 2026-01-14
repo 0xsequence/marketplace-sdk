@@ -1,4 +1,5 @@
 import {
+	type Address,
 	type ContractType,
 	type CreateReq,
 	type GenerateListingTransactionRequest,
@@ -8,7 +9,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { toNumber } from 'dnum';
 import { useMemo } from 'react';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind } from '../../../../../types';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
@@ -31,15 +32,15 @@ export type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
-export interface ListingParams {
+export type ListingParams = {
 	tokenId: bigint;
 	quantity: bigint;
 	expiry: string;
 	currencyAddress: Address;
 	pricePerToken: bigint;
-}
+};
 
-export interface UseListingMutationsArgs {
+export type UseListingMutationsArgs = {
 	chainId: number;
 	collectionAddress: Address;
 	contractType: ContractType | undefined;
@@ -48,7 +49,7 @@ export interface UseListingMutationsArgs {
 	currencyDecimals: number;
 	// NFT approval check should be independent of form validation
 	nftApprovalEnabled?: boolean;
-}
+};
 
 export const useListingMutations = ({
 	chainId,
@@ -194,7 +195,7 @@ export const useListingMutations = ({
 				}
 			}
 
-			if (currency) {
+			if (currency && ownerAddress) {
 				const currencyValueRaw = Number(listing.pricePerToken.toString());
 				const priceDnum = fromBigIntString(
 					listing.pricePerToken.toString(),
@@ -213,7 +214,7 @@ export const useListingMutations = ({
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
 						publicClient,
-						ownerAddress!,
+						ownerAddress,
 					);
 				}
 

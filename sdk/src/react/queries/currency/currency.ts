@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address, ListCurrenciesRequest } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import {
 	buildQueryOptions,
@@ -10,10 +10,9 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchCurrencyParams {
-	chainId: number;
+export type FetchCurrencyParams = ListCurrenciesRequest & {
 	currencyAddress: Address;
-}
+};
 
 /**
  * Fetches currency details from the marketplace API

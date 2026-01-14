@@ -1,6 +1,7 @@
+import type { Address } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address } from 'viem';
+import { zeroAddress } from 'viem';
 import type { Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../hooks';
 
@@ -18,7 +19,7 @@ type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
 
 const initialContext: SellModalState = {
 	isOpen: false,
-	collectionAddress: '0x0000000000000000000000000000000000000000',
+	collectionAddress: zeroAddress,
 	chainId: 0,
 	tokenId: 0n,
 	order: null,

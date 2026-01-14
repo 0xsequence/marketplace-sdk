@@ -1,5 +1,5 @@
-import type { ContractType } from '@0xsequence/api-client';
-import { type Abi, type Address, erc721Abi } from 'viem';
+import type { Address, ContractType } from '@0xsequence/api-client';
+import { type Abi, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 import type { WriteContractErrorType } from 'wagmi/actions';
 import { ERC1155_ABI } from '../../../utils';

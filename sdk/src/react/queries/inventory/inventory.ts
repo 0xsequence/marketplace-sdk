@@ -1,16 +1,16 @@
 import type {
-	IndexerContractInfo as ContractInfo,
+	ChainId,
+	GetUserCollectionBalancesRequest,
+	IndexerTokenMetadata,
 	IndexerTokenBalance as TokenBalance,
 } from '@0xsequence/api-client';
-import { ContractType } from '@0xsequence/api-client';
-import type { Address } from 'viem';
+import { ContractType, MetadataStatus } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import { compareAddress } from '../../../utils';
 import {
 	buildQueryOptions,
 	getQueryClient,
-	MetadataStatus,
 	type SdkQueryParams,
 	type WithOptionalParams,
 	type WithRequired,
@@ -18,36 +18,37 @@ import {
 import { tokenBalancesOptions } from '../collectible/token-balances';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
-export interface FetchInventoryParams {
-	accountAddress: Address;
-	collectionAddress: Address;
-	chainId: number;
+export type FetchInventoryParams = GetUserCollectionBalancesRequest & {
+	chainId: ChainId;
 	includeNonTradable?: boolean;
 	page?: number;
 	pageSize?: number;
-}
+};
 
-export interface CollectibleWithBalance {
-	metadata: {
-		tokenId: bigint;
-		attributes: Array<any>;
-		image?: string;
-		name: string;
-		description?: string;
-		video?: string;
-		audio?: string;
-		status: MetadataStatus;
-	};
+export type CollectibleMetadata = Pick<
+	IndexerTokenMetadata,
+	| 'tokenId'
+	| 'attributes'
+	| 'image'
+	| 'name'
+	| 'description'
+	| 'video'
+	| 'audio'
+> & {
+	status: MetadataStatus;
+};
+
+export type CollectibleWithBalance = Pick<TokenBalance, 'contractInfo'> & {
+	metadata: CollectibleMetadata;
 	balance: string;
-	contractInfo?: ContractInfo;
 	contractType: ContractType.ERC1155 | ContractType.ERC721;
-}
+};
 
-export interface CollectiblesResponse {
+export type CollectiblesResponse = {
 	collectibles: CollectibleWithBalance[];
 	page: Page;
 	isTradable: boolean;
-}
+};
 
 /**
  * Validates if a contract type is a valid collectible type (ERC721 or ERC1155)
@@ -55,6 +56,7 @@ export interface CollectiblesResponse {
 function isCollectibleContractType(
 	contractType: string,
 ): contractType is ContractType.ERC721 | ContractType.ERC1155 {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison -- Intentional type guard comparing string with enum
 	return (
 		contractType === ContractType.ERC721 ||
 		contractType === ContractType.ERC1155
@@ -90,15 +92,15 @@ function collectibleFromTokenBalance(
 async function fetchIndexerTokens(
 	params: WithRequired<
 		InventoryQueryOptions,
-		'chainId' | 'accountAddress' | 'collectionAddress' | 'config'
+		'chainId' | 'userAddress' | 'collectionAddress' | 'config'
 	>,
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
-	const { chainId, accountAddress, collectionAddress, config } = params;
+	const { chainId, userAddress, collectionAddress, config } = params;
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
 		tokenBalancesOptions({
 			collectionAddress,
-			userAddress: accountAddress,
+			userAddress,
 			chainId,
 			includeMetadata: true,
 			config,
@@ -131,11 +133,11 @@ export type UseInventoryArgs = Omit<InventoryQueryOptions, 'config'> & {
 export async function fetchInventory(
 	params: WithRequired<
 		InventoryQueryOptions,
-		'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+		'userAddress' | 'collectionAddress' | 'chainId' | 'config'
 	>,
 ): Promise<CollectiblesResponse> {
 	const {
-		accountAddress,
+		userAddress,
 		collectionAddress,
 		chainId,
 		config,
@@ -156,7 +158,7 @@ export async function fetchInventory(
 	// Fetch collectibles from indexer
 	const { collectibles } = await fetchIndexerTokens({
 		chainId,
-		accountAddress,
+		userAddress,
 		collectionAddress,
 		config,
 	});
@@ -174,7 +176,7 @@ export async function fetchInventory(
 export function getInventoryQueryKey(params: InventoryQueryOptions) {
 	return [
 		'inventory',
-		params.accountAddress,
+		params.userAddress,
 		params.collectionAddress,
 		params.chainId,
 		params.page ?? 1,
@@ -186,7 +188,7 @@ export function inventoryOptions(
 	params: WithOptionalParams<
 		WithRequired<
 			InventoryQueryOptions,
-			'accountAddress' | 'collectionAddress' | 'chainId' | 'config'
+			'userAddress' | 'collectionAddress' | 'chainId' | 'config'
 		>
 	>,
 ) {
@@ -194,7 +196,7 @@ export function inventoryOptions(
 		{
 			getQueryKey: getInventoryQueryKey,
 			requiredParams: [
-				'accountAddress',
+				'userAddress',
 				'collectionAddress',
 				'chainId',
 				'config',

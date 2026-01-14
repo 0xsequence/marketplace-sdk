@@ -1,9 +1,9 @@
 'use client';
 
-import type { Indexer } from '@0xsequence/api-client';
+import type { Address, Indexer } from '@0xsequence/api-client';
 import { useChain } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
-import { type Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
 import { useCollectionBalanceDetails } from '../collection/balance-details';
@@ -157,6 +157,7 @@ export function useAutoSelectFeeOption({
 		}
 	}, [combinedBalances]);
 
+	// eslint-disable-next-line @typescript-eslint/require-await -- Async for interface consistency
 	const autoSelectedOption = useCallback(async () => {
 		if (!userAddress) {
 			return {

@@ -7,3 +7,4 @@ export * from './providers';
 export * from './queries';
 export * from './types/query';
 export * from './ui/index';
+export * from './utils';

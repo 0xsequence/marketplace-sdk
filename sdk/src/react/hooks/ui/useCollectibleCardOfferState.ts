@@ -2,12 +2,12 @@ import { useAccount } from 'wagmi';
 import { compareAddress } from '../../../utils/address';
 import type { Order } from '../../_internal';
 
-export interface CollectibleCardOfferState {
+export type CollectibleCardOfferState = {
 	show: true;
 	canAcceptOffer: boolean;
 	isOfferMadeBySelf: boolean;
 	userOwnsToken: boolean;
-}
+};
 
 /**
  * Hook to determine the state of the collectible card offer notification

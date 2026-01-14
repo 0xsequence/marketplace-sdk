@@ -9,20 +9,21 @@ import type {
 	StandardInfiniteQueryOptions,
 	StandardQueryOptions,
 } from '../types/query';
+import type { RequiredKeys } from './query-builder';
 
-export interface QueryArg {
+export type QueryArg = {
 	enabled?: boolean;
-}
+};
 
 export type CollectableId = string | number;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 
-export interface Transaction {
+export type Transaction = {
 	to: Hex;
 	data?: Hex;
 	value?: bigint;
-}
+};
 
 type TransactionStep = {
 	exist: boolean;
@@ -44,32 +45,32 @@ export enum TransactionType {
 	CANCEL = 'CANCEL',
 }
 
-export interface BuyInput {
+export type BuyInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
 	quantity: string;
-}
+};
 
-export interface SellInput {
+export type SellInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
 	quantity?: string;
-}
+};
 
-export interface ListingInput {
+export type ListingInput = {
 	contractType: ContractType;
 	listing: CreateReq;
-}
+};
 
-export interface OfferInput {
+export type OfferInput = {
 	contractType: ContractType;
 	offer: CreateReq;
-}
+};
 
-export interface CancelInput {
+export type CancelInput = {
 	orderId: string;
 	marketplace: MarketplaceKind;
-}
+};
 
 export type ValuesOptional<T> = {
 	[K in keyof T]: T[K] | undefined;
@@ -124,4 +125,24 @@ export type SdkInfiniteQueryParams<TApiRequest> = SdkQueryParams<
  */
 export type WithRequired<T, K extends keyof T = keyof T> = T & {
 	[P in K]-?: T[P];
+};
+
+/**
+ * Creates hook params from API request types:
+ * - Required API fields → key required, value can be undefined
+ * - Optional API fields → key optional (key doesn't need to exist)
+ * - SDK fields (config, query) → key optional
+ */
+export type HookParamsFromApiRequest<
+	TApiRequest,
+	TSdkParams extends Record<string, unknown> = Record<string, never>,
+> = {
+	// Required API fields: key required, value can be undefined
+	[K in RequiredKeys<TApiRequest>]: TApiRequest[K] | undefined;
+} & {
+	// Optional API fields: key optional (key doesn't need to exist)
+	[K in Exclude<keyof TApiRequest, RequiredKeys<TApiRequest>>]?: TApiRequest[K];
+} & {
+	// SDK fields: key optional
+	[K in keyof TSdkParams]?: TSdkParams[K];
 };

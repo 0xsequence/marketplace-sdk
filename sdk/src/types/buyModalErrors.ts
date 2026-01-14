@@ -1,3 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
+import { zeroAddress } from 'viem';
+
 // Enhanced error types with price context and better debugging information
 export type BuyModalError =
 	| PriceOverflowError
@@ -10,92 +13,83 @@ export type BuyModalError =
 	| ValidationError
 	| StateError;
 
-export interface PriceOverflowError {
+export type PriceOverflowError = {
 	type: 'PRICE_OVERFLOW';
 	maxSafeValue: string;
 	attemptedValue: string;
 	operation: string;
 	timestamp: number;
-}
+};
 
-export interface PriceCalculationError {
+export type PriceCalculationError = {
 	type: 'PRICE_CALCULATION_ERROR';
 	operation: string;
 	inputs: string[];
 	originalError?: string;
 	timestamp: number;
-}
+};
 
-// export interface InsufficientFundsError {
-//   type: "INSUFFICIENT_FUNDS";
-//   required: Price;
-//   available: Price;
-//   currency: string;
-//   shortfall: Price;
-//   timestamp: number;
-// }
-
-export interface InvalidPriceFormatError {
+export type InvalidPriceFormatError = {
 	type: 'INVALID_PRICE_FORMAT';
 	providedPrice: string;
 	expectedFormat: string;
 	suggestions?: string[];
 	timestamp: number;
-}
+};
 
-export interface InvalidQuantityError {
+export type InvalidQuantityError = {
 	type: 'INVALID_QUANTITY';
 	provided: number;
 	min: number;
 	max: number;
 	available?: number;
 	timestamp: number;
-}
+};
 
-export interface NetworkError {
+export type NetworkError = {
 	type: 'NETWORK_ERROR';
 	message: string;
 	retryable: boolean;
 	chainId?: number;
 	endpoint?: string;
 	timestamp: number;
-}
+};
 
-export interface ContractError {
+export type ContractError = {
 	type: 'CONTRACT_ERROR';
-	contractAddress: `0x${string}`;
+	contractAddress: Address;
 	message: string;
 	method?: string;
 	chainId?: number;
 	blockNumber?: number;
 	timestamp: number;
-}
+};
 
-export interface CheckoutError {
+export type CheckoutError = {
 	type: 'CHECKOUT_ERROR';
 	provider: string;
 	message: string;
 	code?: string;
 	retryable: boolean;
 	timestamp: number;
-}
+};
 
-export interface ValidationError {
+export type ValidationError = {
 	type: 'VALIDATION_ERROR';
 	field: string;
 	message: string;
 	value?: unknown;
 	constraints?: Record<string, unknown>;
 	timestamp: number;
-}
+};
 
-export interface StateError {
+export type StateError = {
 	type: 'STATE_ERROR';
 	currentState: string;
 	attemptedAction: string;
 	message: string;
 	timestamp: number;
-}
+};
 
 // biome-ignore lint/complexity/noStaticOnlyClass: provides better organization and type safety for error creation methods
 export class BuyModalErrorFactory {
@@ -190,7 +184,7 @@ export class BuyModalErrorFactory {
 	}
 
 	static contractError(
-		contractAddress: `0x${string}`,
+		contractAddress: Address,
 		message: string,
 		method?: string,
 		chainId?: number,
@@ -356,8 +350,7 @@ export class BuyModalErrorFormatter {
 				// Extract contract address from error message if available
 				const addressMatch = error.message.match(/0x[a-fA-F0-9]{40}/);
 				return BuyModalErrorFactory.contractError(
-					(addressMatch?.[0] as `0x${string}`) ||
-						'0x0000000000000000000000000000000000000000',
+					(addressMatch?.[0] as Address) || zeroAddress,
 					error.message,
 				);
 			}

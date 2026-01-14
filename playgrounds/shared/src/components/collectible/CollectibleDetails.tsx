@@ -1,7 +1,17 @@
-import { Card, Separator, Text } from '@0xsequence/design-system';
-import type { ContractInfo } from '@0xsequence/marketplace-sdk';
+import {
+	Card,
+	capitalize,
+	Separator,
+	Skeleton,
+	Text,
+} from '@0xsequence/design-system';
+import type { ContractInfo, TokenMetadata } from '@0xsequence/marketplace-sdk';
 import { cn } from '@0xsequence/marketplace-sdk';
 import {
+	processAttributes,
+	processProperties,
+	type StandardizedAttribute,
+	type StandardizedProperty,
 	useHighestOffer,
 	useLowestListing,
 	useMarketCurrencies,
@@ -15,6 +25,7 @@ export interface CollectibleDetailsProps {
 	collection: ContractInfo | undefined;
 	onCollectionClick: () => void;
 	cardType?: 'market' | 'shop';
+	collectible: TokenMetadata | undefined;
 }
 
 export const CollectibleDetails = ({
@@ -25,6 +36,7 @@ export const CollectibleDetails = ({
 	collection,
 	onCollectionClick,
 	cardType = 'market',
+	collectible,
 }: CollectibleDetailsProps) => {
 	const isMarket = cardType === 'market';
 
@@ -104,6 +116,11 @@ export const CollectibleDetails = ({
 					)}
 				</div>
 
+				<PropertiesContent
+					tokenMetadata={collectible}
+					isLoading={!collectible}
+				/>
+
 				{/* Market Info Section */}
 				{isMarket && (
 					<div className="space-y-4 border-border-base border-t pt-4">
@@ -141,3 +158,62 @@ export const CollectibleDetails = ({
 		</Card>
 	);
 };
+
+type PropertiesProps = {
+	tokenMetadata?: TokenMetadata;
+	isLoading: boolean;
+};
+
+function PropertiesContent({ tokenMetadata, isLoading }: PropertiesProps) {
+	const propertiesNotSet =
+		tokenMetadata?.attributes.length === 0 &&
+		Object.keys(tokenMetadata?.properties || {}).length === 0 &&
+		!isLoading;
+
+	// Process attributes and properties separately
+	const attributes = tokenMetadata
+		? processAttributes(tokenMetadata.attributes)
+		: {};
+	const properties = tokenMetadata
+		? processProperties(tokenMetadata.properties)
+		: {};
+
+	// Combine both for display (attributes take precedence for display_type)
+	const allProperties: Record<
+		string,
+		StandardizedAttribute | StandardizedProperty
+	> = {
+		...properties,
+		...attributes,
+	};
+
+	if (propertiesNotSet) {
+		return (
+			<Text className="font-medium text-secondary text-sm">
+				No properties for this collectible
+			</Text>
+		);
+	}
+
+	return (
+		<div className="flex gap-3 overflow-x-auto bg-background-active">
+			{isLoading && <Skeleton className="h-4 w-full" />}
+			{Object.entries(allProperties).map(([key, property]) => (
+				<Property key={key} name={property.name} value={property.value} />
+			))}
+		</div>
+	);
+}
+
+function Property({ name, value }: { name: string; value: string }) {
+	const formattedValue = value;
+
+	return (
+		<div className="flex flex-col gap-1 rounded-xl px-3 py-2">
+			<Text className="font-medium text-muted text-xs">{capitalize(name)}</Text>
+			<Text className="whitespace-pre-wrap wrap-break-word font-bold text-secondary text-sm">
+				{formattedValue}
+			</Text>
+		</div>
+	);
+}

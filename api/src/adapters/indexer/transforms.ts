@@ -110,31 +110,24 @@ export function toTokenSupply(
 export function toTransactionReceipt(
 	raw: IndexerGen.TransactionReceipt,
 ): Normalized.TransactionReceipt {
-	// Build result without spreading raw (to avoid type conflicts)
-	const result: Normalized.TransactionReceipt = {
-		txnHash: raw.txnHash,
-		blockHash: raw.blockHash,
-		blockNumber: raw.blockNumber,
-		txnIndex: raw.txnIndex,
-		gasUsed: raw.gasUsed,
-		effectiveGasPrice: transformOptional(raw.effectiveGasPrice, BigInt),
-		logs: transformOptionalArray(raw.logs, (log) => ({
-			address: normalizeAddress(log.contractAddress),
-			topics: log.topics,
-			data: log.data,
-			logIndex: log.index,
-		})),
-	};
-
-	if (raw.from?.startsWith('0x') && raw.from.length === 42) {
-		result.from = normalizeAddress(raw.from);
-	}
-	if (raw.to?.startsWith('0x') && raw.to.length === 42) {
-		result.to = normalizeAddress(raw.to);
-	}
-	// chainId is not in raw API, so we don't set it (it's optional in our type)
-
-	return result;
+	return spreadWith(raw, {
+		effectiveGasPrice: BigInt(raw.effectiveGasPrice),
+		from:
+			raw.from?.startsWith('0x') && raw.from.length === 42
+				? normalizeAddress(raw.from)
+				: undefined,
+		to:
+			raw.to?.startsWith('0x') && raw.to.length === 42
+				? normalizeAddress(raw.to)
+				: undefined,
+		logs: transformArray(raw.logs, (log) => {
+			const { contractAddress, index, ...rest } = log;
+			return spreadWith(rest, {
+				address: normalizeAddress(contractAddress),
+				logIndex: index,
+			});
+		}),
+	});
 }
 
 export function toTokenIDRange(
@@ -146,76 +139,112 @@ export function toTokenIDRange(
 	};
 }
 
-export function toPage(
-	raw: IndexerGen.Page | undefined,
-): Normalized.Page | undefined {
-	if (!raw) return undefined;
+export function toPage(raw: IndexerGen.Page | undefined): Normalized.Page {
+	if (!raw) {
+		return {
+			page: 0,
+			pageSize: 0,
+			more: false,
+		};
+	}
 
-	return {
+	return spreadWith(raw, {
 		page: raw.page || 0,
 		pageSize: raw.pageSize || 0,
 		more: raw.more || false,
-	};
+	});
 }
 
 export function toGetTokenBalancesResponse(
 	raw: IndexerGen.GetTokenBalancesReturn,
 ): Normalized.GetTokenBalancesResponse {
-	return {
+	return spreadWith(raw, {
 		balances: transformArray(raw.balances, toTokenBalance),
 		page: toPage(raw.page),
-	};
+	});
 }
 
 export function toGetTokenSuppliesResponse(
 	raw: IndexerGen.GetTokenSuppliesReturn,
 	contractAddress: Address,
 ): Normalized.GetTokenSuppliesResponse {
-	const { contractType, ...rest } = raw;
-	return {
-		...rest,
-		contractType,
+	const tokenIDs =
+		transformOptionalArray(raw.tokenIDs, (tokenSupply) =>
+			toTokenSupply(tokenSupply, contractAddress),
+		) || [];
+
+	return spreadWith(raw, {
 		contractAddress,
-		supplies:
-			transformOptionalArray(raw.tokenIDs, (tokenSupply) =>
-				toTokenSupply(tokenSupply, contractAddress),
-			) || [],
+		tokenIDs,
+		supplies: tokenIDs,
 		page: toPage(raw.page),
-	};
+	});
 }
 
 export function toGetTokenIDRangesResponse(
 	raw: IndexerGen.GetTokenIDRangesReturn,
 	contractAddress: Address,
 ): Normalized.GetTokenIDRangesResponse {
-	return {
+	const tokenIDRanges =
+		transformOptionalArray(raw.tokenIDRanges, toTokenIDRange) || [];
+
+	return spreadWith(raw, {
 		contractAddress,
-		ranges: transformOptionalArray(raw.tokenIDRanges, toTokenIDRange) || [],
-	};
+		tokenIDRanges,
+		ranges: tokenIDRanges,
+	});
+}
+
+export function toGetTokenBalancesDetailsResponse(
+	raw: IndexerGen.GetTokenBalancesDetailsReturn,
+): Normalized.GetTokenBalancesDetailsResponse {
+	return spreadWith(raw, {
+		page: toPage(raw.page),
+		nativeBalances: (raw.nativeBalances || []).map(toNativeTokenBalance),
+		balances: raw.balances.map(toTokenBalance),
+	});
+}
+
+export function toGetTokenBalancesByContractResponse(
+	raw: IndexerGen.GetTokenBalancesByContractReturn,
+): Normalized.GetTokenBalancesByContractResponse {
+	return spreadWith(raw, {
+		page: toPage(raw.page),
+		balances: raw.balances.map(toTokenBalance),
+	});
+}
+
+export function toGetNativeTokenBalanceResponse(
+	raw: IndexerGen.GetNativeTokenBalanceReturn,
+): Normalized.GetNativeTokenBalanceResponse {
+	return spreadWith(raw, {
+		balance: toNativeTokenBalance(raw.balance),
+	});
 }
 
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
-	// Destructure fields that need transformation or removal
-	// collectionAddress is SDK-only alias for contractAddress, must not be sent to API
-	const {
-		tokenId,
-		collectionAddress: _collectionAddress,
-		contractAddress: _contractAddress,
-		...rest
-	} = req as Normalized.GetTokenBalancesRequest & {
-		collectionAddress?: string;
-		contractAddress?: string;
-	};
+	const { tokenId, ...rest } = req;
 
-	// Handle collectionAddress → contractAddress transformation
-	const contractAddress = _collectionAddress || _contractAddress;
+	const accountAddress =
+		'userAddress' in req && req.userAddress
+			? req.userAddress
+			: 'accountAddress' in req
+				? req.accountAddress
+				: undefined;
+
+	const contractAddress =
+		'collectionAddress' in req && req.collectionAddress
+			? req.collectionAddress
+			: 'contractAddress' in req && req.contractAddress
+				? req.contractAddress
+				: undefined;
 
 	return {
 		...rest,
+		...(accountAddress && { accountAddress }),
 		...(contractAddress && { contractAddress }),
-		// Convert tokenId (bigint) → tokenID (string) for API
 		...(tokenId !== undefined && { tokenID: tokenId.toString() }),
 	};
 }
@@ -244,5 +273,17 @@ export function toGetTokenIDRangesArgs(
 	const contractAddress = req.contractAddress || req.collectionAddress;
 	return {
 		contractAddress,
+	};
+}
+
+export function toGetUserCollectionBalancesArgs(
+	req: Normalized.GetUserCollectionBalancesRequest,
+): IndexerGen.GetTokenBalancesByContractArgs {
+	return {
+		filter: {
+			accountAddresses: [req.userAddress],
+			contractAddresses: [req.collectionAddress],
+		},
+		omitMetadata: req.includeMetadata === false ? true : undefined,
 	};
 }

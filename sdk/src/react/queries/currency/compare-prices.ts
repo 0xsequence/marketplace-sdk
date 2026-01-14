@@ -1,4 +1,4 @@
-import type { Address } from 'viem';
+import type { Address, ChainId } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
 	type SdkQueryParams,
@@ -7,15 +7,13 @@ import {
 } from '../../_internal';
 import { fetchConvertPriceToUSD } from './convert-to-usd';
 
-export interface FetchComparePricesParams {
-	chainId: number;
-	// First price details
-	priceAmountRaw: string;
-	priceCurrencyAddress: Address;
-	// Second price details (to compare against)
-	compareToPriceAmountRaw: string;
-	compareToPriceCurrencyAddress: Address;
-}
+export type FetchComparePricesParams = {
+	chainId?: ChainId;
+	priceAmountRaw?: string;
+	priceCurrencyAddress?: Address;
+	compareToPriceAmountRaw?: string;
+	compareToPriceCurrencyAddress?: Address;
+};
 
 export type ComparePricesReturn = {
 	percentageDifference: number;

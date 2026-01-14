@@ -1,6 +1,6 @@
+import type { Address } from '@0xsequence/api-client';
 import { ContractType } from '@0xsequence/api-client';
 import { useMemo } from 'react';
-import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import {
 	ERC721_SALE_ABI_V0,

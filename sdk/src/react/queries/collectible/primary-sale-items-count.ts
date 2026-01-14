@@ -1,7 +1,6 @@
 import type {
 	GetCountOfPrimarySaleItemsRequest,
 	GetCountOfPrimarySaleItemsResponse,
-	PrimarySaleItemsFilter,
 } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
@@ -11,10 +10,8 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchPrimarySaleItemsCountParams
-	extends GetCountOfPrimarySaleItemsRequest {
-	filter?: PrimarySaleItemsFilter;
-}
+export type FetchPrimarySaleItemsCountParams =
+	GetCountOfPrimarySaleItemsRequest;
 
 export type PrimarySaleItemsCountQueryOptions =
 	SdkQueryParams<FetchPrimarySaleItemsCountParams>;

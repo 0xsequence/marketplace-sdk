@@ -1,14 +1,17 @@
 'use client';
 
+import type { ListOrdersWithCollectiblesRequest } from '@0xsequence/api-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
-	type FetchListItemsOrdersForCollectionParams,
 	type fetchListItemsOrdersForCollection,
 	type ListItemsOrdersForCollectionQueryOptions,
 	listItemsOrdersForCollectionQueryOptions,
 } from '../../queries/collection/market-items';
 import { useConfig } from '../config/useConfig';
+
+export type FetchListItemsOrdersForCollectionParams =
+	ListOrdersWithCollectiblesRequest;
 
 export type UseCollectionMarketItemsParams = Optional<
 	ListItemsOrdersForCollectionQueryOptions,
@@ -81,10 +84,7 @@ export function useCollectionMarketItems(
 
 export { listItemsOrdersForCollectionQueryOptions };
 
-export type {
-	FetchListItemsOrdersForCollectionParams,
-	ListItemsOrdersForCollectionQueryOptions,
-};
+export type { ListItemsOrdersForCollectionQueryOptions };
 
 export type UseListItemsOrdersForCollectionArgs =
 	UseListItemsOrdersForCollectionParams;

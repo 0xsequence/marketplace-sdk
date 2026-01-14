@@ -122,6 +122,7 @@ export function CollectiblePageController({
 
 				{showFullLayout ? (
 					<CollectibleDetails
+						collectible={collectible}
 						name={collectible?.name}
 						id={tokenId}
 						balance={Number(balance?.balance) || 0}
@@ -133,6 +134,7 @@ export function CollectiblePageController({
 				) : (
 					<div className="flex flex-col gap-1">
 						<CollectibleDetails
+							collectible={collectible}
 							name={collectible?.name}
 							id={tokenId}
 							balance={Number(balance?.balance) || 0}

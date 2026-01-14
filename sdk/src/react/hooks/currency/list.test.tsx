@@ -1,7 +1,7 @@
+import type { Address } from '@0xsequence/api-client';
 import * as BuilderMocks from '@0xsequence/api-client/mocks/builder';
 import * as MarketplaceMocks from '@0xsequence/api-client/mocks/marketplace';
 import { HttpResponse, http } from 'msw';
-import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { renderHook, server, waitFor } from '../../../../test';
 import { USDC_ADDRESS } from '../../../../test/const';

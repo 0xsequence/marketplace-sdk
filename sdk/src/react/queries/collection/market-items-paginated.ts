@@ -1,4 +1,3 @@
-import type { Address } from 'viem';
 import { isAddress } from 'viem';
 import type {
 	ListOrdersWithCollectiblesRequest,
@@ -12,12 +11,13 @@ import {
 	type WithRequired,
 } from '../../_internal';
 
-export interface FetchListItemsOrdersForCollectionPaginatedParams
-	extends Omit<ListOrdersWithCollectiblesRequest, 'page'> {
-	collectionAddress: Address;
+export type FetchListItemsOrdersForCollectionPaginatedParams = Omit<
+	ListOrdersWithCollectiblesRequest,
+	'page'
+> & {
 	page?: number;
 	pageSize?: number;
-}
+};
 
 export type ListItemsOrdersForCollectionPaginatedQueryOptions =
 	SdkQueryParams<FetchListItemsOrdersForCollectionPaginatedParams>;

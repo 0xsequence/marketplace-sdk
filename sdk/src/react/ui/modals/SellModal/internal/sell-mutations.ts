@@ -1,11 +1,12 @@
 import {
+	type Address,
 	type ContractType,
 	OrderbookKind,
 	type Step,
 } from '@0xsequence/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';

@@ -1,6 +1,8 @@
 import type {
 	CollectiblePrimarySaleItem,
+	GetPrimarySaleItemRequest,
 	GetPrimarySaleItemResponse,
+	TokenId,
 } from '@0xsequence/api-client';
 import {
 	buildQueryOptions,
@@ -11,11 +13,12 @@ import {
 } from '../../_internal';
 import { createCollectibleQueryKey } from './queryKeys';
 
-export interface FetchPrimarySaleItemParams {
-	chainId: number;
-	primarySaleContractAddress: string;
-	tokenId: string | bigint;
-}
+export type FetchPrimarySaleItemParams = Omit<
+	GetPrimarySaleItemRequest,
+	'tokenId'
+> & {
+	tokenId: TokenId | string;
+};
 
 export type PrimarySaleItemQueryOptions =
 	SdkQueryParams<FetchPrimarySaleItemParams>;

@@ -119,6 +119,7 @@ export const mockConfig = {
 			logoUrl: 'https://example.com/logo.png',
 			fontUrl: 'https://example.com/font.woff2',
 			accessKey: 'mock-access-key',
+			isTrailsEnabled: true,
 		},
 		market: {
 			enabled: true,
