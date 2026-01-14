@@ -252,9 +252,17 @@ export function toGetTokenBalancesArgs(
 export function toGetTokenSuppliesArgs(
 	req: Normalized.GetTokenSuppliesRequest,
 ): IndexerGen.GetTokenSuppliesArgs {
-	const contractAddress = req.contractAddress || req.collectionAddress;
+	const {
+		collectionAddress: _collectionAddress,
+		contractAddress: _contractAddress,
+		...rest
+	} = req as Normalized.GetTokenSuppliesRequest & {
+		collectionAddress?: string;
+		contractAddress?: string;
+	};
+	const contractAddress = _contractAddress || _collectionAddress;
 	return {
-		...req,
+		...rest,
 		contractAddress,
 	};
 }

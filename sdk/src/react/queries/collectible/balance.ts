@@ -35,15 +35,18 @@ export async function fetchBalanceOfCollectible(
 		config,
 	} = params;
 	const indexerClient = getIndexerClient(chainId, config);
+	const shouldIncludeMetadata = includeMetadata ?? false;
 	return indexerClient
 		.getTokenBalances({
 			accountAddress: userAddress,
 			contractAddress: collectionAddress,
 			tokenId,
-			includeMetadata: includeMetadata ?? false,
-			metadataOptions: {
-				verifiedOnly: true,
-			},
+			includeMetadata: shouldIncludeMetadata,
+			...(shouldIncludeMetadata && {
+				metadataOptions: {
+					verifiedOnly: true,
+				},
+			}),
 		})
 		.then((res) => res.balances[0] || null);
 }
@@ -55,17 +58,18 @@ export async function fetchBalanceOfCollectible(
 export function getBalanceOfCollectibleQueryKey(
 	params: BalanceOfCollectibleQueryOptions,
 ) {
+	const shouldIncludeMetadata = params.includeMetadata ?? false;
 	const apiArgs = {
 		chainId: params.chainId,
 		accountAddress: params.userAddress,
 		contractAddress: params.collectionAddress,
 		tokenId: params.tokenId,
-		includeMetadata: params.includeMetadata,
-		metadataOptions: params.userAddress
-			? {
-					verifiedOnly: true,
-				}
-			: undefined,
+		includeMetadata: shouldIncludeMetadata,
+		...(shouldIncludeMetadata && {
+			metadataOptions: {
+				verifiedOnly: true,
+			},
+		}),
 	};
 
 	return createCollectibleQueryKey('balance', apiArgs);
@@ -99,8 +103,8 @@ export function balanceOfCollectibleOptions(
 			customValidation: (p) =>
 				!!p.collectionAddress &&
 				isAddress(p.collectionAddress) &&
-				!!p.tokenId &&
-				p.tokenId > 0n &&
+				p.tokenId !== undefined &&
+				p.tokenId >= 0n &&
 				!!p.userAddress &&
 				isAddress(p.userAddress),
 		},
