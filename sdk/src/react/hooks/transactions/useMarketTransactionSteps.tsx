@@ -38,6 +38,10 @@ export function useMarketTransactionSteps({
 	enabled = true,
 }: UseMarketTransactionStepsParams) {
 	const config = useConfig();
+	const sequenceCheckoutModeOn =
+		typeof config.checkoutMode === 'object'
+			? config.checkoutMode.mode === 'sequence-checkout'
+			: false;
 	const marketplaceClient = useMemo(
 		() => getMarketplaceClient(config),
 		[config],
@@ -76,7 +80,12 @@ export function useMarketTransactionSteps({
 					},
 				],
 				additionalFees,
-				walletType: isSequence ? WalletKind.sequence : WalletKind.unknown,
+				// We need to set walletType to unknown when its web-sdk/checkout
+				walletType: sequenceCheckoutModeOn
+					? WalletKind.unknown
+					: isSequence
+						? WalletKind.sequence
+						: WalletKind.unknown,
 				useWithTrails,
 			});
 
