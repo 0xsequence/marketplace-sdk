@@ -55,6 +55,7 @@ export interface MarketplaceSettings {
 	logoUrl: string;
 	fontUrl: string;
 	accessKey?: string;
+	isTrailsEnabled: boolean
 }
 
 export interface MarketplacePage {
