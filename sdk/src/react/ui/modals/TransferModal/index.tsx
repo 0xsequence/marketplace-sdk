@@ -110,4 +110,5 @@ const Modal = () => {
 };
 
 export { useTransferModal };
+export { useTransferModalContext } from './internal/context';
 export type { ShowTransferModalArgs, UseTransferModalArgs };
