@@ -133,6 +133,7 @@ export function useCryptoPaymentModalContext({
 	const {
 		executeBundledTransactions,
 		isExecuting: isExecutingBundledTransactions,
+		isReady: isBundledTransactionsReady,
 	} = useExecuteBundledTransactions({
 		chainId,
 		approvalStep,
@@ -332,13 +333,15 @@ export function useCryptoPaymentModalContext({
 		!isAnyTransactionPending &&
 		!isFeeSelectionVisible;
 
+	const needsBundledTransactions = isShop && !!approvalStep;
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
 		(isSequenceConnector ? true : !approvalStep) &&
 		!isAnyTransactionPending &&
-		!isFeeSelectionVisible;
+		!isFeeSelectionVisible &&
+		(needsBundledTransactions ? isBundledTransactionsReady : true);
 
 	const result: CryptoPaymentModalReturn = {
 		data: {
