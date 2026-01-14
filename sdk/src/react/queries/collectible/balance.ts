@@ -103,8 +103,8 @@ export function balanceOfCollectibleOptions(
 			customValidation: (p) =>
 				!!p.collectionAddress &&
 				isAddress(p.collectionAddress) &&
-				!!p.tokenId &&
-				p.tokenId > 0n &&
+				p.tokenId !== undefined &&
+				p.tokenId >= 0n &&
 				!!p.userAddress &&
 				isAddress(p.userAddress),
 		},
