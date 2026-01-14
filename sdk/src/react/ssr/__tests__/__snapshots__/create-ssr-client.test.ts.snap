@@ -81,6 +81,7 @@ exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
     "accessKey": "mock-access-key",
     "faviconUrl": "https://example.com/favicon.ico",
     "fontUrl": "https://example.com/font.woff2",
+    "isTrailsEnabled": true,
     "logoUrl": "https://example.com/logo.png",
     "publisherId": "publisher-1",
     "socials": {
