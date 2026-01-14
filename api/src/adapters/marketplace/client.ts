@@ -305,22 +305,6 @@ export type ListCollectiblesRequest = Omit<
 	collectionAddress: Address;
 };
 
-export type ListCollectibleActivitiesRequest = Omit<
-	Gen.ListCollectibleActivitiesRequest,
-	'chainId' | 'contractAddress'
-> & {
-	chainId: ChainId;
-	collectionAddress: Address;
-};
-
-export type ListCollectionActivitiesRequest = Omit<
-	Gen.ListCollectionActivitiesRequest,
-	'chainId' | 'contractAddress'
-> & {
-	chainId: ChainId;
-	collectionAddress: Address;
-};
-
 export type ListPrimarySaleItemsRequest = Omit<
 	Gen.ListPrimarySaleItemsRequest,
 	'chainId'
@@ -495,12 +479,6 @@ export class MarketplaceClient {
 	public readonly listCollectibles: (
 		req: ListCollectiblesRequest,
 	) => Promise<ListCollectiblesResponse>;
-	public readonly listCollectibleActivities: (
-		req: ListCollectibleActivitiesRequest,
-	) => Promise<Gen.ListCollectibleActivitiesResponse>;
-	public readonly listCollectionActivities: (
-		req: ListCollectionActivitiesRequest,
-	) => Promise<Gen.ListCollectionActivitiesResponse>;
 	public readonly listPrimarySaleItems: (
 		req: ListPrimarySaleItemsRequest,
 	) => Promise<ListPrimarySaleItemsResponse>;
@@ -734,12 +712,6 @@ export class MarketplaceClient {
 				...res,
 				collectibles: toCollectibleOrders(res.collectibles),
 			}),
-		);
-		this.listCollectibleActivities = wrapCollectionAddress((req) =>
-			this.client.listCollectibleActivities(req),
-		);
-		this.listCollectionActivities = wrapCollectionAddress((req) =>
-			this.client.listCollectionActivities(req),
 		);
 		this.listPrimarySaleItems = wrapBothTransform(
 			(req) => this.client.listPrimarySaleItems(req),

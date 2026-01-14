@@ -267,16 +267,6 @@ export const handlers = [
 		collectible: mockCollectibleOrder,
 	}),
 
-	mockMarketplaceHandler('ListCollectionActivities', {
-		activities: [mockActivity],
-		page: { page: 1, pageSize: 10, more: false },
-	}),
-
-	mockMarketplaceHandler('ListCollectibleActivities', {
-		activities: [mockActivity],
-		page: { page: 1, pageSize: 10, more: false },
-	}),
-
 	mockMarketplaceHandler('GetOrders', {
 		orders: [mockOrder],
 		page: { page: 1, pageSize: 10, more: false },

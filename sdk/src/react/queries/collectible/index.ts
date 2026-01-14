@@ -1,5 +1,4 @@
 export * from './balance';
-export * from './market-activities';
 export * from './market-count';
 export * from './market-highest-offer';
 export * from './market-list';

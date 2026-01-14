@@ -5,7 +5,6 @@ export {
 export type { UseCollectibleMetadataParams as UseCollectibleDetailParams } from '../collectible';
 export {
 	useCollectibleBalance as useBalanceOfCollectible,
-	useCollectibleMarketActivities as useListCollectibleActivities,
 	useCollectibleMarketCount as useCountOfCollectables,
 	useCollectibleMarketHighestOffer as useHighestOffer,
 	useCollectibleMarketList as useListCollectibles,
@@ -27,7 +26,6 @@ export type { UseCollectionMetadataParams as UseCollectionDetailParams } from '.
 export {
 	useCollectionBalanceDetails,
 	useCollectionList as useListCollections,
-	useCollectionMarketActivities as useListCollectionActivities,
 	useCollectionMarketDetailPolling as useCollectionDetailPolling,
 	useCollectionMarketDetailPolling as useCollectionDetailsPolling,
 	useCollectionMarketDetailPolling as useCollectionMarketCollectionDetailPolling,

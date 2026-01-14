@@ -1,6 +1,5 @@
 export * from './balance-details';
 export * from './list';
-export * from './market-activities';
 export * from './market-detail-polling';
 export * from './market-filtered-count';
 export * from './market-floor';
