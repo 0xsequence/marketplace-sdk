@@ -149,16 +149,6 @@ export interface MarketplaceClient {
 
   getFloorOrder(req: GetFloorOrderRequest, headers?: object, signal?: AbortSignal): Promise<GetFloorOrderResponse>
 
-  /**
-   * Not Implemented
-   */
-  listCollectionActivities(req: ListCollectionActivitiesRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectionActivitiesResponse>
-
-  /**
-   * Not Implemented
-   */
-  listCollectibleActivities(req: ListCollectibleActivitiesRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectibleActivitiesResponse>
-
   listCollectiblesWithLowestListing(req: ListCollectiblesWithLowestListingRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectiblesWithLowestListingResponse>
 
   listCollectiblesWithHighestOffer(req: ListCollectiblesWithHighestOfferRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectiblesWithHighestOfferResponse>
@@ -1318,29 +1308,6 @@ export interface GetFloorOrderResponse {
   collectible: CollectibleOrder
 }
 
-export interface ListCollectionActivitiesRequest {
-  chainId: string
-  contractAddress: string
-  page?: Page
-}
-
-export interface ListCollectionActivitiesResponse {
-  activities: Array<Activity>
-  page?: Page
-}
-
-export interface ListCollectibleActivitiesRequest {
-  chainId: string
-  contractAddress: string
-  tokenId: bigint
-  page?: Page
-}
-
-export interface ListCollectibleActivitiesResponse {
-  activities: Array<Activity>
-  page?: Page
-}
-
 export interface ListCollectiblesWithLowestListingRequest {
   chainId: string
   contractAddress: string
@@ -1708,8 +1675,6 @@ export class Marketplace implements MarketplaceClient {
     getCountOfAllCollectibles: (req: GetCountOfAllCollectiblesRequest) => ['Marketplace', 'getCountOfAllCollectibles', req] as const,
     getCountOfFilteredCollectibles: (req: GetCountOfFilteredCollectiblesRequest) => ['Marketplace', 'getCountOfFilteredCollectibles', req] as const,
     getFloorOrder: (req: GetFloorOrderRequest) => ['Marketplace', 'getFloorOrder', req] as const,
-    listCollectionActivities: (req: ListCollectionActivitiesRequest) => ['Marketplace', 'listCollectionActivities', req] as const,
-    listCollectibleActivities: (req: ListCollectibleActivitiesRequest) => ['Marketplace', 'listCollectibleActivities', req] as const,
     listCollectiblesWithLowestListing: (req: ListCollectiblesWithLowestListingRequest) => ['Marketplace', 'listCollectiblesWithLowestListing', req] as const,
     listCollectiblesWithHighestOffer: (req: ListCollectiblesWithHighestOfferRequest) => ['Marketplace', 'listCollectiblesWithHighestOffer', req] as const,
     syncOrder: (req: SyncOrderRequest) => ['Marketplace', 'syncOrder', req] as const,
@@ -2125,30 +2090,6 @@ export class Marketplace implements MarketplaceClient {
       createHttpRequest(JsonEncode(req), headers, signal)).then((res) => {
       return buildResponse(res).then(_data => {
         return JsonDecode<GetFloorOrderResponse>(_data, 'GetFloorOrderResponse')
-      })
-    }, (error) => {
-      throw WebrpcRequestFailedError.new({ cause: `fetch(): ${error instanceof Error ? error.message : String(error)}` })
-    })
-  }
-
-  listCollectionActivities = (req: ListCollectionActivitiesRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectionActivitiesResponse> => {
-    return this.fetch(
-      this.url('ListCollectionActivities'),
-      createHttpRequest(JsonEncode(req), headers, signal)).then((res) => {
-      return buildResponse(res).then(_data => {
-        return JsonDecode<ListCollectionActivitiesResponse>(_data, 'ListCollectionActivitiesResponse')
-      })
-    }, (error) => {
-      throw WebrpcRequestFailedError.new({ cause: `fetch(): ${error instanceof Error ? error.message : String(error)}` })
-    })
-  }
-
-  listCollectibleActivities = (req: ListCollectibleActivitiesRequest, headers?: object, signal?: AbortSignal): Promise<ListCollectibleActivitiesResponse> => {
-    return this.fetch(
-      this.url('ListCollectibleActivities'),
-      createHttpRequest(JsonEncode(req), headers, signal)).then((res) => {
-      return buildResponse(res).then(_data => {
-        return JsonDecode<ListCollectibleActivitiesResponse>(_data, 'ListCollectibleActivitiesResponse')
       })
     }, (error) => {
       throw WebrpcRequestFailedError.new({ cause: `fetch(): ${error instanceof Error ? error.message : String(error)}` })
