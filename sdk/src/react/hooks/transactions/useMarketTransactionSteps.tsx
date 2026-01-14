@@ -8,7 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getMarketplaceClient } from '../../_internal/api';
-import { useConfig, useConnectorMetadata } from '../config';
+import { useConfig } from '../config';
 
 export interface UseMarketTransactionStepsParams {
 	chainId: number;
@@ -38,15 +38,10 @@ export function useMarketTransactionSteps({
 	enabled = true,
 }: UseMarketTransactionStepsParams) {
 	const config = useConfig();
-	const sequenceCheckoutModeOn =
-		typeof config.checkoutMode === 'object'
-			? config.checkoutMode.mode === 'sequence-checkout'
-			: false;
 	const marketplaceClient = useMemo(
 		() => getMarketplaceClient(config),
 		[config],
 	);
-	const { isSequence } = useConnectorMetadata();
 
 	// Default to true when checkoutMode is undefined or 'trails'
 	// Only false when explicitly set to 'crypto' or 'sequence-checkout'
@@ -80,12 +75,7 @@ export function useMarketTransactionSteps({
 					},
 				],
 				additionalFees,
-				// We need to set walletType to unknown when its web-sdk/checkout
-				walletType: sequenceCheckoutModeOn
-					? WalletKind.unknown
-					: isSequence
-						? WalletKind.sequence
-						: WalletKind.unknown,
+				walletType: WalletKind.unknown,
 				useWithTrails,
 			});
 
