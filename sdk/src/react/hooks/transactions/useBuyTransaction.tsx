@@ -69,7 +69,8 @@ export function useBuyTransaction(options: UseBuyTransactionOptions) {
 		enabled:
 			transactionType === TransactionType.PRIMARY_SALE &&
 			!!buyer &&
-			!!primarySalePrice?.amount &&
+			primarySalePrice?.amount !== undefined &&
+			primarySalePrice?.amount !== null &&
 			!!primarySalePrice?.currencyAddress,
 	});
 
