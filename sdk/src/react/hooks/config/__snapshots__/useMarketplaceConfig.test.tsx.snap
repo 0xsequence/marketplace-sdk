@@ -81,6 +81,7 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
     "accessKey": "mock-access-key",
     "faviconUrl": "https://example.com/favicon.ico",
     "fontUrl": "https://example.com/font.woff2",
+    "isTrailsEnabled": true,
     "logoUrl": "https://example.com/logo.png",
     "publisherId": "publisher-1",
     "socials": {
