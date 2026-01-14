@@ -197,15 +197,20 @@ export function toGetTokenIDRangesResponse(
 export function toGetTokenBalancesArgs(
 	req: Normalized.GetTokenBalancesRequest,
 ): IndexerGen.GetTokenBalancesArgs {
-	const { tokenId, ...rest } = req;
+	// Destructure fields that need transformation or removal
+	// collectionAddress is SDK-only alias for contractAddress, must not be sent to API
+	const {
+		tokenId,
+		collectionAddress: _collectionAddress,
+		contractAddress: _contractAddress,
+		...rest
+	} = req as Normalized.GetTokenBalancesRequest & {
+		collectionAddress?: string;
+		contractAddress?: string;
+	};
 
 	// Handle collectionAddress → contractAddress transformation
-	const contractAddress =
-		'collectionAddress' in req && req.collectionAddress
-			? req.collectionAddress
-			: 'contractAddress' in req && req.contractAddress
-				? req.contractAddress
-				: undefined;
+	const contractAddress = _collectionAddress || _contractAddress;
 
 	return {
 		...rest,
@@ -218,9 +223,17 @@ export function toGetTokenBalancesArgs(
 export function toGetTokenSuppliesArgs(
 	req: Normalized.GetTokenSuppliesRequest,
 ): IndexerGen.GetTokenSuppliesArgs {
-	const contractAddress = req.contractAddress || req.collectionAddress;
+	const {
+		collectionAddress: _collectionAddress,
+		contractAddress: _contractAddress,
+		...rest
+	} = req as Normalized.GetTokenSuppliesRequest & {
+		collectionAddress?: string;
+		contractAddress?: string;
+	};
+	const contractAddress = _contractAddress || _collectionAddress;
 	return {
-		...req,
+		...rest,
 		contractAddress,
 	};
 }
