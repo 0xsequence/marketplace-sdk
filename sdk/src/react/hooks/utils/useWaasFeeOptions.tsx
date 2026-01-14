@@ -85,8 +85,12 @@ export function useWaasFeeOptions(
 	const waasConnector: Connector | undefined = connections.find(
 		(c: Connection) => c.connector.id.includes('waas'),
 	)?.connector;
-	const indexerClient = getIndexerClient(chainId, config);
 	const pendingFeeOptionConfirmation = usePendingConfirmation();
+
+	const isValidChainId = chainId > 0;
+	const indexerClient = isValidChainId
+		? getIndexerClient(chainId, config)
+		: null;
 	/**
 	 * Confirms the selected fee option
 	 * @param id - The fee confirmation ID
@@ -112,7 +116,7 @@ export function useWaasFeeOptions(
 	}
 
 	useEffect(() => {
-		if (!waasConnector) {
+		if (!waasConnector || !indexerClient) {
 			return;
 		}
 
