@@ -14,7 +14,11 @@ export { ShopCard } from './components/marketplace-collectible-card/variants/Sho
 export type { ShopCardPresentationProps } from './components/marketplace-collectible-card/variants/ShopCardPresentation';
 export { ShopCardPresentation } from './components/marketplace-collectible-card/variants/ShopCardPresentation';
 export { Media } from './components/media/Media';
-export { useBuyModal, useBuyModalContext } from './modals/BuyModal';
+export {
+	type BuyModalContext,
+	useBuyModal,
+	useBuyModalContext,
+} from './modals/BuyModal';
 export {
 	useCreateListingModal,
 	useCreateListingModalContext,
@@ -30,6 +34,7 @@ export {
 	useSellModalContext,
 } from './modals/SellModal';
 export {
+	type TransferModalContext,
 	useTransferModal,
 	useTransferModalContext,
 } from './modals/TransferModal';
