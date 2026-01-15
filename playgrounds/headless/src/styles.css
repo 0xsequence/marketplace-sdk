@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@layer base {
+	html {
+		@apply bg-gray-900 text-white antialiased;
+	}
+
+	body {
+		@apply min-h-screen;
+	}
+}
