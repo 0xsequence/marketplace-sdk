@@ -15,4 +15,7 @@ export const useBuyModal = () => {
 	};
 };
 
-export { useBuyModalContext } from './internal/buyModalContext';
+export {
+	type BuyModalContext,
+	useBuyModalContext,
+} from './internal/buyModalContext';
