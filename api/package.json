@@ -49,7 +49,7 @@
 		"@biomejs/biome": "catalog:",
 		"@eslint/js": "catalog:",
 		"eslint": "catalog:",
-		"msw": "^2.12.4",
+		"msw": "^2.12.7",
 		"tsdown": "0.17.0-beta.6",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
