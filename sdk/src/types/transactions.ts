@@ -32,7 +32,7 @@ export type MarketTransactionParams = BaseTransactionParams & {
 	marketplace: MarketplaceKind;
 	orderId: string;
 	collectibleId: string;
-	quantity: string;
+	quantity: bigint;
 	additionalFees: AdditionalFee[];
 };
 
@@ -43,9 +43,9 @@ export type PrimarySaleTransactionParams = BaseTransactionParams & {
 	transactionType: TransactionType.PRIMARY_SALE;
 	collectionAddress: Address;
 	salesContractAddress: Address;
-	tokenIds: string[];
+	tokenIds: bigint[];
 	amounts: number[];
-	maxTotal: string;
+	maxTotal: bigint;
 	paymentToken: Address;
 	merkleProof?: string[];
 	contractVersion: 'v1';
