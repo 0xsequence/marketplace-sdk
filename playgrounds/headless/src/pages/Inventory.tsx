@@ -28,8 +28,8 @@ export function Inventory() {
 
 	if (!isConnected) {
 		return (
-			<div className="text-center py-12">
-				<h2 className="text-xl font-semibold mb-2">Connect Wallet</h2>
+			<div className="py-12 text-center">
+				<h2 className="mb-2 font-semibold text-xl">Connect Wallet</h2>
 				<p className="text-gray-400">
 					Connect your wallet to view your inventory
 				</p>
@@ -39,8 +39,8 @@ export function Inventory() {
 
 	if (!collectionAddress) {
 		return (
-			<div className="text-center py-12">
-				<h2 className="text-xl font-semibold mb-2">No Collections</h2>
+			<div className="py-12 text-center">
+				<h2 className="mb-2 font-semibold text-xl">No Collections</h2>
 				<p className="text-gray-400">
 					No marketplace collections are configured
 				</p>
@@ -56,15 +56,15 @@ export function Inventory() {
 
 	return (
 		<div>
-			<h2 className="text-2xl font-bold mb-2">Your Inventory</h2>
-			<p className="text-gray-400 text-sm mb-6">
+			<h2 className="mb-2 font-bold text-2xl">Your Inventory</h2>
+			<p className="mb-6 text-gray-400 text-sm">
 				Showing items from: {collectionAddress}
 			</p>
 
 			{collectibles.length === 0 ? (
 				<p className="text-gray-400">No items in your inventory</p>
 			) : (
-				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+				<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 					{collectibles.map((item: CollectibleWithBalance) => (
 						<button
 							key={`${chainId}-${item.contractInfo?.address}-${item.metadata.tokenId}`}
@@ -73,7 +73,7 @@ export function Inventory() {
 									`/market/${chainId}/${item.contractInfo?.address}/${item.metadata.tokenId}`,
 								)
 							}
-							className="text-left bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-500 transition-colors w-full"
+							className="w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-left transition-colors hover:border-gray-500"
 							type="button"
 						>
 							{item.metadata?.image ? (
@@ -83,19 +83,19 @@ export function Inventory() {
 										item.metadata?.name ||
 										`Token ${item.metadata.tokenId.toString()}`
 									}
-									className="w-full aspect-square object-cover"
+									className="aspect-square w-full object-cover"
 								/>
 							) : (
-								<div className="w-full aspect-square bg-gray-700 flex items-center justify-center">
+								<div className="flex aspect-square w-full items-center justify-center bg-gray-700">
 									<span className="text-gray-500">No image</span>
 								</div>
 							)}
 							<div className="p-3">
-								<p className="font-medium truncate">
+								<p className="truncate font-medium">
 									{item.metadata?.name ||
 										`#${item.metadata.tokenId.toString()}`}
 								</p>
-								<p className="text-sm text-gray-400">Balance: {item.balance}</p>
+								<p className="text-gray-400 text-sm">Balance: {item.balance}</p>
 							</div>
 						</button>
 					))}

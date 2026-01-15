@@ -48,19 +48,19 @@ function ConfigLoader({
 
 	if (isLoading) {
 		return (
-			<div className="flex items-center justify-center min-h-screen">
-				<div className="text-lg text-gray-400">Loading configuration...</div>
+			<div className="flex min-h-screen items-center justify-center">
+				<div className="text-gray-400 text-lg">Loading configuration...</div>
 			</div>
 		);
 	}
 
 	if (error || !marketplaceConfig) {
 		return (
-			<div className="flex items-center justify-center min-h-screen">
+			<div className="flex min-h-screen items-center justify-center">
 				<div className="text-lg text-red-500">
 					Failed to load marketplace configuration
 					{error && (
-						<pre className="mt-2 text-sm text-gray-400">
+						<pre className="mt-2 text-gray-400 text-sm">
 							{error instanceof Error ? error.message : String(error)}
 						</pre>
 					)}

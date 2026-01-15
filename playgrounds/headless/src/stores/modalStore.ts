@@ -3,21 +3,17 @@ import { useSelector } from '@xstate/store/react';
 
 export type ModalType = 'buy' | 'list' | 'offer' | 'sell' | 'transfer' | null;
 
-type ModalStoreContext = {
+interface ModalStoreContext {
 	activeModal: ModalType;
-};
+}
 
-const initialContext: ModalStoreContext = {
-	activeModal: null,
-};
-
-export const modalStore = createStore({
-	context: { ...initialContext },
+const modalStore = createStore({
+	context: { activeModal: null } as ModalStoreContext,
 	on: {
-		open: (_context, event: { modal: ModalType }) => ({
+		open: (_, event: { modal: ModalType }) => ({
 			activeModal: event.modal,
 		}),
-		close: () => ({ ...initialContext }),
+		close: () => ({ activeModal: null }),
 	},
 });
 

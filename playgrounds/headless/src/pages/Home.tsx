@@ -13,12 +13,12 @@ export function Home() {
 
 	return (
 		<div>
-			<h2 className="text-2xl font-bold mb-6">Collections</h2>
+			<h2 className="mb-6 font-bold text-2xl">Collections</h2>
 
 			{collections.length === 0 ? (
 				<p className="text-gray-400">No collections configured</p>
 			) : (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{collections.map((collection) => (
 						<CollectionCard
 							key={`${collection.chainId}-${collection.itemsAddress}`}
@@ -50,23 +50,23 @@ function CollectionCard({
 	return (
 		<button
 			onClick={onClick}
-			className="text-left bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-500 transition-colors w-full"
+			className="w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-left transition-colors hover:border-gray-500"
 			type="button"
 		>
 			{collection.bannerUrl ? (
 				<img
 					src={collection.bannerUrl}
 					alt=""
-					className="w-full h-32 object-cover"
+					className="h-32 w-full object-cover"
 				/>
 			) : (
-				<div className="w-full h-32 bg-gray-700 flex items-center justify-center">
+				<div className="flex h-32 w-full items-center justify-center bg-gray-700">
 					<span className="text-gray-500">No image</span>
 				</div>
 			)}
 			<div className="p-4">
-				<p className="text-sm text-gray-400">Chain: {collection.chainId}</p>
-				<p className="text-sm text-gray-300 font-mono truncate">
+				<p className="text-gray-400 text-sm">Chain: {collection.chainId}</p>
+				<p className="truncate font-mono text-gray-300 text-sm">
 					{collection.itemsAddress}
 				</p>
 			</div>

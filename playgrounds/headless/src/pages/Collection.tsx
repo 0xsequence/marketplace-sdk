@@ -1,10 +1,10 @@
-import { useParams, useNavigate } from 'react-router';
-import {
-	useCollectionMetadata,
-	useCollectibleMarketList,
-} from '@0xsequence/marketplace-sdk/react';
 import { OrderSide } from '@0xsequence/marketplace-sdk';
-import type { Address } from 'viem';
+import {
+	useCollectibleMarketList,
+	useCollectionMetadata,
+} from '@0xsequence/marketplace-sdk/react';
+import { useNavigate, useParams } from 'react-router';
+import { type Address, isAddress } from 'viem';
 
 export function Collection() {
 	const navigate = useNavigate();
@@ -14,18 +14,63 @@ export function Collection() {
 	}>();
 
 	const parsedChainId = Number(chainId);
+	const isValidAddress = collectionAddress && isAddress(collectionAddress);
+	const validAddress = isValidAddress
+		? (collectionAddress as Address)
+		: undefined;
 
-	const { data: metadata, isLoading: metadataLoading } = useCollectionMetadata({
+	const {
+		data: metadata,
+		isLoading: metadataLoading,
+		error: metadataError,
+	} = useCollectionMetadata({
 		chainId: parsedChainId,
-		collectionAddress: collectionAddress as Address,
+		collectionAddress: validAddress!,
 	});
 
-	const { data: collectiblesData, isLoading: collectiblesLoading } =
-		useCollectibleMarketList({
-			chainId: parsedChainId,
-			collectionAddress: collectionAddress as Address,
-			side: OrderSide.listing,
-		});
+	const {
+		data: collectiblesData,
+		isLoading: collectiblesLoading,
+		error: collectiblesError,
+	} = useCollectibleMarketList({
+		chainId: parsedChainId,
+		collectionAddress: validAddress!,
+		side: OrderSide.listing,
+	});
+
+	if (!isValidAddress) {
+		return (
+			<div className="py-8 text-center">
+				<p className="text-red-400">Invalid collection address</p>
+				<button
+					onClick={() => navigate('/market')}
+					className="mt-4 text-blue-400 hover:underline"
+					type="button"
+				>
+					Back to collections
+				</button>
+			</div>
+		);
+	}
+
+	if (metadataError || collectiblesError) {
+		const error = metadataError || collectiblesError;
+		return (
+			<div className="py-8 text-center">
+				<p className="mb-2 text-red-400">Failed to load collection</p>
+				<p className="mb-4 text-gray-400 text-sm">
+					{error instanceof Error ? error.message : 'Unknown error'}
+				</p>
+				<button
+					onClick={() => navigate('/market')}
+					className="text-blue-400 hover:underline"
+					type="button"
+				>
+					Back to collections
+				</button>
+			</div>
+		);
+	}
 
 	if (metadataLoading || collectiblesLoading) {
 		return <div className="text-gray-400">Loading collection...</div>;
@@ -38,21 +83,21 @@ export function Collection() {
 		<div>
 			<button
 				onClick={() => navigate('/market')}
-				className="text-blue-400 hover:underline mb-2"
+				className="mb-2 text-blue-400 hover:underline"
 				type="button"
 			>
-				← Back to collections
+				&larr; Back to collections
 			</button>
-			<h2 className="text-2xl font-bold">
+			<h2 className="font-bold text-2xl">
 				{metadata?.name || 'Unknown Collection'}
 			</h2>
-			<p className="text-gray-400 font-mono text-sm">{collectionAddress}</p>
-			<p className="text-gray-400 text-sm mb-6">Chain ID: {chainId}</p>
+			<p className="font-mono text-gray-400 text-sm">{collectionAddress}</p>
+			<p className="mb-6 text-gray-400 text-sm">Chain ID: {chainId}</p>
 			{metadata?.extensions?.description && (
-				<p className="text-gray-300 mb-6">{metadata.extensions.description}</p>
+				<p className="mb-6 text-gray-300">{metadata.extensions.description}</p>
 			)}
 
-			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+			<div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{collectibles.map((item) => (
 					<button
 						key={item.metadata.tokenId}
@@ -61,27 +106,27 @@ export function Collection() {
 								`/market/${chainId}/${collectionAddress}/${item.metadata.tokenId}`,
 							)
 						}
-						className="text-left bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-500 transition-colors w-full"
+						className="w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-left transition-colors hover:border-gray-500"
 						type="button"
 					>
 						{item.metadata?.image ? (
 							<img
 								src={item.metadata.image}
 								alt={item.metadata?.name || `Token ${item.metadata.tokenId}`}
-								className="w-full aspect-square object-cover"
+								className="aspect-square w-full object-cover"
 							/>
 						) : (
-							<div className="w-full aspect-square bg-gray-700 flex items-center justify-center">
+							<div className="flex aspect-square w-full items-center justify-center bg-gray-700">
 								<span className="text-gray-500">No image</span>
 							</div>
 						)}
 						<div className="p-3">
-							<p className="font-medium truncate">
+							<p className="truncate font-medium">
 								{item.metadata?.name || `#${item.metadata.tokenId}`}
 							</p>
-							<p className="text-sm text-gray-400">#{item.metadata.tokenId}</p>
+							<p className="text-gray-400 text-sm">#{item.metadata.tokenId}</p>
 							{item.listing?.priceAmount && (
-								<p className="text-sm text-green-400 mt-1">
+								<p className="mt-1 text-green-400 text-sm">
 									{item.listing.priceAmount}
 								</p>
 							)}

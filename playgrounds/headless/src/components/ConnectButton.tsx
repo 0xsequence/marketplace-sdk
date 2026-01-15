@@ -9,12 +9,12 @@ export function ConnectButton() {
 	if (isConnected && address) {
 		return (
 			<div className="flex items-center gap-2">
-				<span className="text-sm text-gray-300 font-mono">
+				<span className="font-mono text-gray-300 text-sm">
 					{address.slice(0, 6)}...{address.slice(-4)}
 				</span>
 				<button
 					onClick={() => disconnect()}
-					className="px-3 py-2 text-sm bg-red-600 hover:bg-red-700 rounded text-white"
+					className="rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
 					type="button"
 				>
 					Disconnect
@@ -26,7 +26,7 @@ export function ConnectButton() {
 	return (
 		<button
 			onClick={openConnectModal}
-			className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white font-medium"
+			className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
 			type="button"
 		>
 			Connect Wallet
