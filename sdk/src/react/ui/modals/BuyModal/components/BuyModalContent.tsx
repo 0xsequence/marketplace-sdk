@@ -9,6 +9,7 @@ import {
 	getSequenceNodeGatewayUrl,
 	getTrailsApiUrl,
 } from '../../../../_internal/api/services';
+import { ModalInitializationError } from '../../_internal/components/baseModal/errors/ModalInitializationError';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
 import { CollectibleMetadataSummary } from './CollectibleMetadataSummary';
@@ -33,6 +34,8 @@ export const BuyModalContent = () => {
 		isShop,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
+		error,
+		refetchAll,
 	} = useBuyModalContext();
 	const currencyAddress = isShop
 		? primarySaleItem?.currencyAddress
@@ -42,6 +45,29 @@ export const BuyModalContent = () => {
 	const sequenceIndexerUrl = getSequenceIndexerUrl(config);
 	const sequenceNodeGatewayUrl = getSequenceNodeGatewayUrl(config);
 	const sequenceApiUrl = getSequenceApiUrl(config);
+
+	if (error) {
+		return (
+			<Modal
+				isDismissible={false}
+				onClose={close}
+				overlayProps={MODAL_OVERLAY_PROPS}
+				contentProps={{
+					style: {
+						width: '450px',
+						height: 'auto',
+					},
+					className: 'overflow-y-auto',
+				}}
+			>
+				<ModalInitializationError
+					error={error}
+					onTryAgain={refetchAll}
+					onClose={close}
+				/>
+			</Modal>
+		);
+	}
 
 	if (
 		typeof checkoutMode === 'object' &&

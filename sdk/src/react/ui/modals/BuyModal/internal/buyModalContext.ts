@@ -29,6 +29,8 @@ export function useBuyModalContext() {
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 		isShop,
+		error,
+		refetchQueries,
 	} = useBuyModalData();
 
 	const transactionData = useBuyTransaction({
@@ -140,6 +142,11 @@ export function useBuyModalContext() {
 		close();
 	};
 
+	const refetchAll = async () => {
+		await refetchQueries();
+		await transactionData.refetch();
+	};
+
 	return {
 		config,
 		modalProps,
@@ -156,6 +163,8 @@ export function useBuyModalContext() {
 		formattedAmount,
 		handleTransactionSuccess,
 		handleTrailsSuccess,
+		error: error || transactionData.error,
+		refetchAll,
 	};
 }
 

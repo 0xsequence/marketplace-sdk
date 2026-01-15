@@ -27,7 +27,9 @@ export const useBuyModalData = () => {
 	const {
 		data: collectible,
 		isLoading: collectableLoading,
-		isError: collectableError,
+		isError: isCollectibleError,
+		error: collectibleError,
+		refetch: refetchCollectible,
 	} = useCollectible({
 		chainId,
 		collectionAddress,
@@ -36,7 +38,9 @@ export const useBuyModalData = () => {
 	const {
 		data: collection,
 		isLoading: collectionLoading,
-		isError: collectionError,
+		isError: isCollectionError,
+		error: collectionError,
+		refetch: refetchCollection,
 	} = useCollection({
 		chainId,
 		collectionAddress,
@@ -45,7 +49,9 @@ export const useBuyModalData = () => {
 	const {
 		data: orders,
 		isLoading: ordersLoading,
-		isError: ordersError,
+		isError: isOrdersError,
+		error: ordersError,
+		refetch: refetchOrders,
 	} = useOrders({
 		chainId,
 		input:
@@ -69,7 +75,9 @@ export const useBuyModalData = () => {
 	const {
 		data: primarySaleItemData,
 		isLoading: primarySaleItemLoading,
-		isError: primarySaleItemError,
+		isError: isPrimarySaleItemError,
+		error: primarySaleItemError,
+		refetch: refetchPrimarySaleItem,
 	} = usePrimarySaleItem({
 		chainId,
 		primarySaleContractAddress: isShop
@@ -89,11 +97,26 @@ export const useBuyModalData = () => {
 	const {
 		data: currency,
 		isLoading: currencyLoading,
-		isError: currencyError,
+		isError: isCurrencyError,
+		error: currencyError,
+		refetch: refetchCurrency,
 	} = useCurrency({
 		chainId,
 		currencyAddress,
 	});
+
+	const refetchQueries = async () => {
+		const promises = [
+			isCollectibleError ? refetchCollectible() : Promise.resolve(),
+			collectionError ? refetchCollection() : Promise.resolve(),
+			isOrdersError && isMarket ? refetchOrders() : Promise.resolve(),
+			isPrimarySaleItemError && isShop
+				? refetchPrimarySaleItem()
+				: Promise.resolve(),
+			currencyError ? refetchCurrency() : Promise.resolve(),
+		];
+		await Promise.all(promises);
+	};
 
 	return {
 		collectible,
@@ -112,10 +135,17 @@ export const useBuyModalData = () => {
 			collectionLoading ||
 			currencyLoading,
 		isError:
-			collectableError ||
+			isCollectibleError ||
+			isCollectionError ||
+			isOrdersError ||
+			isPrimarySaleItemError ||
+			isCurrencyError,
+		error:
+			collectibleError ||
+			collectionError ||
 			ordersError ||
 			primarySaleItemError ||
-			currencyError ||
-			collectionError,
+			currencyError,
+		refetchQueries,
 	};
 };
