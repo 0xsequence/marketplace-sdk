@@ -44,7 +44,7 @@ export function Collectible() {
 		error: metadataError,
 	} = useCollectibleMetadata({
 		chainId: parsedChainId,
-		contractAddress: validAddress!,
+		collectionAddress: validAddress!,
 		tokenId: tokenIdBigInt,
 	});
 
