@@ -211,7 +211,7 @@ function Property({ name, value }: { name: string; value: string }) {
 	return (
 		<div className="flex flex-col gap-1 rounded-xl px-3 py-2">
 			<Text className="font-medium text-muted text-xs">{capitalize(name)}</Text>
-			<Text className="whitespace-pre-wrap wrap-break-word font-bold text-secondary text-sm">
+			<Text className="wrap-break-word whitespace-pre-wrap font-bold text-secondary text-sm">
 				{formattedValue}
 			</Text>
 		</div>
