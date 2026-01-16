@@ -78,6 +78,7 @@ export function useMakeOfferModalContext() {
 			currenciesQuery.data,
 			state.orderbookKind,
 			state.chainId,
+			'offer',
 		);
 	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 
