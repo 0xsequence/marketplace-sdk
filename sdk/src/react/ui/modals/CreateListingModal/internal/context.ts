@@ -71,6 +71,7 @@ export function useCreateListingModalContext() {
 			currenciesQuery.data,
 			state.orderbookKind,
 			state.chainId,
+			'listing',
 		);
 	}, [currenciesQuery.data, state.orderbookKind, state.chainId]);
 

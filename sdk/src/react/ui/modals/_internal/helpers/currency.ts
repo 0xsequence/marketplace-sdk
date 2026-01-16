@@ -8,11 +8,12 @@ export function filterCurrenciesForOrderbook(
 	currencies: Currency[],
 	orderbookKind: OrderbookKind | undefined,
 	chainId: number,
+	side: 'listing' | 'offer',
 ): Currency[] {
 	if (!currencies || currencies.length === 0) return [];
 
 	if (orderbookKind === OrderbookKind.opensea) {
-		const openseaCurrency = getOpenseaCurrencyForChain(chainId, 'listing');
+		const openseaCurrency = getOpenseaCurrencyForChain(chainId, side);
 		if (openseaCurrency) {
 			return currencies.filter((currency) =>
 				compareAddress(currency.contractAddress, openseaCurrency.address),
