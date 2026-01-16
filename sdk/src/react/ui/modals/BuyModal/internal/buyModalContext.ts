@@ -10,6 +10,7 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps } from '../store';
+import { determineCheckoutMode } from './determineCheckoutMode';
 
 export function useBuyModalContext() {
 	const config = useConfig();
@@ -59,37 +60,11 @@ export function useBuyModalContext() {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
-	let checkoutMode: CheckoutMode | undefined;
-
-	if (
-		checkoutModeConfig === 'trails' &&
-		isChainSupported &&
-		canBeUsedWithTrails
-	) {
-		checkoutMode = 'trails';
-	} else if (
-		checkoutModeConfig === 'trails' &&
-		isChainSupported &&
-		!canBeUsedWithTrails
-	) {
-		// Fallback to crypto when order doesn't support trails
-		checkoutMode = 'crypto';
-	} else if (checkoutModeConfig === 'trails' && !isChainSupported) {
-		// Fallback to crypto when chain is not supported by trails
-		checkoutMode = 'crypto';
-	} else if (
-		typeof checkoutModeConfig === 'object' &&
-		checkoutModeConfig.mode === 'sequence-checkout'
-	) {
-		checkoutMode = {
-			mode: 'sequence-checkout',
-			options: checkoutModeConfig.options,
-		};
-	} else if (checkoutModeConfig === 'crypto') {
-		checkoutMode = 'crypto';
-	} else {
-		checkoutMode = undefined;
-	}
+	const checkoutMode = determineCheckoutMode({
+		checkoutModeConfig,
+		isChainSupported,
+		canBeUsedWithTrails,
+	});
 
 	const formattedAmount =
 		currency?.decimals && buyStep?.price
