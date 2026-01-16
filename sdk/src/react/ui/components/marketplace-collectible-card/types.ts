@@ -35,7 +35,10 @@ type MarketplaceCardBaseProps = {
 
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
-	tokenMetadata: Pick<MarketplaceTokenMetadata, 'name' | 'image' | 'video' | 'animation_url'>;
+	tokenMetadata: Pick<
+		MarketplaceTokenMetadata,
+		'name' | 'image' | 'video' | 'animation_url'
+	>;
 	salePrice:
 		| {
 				amount: bigint;
@@ -85,7 +88,10 @@ type MarketCardSpecificProps = {
 type NonTradableInventoryCardSpecificProps = {
 	balance: string;
 	balanceIsLoading: boolean;
-	collectibleMetadata: Pick<MarketplaceTokenMetadata, 'name' | 'image' | 'video' | 'animation_url'>;
+	collectibleMetadata: Pick<
+		MarketplaceTokenMetadata,
+		'name' | 'image' | 'video' | 'animation_url'
+	>;
 };
 
 // Complete CollectibleCardProps with all possible properties and card type

@@ -233,12 +233,12 @@ export function useCryptoPaymentModalContext({
 		setError(null);
 		setIsExecuting(true);
 		try {
-			const hash =await executeBundledTransactions({
+			const hash = await executeBundledTransactions({
 				step: buyStep,
 				onBalanceInsufficientForFeeOption:
 					handleBalanceInsufficientForWaasFeeOption,
 				onTransactionFailed: handleTransactionFailed,
-			})
+			});
 
 			onSuccess(hash as Hash);
 		} catch (error) {

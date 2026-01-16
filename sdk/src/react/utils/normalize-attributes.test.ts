@@ -12,7 +12,11 @@ describe('processAttributes', () => {
 		const result = processAttributes(attributes);
 
 		expect(result).toEqual({
-			Background: { name: 'Background', value: 'Blue', display_type: undefined },
+			Background: {
+				name: 'Background',
+				value: 'Blue',
+				display_type: undefined,
+			},
 			Level: { name: 'Level', value: '5', display_type: undefined },
 			Birthday: {
 				name: 'Birthday',
@@ -50,7 +54,11 @@ describe('processAttributes', () => {
 		const result = processAttributes(attributes);
 
 		expect(result).toEqual({
-			Background: { name: 'Background', value: 'Blue', display_type: undefined },
+			Background: {
+				name: 'Background',
+				value: 'Blue',
+				display_type: undefined,
+			},
 			Level: { name: 'Level', value: '5', display_type: undefined },
 			Active: { name: 'Active', value: 'true', display_type: undefined },
 			metadata: {
