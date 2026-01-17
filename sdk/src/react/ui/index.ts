@@ -20,6 +20,7 @@ export {
 	useBuyModalContext,
 } from './modals/BuyModal';
 export {
+	type CreateListingModalContext,
 	useCreateListingModal,
 	useCreateListingModalContext,
 } from './modals/CreateListingModal';
