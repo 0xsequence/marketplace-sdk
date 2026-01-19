@@ -1,0 +1,41 @@
+{
+	"name": "sequence-marketplace-sdk-playground-headless",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint ."
+	},
+	"dependencies": {
+		"@0xsequence/api": "catalog:",
+		"@0xsequence/indexer": "catalog:",
+		"@0xsequence/marketplace-sdk": "workspace:*",
+		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/network": "catalog:",
+		"@tailwindcss/vite": "^4.1.18",
+		"@tanstack/react-query": "catalog:",
+		"@tanstack/react-query-devtools": "catalog:",
+		"@xstate/store": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"react-router": "^7.11.0",
+		"tailwindcss": "catalog:",
+		"viem": "catalog:",
+		"wagmi": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vitejs/plugin-react": "^5.1.2",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vite-tsconfig-paths": "catalog:"
+	}
+}
