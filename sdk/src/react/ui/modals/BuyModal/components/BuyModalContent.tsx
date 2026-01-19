@@ -90,7 +90,7 @@ export const BuyModalContent = () => {
 	}
 
 	return (
-		<Dialog open={true} defaultOpen={true}>
+		<Dialog open={true} onOpenChange={(open) => !open && close()}>
 			<DialogOverlay style={MODAL_OVERLAY_PROPS.style} />
 
 			<DialogContent className="h-auto w-[450px] overflow-y-auto overflow-x-hidden">
