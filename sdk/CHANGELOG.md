@@ -1,5 +1,176 @@
 # @0xsequence/marketplace-sdk
 
+## 2.0.0
+
+### Major Release
+
+This release introduces first-class support for **Trails**, complete **headless mode** for all modals, and a modernized type system with **BigInt and viem compatibility**.
+
+---
+
+## Trails Integration - 1-Click Checkout
+
+[Trails](https://trails.build) is now the **default checkout mode**, enabling seamless 1-click purchases across any chain, with any token, from any wallet.
+
+
+```typescript
+<MarketplaceProvider config={{
+  projectAccessKey: 'your-key',
+  projectId: 'your-project-id',
+  // checkoutMode: 'trails' is the default
+}}>
+```
+
+| Checkout Mode                            | Description                                             |
+|------------------------------------------|---------------------------------------------------------|
+| `'trails'`                               | **Default** - 1-click checkout with cross-chain support |
+| `'crypto'`                               | Direct on-chain payment in the listing currency         |
+| `{ mode: 'sequence-checkout', options }` | Sequence Checkout with custom options                   |
+
+---
+
+## Complete Headless Mode
+
+All modal components now export their internal context hooks and types for fully custom UI implementations. See the [headless playground](https://github.com/0xsequence/marketplace-sdk/tree/master/playgrounds/headless) for a complete example.
+
+```typescript
+import {
+  // Context hooks (NEW)
+  useBuyModalContext,
+  useCreateListingModalContext,
+  useMakeOfferModalContext,
+  useSellModalContext,
+  useTransferModalContext,
+
+  // Context types (NEW)
+  type BuyModalContext,
+  type CreateListingModalContext,
+  type MakeOfferModalContext,
+  type SellModalContext,
+  type TransferModalContext,
+} from '@0xsequence/marketplace-sdk/react';
+```
+
+---
+
+## Modern Type System - BigInt & Viem Compatible
+
+All SDK types now use `bigint` primitives and are fully compatible with viem types:
+
+| Property                 | Before (v1.x)      | After (v2.0)   |
+|--------------------------|--------------------|----------------|
+| `tokenId`                | `string`           | `bigint`       |
+| `amount` / `priceAmount` | `string`           | `bigint`       |
+| `quantity`               | `string \| number` | `bigint`       |
+| `Address`                | `string`           | viem `Address` |
+| `Hex`                    | `string`           | viem `Hex`     |
+
+## Breaking Changes
+
+### Type Changes (Migration Required)
+
+- `tokenId`, `amount`, `quantity` now use `bigint` instead of `string`
+- Address types now use viem's `Address` type
+
+### Removed APIs
+
+| Removed                           | Notes                                      |
+|-----------------------------------|--------------------------------------------|
+| `useListCollectionActivities`     | Activities API removed                     |
+| `useListCollectibleActivities`    | Activities API removed                     |
+| `onSuccess` / `onError` callbacks | Use React query for network errors         |
+
+### Hook Changes
+
+| Hook          | Change                                                  |
+|---------------|---------------------------------------------------------|
+| Count hooks   | Return `number` directly instead of `{ count: number }` |
+
+---
+
+## New Features
+
+### New Hooks
+
+- `useERC721Owner` - Read ERC721 token owner address
+
+### New Utilities
+
+- `processProperties` / `processAttributes` - Normalize NFT metadata into standardized format
+
+---
+
+## Enhanced Error Handling
+
+Modal error handling has been significantly improved with better user feedback and recovery options:
+
+- **Modals** - Added extensive error handling with retry options
+- **Headless mode** - Added error boundaries and accessible error recovery patterns
+
+```typescript
+const ctx = useBuyModalContext();
+
+// New error handling properties
+if (ctx.error) {
+  return <ErrorDisplay error={ctx.error} onRetry={ctx.refetchAll} />;
+}
+```
+
+---
+
+## Callback Removal (Breaking Change)
+
+All modal hooks no longer accept `onSuccess` / `onError` callback parameters. Modals now handle errors internally with improved user feedback and recovery options.
+
+If you need to surface network errors to your application, use React Query's global error handling via `QueryCache` callbacks. See the [TanStack Query documentation](https://tanstack.com/query/latest/docs/framework/react/guides/query-options#global-callbacks) for details.
+
+The new context hooks (see [Complete Headless Mode](#complete-headless-mode)) provide full access to modal state for custom UI implementations.
+
+**Affected modals:**
+
+| Removed Callbacks From   | New Context Hook (v2.0)          |
+|--------------------------|----------------------------------|
+| `useBuyModal`            | `useBuyModalContext()`           |
+| `useCreateListingModal`  | `useCreateListingModalContext()` |
+| `useMakeOfferModal`      | `useMakeOfferModalContext()`     |
+| `useSellModal`           | `useSellModalContext()`          |
+| `useTransferModal`       | `useTransferModalContext()`      |
+
+
+**Before (v1.x):**
+
+```typescript
+const { openBuyModal } = useBuyModal({
+  onSuccess: (txHash) => console.log('Purchased!', txHash),
+  onError: (err) => console.error(err),
+});
+```
+
+**After (v2.0):**
+
+```typescript
+const { openBuyModal } = useBuyModal();
+const ctx = useBuyModalContext(); // NEW - provides full modal state access
+
+// Handle states in your UI
+if (ctx.isLoading) {
+  // Show loading state
+}
+if (ctx.error) {
+  // Show error state with ctx.refetchAll for retry
+}
+```
+
+---
+
+## Internal Improvements
+
+- Upgraded dependencies: wagmi, @tanstack/react-query, nuqs
+- Updated Trails SDK to v0.9.5
+- Added comprehensive test coverage for transaction hooks
+- Improved TypeScript type inference
+
+---
 ## 1.2.1
 
 ### Patch Changes
@@ -145,7 +316,7 @@
 ### ! Breaking Changes
 
 By default, the SDK now uses shadow DOM for all modals. To disable this, you can set the `useShadowDOM` flag to `false` in the `SdkConfig`. Other components (media, collectible card etc) are rendered to the document body and requires Tailwind.
-`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging api-client
+`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging marketplace-api
 
 - **Wallet**: Complete removal of custom wallet client in favor of wagmi hooks
   - Replace `wallet.address` with `useAccount()` hook from wagmi
@@ -584,7 +755,7 @@ SSR config do not require passing query client anymore, and leverages an interna
 
 ### Patch Changes
 
-- Added new `useInventory` hook that combines data from api-client and indexer [#294](https://github.com/0xsequence/marketplace-sdk/pull/294)
+- Added new `useInventory` hook that combines data from marketplace-api and indexer [#294](https://github.com/0xsequence/marketplace-sdk/pull/294)
 - Added optimistic updates for listings and offers [#290](https://github.com/0xsequence/marketplace-sdk/pull/290)
 - Improved test coverage and fixed various bugs
 
