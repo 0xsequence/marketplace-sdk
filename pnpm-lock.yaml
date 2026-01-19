@@ -740,9 +740,6 @@ importers:
       '@0xsequence/api':
         specifier: 'catalog:'
         version: 2.3.39
-      '@0xsequence/api-client':
-        specifier: workspace:*
-        version: link:../api
       '@0xsequence/checkout':
         specifier: 'catalog:'
         version: 5.4.8(9c5b2f71c5f04622e7974bb8ed6ec719)
@@ -816,6 +813,9 @@ importers:
         specifier: 2.18.0
         version: 2.18.0(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react@19.2.7)(bufferutil@4.1.0)(react@19.2.3)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5)
     devDependencies:
+      '@0xsequence/api-client':
+        specifier: workspace:*
+        version: link:../api
       '@biomejs/biome':
         specifier: 'catalog:'
         version: 2.3.11
