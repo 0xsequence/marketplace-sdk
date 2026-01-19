@@ -38,7 +38,7 @@
 		"sonner": "^2.0.7",
 		"tailwindcss": "catalog:",
 		"viem": "catalog:",
-		"wagmi": "^2.19.5"
+		"wagmi": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
