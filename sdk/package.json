@@ -60,7 +60,7 @@
 		}
 	},
 	"dependencies": {
-		"0xtrails": "^0.9.5",
+		"0xtrails": "^0.9.6",
 		"@0xsequence/api-client": "workspace:*",
 		"@databeat/tracker": "^0.9.3",
 		"@tailwindcss/cli": "^4.1.18",

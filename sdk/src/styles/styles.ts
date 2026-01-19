@@ -997,6 +997,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-\[148px\] {
     width: 148px;
   }
+  .w-\[450px\] {
+    width: 450px;
+  }
   .w-auto {
     width: auto;
   }
