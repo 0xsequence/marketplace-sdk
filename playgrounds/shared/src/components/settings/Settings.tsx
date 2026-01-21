@@ -18,7 +18,10 @@ import type {
 	Env,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
-import { OrderbookKind as OrderbookKindEnum } from '@0xsequence/marketplace-sdk';
+import {
+	OrderbookKind as OrderbookKindEnum,
+	TransactionCrypto,
+} from '@0xsequence/marketplace-sdk';
 import { useOpenConnectModal } from '@0xsequence/marketplace-sdk/react';
 import { useMemo, useState } from 'react';
 import type { Address } from 'viem';
@@ -47,20 +50,31 @@ const CHECKOUT_MODE_OPTIONS = [
 	{ label: 'API Default (isTrailsEnabled)', value: 'api-default' },
 	{ label: 'Trails', value: 'trails' },
 	{ label: 'Crypto', value: 'crypto' },
+	{ label: 'Sequence Checkout', value: 'sequence-checkout' },
 ];
 
-function getCheckoutModeSelectValue(mode: CheckoutMode | undefined): string {
-	if (mode === undefined) return 'api-default';
-	if (mode === 'trails') return 'trails';
-	if (mode === 'crypto') return 'crypto';
-	return 'api-default';
-}
+const SEQUENCE_CHECKOUT_MODE: CheckoutMode = {
+	mode: 'sequence-checkout',
+	options: {
+		crypto: TransactionCrypto.all,
+		swap: [],
+		nftCheckout: [],
+		onRamp: [],
+	},
+};
 
-function parseCheckoutModeSelectValue(value: string): CheckoutMode | undefined {
-	if (value === 'api-default') return undefined;
-	if (value === 'trails') return 'trails';
-	if (value === 'crypto') return 'crypto';
-	return undefined;
+const CHECKOUT_MODE_MAP: Record<string, CheckoutMode | undefined> = {
+	'api-default': undefined,
+	trails: 'trails',
+	crypto: 'crypto',
+	'sequence-checkout': SEQUENCE_CHECKOUT_MODE,
+};
+
+function checkoutModeToSelectValue(mode: CheckoutMode | undefined): string {
+	if (mode === undefined) return 'api-default';
+	if (typeof mode === 'object' && mode.mode === 'sequence-checkout')
+		return 'sequence-checkout';
+	return mode;
 }
 
 type SettingsProps = {
@@ -201,12 +215,10 @@ export function Settings({ collectionAddress }: SettingsProps) {
 
 							<Select.Helper
 								name="checkoutMode"
-								value={getCheckoutModeSelectValue(checkoutModeOverride)}
+								value={checkoutModeToSelectValue(checkoutModeOverride)}
 								options={CHECKOUT_MODE_OPTIONS}
 								onValueChange={(value) =>
-									setCheckoutModeOverride(
-										parseCheckoutModeSelectValue(value),
-									)
+									setCheckoutModeOverride(CHECKOUT_MODE_MAP[value])
 								}
 							/>
 						</Field>
