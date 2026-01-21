@@ -10,6 +10,7 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
+import { useRef, useState } from 'react';
 import {
 	getSequenceApiUrl,
 	getSequenceIndexerUrl,
@@ -56,12 +57,12 @@ export const BuyModalContent = () => {
 	if (error) {
 		return (
 			<Modal
-				isDismissible={false}
+				isDismissible={true}
 				onClose={close}
 				overlayProps={MODAL_OVERLAY_PROPS}
 				contentProps={{
 					style: {
-						width: '450px',
+						width: '400px',
 						height: 'auto',
 					},
 					className: 'overflow-y-auto',
@@ -103,7 +104,7 @@ export const BuyModalContent = () => {
 						<div className="flex w-full items-center justify-center py-8">
 							<div className="flex flex-col items-center gap-4">
 								<Spinner size="lg" />
-								<Text className="text-text-80">Loading payment options...</Text>
+								<ProgressiveLoadingMessage />
 							</div>
 						</div>
 					)}
@@ -158,4 +159,17 @@ export const BuyModalContent = () => {
 			</DialogContent>
 		</Dialog>
 	);
+};
+
+const ProgressiveLoadingMessage = () => {
+	const [message, setMessage] = useState('Loading payment options...');
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+	if (!timerRef.current) {
+		timerRef.current = setTimeout(() => {
+			setMessage('This is taking longer than expected. Please wait...');
+		}, 3000);
+	}
+
+	return <Text className="text-text-80">{message}</Text>;
 };
