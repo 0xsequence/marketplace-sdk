@@ -14,6 +14,7 @@ import {
 } from '@0xsequence/design-system';
 import type {
 	ApiConfig,
+	CheckoutMode,
 	Env,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
@@ -42,6 +43,26 @@ const ENV_OPTIONS = [
 	{ label: 'Next', value: 'next' },
 ];
 
+const CHECKOUT_MODE_OPTIONS = [
+	{ label: 'API Default (isTrailsEnabled)', value: 'api-default' },
+	{ label: 'Trails', value: 'trails' },
+	{ label: 'Crypto', value: 'crypto' },
+];
+
+function getCheckoutModeSelectValue(mode: CheckoutMode | undefined): string {
+	if (mode === undefined) return 'api-default';
+	if (mode === 'trails') return 'trails';
+	if (mode === 'crypto') return 'crypto';
+	return 'api-default';
+}
+
+function parseCheckoutModeSelectValue(value: string): CheckoutMode | undefined {
+	if (value === 'api-default') return undefined;
+	if (value === 'trails') return 'trails';
+	if (value === 'crypto') return 'crypto';
+	return undefined;
+}
+
 type SettingsProps = {
 	collectionAddress: Address;
 };
@@ -57,6 +78,8 @@ export function Settings({ collectionAddress }: SettingsProps) {
 		orderbookKind,
 		paginationMode,
 		setPaginationMode,
+		checkoutModeOverride,
+		setCheckoutModeOverride,
 		resetSettings,
 		setApiOverride,
 		addCollectionOverride,
@@ -168,6 +191,21 @@ export function Settings({ collectionAddress }: SettingsProps) {
 								onValueChange={(value) =>
 									setOrderbookKind(
 										value === 'default' ? undefined : (value as OrderbookKind),
+									)
+								}
+							/>
+						</Field>
+
+						<Field>
+							<FieldLabel>Checkout Mode</FieldLabel>
+
+							<Select.Helper
+								name="checkoutMode"
+								value={getCheckoutModeSelectValue(checkoutModeOverride)}
+								options={CHECKOUT_MODE_OPTIONS}
+								onValueChange={(value) =>
+									setCheckoutModeOverride(
+										parseCheckoutModeSelectValue(value),
 									)
 								}
 							/>

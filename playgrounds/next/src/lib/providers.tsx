@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { MarketplaceProviders } from 'shared-components';
+import { MarketplaceProviders, useMarketplace } from 'shared-components';
 import type { State } from 'wagmi';
 import { AppLink } from '../components/ui/app-link';
 
@@ -22,6 +22,7 @@ export default function Providers({
 	sdkConfig: SdkConfig;
 	children: React.ReactNode;
 }) {
+	const { checkoutModeOverride } = useMarketplace();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,
@@ -43,6 +44,7 @@ export default function Providers({
 		<MarketplaceProviders
 			config={sdkConfig}
 			marketplaceConfig={marketplaceConfig}
+			checkoutModeOverride={checkoutModeOverride}
 			initialState={sdkInitialState}
 			LinkComponent={AppLink}
 			NuqsAdapter={NuqsAdapter}

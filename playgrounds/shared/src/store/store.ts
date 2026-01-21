@@ -1,10 +1,10 @@
 import {
 	type ApiConfig,
+	type CheckoutMode,
 	type ContractType,
 	type MarketplaceConfig,
 	type OrderbookKind,
 	type SdkConfig,
-	TransactionCrypto,
 } from '@0xsequence/marketplace-sdk';
 import { createStore } from '@xstate/store';
 import type { Address } from 'viem';
@@ -54,6 +54,8 @@ export type ExtendedSdkConfig = SdkConfig & {
 	};
 };
 
+export type CheckoutModeOverride = CheckoutMode | undefined;
+
 export const defaultContext = {
 	activeTab:
 		typeof window !== 'undefined'
@@ -62,19 +64,11 @@ export const defaultContext = {
 	projectId: DEFAULT_PROJECT_ID,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
+	checkoutModeOverride: undefined as CheckoutModeOverride,
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		checkoutMode: {
-			mode: 'sequence-checkout',
-			options: {
-				crypto: TransactionCrypto.all,
-				swap: [],
-				nftCheckout: [],
-				onRamp: [],
-			},
-		},
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
@@ -151,6 +145,14 @@ export const marketplaceStore = createStore({
 		setPaginationMode: (context, { mode }: { mode: PaginationMode }) => ({
 			...context,
 			paginationMode: mode,
+		}),
+
+		setCheckoutModeOverride: (
+			context,
+			{ mode }: { mode: CheckoutModeOverride },
+		) => ({
+			...context,
+			checkoutModeOverride: mode,
 		}),
 
 		resetSettings: () => structuredClone(defaultContext),

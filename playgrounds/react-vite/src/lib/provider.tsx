@@ -18,7 +18,7 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children, initialState }: ProvidersProps) {
-	const { sdkConfig } = useMarketplace();
+	const { sdkConfig, checkoutModeOverride } = useMarketplace();
 	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
@@ -41,6 +41,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
 		<MarketplaceProviders
 			config={sdkConfig}
 			marketplaceConfig={marketplaceConfig}
+			checkoutModeOverride={checkoutModeOverride}
 			initialState={initialState}
 			LinkComponent={AppLink}
 			NuqsAdapter={NuqsAdapter}
