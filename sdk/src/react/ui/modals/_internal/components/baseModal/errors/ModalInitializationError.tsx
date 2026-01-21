@@ -17,7 +17,7 @@ export const ModalInitializationError = ({
 	const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
 
 	return (
-		<div className="flex min-h-[400px] flex-col items-center justify-center p-4 text-white">
+		<div className="flex min-h-[400px] flex-col items-center justify-center p-6 text-white">
 			<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500">
 				<WarningIcon className="h-8 w-8 text-white" />
 			</div>
@@ -29,7 +29,7 @@ export const ModalInitializationError = ({
 				refresh the page.
 			</p>
 
-			{error.stack && (
+			{(error.cause as string) && (
 				<button
 					type="button"
 					onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
@@ -50,19 +50,21 @@ export const ModalInitializationError = ({
 							d="M19 9l-7 7-7-7"
 						/>
 					</svg>
-					Show technical details
+					{showTechnicalDetails
+						? 'Hide technical details'
+						: 'Show technical details'}
 				</button>
 			)}
 
-			{showTechnicalDetails && error.stack && (
+			{showTechnicalDetails && (error.cause as string) && (
 				<div className="mb-8 max-h-64 w-full max-w-md overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-4">
 					<pre className="whitespace-pre-wrap break-words text-red-100 text-xs">
-						{error.stack}
+						{error.cause as string}
 					</pre>
 				</div>
 			)}
 
-			<div className="flex w-full max-w-xs flex-col space-y-3">
+			<div className="flex w-full flex-col space-y-3">
 				{onTryAgain && (
 					<Button
 						onClick={onTryAgain}
