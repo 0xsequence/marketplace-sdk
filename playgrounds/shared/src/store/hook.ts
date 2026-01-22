@@ -4,16 +4,17 @@ import { useSelector } from '@xstate/store/react';
 import type { PaginationMode, Tab } from '../types';
 import {
 	type ApiOverrides,
+	type CheckoutModeOverride,
 	type CollectionOverride,
 	marketplaceStore,
 } from './store';
 
-// Add type for trigger events
 type TriggerEvents = {
 	setActiveTab: { tab: Tab };
 	setProjectId: { id: string };
 	setOrderbookKind: { kind: OrderbookKind | undefined };
 	setPaginationMode: { mode: PaginationMode };
+	setCheckoutModeOverride: { mode: CheckoutModeOverride };
 	resetSettings: undefined;
 	setApiOverride: {
 		service: keyof ApiOverrides;
@@ -42,6 +43,10 @@ export function useMarketplace() {
 		marketplaceStore,
 		(state) => state.context.paginationMode,
 	);
+	const checkoutModeOverride = useSelector(
+		marketplaceStore,
+		(state) => state.context.checkoutModeOverride,
+	);
 
 	const { trigger } = marketplaceStore as {
 		trigger: { [K in keyof TriggerEvents]: (event: TriggerEvents[K]) => void };
@@ -58,6 +63,9 @@ export function useMarketplace() {
 		paginationMode,
 		setPaginationMode: (mode: PaginationMode) =>
 			trigger.setPaginationMode({ mode }),
+		checkoutModeOverride,
+		setCheckoutModeOverride: (mode: CheckoutModeOverride) =>
+			trigger.setCheckoutModeOverride({ mode }),
 		resetSettings: () => trigger.resetSettings(undefined),
 		setApiOverride: (
 			service: keyof ApiOverrides,

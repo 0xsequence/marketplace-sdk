@@ -14,10 +14,14 @@ import {
 } from '@0xsequence/design-system';
 import type {
 	ApiConfig,
+	CheckoutMode,
 	Env,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
-import { OrderbookKind as OrderbookKindEnum } from '@0xsequence/marketplace-sdk';
+import {
+	OrderbookKind as OrderbookKindEnum,
+	TransactionCrypto,
+} from '@0xsequence/marketplace-sdk';
 import { useOpenConnectModal } from '@0xsequence/marketplace-sdk/react';
 import { useMemo, useState } from 'react';
 import type { Address } from 'viem';
@@ -42,6 +46,37 @@ const ENV_OPTIONS = [
 	{ label: 'Next', value: 'next' },
 ];
 
+const CHECKOUT_MODE_OPTIONS = [
+	{ label: 'API Default (isTrailsEnabled)', value: 'api-default' },
+	{ label: 'Trails', value: 'trails' },
+	{ label: 'Crypto', value: 'crypto' },
+	{ label: 'Sequence Checkout', value: 'sequence-checkout' },
+];
+
+const SEQUENCE_CHECKOUT_MODE: CheckoutMode = {
+	mode: 'sequence-checkout',
+	options: {
+		crypto: TransactionCrypto.all,
+		swap: [],
+		nftCheckout: [],
+		onRamp: [],
+	},
+};
+
+const CHECKOUT_MODE_MAP: Record<string, CheckoutMode | undefined> = {
+	'api-default': undefined,
+	trails: 'trails',
+	crypto: 'crypto',
+	'sequence-checkout': SEQUENCE_CHECKOUT_MODE,
+};
+
+function checkoutModeToSelectValue(mode: CheckoutMode | undefined): string {
+	if (mode === undefined) return 'api-default';
+	if (mode === 'trails') return 'trails';
+	if (mode === 'crypto') return 'crypto';
+	return 'sequence-checkout';
+}
+
 type SettingsProps = {
 	collectionAddress: Address;
 };
@@ -57,6 +92,8 @@ export function Settings({ collectionAddress }: SettingsProps) {
 		orderbookKind,
 		paginationMode,
 		setPaginationMode,
+		checkoutModeOverride,
+		setCheckoutModeOverride,
 		resetSettings,
 		setApiOverride,
 		addCollectionOverride,
@@ -169,6 +206,19 @@ export function Settings({ collectionAddress }: SettingsProps) {
 									setOrderbookKind(
 										value === 'default' ? undefined : (value as OrderbookKind),
 									)
+								}
+							/>
+						</Field>
+
+						<Field>
+							<FieldLabel>Checkout Mode</FieldLabel>
+
+							<Select.Helper
+								name="checkoutMode"
+								value={checkoutModeToSelectValue(checkoutModeOverride)}
+								options={CHECKOUT_MODE_OPTIONS}
+								onValueChange={(value) =>
+									setCheckoutModeOverride(CHECKOUT_MODE_MAP[value])
 								}
 							/>
 						</Field>

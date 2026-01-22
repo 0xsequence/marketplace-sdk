@@ -1,7 +1,11 @@
 'use client';
 import { SequenceConnectProvider } from '@0xsequence/connect';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
-import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
+import type {
+	CheckoutMode,
+	MarketplaceConfig,
+	SdkConfig,
+} from '@0xsequence/marketplace-sdk';
 import {
 	createWagmiConfig,
 	MarketplaceProvider,
@@ -15,24 +19,35 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { ComponentType, ReactNode } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 import { type State, WagmiProvider } from 'wagmi';
 import { hashFn } from 'wagmi/query';
 import type { AppLinkProps } from '../components/ui/AppLink';
 import { LinkProvider } from '../components/ui/LinkProvider';
 import { DEFAULT_ENV } from '../consts';
+import type { CheckoutModeOverride } from '../store';
 import {
 	createConnectConfig,
 	createProcessedSdkConfig,
 } from '../utils/environmentOverrides';
 
+function resolveCheckoutMode(
+	override: CheckoutModeOverride,
+	isTrailsEnabled: boolean,
+): CheckoutMode {
+	if (override !== undefined) {
+		return override;
+	}
+	return isTrailsEnabled ? 'trails' : 'crypto';
+}
+
 export interface MarketplaceProvidersProps {
 	config: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
+	checkoutModeOverride?: CheckoutModeOverride;
 	children: ReactNode;
 	initialState?: { wagmi?: State };
-	// Framework-specific components
 	LinkComponent: ComponentType<AppLinkProps>;
 	NuqsAdapter: ComponentType<{ children: ReactNode }>;
 }
@@ -40,14 +55,35 @@ export interface MarketplaceProvidersProps {
 export function MarketplaceProviders({
 	config,
 	marketplaceConfig,
+	checkoutModeOverride,
 	children,
 	initialState,
 	LinkComponent,
 	NuqsAdapter,
 }: MarketplaceProvidersProps) {
-	const processedConfig = createProcessedSdkConfig(config, DEFAULT_ENV);
+	const checkoutMode = useMemo(
+		() =>
+			resolveCheckoutMode(
+				checkoutModeOverride,
+				marketplaceConfig.settings.isTrailsEnabled,
+			),
+		[checkoutModeOverride, marketplaceConfig.settings.isTrailsEnabled],
+	);
+
+	const configWithCheckoutMode = useMemo(
+		() => ({
+			...config,
+			checkoutMode,
+		}),
+		[config, checkoutMode],
+	);
+
+	const processedConfig = createProcessedSdkConfig(
+		configWithCheckoutMode,
+		DEFAULT_ENV,
+	);
 	const connectConfig = createConnectConfig(
-		config,
+		configWithCheckoutMode,
 		marketplaceConfig.settings.title,
 		DEFAULT_ENV,
 	);

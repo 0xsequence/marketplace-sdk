@@ -1,5 +1,19 @@
 import type { defaultContext } from './store';
 
+function isValidCheckoutModeOverride(mode: unknown): boolean {
+	if (mode === undefined) return true;
+	if (mode === 'crypto' || mode === 'trails') return true;
+	if (
+		typeof mode === 'object' &&
+		mode !== null &&
+		'mode' in mode &&
+		(mode as { mode: string }).mode === 'sequence-checkout'
+	) {
+		return true;
+	}
+	return false;
+}
+
 export function validateStoreSnapshot(
 	snapshot: unknown,
 ): snapshot is typeof defaultContext {
@@ -15,6 +29,8 @@ export function validateStoreSnapshot(
 
 	if (s.orderbookKind !== undefined && typeof s.orderbookKind !== 'string')
 		return false;
+
+	if (!isValidCheckoutModeOverride(s.checkoutModeOverride)) return false;
 
 	if (!s.sdkConfig || typeof s.sdkConfig !== 'object') return false;
 	if (typeof s.sdkConfig.projectId !== 'string') return false;
