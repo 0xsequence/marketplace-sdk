@@ -1985,6 +1985,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .break-words {
     overflow-wrap: break-word;
   }
+  .wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
   .text-ellipsis {
     text-overflow: ellipsis;
   }

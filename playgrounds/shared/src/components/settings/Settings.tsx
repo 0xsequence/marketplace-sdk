@@ -72,9 +72,9 @@ const CHECKOUT_MODE_MAP: Record<string, CheckoutMode | undefined> = {
 
 function checkoutModeToSelectValue(mode: CheckoutMode | undefined): string {
 	if (mode === undefined) return 'api-default';
-	if (typeof mode === 'object' && mode.mode === 'sequence-checkout')
-		return 'sequence-checkout';
-	return mode;
+	if (mode === 'trails') return 'trails';
+	if (mode === 'crypto') return 'crypto';
+	return 'sequence-checkout';
 }
 
 type SettingsProps = {
