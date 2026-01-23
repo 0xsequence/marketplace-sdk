@@ -36,6 +36,7 @@ export const BuyModalContent = () => {
 		marketOrder,
 		collectible,
 		buyStep,
+		nftTransfer,
 		isLoading,
 		collection,
 		checkoutMode,
@@ -144,6 +145,7 @@ export const BuyModalContent = () => {
 									toToken={currencyAddress}
 									toCalldata={buyStep.data}
 									toAmount={formattedAmount}
+									nftTransfer={nftTransfer}
 									renderInline={true}
 									theme="dark"
 									mode="pay"

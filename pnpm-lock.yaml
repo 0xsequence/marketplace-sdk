@@ -735,8 +735,8 @@ importers:
         specifier: 'catalog:'
         version: 2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       0xtrails:
-        specifier: ^0.9.6
-        version: 0.9.6(0xsequence@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.39)(@0xsequence/metadata@2.3.39)(@0xsequence/network@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@react-oauth/google@0.11.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.18.0(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react@19.2.7)(bufferutil@4.1.0)(react@19.2.3)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))(zod@4.3.5)
+        specifier: file:../../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz
+        version: file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz(0xsequence@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.39)(@0xsequence/metadata@2.3.39)(@0xsequence/network@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@react-oauth/google@0.11.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.18.0(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react@19.2.7)(bufferutil@4.1.0)(react@19.2.3)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))(zod@4.3.5)
       '@0xsequence/api':
         specifier: 'catalog:'
         version: 2.3.39
@@ -926,8 +926,9 @@ packages:
     peerDependencies:
       ethers: '>=6'
 
-  0xtrails@0.9.6:
-    resolution: {integrity: sha512-2PW4COc0rbgm3kRC8kUnV0bGSQMoEfmNEmJlhxW5p3nkANzV/4F8yWHY8H1RBI+CSLCbo3oBjhuT9fuA7VPkGQ==}
+  0xtrails@file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz:
+    resolution: {integrity: sha512-52ny+Xw33YzlwCxlz0YkSQo0qrOVzRR3SXF6cpOTu+7LoOuJVu9KWxme/CEG82u/3zl2Zh+2RasQiQVUIElPVA==, tarball: file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz}
+    version: 0.9.6
     peerDependencies:
       '@tanstack/react-query': 5.90.16
       ethers: 6.15.0
@@ -10025,8 +10026,8 @@ snapshots:
       '@0xsequence/wallet': 2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
-  0xtrails@0.9.6(0xsequence@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.39)(@0xsequence/metadata@2.3.39)(@0xsequence/network@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@react-oauth/google@0.11.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.18.0(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react@19.2.7)(bufferutil@4.1.0)(react@19.2.3)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))(zod@4.3.5):
-    dependencies:
+  ? 0xtrails@file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz(0xsequence@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@0xsequence/api@2.3.39)(@0xsequence/metadata@2.3.39)(@0xsequence/network@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@react-oauth/google@0.11.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.18.0(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.3))(@types/react@19.2.7)(bufferutil@4.1.0)(react@19.2.3)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))(zod@4.3.5)
+  : dependencies:
       '@0xsequence/connect': 5.4.4(10be68195bbde05f4de91ed2d0c1a6bc)
       '@0xsequence/hooks': 5.4.4(@0xsequence/api@2.3.39)(@0xsequence/indexer@3.0.0-beta.4)(@0xsequence/metadata@2.3.39)(@0xsequence/network@2.3.39(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.16(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(viem@2.44.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))
       '@0xsequence/indexer': 3.0.0-beta.4
