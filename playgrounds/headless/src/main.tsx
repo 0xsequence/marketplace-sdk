@@ -4,11 +4,11 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import './styles.css';
 
 import App from './App';
-import Providers from './providers/Providers';
-import { Home } from './pages/Home';
-import { Collection } from './pages/Collection';
 import { Collectible } from './pages/Collectible';
+import { Collection } from './pages/Collection';
+import { Home } from './pages/Home';
 import { Inventory } from './pages/Inventory';
+import Providers from './providers/Providers';
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>

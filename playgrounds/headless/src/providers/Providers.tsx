@@ -8,13 +8,12 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { type ReactNode, useState, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
-
-import { createSdkConfig } from '../config/sdk';
-import { createHeadlessWagmiConfig } from '../config/wagmi';
 import { ConnectDialog } from '../components/ConnectDialog';
 import { ModalContainer } from '../components/modals/ModalContainer';
+import { createSdkConfig } from '../config/sdk';
+import { createHeadlessWagmiConfig } from '../config/wagmi';
 
 interface ProvidersProps {
 	children: ReactNode;
