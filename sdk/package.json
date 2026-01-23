@@ -60,7 +60,7 @@
 		}
 	},
 	"dependencies": {
-		"0xtrails": "^0.9.6",
+		"0xtrails": "file:../../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz",
 		"@databeat/tracker": "^0.9.3",
 		"@tailwindcss/cli": "^4.1.18",
 		"@xstate/store": "catalog:",

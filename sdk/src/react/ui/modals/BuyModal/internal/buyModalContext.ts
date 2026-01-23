@@ -1,6 +1,8 @@
 import { ContractType, type Hash } from '@0xsequence/api-client';
 import { useSupportedChains } from '0xtrails';
+import type { NFTTransfer } from '0xtrails';
 import { type Chain, formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
@@ -19,6 +21,7 @@ export function useBuyModalContext() {
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
+	const { address: userWalletAddress } = useAccount();
 
 	const {
 		collectible,
@@ -34,16 +37,18 @@ export function useBuyModalContext() {
 		refetchQueries,
 	} = useBuyModalData();
 
+	const contractType =
+		collection?.type === ContractType.ERC1155
+			? ContractType.ERC1155
+			: ContractType.ERC721;
+
 	const transactionData = useBuyTransaction({
 		modalProps,
 		primarySalePrice: {
 			amount: primarySaleItem?.priceAmount,
 			currencyAddress: primarySaleItem?.currencyAddress,
 		},
-		contractType:
-			collection?.type === ContractType.ERC1155
-				? ContractType.ERC1155
-				: ContractType.ERC721,
+		contractType,
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =
@@ -59,6 +64,23 @@ export function useBuyModalContext() {
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
+
+	const nftTransfer: NFTTransfer | null = (() => {
+		if (!isMarket || !marketOrder || !userWalletAddress || marketOrder.tokenId === undefined) {
+			return null;
+		}
+
+		const baseTransfer = {
+			contract: marketOrder.collectionContractAddress,
+			tokenId: marketOrder.tokenId,
+			recipient: userWalletAddress,
+		};
+
+		if (contractType === ContractType.ERC1155) {
+			return { ...baseTransfer, type: 'ERC1155' as const, amount: 1n };
+		}
+		return { ...baseTransfer, type: 'ERC721' as const };
+	})();
 
 	const checkoutMode = determineCheckoutMode({
 		checkoutModeConfig,
@@ -133,6 +155,7 @@ export function useBuyModalContext() {
 		marketOrder,
 		isShop,
 		buyStep,
+		nftTransfer,
 		isLoading,
 		checkoutMode,
 		formattedAmount,
