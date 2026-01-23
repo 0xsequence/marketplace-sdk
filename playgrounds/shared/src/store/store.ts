@@ -1,10 +1,10 @@
-import {
-	type ApiConfig,
-	type CheckoutMode,
-	type ContractType,
-	type MarketplaceConfig,
-	type OrderbookKind,
-	type SdkConfig,
+import type {
+	ApiConfig,
+	CheckoutMode,
+	ContractType,
+	MarketplaceConfig,
+	OrderbookKind,
+	SdkConfig,
 } from '@0xsequence/marketplace-sdk';
 import { createStore } from '@xstate/store';
 import type { Address } from 'viem';

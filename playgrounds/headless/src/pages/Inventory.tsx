@@ -1,11 +1,11 @@
-import { useAccount } from 'wagmi';
-import { useNavigate } from 'react-router';
 import {
+	type CollectibleWithBalance,
 	useInventory,
 	useMarketplaceConfig,
-	type CollectibleWithBalance,
 } from '@0xsequence/marketplace-sdk/react';
+import { useNavigate } from 'react-router';
 import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 
 export function Inventory() {
 	const navigate = useNavigate();

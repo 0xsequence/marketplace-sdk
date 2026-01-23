@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { ConnectButton } from './components/ConnectButton';
 
 function App() {
