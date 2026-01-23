@@ -5,8 +5,8 @@ import {
 	type Step,
 	WalletKind,
 } from '@0xsequence/api-client';
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
 
@@ -38,6 +38,7 @@ export function useMarketTransactionSteps({
 	enabled = true,
 }: UseMarketTransactionStepsParams) {
 	const config = useConfig();
+	const queryClient = useQueryClient();
 	const marketplaceClient = useMemo(
 		() => getMarketplaceClient(config),
 		[config],
@@ -48,19 +49,24 @@ export function useMarketTransactionSteps({
 	const useWithTrails =
 		config.checkoutMode === 'trails' || config.checkoutMode === undefined;
 
-	return useQuery<{ steps: Step[]; canBeUsedWithTrails: boolean }, Error>({
-		queryKey: [
-			'market-transaction-steps',
-			{
-				chainId,
-				collectionAddress,
-				buyer,
-				orderId,
-				tokenId,
-				quantity,
-				useWithTrails,
-			},
-		],
+	const queryKey = [
+		'market-transaction-steps',
+		{
+			chainId,
+			collectionAddress,
+			buyer,
+			orderId,
+			tokenId,
+			quantity,
+			useWithTrails,
+		},
+	];
+
+	const query = useQuery<
+		{ steps: Step[]; canBeUsedWithTrails: boolean },
+		Error
+	>({
+		queryKey,
 		queryFn: async () => {
 			const response = await marketplaceClient.generateBuyTransaction({
 				chainId,
@@ -85,5 +91,39 @@ export function useMarketTransactionSteps({
 			};
 		},
 		enabled: enabled && !!buyer,
+		retry: false,
 	});
+
+	// Abort and refetch every 3 seconds until we have data
+	useEffect(() => {
+		if (
+			!query.data &&
+			enabled &&
+			buyer &&
+			query.fetchStatus === 'fetching' &&
+			!query.isError
+		) {
+			const intervalId = setInterval(() => {
+				// Cancel all queries with this key
+				queryClient.cancelQueries({ queryKey });
+
+				query.refetch();
+			}, 3000);
+
+			return () => {
+				clearInterval(intervalId);
+			};
+		}
+	}, [
+		query.data,
+		enabled,
+		buyer,
+		query.fetchStatus,
+		query.isError,
+		query,
+		queryClient,
+		queryKey,
+	]);
+
+	return query;
 }
