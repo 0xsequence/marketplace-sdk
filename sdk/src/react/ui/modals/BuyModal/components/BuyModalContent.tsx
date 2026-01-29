@@ -35,7 +35,7 @@ export const BuyModalContent = () => {
 		marketOrder,
 		collectible,
 		buyStep,
-		nftTransfer,
+		destinationCalls,
 		isLoading,
 		collection,
 		checkoutMode,
@@ -143,11 +143,9 @@ export const BuyModalContent = () => {
 									sequenceApiUrl={sequenceApiUrl}
 									walletConnectProjectId={config.walletConnectProjectId}
 									toChainId={modalProps.chainId}
-									toAddress={buyStep.to}
 									toToken={currencyAddress}
-									toCalldata={buyStep.data}
 									toAmount={formattedAmount}
-									nftTransfer={nftTransfer}
+									destinationCalls={destinationCalls}
 									renderInline={true}
 									theme="dark"
 									mode="pay"
