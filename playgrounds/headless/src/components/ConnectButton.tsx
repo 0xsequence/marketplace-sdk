@@ -1,5 +1,5 @@
-import { useAccount, useDisconnect } from 'wagmi';
 import { useOpenConnectModal } from '@0xsequence/marketplace-sdk/react';
+import { useAccount, useDisconnect } from 'wagmi';
 
 export function ConnectButton() {
 	const { address, isConnected } = useAccount();

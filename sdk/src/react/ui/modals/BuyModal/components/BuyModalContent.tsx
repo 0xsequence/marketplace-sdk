@@ -17,6 +17,7 @@ import {
 	getSequenceNodeGatewayUrl,
 	getTrailsApiUrl,
 } from '../../../../_internal/api/services';
+import { cn } from '../../../../ssr';
 import { ModalInitializationError } from '../../_internal/components/baseModal/errors/ModalInitializationError';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModalContext } from '../internal/buyModalContext';
@@ -103,10 +104,7 @@ export const BuyModalContent = () => {
 
 					{isLoading && (
 						<div className="flex w-full items-center justify-center py-8">
-							<div className="flex flex-col items-center gap-4">
-								<Spinner size="lg" />
-								<ProgressiveLoadingMessage />
-							</div>
+							<ProgressiveLoadingMessage />
 						</div>
 					)}
 
@@ -162,14 +160,36 @@ export const BuyModalContent = () => {
 };
 
 const ProgressiveLoadingMessage = () => {
-	const [message, setMessage] = useState('Loading payment options...');
+	const [showSecondaryMessage, setShowSecondaryMessage] = useState(false);
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 	if (!timerRef.current) {
 		timerRef.current = setTimeout(() => {
-			setMessage('This is taking longer than expected. Please wait...');
+			setShowSecondaryMessage(true);
 		}, 3000);
 	}
 
-	return <Text className="text-text-80">{message}</Text>;
+	return (
+		<div className="flex items-center gap-4">
+			<div
+				className={cn(
+					'transition-all duration-300',
+					showSecondaryMessage ? 'h-10 w-10' : 'h-5 w-5',
+				)}
+			>
+				<Spinner className="h-full w-full transition-all duration-150" />
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<p className="animate-pulse text-text-100">
+					Loading payment options...
+				</p>
+				{showSecondaryMessage && (
+					<p className="text-small text-text-50">
+						This is taking longer than expected.
+					</p>
+				)}
+			</div>
+		</div>
+	);
 };
