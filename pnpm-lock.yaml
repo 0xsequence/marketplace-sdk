@@ -927,7 +927,7 @@ packages:
       ethers: '>=6'
 
   0xtrails@file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz:
-    resolution: {integrity: sha512-52ny+Xw33YzlwCxlz0YkSQo0qrOVzRR3SXF6cpOTu+7LoOuJVu9KWxme/CEG82u/3zl2Zh+2RasQiQVUIElPVA==, tarball: file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz}
+    resolution: {integrity: sha512-JqHorGVpmF+fCb6GEtnmJsBRGotPy76mB+A0eF6E4ZQYEd+4s8rNjTBepxBRUvDUnr1iGipDu6Gz/aVwx67lSA==, tarball: file:../trails-nft-auto-bundle/packages/0xtrails/0xtrails-0.9.6.tgz}
     version: 0.9.6
     peerDependencies:
       '@tanstack/react-query': 5.90.16
