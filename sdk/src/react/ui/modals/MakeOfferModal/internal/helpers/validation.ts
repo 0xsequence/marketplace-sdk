@@ -11,6 +11,7 @@ export type OfferValidation = {
 	quantity: FieldValidation;
 	balance: FieldValidation;
 	openseaCriteria?: FieldValidation;
+	openseaMinPrice?: FieldValidation;
 };
 
 export function validateOfferForm({
@@ -19,12 +20,14 @@ export function validateOfferForm({
 	balance,
 	lowestListing,
 	orderbookKind,
+	usdAmount,
 }: {
 	price: Dnum;
 	quantity: Dnum;
 	balance?: Dnum;
 	lowestListing?: Dnum;
 	orderbookKind?: string;
+	usdAmount?: number;
 }): OfferValidation {
 	const validation: OfferValidation = {
 		price: { isValid: true, error: null },
@@ -67,6 +70,15 @@ export function validateOfferForm({
 		};
 	}
 
+	// OpenSea minimum price validation ($0.01 USD)
+	if (orderbookKind === 'opensea' && usdAmount !== undefined) {
+		const meetsMinPrice = usdAmount >= 0.01;
+		validation.openseaMinPrice = {
+			isValid: meetsMinPrice,
+			error: meetsMinPrice ? null : 'Lowest price must be at least $0.01',
+		};
+	}
+
 	return validation;
 }
 
@@ -75,7 +87,8 @@ export function isFormValid(validation: OfferValidation): boolean {
 		validation.price.isValid &&
 		validation.quantity.isValid &&
 		validation.balance.isValid &&
-		(validation.openseaCriteria?.isValid ?? true)
+		(validation.openseaCriteria?.isValid ?? true) &&
+		(validation.openseaMinPrice?.isValid ?? true)
 	);
 }
 
@@ -87,6 +100,8 @@ export function getValidationErrors(validation: OfferValidation): string[] {
 	if (validation.balance.error) errors.push(validation.balance.error);
 	if (validation.openseaCriteria?.error)
 		errors.push(validation.openseaCriteria.error);
+	if (validation.openseaMinPrice?.error)
+		errors.push(validation.openseaMinPrice.error);
 
 	return errors;
 }

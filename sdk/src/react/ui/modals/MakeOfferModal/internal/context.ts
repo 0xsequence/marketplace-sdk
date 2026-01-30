@@ -11,6 +11,7 @@ import {
 	useCollectionMetadata,
 	useConfig,
 	useConnectorMetadata,
+	useCurrencyConvertToUSD,
 	useCurrencyList,
 	useTokenCurrencyBalance,
 } from '../../../../hooks';
@@ -106,6 +107,18 @@ export function useMakeOfferModalContext() {
 		},
 	});
 
+	const { data: usdConversion } = useCurrencyConvertToUSD({
+		chainId: state.chainId,
+		currencyAddress: selectedCurrency?.contractAddress ?? zeroAddress,
+		amountRaw: state.priceInput?.toString(),
+		query: {
+			enabled:
+				state.orderbookKind === OrderbookKind.opensea &&
+				!!selectedCurrency?.contractAddress &&
+				!!state.priceInput,
+		},
+	});
+
 	const expiryDate = useMemo(
 		() => new Date(Date.now() + state.expiryDays * 24 * 60 * 60 * 1000),
 		[state.expiryDays],
@@ -139,6 +152,7 @@ export function useMakeOfferModalContext() {
 		balance: balanceDnum,
 		lowestListing: lowestListingDnum,
 		orderbookKind: state.orderbookKind,
+		usdAmount: usdConversion?.usdAmount,
 	});
 
 	const formIsValid = isFormValid(validation);
@@ -359,6 +373,7 @@ export function useMakeOfferModalContext() {
 				quantity: validation.quantity,
 				balance: validation.balance,
 				openseaCriteria: validation.openseaCriteria,
+				openseaMinPrice: validation.openseaMinPrice,
 			},
 			errors: {
 				price: state.isPriceTouched ? validation.price.error : undefined,
@@ -368,6 +383,9 @@ export function useMakeOfferModalContext() {
 				balance: state.isPriceTouched ? validation.balance.error : undefined,
 				openseaCriteria: state.isPriceTouched
 					? validation.openseaCriteria?.error
+					: undefined,
+				openseaMinPrice: state.isPriceTouched
+					? validation.openseaMinPrice?.error
 					: undefined,
 			},
 		},
@@ -415,7 +433,8 @@ export function useMakeOfferModalContext() {
 				this.form.errors.price ||
 				this.form.errors.quantity ||
 				this.form.errors.balance ||
-				this.form.errors.openseaCriteria
+				this.form.errors.openseaCriteria ||
+				this.form.errors.openseaMinPrice
 			);
 		},
 
