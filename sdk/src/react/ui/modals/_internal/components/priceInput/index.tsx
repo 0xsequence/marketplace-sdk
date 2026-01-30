@@ -81,8 +81,7 @@ export default function PriceInput({
 				enabled:
 					orderbookKind === OrderbookKind.opensea &&
 					!!currencyAddress &&
-					!!priceAmountRaw &&
-					!!setOpenseaLowestPriceCriteriaMet,
+					!!priceAmountRaw,
 			},
 		});
 
@@ -164,7 +163,7 @@ export default function PriceInput({
 
 	const openseaLowestPriceCriteriaMet =
 		orderbookKind === OrderbookKind.opensea &&
-		!!conversion?.usdAmount &&
+		conversion?.usdAmount !== undefined &&
 		conversion.usdAmount >= 0.01;
 
 	if (checkBalance?.enabled) {
