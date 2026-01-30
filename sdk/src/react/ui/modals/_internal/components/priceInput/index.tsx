@@ -36,7 +36,6 @@ type PriceInputProps = {
 	};
 	disabled?: boolean;
 	orderbookKind?: OrderbookKind;
-	setOpenseaLowestPriceCriteriaMet?: (state: boolean) => void;
 	modalType?: 'listing' | 'offer';
 	// Fee data for enhanced balance checking in offers
 	feeData?: {
@@ -55,7 +54,6 @@ export default function PriceInput({
 	includeNativeCurrency,
 	disabled,
 	orderbookKind,
-	setOpenseaLowestPriceCriteriaMet,
 	modalType,
 	feeData,
 }: PriceInputProps) {
@@ -168,10 +166,6 @@ export default function PriceInput({
 
 	if (checkBalance?.enabled) {
 		checkBalance.callback(balanceError);
-	}
-
-	if (setOpenseaLowestPriceCriteriaMet) {
-		setOpenseaLowestPriceCriteriaMet(openseaLowestPriceCriteriaMet);
 	}
 
 	const [value, setValue] = useState('0');
