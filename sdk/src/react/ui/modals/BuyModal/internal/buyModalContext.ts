@@ -1,6 +1,20 @@
-import { ContractType, type Hash } from '@0xsequence/api-client';
-import { useSupportedChains } from '0xtrails';
-import { type Chain, formatUnits } from 'viem';
+import { ContractType, OrderbookKind, type Hash } from '@0xsequence/api-client';
+import {
+	useSupportedChains,
+	erc721Transfer,
+	erc1155Transfer,
+	erc20Approve,
+	type DestinationCall,
+} from '0xtrails';
+import {
+	type Chain,
+	encodeFunctionData,
+	formatUnits,
+	zeroAddress,
+	maxUint256,
+} from 'viem';
+import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
+import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
@@ -19,6 +33,7 @@ export function useBuyModalContext() {
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
+	const { address: userWalletAddress } = useAccount();
 
 	const {
 		collectible,
@@ -34,16 +49,18 @@ export function useBuyModalContext() {
 		refetchQueries,
 	} = useBuyModalData();
 
+	const contractType =
+		collection?.type === ContractType.ERC1155
+			? ContractType.ERC1155
+			: ContractType.ERC721;
+
 	const transactionData = useBuyTransaction({
 		modalProps,
 		primarySalePrice: {
 			amount: primarySaleItem?.priceAmount,
 			currencyAddress: primarySaleItem?.currencyAddress,
 		},
-		contractType:
-			collection?.type === ContractType.ERC1155
-				? ContractType.ERC1155
-				: ContractType.ERC721,
+		contractType,
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =
@@ -59,6 +76,72 @@ export function useBuyModalContext() {
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
+
+	const destinationCalls: DestinationCall[] | null = (() => {
+		if (
+			!isMarket ||
+			!marketOrder ||
+			!userWalletAddress ||
+			marketOrder.tokenId === undefined ||
+			!buyStep
+		) {
+			return null;
+		}
+
+		const calls: DestinationCall[] = [];
+		const currencyAddress = marketOrder.priceCurrencyAddress;
+		const isErc20Payment = currencyAddress !== zeroAddress;
+
+		if (isErc20Payment) {
+			const conduitAddress = getConduitAddressForOrderbook(
+				marketOrder.marketplace as unknown as OrderbookKind,
+			);
+			if (conduitAddress) {
+				const approveCall = erc20Approve(
+					currencyAddress,
+					conduitAddress,
+					maxUint256,
+				);
+				calls.push({
+					to: approveCall.to,
+					data: encodeFunctionData({
+						abi: approveCall.abi,
+						functionName: approveCall.functionName,
+						args: approveCall.args as readonly unknown[],
+					}),
+					behaviorOnError: 'revert',
+				});
+			}
+		}
+
+		calls.push({
+			to: buyStep.to,
+			data: buyStep.data,
+			value: isErc20Payment ? undefined : BigInt(buyStep.value || 0),
+			behaviorOnError: 'revert',
+		});
+
+		const contract = marketOrder.collectionContractAddress as `0x${string}`;
+		const tokenId = marketOrder.tokenId;
+		const recipient = userWalletAddress;
+
+		const transferCall =
+			contractType === ContractType.ERC1155
+				? erc1155Transfer(contract, tokenId, 1n, recipient)
+				: erc721Transfer(contract, tokenId, recipient);
+
+		calls.push({
+			to: transferCall.to,
+			data: encodeFunctionData({
+				abi: transferCall.abi,
+				functionName: transferCall.functionName,
+				args: transferCall.args,
+			}),
+			behaviorOnError: 'revert',
+		});
+
+		return calls;
+	})();
 
 	const checkoutMode = determineCheckoutMode({
 		checkoutModeConfig,
@@ -133,6 +216,7 @@ export function useBuyModalContext() {
 		marketOrder,
 		isShop,
 		buyStep,
+		destinationCalls,
 		isLoading,
 		checkoutMode,
 		formattedAmount,
