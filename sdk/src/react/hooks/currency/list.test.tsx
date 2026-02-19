@@ -52,7 +52,28 @@ describe('useCurrencyList', () => {
 		);
 	});
 
-	it('should filter currencies by collection address', async () => {
+	it('should filter currencies by collection address and chain', async () => {
+		const args = {
+			chainId: mockConfig.marketCollections[1].chainId,
+			collectionAddress: mockConfig.marketCollections[1]
+				.itemsAddress as Address,
+		} satisfies Parameters<typeof useCurrencyList>[0];
+
+		const { result } = renderHook(() => useCurrencyList(args));
+
+		await waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		const currencyAddresses = result.current.data?.map(
+			(c) => c.contractAddress,
+		);
+		expect(currencyAddresses).toEqual(
+			mockConfig.marketCollections[1].currencyOptions,
+		);
+	});
+
+	it('should not filter currencies when collection address matches a different chain', async () => {
 		const args = {
 			...defaultArgs,
 			collectionAddress: mockConfig.marketCollections[1]
@@ -69,7 +90,7 @@ describe('useCurrencyList', () => {
 			(c) => c.contractAddress,
 		);
 		expect(currencyAddresses).toEqual(
-			mockConfig.marketCollections[1].currencyOptions,
+			mockCurrencies.map((currency) => currency.contractAddress),
 		);
 	});
 
