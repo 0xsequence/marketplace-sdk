@@ -52,13 +52,16 @@ export async function fetchMarketCurrencies(
 
 		const currenciesOptions = marketplaceConfig.market.collections.find(
 			(collection) =>
-				compareAddress(collection.itemsAddress, collectionAddress),
+				compareAddress(collection.itemsAddress, collectionAddress) &&
+				Number(collection.chainId) === Number(chainId),
 		)?.currencyOptions;
 
 		// Filter currencies based on collection currency options
 		if (currenciesOptions) {
 			currencies = currencies.filter((currency) =>
-				currenciesOptions.includes(currency.contractAddress),
+				currenciesOptions.some((option) =>
+					compareAddress(option, currency.contractAddress),
+				),
 			);
 		}
 	}
