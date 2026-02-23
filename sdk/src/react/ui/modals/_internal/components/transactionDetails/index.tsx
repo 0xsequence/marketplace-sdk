@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
+import { findMarketCollection } from '../../../../../../utils';
 import { calculateEarningsAfterFees } from '../../../../../../utils/price';
 import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
@@ -37,8 +38,10 @@ export default function TransactionDetails({
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
 
 	const marketplaceFeePercentage = includeMarketplaceFee
-		? data?.market.collections.find(
-				(collection) => collection.itemsAddress === collectionAddress,
+		? findMarketCollection(
+				data?.market.collections ?? [],
+				collectionAddress,
+				chainId,
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE
 		: 0;
 	// royaltyPercentage is an array of [recipient, percentage]
