@@ -1,5 +1,13 @@
 # @0xsequence/marketplace-sdk
 
+## 2.0.1
+
+### Patch Changes
+
+ **Fix multi-chain collection lookup**: Collections deployed on multiple chains could resolve to the wrong configuration (currencies, fees, filters, orderbook). Lookups now match on both address and chain ID.
+ **Fix OpenSea minimum offer price validation**: The `useConvertPriceToUSD` hook was always disabled, so the $0.01 USD minimum for OpenSea offers was never enforced. Validation now runs correctly in the MakeOfferModal.
+ **Improve buy modal reliability**: The `generateBuyTransaction` call now polls until data is available, preventing the modal from hanging on slow responses. Added a progressive loading indicator.
+
 ## 2.0.0
 
 ### Major Release
