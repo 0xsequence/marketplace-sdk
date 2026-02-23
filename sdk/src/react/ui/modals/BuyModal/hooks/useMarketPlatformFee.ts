@@ -1,6 +1,6 @@
 import { skipToken } from '@tanstack/react-query';
 import { avalanche, optimism } from 'viem/chains';
-import { compareAddress } from '../../../../../utils';
+import { findMarketCollection } from '../../../../../utils';
 import type { AdditionalFee } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 
@@ -28,10 +28,10 @@ export const useMarketPlatformFee = (params: FeesParams | typeof skipToken) => {
 	const { chainId, collectionAddress } = params;
 
 	// Find collection in market collections only (not shop collections)
-	const marketCollection = marketplaceConfig?.market?.collections?.find(
-		(col) =>
-			compareAddress(col.itemsAddress, collectionAddress) &&
-			String(col.chainId) === String(chainId),
+	const marketCollection = findMarketCollection(
+		marketplaceConfig?.market?.collections ?? [],
+		collectionAddress,
+		chainId,
 	);
 
 	const avalancheOrOptimism =
