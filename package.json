@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "pnpm run --filter \"./api\" build && pnpm run --filter \"./sdk\" build",
-		"deps": "pnpx taze -r",
+		"deps": "pnpm dlx taze -r",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"biome-check": "biome check . --unsafe --write",
@@ -16,7 +16,7 @@
 		"dev:headless": "pnpm --filter sequence-marketplace-sdk-playground-headless dev",
 		"eslint": "pnpm run --r --filter \"./sdk\" --filter \"./api\" eslint",
 		"eslint:fix": "pnpm run --r --filter \"./sdk\" --filter \"./api\" eslint:fix",
-		"preinstall": "pnpx only-allow pnpm",
+		"preinstall": "pnpm dlx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
