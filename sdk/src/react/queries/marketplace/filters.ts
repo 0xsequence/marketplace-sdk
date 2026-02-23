@@ -1,7 +1,7 @@
 import type { GetFiltersArgs, PropertyFilter } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import { FilterCondition } from '../../../types';
-import { compareAddress } from '../../../utils';
+import { findMarketCollection } from '../../../utils';
 import {
 	buildQueryOptions,
 	getMetadataClient,
@@ -49,8 +49,10 @@ export async function fetchFilters(
 	const marketplaceConfig = await queryClient.fetchQuery(
 		marketplaceConfigOptions(config),
 	);
-	const collectionFilters = marketplaceConfig.market.collections.find((c) =>
-		compareAddress(c.itemsAddress, collectionAddress),
+	const collectionFilters = findMarketCollection(
+		marketplaceConfig.market.collections,
+		collectionAddress,
+		chainId,
 	)?.filterSettings;
 
 	const filterOrder = collectionFilters?.filterOrder;

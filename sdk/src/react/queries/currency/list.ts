@@ -4,7 +4,7 @@ import type {
 	ListCurrenciesRequest,
 } from '@0xsequence/api-client';
 import { zeroAddress } from 'viem';
-import { compareAddress } from '../../../utils';
+import { compareAddress, findMarketCollection } from '../../../utils';
 import {
 	buildQueryOptions,
 	getMarketplaceClient,
@@ -50,10 +50,10 @@ export async function fetchMarketCurrencies(
 			marketplaceConfigOptions(config),
 		);
 
-		const currenciesOptions = marketplaceConfig.market.collections.find(
-			(collection) =>
-				compareAddress(collection.itemsAddress, collectionAddress) &&
-				Number(collection.chainId) === Number(chainId),
+		const currenciesOptions = findMarketCollection(
+			marketplaceConfig.market.collections,
+			collectionAddress,
+			chainId,
 		)?.currencyOptions;
 
 		// Filter currencies based on collection currency options

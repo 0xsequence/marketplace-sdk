@@ -1,7 +1,7 @@
 import { isAddress } from 'viem';
 import type { Page } from '../../../types';
 import type { CardType } from '../../../types/types';
-import { compareAddress } from '../../../utils';
+import { findMarketCollection } from '../../../utils';
 import type {
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
@@ -37,8 +37,10 @@ export async function fetchListCollectibles(
 		params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
-	const isMarketCollection = marketplaceConfig?.market.collections.some(
-		(collection) => compareAddress(collection.itemsAddress, collectionAddress),
+	const isMarketCollection = !!findMarketCollection(
+		marketplaceConfig?.market.collections ?? [],
+		collectionAddress,
+		chainId,
 	);
 
 	// If it's not a market collection, return an empty list. those collections are not compatible with the ListCollectibles endpoint.

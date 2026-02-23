@@ -1,6 +1,7 @@
 import type { Address } from '@0xsequence/api-client';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
+import { findMarketCollection } from '../../../../../utils';
 import { useMarketplaceConfig } from '../../../hooks';
 
 export type OpenMakeOfferModalArgs = {
@@ -109,8 +110,10 @@ export const useMakeOfferModalState = () => {
 	} = useSelector(makeOfferModalStore, (state) => state.context);
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const orderbookKind = marketplaceConfig?.market.collections.find(
-		(collection) => collection.itemsAddress === collectionAddress,
+	const orderbookKind = findMarketCollection(
+		marketplaceConfig?.market.collections ?? [],
+		collectionAddress,
+		chainId,
 	)?.destinationMarketplace;
 
 	const closeModal = () => makeOfferModalStore.send({ type: 'close' });

@@ -7,7 +7,7 @@ import type {
 import { ContractType, MetadataStatus } from '@0xsequence/api-client';
 import { isAddress } from 'viem';
 import type { Page } from '../../../types';
-import { compareAddress } from '../../../utils';
+import { findMarketCollection } from '../../../utils';
 import {
 	buildQueryOptions,
 	getQueryClient,
@@ -148,8 +148,10 @@ export async function fetchInventory(
 
 	const marketCollections = marketplaceConfig?.market.collections || [];
 
-	const isMarketCollection = marketCollections.some((collection) =>
-		compareAddress(collection.itemsAddress, collectionAddress),
+	const isMarketCollection = !!findMarketCollection(
+		marketCollections,
+		collectionAddress,
+		chainId,
 	);
 
 	// Determine if this collection is tradable (market collection vs shop collection)
