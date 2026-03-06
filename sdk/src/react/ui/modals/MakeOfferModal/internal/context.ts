@@ -5,6 +5,7 @@ import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
+import { isOpenSeaOrderbook } from '../../../../../utils/normalizeMarketplace';
 import {
 	useCollectibleMarketLowestListing,
 	useCollectibleMetadata,
@@ -113,7 +114,7 @@ export function useMakeOfferModalContext() {
 		amountRaw: state.priceInput?.toString(),
 		query: {
 			enabled:
-				state.orderbookKind === OrderbookKind.opensea &&
+				isOpenSeaOrderbook(state.orderbookKind) &&
 				!!selectedCurrency?.contractAddress &&
 				!!state.priceInput,
 		},

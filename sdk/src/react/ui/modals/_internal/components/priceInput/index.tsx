@@ -15,6 +15,7 @@ import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
 import { validateOpenseaOfferDecimals } from '../../../../../../utils/price';
+import { isOpenSeaOrderbook } from '../../../../../../utils/normalizeMarketplace';
 import {
 	useConvertPriceToUSD,
 	useTokenCurrencyBalance,
@@ -74,13 +75,13 @@ export default function PriceInput({
 		useConvertPriceToUSD({
 			chainId,
 			currencyAddress: currencyAddress ?? zeroAddress,
-			amountRaw: priceAmountRaw?.toString(),
-			query: {
-				enabled:
-					orderbookKind === OrderbookKind.opensea &&
-					!!currencyAddress &&
-					!!priceAmountRaw,
-			},
+		amountRaw: priceAmountRaw?.toString(),
+		query: {
+			enabled:
+				isOpenSeaOrderbook(orderbookKind) &&
+				!!currencyAddress &&
+				!!priceAmountRaw,
+		},
 		});
 
 	useEffect(() => {
@@ -160,7 +161,7 @@ export default function PriceInput({
 	);
 
 	const openseaLowestPriceCriteriaMet =
-		orderbookKind === OrderbookKind.opensea &&
+		isOpenSeaOrderbook(orderbookKind) &&
 		conversion?.usdAmount !== undefined &&
 		conversion.usdAmount >= 0.01;
 
@@ -205,7 +206,7 @@ export default function PriceInput({
 		if (!price || !onPriceChange) return;
 
 		// Validate OpenSea decimal constraints for offers
-		if (orderbookKind === OrderbookKind.opensea && modalType === 'offer') {
+		if (isOpenSeaOrderbook(orderbookKind) && modalType === 'offer') {
 			const validation = validateOpenseaOfferDecimals(newValue);
 			if (!validation.isValid) {
 				setOpenseaDecimalError(validation.errorMessage || null);
@@ -318,7 +319,7 @@ export default function PriceInput({
 			{!balanceError &&
 				priceAmountRaw !== 0n &&
 				!openseaLowestPriceCriteriaMet &&
-				orderbookKind === OrderbookKind.opensea &&
+				isOpenSeaOrderbook(orderbookKind) &&
 				!isConversionLoading &&
 				modalType === 'offer' &&
 				!openseaDecimalError && (
@@ -332,7 +333,7 @@ export default function PriceInput({
 
 			{!balanceError &&
 				openseaDecimalError &&
-				orderbookKind === OrderbookKind.opensea &&
+				isOpenSeaOrderbook(orderbookKind) &&
 				modalType === 'offer' && (
 					<Text className="font-body font-medium text-xs" color="negative">
 						{openseaDecimalError}

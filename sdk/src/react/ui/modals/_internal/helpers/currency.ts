@@ -1,6 +1,7 @@
 import { zeroAddress } from 'viem';
 import { OrderbookKind } from '../../../../../types';
 import { compareAddress } from '../../../../../utils';
+import { isOpenSeaOrderbook, normalizeOrderbookKind } from '../../../../../utils/normalizeMarketplace';
 import type { Currency } from '../../../../_internal';
 import { getOpenseaCurrencyForChain } from '../../_internal/constants/opensea-currencies';
 
@@ -12,7 +13,7 @@ export function filterCurrenciesForOrderbook(
 ): Currency[] {
 	if (!currencies || currencies.length === 0) return [];
 
-	if (orderbookKind === OrderbookKind.opensea) {
+	if (isOpenSeaOrderbook(orderbookKind)) {
 		const openseaCurrency = getOpenseaCurrencyForChain(chainId, side);
 		if (openseaCurrency) {
 			return currencies.filter((currency) =>
@@ -35,8 +36,9 @@ export function getDefaultCurrency(
 		return currencies[0];
 	}
 
+	const normalizedOrderbookKind = normalizeOrderbookKind(orderbookKind);
 	const shouldSkipNative =
-		orderbookKind !== OrderbookKind.sequence_marketplace_v2 &&
+		normalizedOrderbookKind !== OrderbookKind.sequence_marketplace_v2 &&
 		currencies.length > 1;
 
 	return shouldSkipNative ? currencies[1] : currencies[0];

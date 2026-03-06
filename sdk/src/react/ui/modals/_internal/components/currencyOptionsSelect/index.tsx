@@ -4,6 +4,7 @@ import type { Address } from '@0xsequence/api-client';
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { compareAddress } from '../../../../../../utils';
+import { isOpenSeaOrderbook } from '../../../../../../utils/normalizeMarketplace';
 import { type Currency, OrderbookKind } from '../../../../../_internal';
 import { useCurrencyList } from '../../../../../hooks';
 import {
@@ -41,7 +42,7 @@ function CurrencyOptionsSelect({
 
 	// Filter currencies for OpenSea
 	let filteredCurrencies = currencies;
-	if (currencies && orderbookKind === OrderbookKind.opensea && modalType) {
+	if (currencies && isOpenSeaOrderbook(orderbookKind) && modalType) {
 		const openseaCurrency = getOpenseaCurrencyForChain(chainId, modalType);
 		if (openseaCurrency) {
 			// Filter to only show the OpenSea-supported currency
