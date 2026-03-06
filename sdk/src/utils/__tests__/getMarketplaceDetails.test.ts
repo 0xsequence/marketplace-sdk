@@ -38,6 +38,16 @@ describe('getMarketplaceDetails', () => {
 			expect(result?.logo).toBe(OpenSeaLogo);
 			expect(result?.displayName).toBe('OpenSea');
 		});
+
+		test('should map Magic Eden kind to OpenSea', () => {
+			const result = getMarketplaceDetails({
+				originName: 'Magic Eden',
+				kind: MarketplaceKind.magic_eden,
+			});
+			expect(result).toBeDefined();
+			expect(result?.logo).toBe(OpenSeaLogo);
+			expect(result?.displayName).toBe('OpenSea');
+		});
 	});
 
 	describe('detection by marketplace name', () => {

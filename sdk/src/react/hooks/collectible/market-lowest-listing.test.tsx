@@ -115,6 +115,34 @@ describe('useCollectibleMarketLowestListing', () => {
 		expect(result.current.isSuccess).toBe(true);
 	});
 
+	it('should normalize Magic Eden listings to OpenSea', async () => {
+		server.use(
+			http.post(
+				mockMarketplaceEndpoint('GetLowestPriceListingForCollectible'),
+				() => {
+					return HttpResponse.json({
+						order: {
+							...mockOrder,
+							marketplace: marketplaceGen.MarketplaceKind.magic_eden,
+						},
+					});
+				},
+			),
+		);
+
+		const { result } = renderHook(() =>
+			useCollectibleMarketLowestListing(defaultArgs),
+		);
+
+		await waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		expect(result.current.data?.marketplace).toBe(
+			marketplaceGen.MarketplaceKind.opensea,
+		);
+	});
+
 	it('should handle query options', async () => {
 		const argsWithQuery = {
 			...defaultArgs,

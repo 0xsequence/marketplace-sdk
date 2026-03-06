@@ -1,8 +1,9 @@
 import * as BuilderMocks from '@0xsequence/api-client/mocks/builder';
+import { OrderbookKind } from '@0xsequence/api-client';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 
-const { createLookupMarketplaceErrorHandler } = BuilderMocks;
+const { createLookupMarketplaceErrorHandler, createLookupMarketplaceHandler, mockConfig } = BuilderMocks;
 
 import { useMarketplaceConfig } from './useMarketplaceConfig';
 
@@ -37,5 +38,31 @@ describe('useMarketplaceConfig', () => {
 
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
+	});
+
+	it('should normalize Magic Eden market collections to OpenSea', async () => {
+		server.use(
+			createLookupMarketplaceHandler({
+				...mockConfig,
+				marketCollections: mockConfig.marketCollections.map((collection, index) =>
+					index === 1
+						? {
+							...collection,
+							destinationMarketplace: OrderbookKind.magic_eden,
+						}
+						: collection,
+				),
+			}),
+		);
+
+		const { result } = renderHook(() => useMarketplaceConfig());
+
+		await waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		expect(result.current.data?.market.collections[1]?.destinationMarketplace).toBe(
+			OrderbookKind.opensea,
+		);
 	});
 });
