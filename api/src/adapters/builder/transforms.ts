@@ -5,6 +5,7 @@ import {
 	normalizeTokenId,
 	toApiTokenId,
 } from '../../utils/normalize';
+import { normalizeOrderbookKind } from '../marketplace/normalize';
 import { transformArray } from '../../utils/transform';
 import type * as BuilderGen from './builder.gen';
 import type * as Builder from './types';
@@ -47,8 +48,9 @@ export function toMarketCollection(
 		chainId: normalizeChainId(data.chainId),
 		itemsAddress: normalizeAddress(data.itemsAddress),
 		contractType: data.contractType as Builder.MarketCollection['contractType'],
-		destinationMarketplace:
+		destinationMarketplace: normalizeOrderbookKind(
 			data.destinationMarketplace as Builder.MarketCollection['destinationMarketplace'],
+		),
 	};
 }
 
