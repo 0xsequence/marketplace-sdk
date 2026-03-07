@@ -26,12 +26,17 @@ export const useEnsureCorrectChain = () => {
 	const ensureCorrectChainAsync = useCallback(
 		async (targetChainId: number) => {
 			if (currentChainId === targetChainId) {
-				return Promise.resolve();
+				return true;
 			}
-			return switchChainAsync({ chainId: targetChainId }).catch(() => {
+
+			return switchChainAsync({ chainId: targetChainId })
+				.then(() => true)
+				.catch(() => {
 				showSwitchChainErrorModal({
 					chainIdToSwitchTo: targetChainId,
 				});
+
+				return false;
 			});
 		},
 		[currentChainId, isWaaS, switchChainAsync, showSwitchChainErrorModal],

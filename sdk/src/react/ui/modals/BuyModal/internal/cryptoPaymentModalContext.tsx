@@ -169,7 +169,10 @@ export function useCryptoPaymentModalContext({
 			throw errorDetails;
 		}
 
-		await ensureCorrectChainAsync(chainId);
+		const isOnCorrectChain = await ensureCorrectChainAsync(chainId);
+		if (!isOnCorrectChain) {
+			throw new Error('Failed to switch to the required network.');
+		}
 
 		const hash = await sendTransactionAsync({
 			to,

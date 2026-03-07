@@ -45,7 +45,7 @@ export const CryptoPaymentModal = ({
 		details?: Error;
 	} | null>(null);
 
-	const handleChainSwitchError = (error: Error) => {
+	const handleChainSwitchError = (error?: Error) => {
 		const chainName = getPresentableChainName(chainId);
 		setChainSwitchError({
 			title: 'Chain switch failed',
@@ -61,11 +61,19 @@ export const CryptoPaymentModal = ({
 	const executeWithChainSwitch = async (action: 'approval' | 'buy') => {
 		dismissChainSwitchError();
 		try {
-			await ensureCorrectChainAsync(chainId);
+			const isOnCorrectChain = await ensureCorrectChainAsync(chainId);
+			if (!isOnCorrectChain) {
+				handleChainSwitchError();
+				return;
+			}
 		} catch (error) {
 			if (error instanceof Error) {
 				handleChainSwitchError(error);
+			} else {
+				handleChainSwitchError();
 			}
+
+			return;
 		}
 
 		if (action === 'approval') {
