@@ -32,7 +32,7 @@ const useExecuteBundledTransactions = ({
 	const config = useConfig();
 	const [isExecuting, setIsExecuting] = useState(false);
 	const { address, connector } = useAccount();
-	const publicClient = usePublicClient();
+	const publicClient = usePublicClient({ chainId });
 	const { data: walletClient } = useWalletClient();
 	const indexerClient = getIndexerClient(chainId, config);
 
