@@ -11,6 +11,7 @@ import {
 	SequenceLogo,
 	X2y2Logo,
 } from '../react/ui/components/marketplace-logos';
+import { normalizeMarketplaceKind } from './normalizeMarketplace';
 
 interface Marketplace {
 	logo: ComponentType<React.ComponentProps<typeof Image>>;
@@ -75,11 +76,17 @@ export function getMarketplaceDetails({
 	originName,
 	kind,
 }: MarketplaceDetailsProp) {
+	const normalizedKind = normalizeMarketplaceKind(kind);
+
 	if (
-		kind === MarketplaceKind.sequence_marketplace_v1 ||
-		kind === MarketplaceKind.sequence_marketplace_v2
+		normalizedKind === MarketplaceKind.sequence_marketplace_v1 ||
+		normalizedKind === MarketplaceKind.sequence_marketplace_v2
 	) {
 		return MARKETPLACES.sequence;
+	}
+
+	if (normalizedKind === MarketplaceKind.opensea) {
+		return MARKETPLACES.opensea;
 	}
 
 	let name = originName.toLowerCase();
@@ -99,8 +106,8 @@ export function getMarketplaceDetails({
 		return details;
 	}
 
-	if (KIND_TO_MARKETPLACE[kind]) {
-		return MARKETPLACES[KIND_TO_MARKETPLACE[kind]];
+	if (normalizedKind && KIND_TO_MARKETPLACE[normalizedKind]) {
+		return MARKETPLACES[KIND_TO_MARKETPLACE[normalizedKind]];
 	}
 }
 

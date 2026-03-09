@@ -8,6 +8,7 @@ import type { TypedDataDomain } from 'viem';
 import { normalizeAddress } from '../../utils/normalize';
 import type * as Gen from './marketplace.gen';
 import { StepType } from './marketplace.gen';
+import { normalizeMarketplaceKind } from './normalize';
 import type {
 	CollectibleOrder,
 	CollectiblePrimarySaleItem,
@@ -122,6 +123,7 @@ export function toCurrencies(raw: Gen.Currency[]): Currency[] {
 export function toOrder(raw: Gen.Order): Order {
 	return {
 		...raw,
+		marketplace: normalizeMarketplaceKind(raw.marketplace),
 		priceCurrencyAddress: normalizeAddress(raw.priceCurrencyAddress),
 	};
 }

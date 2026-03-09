@@ -38,4 +38,5 @@ describe('useMarketplaceConfig', () => {
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
 	});
+
 });
