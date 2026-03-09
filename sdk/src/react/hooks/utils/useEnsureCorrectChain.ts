@@ -32,12 +32,12 @@ export const useEnsureCorrectChain = () => {
 			return switchChainAsync({ chainId: targetChainId })
 				.then(() => true)
 				.catch(() => {
-				showSwitchChainErrorModal({
-					chainIdToSwitchTo: targetChainId,
-				});
+					showSwitchChainErrorModal({
+						chainIdToSwitchTo: targetChainId,
+					});
 
-				return false;
-			});
+					return false;
+				});
 		},
 		[currentChainId, isWaaS, switchChainAsync, showSwitchChainErrorModal],
 	);

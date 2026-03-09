@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Spinner, Text } from '@0xsequence/design-system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
 import { getPresentableChainName } from '../../../../../utils/network';
 import type { Step } from '../../../../_internal';
@@ -39,11 +39,24 @@ export const CryptoPaymentModal = ({
 	} = useCryptoPaymentModalContext({ chainId, steps, onSuccess });
 
 	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
+	const [pendingAction, setPendingAction] = useState<'approval' | 'buy' | null>(
+		null,
+	);
 	const [chainSwitchError, setChainSwitchError] = useState<{
 		title: string;
 		message: string;
 		details?: Error;
 	} | null>(null);
+
+	useEffect(() => {
+		if (!pendingAction || !isOnCorrectChain) {
+			return;
+		}
+
+		setPendingAction(null);
+
+		void (pendingAction === 'approval' ? executeApproval() : executeBuy());
+	}, [pendingAction, isOnCorrectChain, executeApproval, executeBuy]);
 
 	const handleChainSwitchError = (error?: Error) => {
 		const chainName = getPresentableChainName(chainId);
@@ -58,34 +71,53 @@ export const CryptoPaymentModal = ({
 		setChainSwitchError(null);
 	};
 
+	const executeAction = async (action: 'approval' | 'buy') => {
+		setPendingAction(null);
+
+		if (action === 'approval') {
+			await executeApproval();
+			return;
+		}
+
+		await executeBuy();
+	};
+
 	const executeWithChainSwitch = async (action: 'approval' | 'buy') => {
 		dismissChainSwitchError();
+
+		if (isOnCorrectChain) {
+			await executeAction(action);
+			return;
+		}
+
+		setPendingAction(action);
+
 		try {
-			const isOnCorrectChain = await ensureCorrectChainAsync(chainId);
-			if (!isOnCorrectChain) {
+			const didRequestChainSwitch = await ensureCorrectChainAsync(chainId);
+			if (!didRequestChainSwitch) {
+				setPendingAction(null);
 				handleChainSwitchError();
-				return;
 			}
 		} catch (error) {
+			setPendingAction(null);
+
 			if (error instanceof Error) {
 				handleChainSwitchError(error);
 			} else {
 				handleChainSwitchError();
 			}
-
-			return;
-		}
-
-		if (action === 'approval') {
-			await executeApproval();
-		} else {
-			await executeBuy();
 		}
 	};
+
+	const isWaitingForChainSwitch = pendingAction !== null && !isOnCorrectChain;
 
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
 			<Spinner size="sm" /> Approving Token...
+		</div>
+	) : isWaitingForChainSwitch && pendingAction === 'approval' ? (
+		<div className="flex items-center gap-2">
+			<Spinner size="sm" /> Switching Network...
 		</div>
 	) : (
 		'Approve Token'
@@ -94,6 +126,10 @@ export const CryptoPaymentModal = ({
 		isExecuting || isExecutingBundledTransactions ? (
 			<div className="flex items-center gap-2">
 				<Spinner size="sm" /> Confirming Purchase...
+			</div>
+		) : isWaitingForChainSwitch && pendingAction === 'buy' ? (
+			<div className="flex items-center gap-2">
+				<Spinner size="sm" /> Switching Network...
 			</div>
 		) : (
 			'Buy now'
@@ -137,7 +173,7 @@ export const CryptoPaymentModal = ({
 						onClick={async () => {
 							await executeWithChainSwitch('approval');
 						}}
-						disabled={!canApprove}
+						disabled={!canApprove || isWaitingForChainSwitch}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -151,7 +187,7 @@ export const CryptoPaymentModal = ({
 						onClick={async () => {
 							await executeWithChainSwitch('buy');
 						}}
-						disabled={!canBuy}
+						disabled={!canBuy || isWaitingForChainSwitch}
 						variant="primary"
 						size="lg"
 						className="w-full"
