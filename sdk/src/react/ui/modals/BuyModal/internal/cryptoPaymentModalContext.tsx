@@ -101,7 +101,6 @@ export function useCryptoPaymentModalContext({
 		marketOrder,
 		primarySaleItem,
 		isMarket,
-		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
