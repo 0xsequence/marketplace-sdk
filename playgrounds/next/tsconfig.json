@@ -3,6 +3,8 @@
 	"include": ["src", "next-env.d.ts", ".next/types/**/*.ts", "image.d.ts"],
 	"compilerOptions": {
 		"paths": {
+			"@0xsequence/marketplace-sdk": ["../../sdk/src/index.ts"],
+			"@0xsequence/marketplace-sdk/*": ["../../sdk/src/*"],
 			"@/*": ["./src/*"]
 		},
 		"plugins": [
