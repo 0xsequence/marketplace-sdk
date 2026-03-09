@@ -101,7 +101,6 @@ export function useCryptoPaymentModalContext({
 		marketOrder,
 		primarySaleItem,
 		isMarket,
-		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
@@ -169,7 +168,10 @@ export function useCryptoPaymentModalContext({
 			throw errorDetails;
 		}
 
-		await ensureCorrectChainAsync(chainId);
+		const isOnCorrectChain = await ensureCorrectChainAsync(chainId);
+		if (!isOnCorrectChain) {
+			throw new Error('Failed to switch to the required network.');
+		}
 
 		const hash = await sendTransactionAsync({
 			to,
@@ -330,7 +332,6 @@ export function useCryptoPaymentModalContext({
 		!isAnyTransactionPending &&
 		!isFeeSelectionVisible;
 
-	const needsBundledTransactions = isShop && !!approvalStep;
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
@@ -338,7 +339,7 @@ export function useCryptoPaymentModalContext({
 		(isSequenceConnector ? true : !approvalStep) &&
 		!isAnyTransactionPending &&
 		!isFeeSelectionVisible &&
-		(needsBundledTransactions ? isBundledTransactionsReady : true);
+		isBundledTransactionsReady;
 
 	const result: CryptoPaymentModalReturn = {
 		data: {

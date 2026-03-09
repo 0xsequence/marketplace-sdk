@@ -84,7 +84,10 @@ export const useCancelTransactionSteps = ({
 		}
 
 		try {
-			await ensureCorrectChainAsync(Number(chainId));
+			const isOnCorrectChain = await ensureCorrectChainAsync(Number(chainId));
+			if (!isOnCorrectChain) {
+				return;
+			}
 
 			setSteps((prev) => ({
 				...prev,

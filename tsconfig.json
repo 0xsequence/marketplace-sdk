@@ -12,6 +12,10 @@
 		"moduleDetection": "force",
 		"noEmit": true,
 		"jsx": "react-jsx",
+		"paths": {
+			"@0xsequence/marketplace-sdk": ["./sdk/src/index.ts"],
+			"@0xsequence/marketplace-sdk/*": ["./sdk/src/*"]
+		},
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
