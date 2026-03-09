@@ -333,7 +333,6 @@ export function useCryptoPaymentModalContext({
 		!isAnyTransactionPending &&
 		!isFeeSelectionVisible;
 
-	const needsBundledTransactions = isShop && !!approvalStep;
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
@@ -341,7 +340,7 @@ export function useCryptoPaymentModalContext({
 		(isSequenceConnector ? true : !approvalStep) &&
 		!isAnyTransactionPending &&
 		!isFeeSelectionVisible &&
-		(needsBundledTransactions ? isBundledTransactionsReady : true);
+		isBundledTransactionsReady;
 
 	const result: CryptoPaymentModalReturn = {
 		data: {

@@ -47,16 +47,26 @@ export const CryptoPaymentModal = ({
 		message: string;
 		details?: Error;
 	} | null>(null);
+	const isPendingApprovalReady =
+		pendingAction === 'approval' && isOnCorrectChain && canApprove;
+	const isPendingBuyReady = pendingAction === 'buy' && isOnCorrectChain && canBuy;
+	const isPendingAction = pendingAction !== null;
 
 	useEffect(() => {
-		if (!pendingAction || !isOnCorrectChain) {
+		if (!isPendingApprovalReady && !isPendingBuyReady) {
 			return;
 		}
 
 		setPendingAction(null);
 
 		void (pendingAction === 'approval' ? executeApproval() : executeBuy());
-	}, [pendingAction, isOnCorrectChain, executeApproval, executeBuy]);
+	}, [
+		executeApproval,
+		executeBuy,
+		isPendingApprovalReady,
+		isPendingBuyReady,
+		pendingAction,
+	]);
 
 	const handleChainSwitchError = (error?: Error) => {
 		const chainName = getPresentableChainName(chainId);
@@ -109,7 +119,8 @@ export const CryptoPaymentModal = ({
 		}
 	};
 
-	const isWaitingForChainSwitch = pendingAction !== null && !isOnCorrectChain;
+	const isWaitingForChainSwitch = isPendingAction && !isOnCorrectChain;
+	const isPreparingPendingAction = isPendingAction && isOnCorrectChain;
 
 	const approvalButtonLabel = isApproving ? (
 		<div className="flex items-center gap-2">
@@ -118,6 +129,10 @@ export const CryptoPaymentModal = ({
 	) : isWaitingForChainSwitch && pendingAction === 'approval' ? (
 		<div className="flex items-center gap-2">
 			<Spinner size="sm" /> Switching Network...
+		</div>
+	) : isPreparingPendingAction && pendingAction === 'approval' ? (
+		<div className="flex items-center gap-2">
+			<Spinner size="sm" /> Preparing Approval...
 		</div>
 	) : (
 		'Approve Token'
@@ -130,6 +145,10 @@ export const CryptoPaymentModal = ({
 		) : isWaitingForChainSwitch && pendingAction === 'buy' ? (
 			<div className="flex items-center gap-2">
 				<Spinner size="sm" /> Switching Network...
+			</div>
+		) : isPreparingPendingAction && pendingAction === 'buy' ? (
+			<div className="flex items-center gap-2">
+				<Spinner size="sm" /> Preparing Purchase...
 			</div>
 		) : (
 			'Buy now'
@@ -173,7 +192,7 @@ export const CryptoPaymentModal = ({
 						onClick={async () => {
 							await executeWithChainSwitch('approval');
 						}}
-						disabled={!canApprove || isWaitingForChainSwitch}
+						disabled={!canApprove || isPendingAction}
 						variant="primary"
 						size="lg"
 						className="w-full"
@@ -187,7 +206,7 @@ export const CryptoPaymentModal = ({
 						onClick={async () => {
 							await executeWithChainSwitch('buy');
 						}}
-						disabled={!canBuy || isWaitingForChainSwitch}
+						disabled={!canBuy || isPendingAction}
 						variant="primary"
 						size="lg"
 						className="w-full"
