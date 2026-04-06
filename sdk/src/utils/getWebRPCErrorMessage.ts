@@ -1,6 +1,27 @@
 import type { WebrpcError } from '@0xsequence/api-client';
 
 export const getWebRPCErrorMessage = (error: WebrpcError): string => {
+	const causeMessage =
+		typeof error.cause === 'string'
+			? error.cause
+			: error.cause instanceof Error
+				? error.cause.message
+				: '';
+
+	const rawDetails = [error.message, causeMessage]
+		.join(' ')
+		.toLowerCase();
+
+	if (
+		rawDetails.includes('outoffund') ||
+		rawDetails.includes('out of fund') ||
+		rawDetails.includes('insufficient funds') ||
+		rawDetails.includes('insufficient balance') ||
+		rawDetails.includes('not enough balance')
+	) {
+		return 'Insufficient balance to complete this transaction.';
+	}
+
 	switch (error.code) {
 		// Protocol Errors (negative numbers)
 		case -1: // WebrpcRequestFailed

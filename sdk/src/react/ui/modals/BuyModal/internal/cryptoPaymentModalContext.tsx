@@ -2,8 +2,9 @@ import type { Address, Hash } from '@0xsequence/api-client';
 import { ChevronLeftIcon, Text } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import type { Hex } from 'viem';
+import { zeroAddress, type Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
+import { getErrorMessage } from '../../../../../utils/getErrorMessage';
 import { formatPrice } from '../../../../../utils/price';
 import { type Step, StepType } from '../../../../_internal';
 import { useConnectorMetadata } from '../../../../hooks';
@@ -74,6 +75,31 @@ type CryptoPaymentModalReturn = {
 	};
 };
 
+const toErrorWithDetails = (error: unknown): Error => {
+	if (error instanceof Error) {
+		return error;
+	}
+
+	if (typeof error === 'object' && error !== null) {
+		const errorLike = error as Record<string, unknown>;
+		let message = 'An unexpected error occurred.';
+
+		if (typeof errorLike.message === 'string') {
+			message = errorLike.message;
+		} else {
+			try {
+				message = JSON.stringify(errorLike);
+			} catch {
+				message = 'An unexpected error occurred.';
+			}
+		}
+
+		return Object.assign(new Error(message), errorLike);
+	}
+
+	return new Error(String(error));
+};
+
 export function useCryptoPaymentModalContext({
 	chainId,
 	steps,
@@ -114,11 +140,16 @@ export function useCryptoPaymentModalContext({
 	const priceCurrencyAddress = isMarket
 		? marketOrder?.priceCurrencyAddress
 		: (primarySaleItem?.currencyAddress as Address);
+	const listedPriceAmount = BigInt(priceAmount || 0);
+	const buyStepPriceAmount = buyStep.price ? BigInt(buyStep.price) : listedPriceAmount;
+	const buyStepValue = buyStep.value ? BigInt(buyStep.value) : buyStepPriceAmount;
+	const requiredBalance =
+		priceCurrencyAddress === zeroAddress ? buyStepValue : buyStepPriceAmount;
 	const isAnyTransactionPending = isApproving || isExecuting;
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
-		value: BigInt(priceAmount || 0),
+		value: requiredBalance,
 		tokenAddress: priceCurrencyAddress as Address,
 	});
 
@@ -136,7 +167,6 @@ export function useCryptoPaymentModalContext({
 	} = useExecuteBundledTransactions({
 		chainId,
 		approvalStep,
-		priceAmount: BigInt(priceAmount || 0),
 	});
 
 	const waas = useSelectWaasFeeOptionsStore();
@@ -197,12 +227,10 @@ export function useCryptoPaymentModalContext({
 			await executeTransaction(approvalStep);
 			setApprovalStep(undefined);
 		} catch (error) {
-			const errorObj =
-				error instanceof Error ? error : new Error(String(error));
+			const errorObj = toErrorWithDetails(error);
 			setError({
 				title: 'Approval failed',
-				message:
-					errorObj.message || 'Failed to approve token. Please try again.',
+				message: getErrorMessage(errorObj),
 				details: errorObj,
 			});
 			console.error('Approval transaction failed:', error);
@@ -224,7 +252,7 @@ export function useCryptoPaymentModalContext({
 	const handleTransactionFailed = (error: Error) => {
 		setError({
 			title: 'Transaction failed',
-			message: error.message,
+			message: getErrorMessage(error),
 			details: error,
 		});
 
@@ -244,12 +272,10 @@ export function useCryptoPaymentModalContext({
 
 			onSuccess(hash as Hash);
 		} catch (error) {
-			const errorObj =
-				error instanceof Error ? error : new Error(String(error));
+			const errorObj = toErrorWithDetails(error);
 			setError({
 				title: 'Purchase failed',
-				message:
-					errorObj.message || 'Failed to complete purchase. Please try again.',
+				message: getErrorMessage(errorObj),
 				details: errorObj,
 			});
 			console.error('Buy transaction failed:', error);
@@ -263,7 +289,7 @@ export function useCryptoPaymentModalContext({
 	};
 
 	const formattedPrice = formatPrice(
-		BigInt(priceAmount || 0),
+		buyStepPriceAmount,
 		currency?.decimals || 0,
 	);
 	const isFree = formattedPrice === '0';

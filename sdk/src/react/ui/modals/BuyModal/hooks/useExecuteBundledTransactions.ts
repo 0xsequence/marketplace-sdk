@@ -5,7 +5,6 @@ import type { Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { useConfig } from '../../../..';
 import { getIndexerClient, type Step } from '../../../../_internal';
-import { useBuyModalData } from './useBuyModalData';
 
 // https://github.com/0xsequence/web-sdk/blob/620b6fe7681ae49efd4eb3fa7607ef01dd7ede54/packages/connect/src/utils/transactions.ts#L11-L19
 class FeeOptionInsufficientFundsError extends Error {
@@ -21,13 +20,11 @@ class FeeOptionInsufficientFundsError extends Error {
 type UseExecuteBundledTransactions = {
 	chainId: number;
 	approvalStep?: Step;
-	priceAmount: bigint;
 };
 
 const useExecuteBundledTransactions = ({
 	chainId,
 	approvalStep,
-	priceAmount,
 }: UseExecuteBundledTransactions) => {
 	const config = useConfig();
 	const [isExecuting, setIsExecuting] = useState(false);
@@ -36,16 +33,12 @@ const useExecuteBundledTransactions = ({
 	const { data: walletClient } = useWalletClient();
 	const indexerClient = getIndexerClient(chainId, config);
 
-	const { collection, currency } = useBuyModalData();
-
 	const isReady =
 		!!address &&
 		!!publicClient &&
 		!!walletClient &&
 		!!indexerClient &&
-		!!connector &&
-		!!collection?.address &&
-		priceAmount != null;
+		!!connector;
 
 	const executeBundledTransactions = async ({
 		step,
@@ -79,28 +72,22 @@ const useExecuteBundledTransactions = ({
 				throw new Error('Connector not found');
 			}
 
-			if (!collection?.address) {
-				throw new Error('Collection address not found');
-			}
+			const buildTransaction = (step: Step) => {
+				const value = step.value ? BigInt(step.value) : 0n;
 
-			if (priceAmount == null) {
-				throw new Error('Price amount not found');
-			}
+				return {
+					to: step.to,
+					data: step.data as Hex,
+					chainId,
+					...(value > 0n ? { value } : {}),
+				};
+			};
 
 			const approvalData = approvalStep
-				? {
-						to: approvalStep.to,
-						data: approvalStep.data as Hex,
-						chainId,
-					}
+				? buildTransaction(approvalStep)
 				: undefined;
 
-			const transactionData = {
-				to: step.to,
-				data: step.data as Hex,
-				chainId,
-				...(currency?.nativeCurrency ? { value: priceAmount } : {}),
-			};
+			const transactionData = buildTransaction(step);
 
 			const transactions = [
 				...(approvalData ? [approvalData] : []),
