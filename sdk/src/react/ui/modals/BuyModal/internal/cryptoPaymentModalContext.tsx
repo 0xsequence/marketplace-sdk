@@ -90,7 +90,7 @@ const toErrorWithDetails = (error: unknown): Error => {
 			try {
 				message = JSON.stringify(errorLike);
 			} catch {
-				message = String(error);
+				message = 'An unexpected error occurred.';
 			}
 		}
 

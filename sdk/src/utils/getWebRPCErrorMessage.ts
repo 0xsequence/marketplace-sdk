@@ -1,7 +1,14 @@
 import type { WebrpcError } from '@0xsequence/api-client';
 
 export const getWebRPCErrorMessage = (error: WebrpcError): string => {
-	const rawDetails = [error.message, String(error.cause ?? '')]
+	const causeMessage =
+		typeof error.cause === 'string'
+			? error.cause
+			: error.cause instanceof Error
+				? error.cause.message
+				: '';
+
+	const rawDetails = [error.message, causeMessage]
 		.join(' ')
 		.toLowerCase();
 
