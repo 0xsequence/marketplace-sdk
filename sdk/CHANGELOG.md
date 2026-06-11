@@ -1,5 +1,15 @@
 # @0xsequence/marketplace-sdk
 
+## 2.0.2
+
+### Patch Changes
+
+ **Support Trails market buys**: BuyModal now builds Trails destination-call actions for Market orders, including OpenSea-normalized marketplace purchases.
+ **Normalize Magic Eden EVM to OpenSea**: Marketplace helpers and API adapters now map Magic Eden EVM orderbooks to OpenSea consistently, including currency limits and conduit lookup.
+ **Fix checkout network handling**: Checkout now uses the target-chain public client, waits for readiness after chain switches, resumes correctly, and stops cleanly on failed switches.
+ **Improve bundled buy error handling**: Bundled buy totals now include fees for balance checks, and WebRPC errors are surfaced without stringifying useful details.
+ **Upgrade Trails dependencies**: Updated `0xtrails`, added the wagmi adapter, and ensured the API package builds before the SDK.
+
 ## 2.0.1
 
 ### Patch Changes
