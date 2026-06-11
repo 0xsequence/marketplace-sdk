@@ -7,6 +7,7 @@
 		"**/*.css"
 	],
 	"scripts": {
+		"prebuild": "pnpm --filter \"@0xsequence/api-client\" build",
 		"build": "tsdown",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
