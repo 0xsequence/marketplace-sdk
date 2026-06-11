@@ -29,10 +29,12 @@ export const BuyModalContent = () => {
 		marketOrder,
 		collectible,
 		buyStep,
+		trailsDestination,
 		isLoading,
 		collection,
 		checkoutMode,
 		formattedAmount,
+		isMarket,
 		isShop,
 		handleTrailsSuccess,
 		handleTransactionSuccess,
@@ -110,6 +112,7 @@ export const BuyModalContent = () => {
 					{!isLoading &&
 						checkoutMode === 'trails' &&
 						buyStep &&
+						(!isMarket || trailsDestination) &&
 						!(isShop && primarySaleItem?.priceAmount === 0n) && (
 							<div className="pointer-events-auto w-full">
 								{collectible && (
@@ -120,19 +123,37 @@ export const BuyModalContent = () => {
 									/>
 								)}
 
-								<TrailsWidget
-									toChainId={modalProps.chainId}
-									toAddress={buyStep.to}
-									toToken={currencyAddress}
-									toCalldata={buyStep.data}
-									toAmount={formattedAmount}
-									renderInline={true}
-									theme="dark"
-									mode="pay"
-									customCss={TRAILS_CUSTOM_CSS}
-									onDestinationConfirmation={handleTrailsSuccess}
-									payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
-								/>
+								{isMarket && trailsDestination ? (
+									<TrailsWidget
+										key={`market-${marketOrder?.orderId}-${trailsDestination.destinationCalldata}`}
+										toChainId={modalProps.chainId}
+										toAddress={trailsDestination.recipient}
+										toToken={currencyAddress}
+										toAmount={formattedAmount}
+										toCalldata={trailsDestination.destinationCalldata}
+										renderInline={true}
+										theme="dark"
+										mode="pay"
+										customCss={TRAILS_CUSTOM_CSS}
+										onDestinationConfirmation={handleTrailsSuccess}
+										payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
+									/>
+								) : (
+									<TrailsWidget
+										key={`direct-${buyStep.to}-${buyStep.data}`}
+										toChainId={modalProps.chainId}
+										toAddress={buyStep.to}
+										toToken={currencyAddress}
+										toAmount={formattedAmount}
+										toCalldata={buyStep.data}
+										renderInline={true}
+										theme="dark"
+										mode="pay"
+										customCss={TRAILS_CUSTOM_CSS}
+										onDestinationConfirmation={handleTrailsSuccess}
+										payMessage="{TO_TOKEN_IMAGE}{TO_AMOUNT}{TO_TOKEN_SYMBOL}{TO_AMOUNT_USD}"
+									/>
+								)}
 							</div>
 						)}
 				</div>
