@@ -7,6 +7,7 @@
 		"**/*.css"
 	],
 	"scripts": {
+		"prebuild": "pnpm --filter \"@0xsequence/api-client\" build",
 		"build": "tsdown",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
@@ -60,7 +61,8 @@
 		}
 	},
 	"dependencies": {
-		"0xtrails": "^0.9.6",
+		"0xtrails": "^0.16.2",
+		"@0xtrails/adapter-wagmi": "^0.16.2",
 		"@databeat/tracker": "^0.9.3",
 		"@tailwindcss/cli": "^4.1.18",
 		"@xstate/store": "catalog:",

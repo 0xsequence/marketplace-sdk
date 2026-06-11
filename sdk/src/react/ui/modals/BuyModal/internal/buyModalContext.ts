@@ -1,6 +1,14 @@
-import { ContractType, type Hash } from '@0xsequence/api-client';
-import { useSupportedChains } from '0xtrails';
+import {
+	type Address,
+	ContractType,
+	findApprovalStep,
+	findBuyStep,
+	type Hash,
+} from '@0xsequence/api-client';
+import { encodeDestinationCalls, useSupportedChains } from '0xtrails';
+import { useMemo } from 'react';
 import { type Chain, formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
@@ -10,7 +18,15 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps } from '../store';
+import { buildTrailsMarketBuyActions } from './buildTrailsMarketBuyActions';
 import { determineCheckoutMode } from './determineCheckoutMode';
+
+type TrailsDestination = {
+	recipient: Address;
+	destinationCalldata: Hash;
+	paymentTokenAddress: Address;
+	paymentAmount: bigint;
+};
 
 export function useBuyModalContext() {
 	const config = useConfig();
@@ -18,7 +34,9 @@ export function useBuyModalContext() {
 	const checkoutModeConfig: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
-	const { supportedChains, isLoadingChains } = useSupportedChains();
+	const { address: userWalletAddress } = useAccount();
+	const { data: supportedChains = [], isLoading: isLoadingChains } =
+		useSupportedChains();
 
 	const {
 		collectible,
@@ -34,16 +52,18 @@ export function useBuyModalContext() {
 		refetchQueries,
 	} = useBuyModalData();
 
+	const contractType =
+		collection?.type === ContractType.ERC1155
+			? ContractType.ERC1155
+			: ContractType.ERC721;
+
 	const transactionData = useBuyTransaction({
 		modalProps,
 		primarySalePrice: {
 			amount: primarySaleItem?.priceAmount,
 			currencyAddress: primarySaleItem?.currencyAddress,
 		},
-		contractType:
-			collection?.type === ContractType.ERC1155
-				? ContractType.ERC1155
-				: ContractType.ERC721,
+		contractType,
 	});
 	const steps = transactionData.data?.steps;
 	const canBeUsedWithTrails =
@@ -58,7 +78,47 @@ export function useBuyModalContext() {
 
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
 
-	const buyStep = steps?.find((step) => step.id === 'buy');
+	const buyStep = steps ? findBuyStep(steps) : undefined;
+	const approvalStep = steps ? findApprovalStep(steps) : undefined;
+
+	const trailsDestination = useMemo<TrailsDestination | undefined>(() => {
+		if (!isMarket || !marketOrder || !buyStep || !userWalletAddress) {
+			return undefined;
+		}
+
+		const trailsMarketBuyActions = buildTrailsMarketBuyActions({
+			chainId: modalProps.chainId,
+			buyStep,
+			marketOrder,
+			contractType,
+			recipientAddress: userWalletAddress,
+			approvalStep,
+		});
+		if (!trailsMarketBuyActions) {
+			return undefined;
+		}
+
+		const destination = encodeDestinationCalls({
+			calls: trailsMarketBuyActions.calls,
+			tokenAddress: trailsMarketBuyActions.paymentTokenAddress,
+			sweepTarget: userWalletAddress,
+		});
+
+		return {
+			recipient: destination.recipient,
+			destinationCalldata: destination.destinationCalldata,
+			paymentTokenAddress: trailsMarketBuyActions.paymentTokenAddress,
+			paymentAmount: trailsMarketBuyActions.paymentAmount,
+		};
+	}, [
+		approvalStep,
+		buyStep,
+		contractType,
+		isMarket,
+		marketOrder,
+		modalProps.chainId,
+		userWalletAddress,
+	]);
 
 	const checkoutMode = determineCheckoutMode({
 		checkoutModeConfig,
@@ -66,9 +126,16 @@ export function useBuyModalContext() {
 		canBeUsedWithTrails,
 	});
 
+	const paymentAmount =
+		trailsDestination?.paymentAmount ??
+		(buyStep
+			? buyStep.price > 0n
+				? buyStep.price
+				: buyStep.value
+			: undefined);
 	const formattedAmount =
-		currency?.decimals && buyStep?.price
-			? formatUnits(BigInt(buyStep.price), currency.decimals)
+		currency?.decimals !== undefined && paymentAmount !== undefined
+			? formatUnits(paymentAmount, currency.decimals)
 			: undefined;
 
 	const handleTransactionSuccess = (hash: Hash) => {
@@ -131,8 +198,10 @@ export function useBuyModalContext() {
 		collection,
 		primarySaleItem,
 		marketOrder,
+		isMarket,
 		isShop,
 		buyStep,
+		trailsDestination,
 		isLoading,
 		checkoutMode,
 		formattedAmount,
