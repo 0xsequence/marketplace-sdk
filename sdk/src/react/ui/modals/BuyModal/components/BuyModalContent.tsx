@@ -128,7 +128,7 @@ export const BuyModalContent = () => {
 										key={`market-${marketOrder?.orderId}-${trailsDestination.destinationCalldata}`}
 										toChainId={modalProps.chainId}
 										toAddress={trailsDestination.recipient}
-										toToken={currencyAddress}
+										toToken={trailsDestination.paymentTokenAddress}
 										toAmount={formattedAmount}
 										toCalldata={trailsDestination.destinationCalldata}
 										renderInline={true}

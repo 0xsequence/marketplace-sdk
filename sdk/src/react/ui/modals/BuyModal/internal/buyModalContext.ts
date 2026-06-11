@@ -1,4 +1,9 @@
-import { ContractType, findBuyStep, type Hash } from '@0xsequence/api-client';
+import {
+	ContractType,
+	findApprovalStep,
+	findBuyStep,
+	type Hash,
+} from '@0xsequence/api-client';
 import { encodeDestinationCalls, useSupportedChains } from '0xtrails';
 import { useMemo } from 'react';
 import { type Address, type Chain, formatUnits } from 'viem';
@@ -18,6 +23,8 @@ import { determineCheckoutMode } from './determineCheckoutMode';
 type TrailsDestination = {
 	recipient: Address;
 	destinationCalldata: `0x${string}`;
+	paymentTokenAddress: Address;
+	paymentAmount: bigint;
 };
 
 export function useBuyModalContext() {
@@ -71,28 +78,46 @@ export function useBuyModalContext() {
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
 
 	const buyStep = steps ? findBuyStep(steps) : undefined;
+	const approvalStep = steps ? findApprovalStep(steps) : undefined;
 
 	const trailsDestination = useMemo<TrailsDestination | undefined>(() => {
 		if (!isMarket || !marketOrder || !buyStep || !userWalletAddress) {
 			return undefined;
 		}
 
-		const calls = buildTrailsMarketBuyActions({
+		const trailsMarketBuyActions = buildTrailsMarketBuyActions({
+			chainId: modalProps.chainId,
 			buyStep,
 			marketOrder,
+			contractType,
+			recipientAddress: userWalletAddress,
+			approvalStep,
 		});
+		if (!trailsMarketBuyActions) {
+			return undefined;
+		}
 
 		const destination = encodeDestinationCalls({
-			calls,
-			tokenAddress: marketOrder.priceCurrencyAddress as Address,
+			calls: trailsMarketBuyActions.calls,
+			tokenAddress: trailsMarketBuyActions.paymentTokenAddress,
 			sweepTarget: userWalletAddress,
 		});
 
 		return {
 			recipient: destination.recipient as Address,
 			destinationCalldata: destination.destinationCalldata,
+			paymentTokenAddress: trailsMarketBuyActions.paymentTokenAddress,
+			paymentAmount: trailsMarketBuyActions.paymentAmount,
 		};
-	}, [buyStep, isMarket, marketOrder, userWalletAddress]);
+	}, [
+		approvalStep,
+		buyStep,
+		contractType,
+		isMarket,
+		marketOrder,
+		modalProps.chainId,
+		userWalletAddress,
+	]);
 
 	const checkoutMode = determineCheckoutMode({
 		checkoutModeConfig,
@@ -100,9 +125,16 @@ export function useBuyModalContext() {
 		canBeUsedWithTrails,
 	});
 
+	const paymentAmount =
+		trailsDestination?.paymentAmount ??
+		(buyStep
+			? buyStep.price > 0n
+				? buyStep.price
+				: buyStep.value
+			: undefined);
 	const formattedAmount =
-		currency?.decimals && buyStep?.price
-			? formatUnits(BigInt(buyStep.price), currency.decimals)
+		currency?.decimals !== undefined && paymentAmount !== undefined
+			? formatUnits(paymentAmount, currency.decimals)
 			: undefined;
 
 	const handleTransactionSuccess = (hash: Hash) => {
