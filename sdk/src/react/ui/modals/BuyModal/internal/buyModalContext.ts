@@ -18,7 +18,8 @@ export function useBuyModalContext() {
 	const checkoutModeConfig: CheckoutMode = config.checkoutMode ?? 'trails';
 	const { close } = useBuyModal();
 	const transactionStatusModal = useTransactionStatusModal();
-	const { supportedChains, isLoadingChains } = useSupportedChains();
+	const { data: supportedChains = [], isLoading: isLoadingChains } =
+		useSupportedChains();
 
 	const {
 		collectible,

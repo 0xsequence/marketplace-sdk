@@ -11,12 +11,6 @@ import {
 } from '@0xsequence/design-system';
 import { TrailsWidget } from '0xtrails/widget';
 import { useRef, useState } from 'react';
-import {
-	getSequenceApiUrl,
-	getSequenceIndexerUrl,
-	getSequenceNodeGatewayUrl,
-	getTrailsApiUrl,
-} from '../../../../_internal/api/services';
 import { cn } from '../../../../ssr';
 import { ModalInitializationError } from '../../_internal/components/baseModal/errors/ModalInitializationError';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
@@ -28,7 +22,6 @@ import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
 	const {
-		config,
 		modalProps,
 		close,
 		steps,
@@ -49,11 +42,6 @@ export const BuyModalContent = () => {
 	const currencyAddress = isShop
 		? primarySaleItem?.currencyAddress
 		: marketOrder?.priceCurrencyAddress;
-
-	const trailsApiUrl = getTrailsApiUrl(config);
-	const sequenceIndexerUrl = getSequenceIndexerUrl(config);
-	const sequenceNodeGatewayUrl = getSequenceNodeGatewayUrl(config);
-	const sequenceApiUrl = getSequenceApiUrl(config);
 
 	if (error) {
 		return (
@@ -133,12 +121,6 @@ export const BuyModalContent = () => {
 								)}
 
 								<TrailsWidget
-									apiKey={config.projectAccessKey}
-									trailsApiUrl={trailsApiUrl}
-									sequenceIndexerUrl={sequenceIndexerUrl}
-									sequenceNodeGatewayUrl={sequenceNodeGatewayUrl}
-									sequenceApiUrl={sequenceApiUrl}
-									walletConnectProjectId={config.walletConnectProjectId}
 									toChainId={modalProps.chainId}
 									toAddress={buyStep.to}
 									toToken={currencyAddress}
