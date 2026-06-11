@@ -5,7 +5,6 @@ import {
 	wagmiAdapter,
 } from '@0xtrails/adapter-wagmi';
 import { TrailsProvider } from '0xtrails/widget';
-import { useMemo } from 'react';
 import { useConfig as useWagmiConfig } from 'wagmi';
 import {
 	getSequenceApiUrl,
@@ -32,50 +31,44 @@ export const BuyModal = () => {
 	return <BuyModalWithTrailsProvider />;
 };
 
+const useTrailsWaasFeeOptions: TrailsUseWaasFeeOptions = ({
+	chainIdOverride,
+} = {}) => {
+	const config = useConfig();
+	const {
+		pendingFeeOptionConfirmation,
+		confirmPendingFeeOption,
+		rejectPendingFeeOption,
+	} = useWaasFeeOptions(chainIdOverride ?? 0, config);
+
+	return [
+		pendingFeeOptionConfirmation,
+		confirmPendingFeeOption,
+		rejectPendingFeeOption,
+	];
+};
+
 const BuyModalWithTrailsProvider = () => {
 	const config = useConfig();
 	const wagmiConfig = useWagmiConfig();
-	const useTrailsWaasFeeOptions = useMemo<TrailsUseWaasFeeOptions>(
-		() =>
-			({ chainIdOverride } = {}) => {
-				const {
-					pendingFeeOptionConfirmation,
-					confirmPendingFeeOption,
-					rejectPendingFeeOption,
-				} = useWaasFeeOptions(chainIdOverride ?? 0, config);
-
-				return [
-					pendingFeeOptionConfirmation,
-					confirmPendingFeeOption,
-					rejectPendingFeeOption,
-				];
-			},
-		[config],
-	);
-	const trailsAdapters = useMemo(
-		() => [
-			wagmiAdapter({
-				wagmiConfig,
-				sequence: { useWaasFeeOptions: useTrailsWaasFeeOptions },
-			}),
-		],
-		[useTrailsWaasFeeOptions, wagmiConfig],
-	);
-	const trailsConfig = useMemo(
-		() => ({
-			trailsApiKey: config.projectAccessKey,
-			trailsApiUrl: getTrailsApiUrl(config),
-			sequenceIndexerUrl: getSequenceIndexerUrl(config),
-			sequenceNodeGatewayUrl: getSequenceNodeGatewayUrl(config),
-			sequenceApiUrl: getSequenceApiUrl(config),
-			walletConnectProjectId: config.walletConnectProjectId,
-			adapters: trailsAdapters,
-		}),
-		[config, trailsAdapters],
-	);
 
 	return (
-		<TrailsProvider config={trailsConfig}>
+		<TrailsProvider
+			config={{
+				trailsApiKey: config.projectAccessKey,
+				trailsApiUrl: getTrailsApiUrl(config),
+				sequenceIndexerUrl: getSequenceIndexerUrl(config),
+				sequenceNodeGatewayUrl: getSequenceNodeGatewayUrl(config),
+				sequenceApiUrl: getSequenceApiUrl(config),
+				walletConnectProjectId: config.walletConnectProjectId,
+				adapters: [
+					wagmiAdapter({
+						wagmiConfig,
+						sequence: { useWaasFeeOptions: useTrailsWaasFeeOptions },
+					}),
+				],
+			}}
+		>
 			<BuyModalContent />
 		</TrailsProvider>
 	);
