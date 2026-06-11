@@ -1,13 +1,15 @@
 import {
+	type Address,
 	type ApprovalStep,
 	type BuyStep,
 	ContractType,
+	type Hash,
 	MarketplaceKind,
 	type Order,
 	type OrderbookKind,
 } from '@0xsequence/api-client';
 import { buildErc20Approve, type Call, self } from '0xtrails';
-import { type Address, encodeFunctionData, zeroAddress } from 'viem';
+import { encodeFunctionData, zeroAddress } from 'viem';
 import { getConduitAddressForOrderbook } from '../../../../../utils/getConduitAddressForOrderbook';
 import { normalizeMarketplaceKind } from '../../../../../utils/normalizeMarketplace';
 import { OPENSEA_CHAIN_CURRENCIES } from '../../_internal/constants/opensea-currencies';
@@ -75,7 +77,7 @@ const OPENSEA_FULFILL_WITHOUT_RECIPIENT_SELECTORS = new Set([
 	'0xb1b747c3', // fulfillOrder(...)
 ]);
 
-const isNativeCurrency = (currencyAddress: string) =>
+const isNativeCurrency = (currencyAddress: Address) =>
 	currencyAddress.toLowerCase() === zeroAddress;
 
 const getPaymentAmount = ({
@@ -118,7 +120,7 @@ const buildWrappedNativeWithdrawCall = ({
 	}),
 });
 
-const isOpenSeaFulfillWithoutRecipient = (calldata: `0x${string}`) =>
+const isOpenSeaFulfillWithoutRecipient = (calldata: Hash) =>
 	OPENSEA_FULFILL_WITHOUT_RECIPIENT_SELECTORS.has(
 		calldata.slice(0, 10).toLowerCase(),
 	);
@@ -139,7 +141,7 @@ const buildOpenSeaNftTransferCall = ({
 	}
 
 	const collectionAddress = marketOrder.collectionContractAddress as Address;
-	const executorAddress = self() as Address;
+	const executorAddress = self();
 
 	if (contractType === ContractType.ERC1155) {
 		return {
@@ -178,7 +180,7 @@ export function buildTrailsMarketBuyActions({
 	quantity = 1n,
 }: BuildTrailsMarketBuyActionsParams): TrailsMarketBuyActions | undefined {
 	const calls: TrailsMarketBuyCall[] = [];
-	const currencyAddress = marketOrder.priceCurrencyAddress as Address;
+	const currencyAddress = marketOrder.priceCurrencyAddress;
 	const isErc20Payment = !isNativeCurrency(currencyAddress);
 	const paymentAmount = getPaymentAmount({
 		buyStep,

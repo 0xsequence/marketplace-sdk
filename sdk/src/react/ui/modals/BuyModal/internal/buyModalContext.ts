@@ -1,4 +1,5 @@
 import {
+	type Address,
 	ContractType,
 	findApprovalStep,
 	findBuyStep,
@@ -6,7 +7,7 @@ import {
 } from '@0xsequence/api-client';
 import { encodeDestinationCalls, useSupportedChains } from '0xtrails';
 import { useMemo } from 'react';
-import { type Address, type Chain, formatUnits } from 'viem';
+import { type Chain, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
@@ -22,7 +23,7 @@ import { determineCheckoutMode } from './determineCheckoutMode';
 
 type TrailsDestination = {
 	recipient: Address;
-	destinationCalldata: `0x${string}`;
+	destinationCalldata: Hash;
 	paymentTokenAddress: Address;
 	paymentAmount: bigint;
 };
@@ -104,7 +105,7 @@ export function useBuyModalContext() {
 		});
 
 		return {
-			recipient: destination.recipient as Address,
+			recipient: destination.recipient,
 			destinationCalldata: destination.destinationCalldata,
 			paymentTokenAddress: trailsMarketBuyActions.paymentTokenAddress,
 			paymentAmount: trailsMarketBuyActions.paymentAmount,
